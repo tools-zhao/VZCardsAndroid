@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="300dp"
+   android:layout_height="140dp"
+    android:background="@drawable/drawable3">
+
+    <TextView
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:id="@+id/text1"
+        android:text="ENTER OTP"
+        android:layout_marginLeft="102dp"
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        android:textColor="#ffff"/>
+    <EditText
+        android:layout_width="200dp"
+        android:layout_height="35dp"
+        android:id="@+id/otp"
+        android:layout_gravity="center"
+        android:background="@drawable/drawable_text"
+        android:layout_marginTop="2dp"
+        />
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/linearLayout1"
+        android:layout_marginTop="15dp"
+        android:background="#060606"></View>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="0dp">
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:text="btnOk"
+        android:id="@+id/btnOK"
+        android:background="@drawable/drawable_btn"
+        android:layout_gravity="center"
+        android:layout_marginLeft="0dp"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="50dp"
+            android:background="#060606" />
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="btnResend"
+            android:id="@+id/btnResend"
+            android:background="@drawable/drawable_btn"
+            android:layout_gravity="center"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="50dp"
+            android:background="#060606" />
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="btnCancel"
+            android:id="@+id/btnCancel"
+            android:background="@drawable/drawable_btn"
+            android:layout_gravity="center"/>
+
+
+        </LinearLayout>
+
+
+</LinearLayout>
