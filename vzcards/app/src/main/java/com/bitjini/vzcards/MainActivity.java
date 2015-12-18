@@ -29,11 +29,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my1));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_vz_profile));
 
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.feed_s));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.add_ds1));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.history_ds));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.feeds_drawable));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.add_drawable));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.history_drawable));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
