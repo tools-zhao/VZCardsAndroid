@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/profile_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+<RelativeLayout
     android:layout_width="match_parent"
     android:background="#97c1d9f2"
     android:layout_height="match_parent">
@@ -10,7 +13,6 @@
             android:layout_height="35dp"
             android:background="#434951"
             android:id="@+id/l1"
-            android:layout_below="@+id/l0"
             android:gravity="center_horizontal">
             <TextView
                 android:layout_width="200dp"
@@ -225,3 +227,5 @@
     </LinearLayout>
 
 </RelativeLayout>
+
+</FrameLayout>

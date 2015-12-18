@@ -28,7 +28,17 @@ public class MyProfileActivity extends Fragment {
         referral.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
-            { new Referal_Activity();
+            {
+
+            Fragment newfragment = new Referal_Activity();
+
+//
+//// Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.profile_frame,newfragment).addToBackStack(null)
+                        .commit();
+
             }
         });
         return profile;

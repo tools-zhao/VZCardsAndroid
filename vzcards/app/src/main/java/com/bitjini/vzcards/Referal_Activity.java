@@ -10,13 +10,13 @@ import android.view.ViewGroup;
 /**
  * Created by bitjini on 17/12/15.
  */
-public class Referal_Activity extends Activity {
+public class Referal_Activity extends Fragment {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.referral);
-
+    public View onCreateView(LayoutInflater inflater,ViewGroup container,
+                             Bundle savedInstanceState) {
+        View referral = inflater.inflate(R.layout.referral, container, false);
+        return referral;
 
     }
 }
