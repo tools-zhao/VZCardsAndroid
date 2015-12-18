@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:background="#97c1d9f2"
+    android:background="#43c1d9f2"
     android:layout_height="match_parent">
 
 
@@ -71,10 +71,9 @@
 
     <ImageButton
         android:layout_width="100dp"
-        android:layout_height="40dp"
+        android:layout_height="25dp"
         android:src="@drawable/vzc_need_post_btn"
         android:layout_gravity="center"
-        android:background="#97c1d9f2"
         android:id="@+id/imgbtn"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/l3"
@@ -100,7 +99,7 @@
         android:id="@+id/history"
         android:layout_gravity="center"
         android:textSize="15sp"
-        android:background="#eef6fc"
+        android:background="@drawable/text_drawable"
         />
     </LinearLayout>
     <LinearLayout

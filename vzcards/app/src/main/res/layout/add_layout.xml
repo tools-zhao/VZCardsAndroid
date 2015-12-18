@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ihave_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_width="match_parent"
-    android:background="#97c1d9f2"
+    android:background="#43c1d9f2"
     android:layout_height="match_parent"
     android:layout_gravity="center_horizontal">
 
@@ -124,10 +129,9 @@
         </LinearLayout>
     <ImageButton
         android:layout_width="100dp"
-        android:layout_height="40dp"
+        android:layout_height="25dp"
         android:src="@drawable/vzc_have_post_btn"
         android:layout_gravity="center"
-        android:background="#97c1d9f2"
         android:id="@+id/imgbtn"
         android:layout_marginTop="15dp"
         android:layout_below="@+id/l4"
@@ -153,7 +157,7 @@
             <Button
                 android:layout_width="145dp"
                 android:layout_height="30dp"
-                android:id="@+id/profilebtn"
+                android:id="@+id/ihave"
                 android:layout_marginTop="0.2dp"
                 android:background="@drawable/button_color"
                 android:textColor="@drawable/text_color"
@@ -169,7 +173,7 @@
             <Button
                 android:layout_width="145dp"
                 android:layout_height="30dp"
-                android:id="@+id/vzfrnds"
+                android:id="@+id/ineed"
                 android:textSize="15sp"
                 android:text="i Need"
                 android:background="@drawable/button_color2"
@@ -184,3 +188,4 @@
 
 
 </RelativeLayout>
+    </FrameLayout>
