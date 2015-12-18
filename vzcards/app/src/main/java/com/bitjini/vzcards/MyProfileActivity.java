@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 
 /**
  * Created by VEENA on 12/7/2015.
@@ -31,12 +32,13 @@ public class MyProfileActivity extends Fragment {
             {
 
             Fragment newfragment = new Referal_Activity();
+                // get the id of fragment
+                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
 
-//
-//// Insert the fragment by replacing any existing fragment
+               // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .replace(R.id.profile_frame,newfragment).addToBackStack(null)
+                        .replace(contentView.getId(), newfragment).addToBackStack(contentView.toString())
                         .commit();
 
             }
