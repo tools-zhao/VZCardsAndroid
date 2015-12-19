@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/referral_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:background="@android:color/transparent"
+    android:layout_height="match_parent">
+
+
+
+
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:id="@+id/referralList"
+        android:layout_below="@+id/Layout1"
+        android:divider="#97e6ecf2"
+        android:dividerHeight="5.0sp"></ListView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#5f8ac7"
+        android:layout_marginBottom="0dp"
+        android:id="@+id/l8"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:gravity="center">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:id="@+id/profilebtn"
+            android:background="@drawable/button_color"
+            android:textColor="@drawable/text_color"
+            android:text="Profile"
+            android:textSize="15sp"
+            android:textAllCaps="false"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:id="@+id/vzfrnds"
+            android:textSize="15sp"
+            android:text="VZFriends"
+            android:background="@drawable/button_color2"
+            android:textColor="@drawable/text_color"
+            android:textAllCaps="false"
+            android:layout_marginLeft="-1dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:id="@+id/referral"
+            android:text="Referral"
+            android:textSize="15sp"
+            android:background="@drawable/button_color3"
+            android:textColor="@drawable/text_color"
+            android:textAllCaps="false"
+            android:layout_marginLeft="-1dp"
+            android:layout_weight="1"
+            android:layout_marginRight="15dp"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
+
+
+
+</RelativeLayout>
+    </FrameLayout>
