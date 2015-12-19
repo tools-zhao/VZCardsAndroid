@@ -23,7 +23,7 @@ public class Referal_Activity extends Fragment {
 
         Button vzfrnds=(Button) referral.findViewById(R.id.vzfrnds);
 
-        profilebtn.setOnClickListener(new View.OnClickListener() {
+        profilebtn.setOnClickListener(this);
             @Override
             public void onClick(View v)
             {
@@ -39,7 +39,7 @@ public class Referal_Activity extends Fragment {
                         .commit();
 
             }
-        });
+        
         vzfrnds.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)

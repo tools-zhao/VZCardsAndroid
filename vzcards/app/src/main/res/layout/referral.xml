@@ -6,16 +6,19 @@
     android:background="?android:attr/colorBackground">
 <RelativeLayout
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#43c1d9f2">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:id="@+id/linearLayout1"
+        android:background="@drawable/text_drawable"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="2dp"
+        android:layout_marginLeft="5dp"
         android:orientation="horizontal"
+        android:layout_marginRight="5dp"
         android:layout_below="@+id/Layout1">
         <ImageView
             android:layout_width="50dp"
@@ -89,70 +92,67 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/linearLayout1"
-        android:background="#ea1624"></View>
+        android:background="#ea1624"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"></View>
 
 
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:background="#5f8ac7"
         android:layout_marginBottom="0dp"
         android:id="@+id/l8"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        android:gravity="center_horizontal">
-        <LinearLayout
-            android:layout_width="280dp"
-            android:layout_marginTop="2dp"
-            android:background="@drawable/drawable1"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
-            android:layout_height="33dp"
-            android:layout_gravity="center">
-            <Button
-                android:layout_width="90dp"
-                android:layout_height="30dp"
-                android:id="@+id/profilebtn"
-                android:layout_marginTop="0.2dp"
-                android:background="@drawable/button_color"
-                android:textColor="@drawable/text_color"
-                android:text="Profile"
-                android:textSize="15sp"
-                android:textAllCaps="false"
-                android:layout_marginLeft="-2dp"
-                android:layout_gravity="center_vertical"/>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="35dp"
-                android:background="#ffffff"/>
-            <Button
-                android:layout_width="90dp"
-                android:layout_height="31dp"
-                android:id="@+id/vzfrnds"
-                android:textSize="15sp"
-                android:text="VZFriends"
-                android:background="@drawable/button_color2"
-                android:textColor="@drawable/text_color"
-                android:textAllCaps="false"
-                android:layout_gravity="center_vertical"/>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="35dp"
-                android:background="#ffffff" />
-            <Button
-                android:layout_width="95dp"
-                android:layout_height="31dp"
-                android:id="@+id/referral"
-                android:text="Referral"
-                android:background="@drawable/button_color"
-                android:textColor="@drawable/text_color"
-                android:textAllCaps="false"
-                android:layout_gravity="center_vertical"/>
-        </LinearLayout>
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:gravity="center">
 
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:id="@+id/profilebtn"
+            android:background="@drawable/button_color"
+            android:textColor="@drawable/text_color"
+            android:text="Profile"
+            android:textSize="15sp"
+            android:textAllCaps="false"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:id="@+id/vzfrnds"
+            android:textSize="15sp"
+            android:text="VZFriends"
+            android:background="@drawable/button_color2"
+            android:textColor="@drawable/text_color"
+            android:textAllCaps="false"
+            android:layout_marginLeft="-1dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:id="@+id/referral"
+            android:text="Referral"
+            android:textSize="15sp"
+            android:background="@drawable/button_color3"
+            android:textColor="@drawable/text_color"
+            android:textAllCaps="false"
+            android:layout_marginLeft="-1dp"
+            android:layout_weight="1"
+            android:layout_marginRight="15dp"
+            android:layout_gravity="center_vertical"/>
     </LinearLayout>
+
+
 
 
 </RelativeLayout>
