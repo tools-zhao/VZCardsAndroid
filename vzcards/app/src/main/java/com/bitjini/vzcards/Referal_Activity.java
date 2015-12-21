@@ -1,6 +1,5 @@
 package com.bitjini.vzcards;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,18 +9,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import java.sql.Ref;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by bitjini on 17/12/15.
  */
-public class Referal_Activity extends Fragment implements OnClickListener {
+public class Referal_Activity extends Fragment implements OnClickListener,ExpandableListView.OnChildClickListener {
 
    Context context;
     Button vzfrnds,profilebtn;
@@ -40,7 +40,12 @@ public class Referal_Activity extends Fragment implements OnClickListener {
                              Bundle savedInstanceState) {
         View referral = inflater.inflate(R.layout.list_referal_activity, container, false);
 
-        listView=(ListView)referral.findViewById(R.id.referralList);
+//        listView=(ListView)referral.findViewById(R.id.referralList);
+        ExpandableListView listView=(ExpandableListView)referral.findViewById(R.id.referralList);
+
+//        setGroupData();
+        setChildGroupData();
+
 
         profilebtn = (Button) referral.findViewById(R.id.profilebtn);
        vzfrnds = (Button) referral.findViewById(R.id.vzfrnds);
@@ -64,22 +69,59 @@ public class Referal_Activity extends Fragment implements OnClickListener {
 
             referalUsers.setName((String) names.get(i));
             referalUsers.setReferredName((String) referedNames.get(i));
-
+//
             arrayReferUsers.add(referalUsers);
-
-//            Log.e("values...", ""+referalUsers.getName());
-//            Log.e("values...", ""+referalUsers.getReferredName());
-            Log.e(" array list values...", ""+arrayReferUsers.get(i).getName());
-            Log.e(" array list values...", ""+arrayReferUsers.get(i).getReferredName());
-
-
+//
+////            Log.e("values...", ""+referalUsers.getName());
+////            Log.e("values...", ""+referalUsers.getReferredName());
+//            Log.e(" array list values...", ""+arrayReferUsers.get(i).getName());
+////            Log.e(" array list values...", ""+arrayReferUsers.get(i).getReferredName());
+//
+//
             }
+//
+NewAdapter mNewAdapter=new NewAdapter(arrayReferUsers,childItem,getActivity());
+        listView.setAdapter(mNewAdapter);
+        listView.setOnChildClickListener(this);
 
-        adapter = new ReferUserAdapter(arrayReferUsers,getActivity());
-        listView.setAdapter(adapter);
+//        adapter = new ReferUserAdapter(arrayReferUsers,getActivity());
+//        listView.setAdapter(adapter);
 
 
         return referral;
+    }
+//    public void setGroupData() {
+//        ArrayList<String> group = new ArrayList<String>();
+//        group.add("TechNology");
+//        group.add("Mobile");
+//        group.add("Manufacturer");
+//        group.add("Extras");
+//        for(int i=0;i<group.size();i++) {
+//            ReferalUsers referalUsers = new ReferalUsers();
+//
+//            referalUsers.setName((String) group.get(i));
+////            referalUsers.setReferredName((String) referedNames.get(i));
+//
+//            groupItem.add(referalUsers);}
+//
+//    }
+    ArrayList<ReferalUsers> groupItem=new ArrayList<ReferalUsers>();
+    ArrayList<ReferalUsers> childItem=new ArrayList<ReferalUsers>();
+    public void setChildGroupData(){
+
+        ArrayList<String> child = new ArrayList<String>();
+        child.add("Contact Us");
+        child.add("About Us");
+        child.add("Location");
+        child.add("Root Cause");
+        childItem.add(child);
+        for(int i=0;i<child.size();i++) {
+            ReferalUsers referalUsers = new ReferalUsers();
+
+            referalUsers.setName((String) child.get(i));
+//            referalUsers.setReferredName((String) referedNames.get(i));
+
+            childItem.add(referalUsers);}
     }
 
     @Override
@@ -119,4 +161,13 @@ public class Referal_Activity extends Fragment implements OnClickListener {
 
 
     }
+
+    @Override
+    public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
+        Toast.makeText(getActivity(), "Clicked On Child",
+                Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+
 }

@@ -2,11 +2,14 @@ package com.bitjini.vzcards;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ReferalUsers {
     String name;
     String referredName;
 //    Bitmap thumb;
-
+private List<ItemDetail> itemList = new ArrayList<ItemDetail>();
     public String getName()
 
     {
@@ -42,4 +45,16 @@ public class ReferalUsers {
 
 
 }
+class ItemDetail
+{
+    private String name;
+    public String getName()
 
+    {
+        return name;
+    }
+    public void setName(String name)
+    {
+        this.name=name;
+    }
+}
