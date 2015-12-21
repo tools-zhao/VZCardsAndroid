@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,8 @@ public class Referal_Activity extends Fragment implements OnClickListener {
    Context context;
     Button vzfrnds,profilebtn;
 
-    ArrayList<ReferalUsers> ReferUsers=new ArrayList<ReferalUsers>();
-    List<ReferalUsers> temp;
+    ArrayList<ReferalUsers> arrayReferUsers=new ArrayList<ReferalUsers>();
+
     // Contact List
     ListView listView;
 
@@ -44,39 +45,37 @@ public class Referal_Activity extends Fragment implements OnClickListener {
         profilebtn = (Button) referral.findViewById(R.id.profilebtn);
        vzfrnds = (Button) referral.findViewById(R.id.vzfrnds);
 
-//        ArrayList names=new ArrayList<String>();
-//        names.add("Mathew Json");
-//        names.add("Sheldon Cooper");
-//        names.add("Howard Wolowitz");
-//
-//        ArrayList referedNames=new ArrayList<String>();
-//        referedNames.add("Walter White");
-//        referedNames.add("Amy Fowler");
-//        referedNames.add("Bernedette");
-//
-//        ArrayList n=new ArrayList<String>();
-//        n.addAll(names);
-//
-//        ArrayList r=new ArrayList<String>();
-//        r.addAll(referedNames);
-
-
-
         profilebtn.setOnClickListener(this);
         vzfrnds.setOnClickListener(this);
 
-        String [] names={"Mathew Json","Sheldon Cooper","Howard Wolowitz"};
-        String [] referedNames={"Walter White","Amy Fowler","Bernedette"};
+        ArrayList names=new ArrayList<String>();
+        names.add("Mathew Json");
+        names.add("Sheldon Cooper");
+        names.add("Howard Wolowitz");
 
-        ReferalUsers referalUsers = new ReferalUsers();
+        ArrayList referedNames=new ArrayList<String>();
+        referedNames.add("Walter White");
+        referedNames.add("Amy Fowler");
+        referedNames.add("Bernedette");
 
 
-            referalUsers.setName(names.toString());
+        for(int i=0;i<names.size();i++) {
+            ReferalUsers referalUsers = new ReferalUsers();
 
-            referalUsers.setReferredName(referedNames.toString());
+            referalUsers.setName((String) names.get(i));
+            referalUsers.setReferredName((String) referedNames.get(i));
 
-        ReferUsers.add(referalUsers);
-        adapter = new ReferUserAdapter(ReferUsers,getActivity());
+            arrayReferUsers.add(referalUsers);
+
+//            Log.e("values...", ""+referalUsers.getName());
+//            Log.e("values...", ""+referalUsers.getReferredName());
+            Log.e(" array list values...", ""+arrayReferUsers.get(i).getName());
+            Log.e(" array list values...", ""+arrayReferUsers.get(i).getReferredName());
+
+
+            }
+
+        adapter = new ReferUserAdapter(arrayReferUsers,getActivity());
         listView.setAdapter(adapter);
 
 

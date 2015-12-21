@@ -16,6 +16,7 @@ public class ReferalUsers {
     {
         this.name=name;
     }
+    public String toString() { return name; }
 
 //    public Bitmap getThumb()
 //    {
@@ -32,10 +33,12 @@ public class ReferalUsers {
     {
         return referredName;
     }
+
     public void setReferredName(String referredName)
     {
         this.referredName=referredName;
     }
+
 
 
 }

@@ -124,6 +124,7 @@ public class ContactsMainActivity extends Activity {
                     selectUser.setName(name);
                     selectUser.setPhone(phoneNumber);
                     selectUsers.add(selectUser);
+
                 }
             } else {
                 Log.e("Cursor close 1", "----------------");

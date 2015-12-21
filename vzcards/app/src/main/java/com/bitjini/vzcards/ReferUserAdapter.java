@@ -15,7 +15,6 @@ import java.util.List;
 public class ReferUserAdapter extends BaseAdapter
 {
     public List<ReferalUsers> _data;
-    private ArrayList<ReferalUsers> arrayList;
     Context _c;
     ViewHolder v;
 //    RoundImage roundedImage;
@@ -24,8 +23,7 @@ public class ReferUserAdapter extends BaseAdapter
     {
         _data=ReferUsers;
         _c=context;
-        this.arrayList=new ArrayList<ReferalUsers>();
-        this.arrayList.addAll(_data);
+
     }
     @Override
     public int getCount()
@@ -52,6 +50,7 @@ public class ReferUserAdapter extends BaseAdapter
             LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = li.inflate(R.layout.referral, null);
             Log.e("inside", "here---------------In View1");
+            Log.e("position..",""+ i);
 
 
         }
@@ -65,10 +64,8 @@ public class ReferUserAdapter extends BaseAdapter
         v.referredName=(TextView)view.findViewById(R.id.referred);
 
 
-
-        final  ReferalUsers data=(ReferalUsers) _data.get(i);
-        v.name.setText(data.getName());
-        v.referredName.setText(data.getReferredName());
+        v.name.setText(_data.get(i).getName());
+        v.referredName.setText(_data.get(i).getReferredName());
 
 
 

@@ -15,7 +15,7 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="match_parent"
         android:id="@+id/referralList"
         android:layout_below="@+id/Layout1"
         android:divider="#97e6ecf2"
