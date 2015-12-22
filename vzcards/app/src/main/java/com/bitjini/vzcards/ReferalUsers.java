@@ -45,16 +45,15 @@ private List<ItemDetail> itemList = new ArrayList<ItemDetail>();
 
 
 }
-class ItemDetail
-{
-    private String name;
-    public String getName()
+class ItemDetail extends ReferalUsers {
+    private String desc;
+    public String getDesc()
 
     {
-        return name;
+        return desc;
     }
-    public void setName(String name)
+    public void setDesc(String desc)
     {
-        this.name=name;
+        this.desc=desc;
     }
 }

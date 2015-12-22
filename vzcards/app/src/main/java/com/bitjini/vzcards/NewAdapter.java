@@ -25,12 +25,12 @@ public class NewAdapter extends BaseExpandableListAdapter {
     RecyclerView.ViewHolder v;
 //    RoundImage roundedImage;
 public ArrayList<ReferalUsers> groupItem, tempChild;
-    public ArrayList<ReferalUsers> Childtem = new ArrayList<ReferalUsers>();
+    public ArrayList<ItemDetail> ChildItem = new ArrayList<ItemDetail>();
 
-    public NewAdapter(ArrayList<ReferalUsers> group,ArrayList<ReferalUsers> child,Context context)
+    public NewAdapter(ArrayList<ReferalUsers> group,ArrayList<ItemDetail> child,Context context)
     {
         groupItem=group;
-        Childtem=child;
+        ChildItem=child;
         _c=context;
 
     }
@@ -57,12 +57,12 @@ public ArrayList<ReferalUsers> groupItem, tempChild;
         }
 
         TextView itemName = (TextView) v.findViewById(R.id.textView1);
-
-//        ItemDetail det = catList.get(groupPosition).getItemList().get(childPosition);
+//
+         ItemDetail det = ChildItem.get(childPosition);
 
 //        v.name.setText(_data.get(groupPosition).getName().get(childPosition));
 //        v.referredName.setText(_data.get(i).getReferredName());
-        itemName.setText(Childtem.get(childPosition).getName());
+        itemName.setText(det.getDesc());
 
 
         return v;
@@ -70,7 +70,7 @@ public ArrayList<ReferalUsers> groupItem, tempChild;
     }
     @Override
     public int getChildrenCount(int groupPosition) {
-        return Childtem.size();
+        return ChildItem.size();
     }
     @Override
     public Object getGroup(int groupPosition) {

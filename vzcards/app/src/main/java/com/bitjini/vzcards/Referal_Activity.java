@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import java.sql.Ref;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bitjini on 17/12/15.
@@ -26,8 +27,8 @@ public class Referal_Activity extends Fragment implements OnClickListener,Expand
    Context context;
     Button vzfrnds,profilebtn;
 
-    ArrayList<ReferalUsers> arrayReferUsers=new ArrayList<ReferalUsers>();
-
+    ArrayList<ReferalUsers> groupItem=new ArrayList<ReferalUsers>();
+    ArrayList<ItemDetail> childItem=new ArrayList<ItemDetail>();
     // Contact List
     ListView listView;
 
@@ -44,7 +45,7 @@ public class Referal_Activity extends Fragment implements OnClickListener,Expand
         ExpandableListView listView=(ExpandableListView)referral.findViewById(R.id.referralList);
 
 //        setGroupData();
-        setChildGroupData();
+//        setChildGroupData();
 
 
         profilebtn = (Button) referral.findViewById(R.id.profilebtn);
@@ -52,7 +53,6 @@ public class Referal_Activity extends Fragment implements OnClickListener,Expand
 
         profilebtn.setOnClickListener(this);
         vzfrnds.setOnClickListener(this);
-
         ArrayList names=new ArrayList<String>();
         names.add("Mathew Json");
         names.add("Sheldon Cooper");
@@ -64,66 +64,71 @@ public class Referal_Activity extends Fragment implements OnClickListener,Expand
         referedNames.add("Bernedette");
 
 
-        for(int i=0;i<names.size();i++) {
-            ReferalUsers referalUsers = new ReferalUsers();
-
-            referalUsers.setName((String) names.get(i));
-            referalUsers.setReferredName((String) referedNames.get(i));
-//
-            arrayReferUsers.add(referalUsers);
-//
-////            Log.e("values...", ""+referalUsers.getName());
-////            Log.e("values...", ""+referalUsers.getReferredName());
-//            Log.e(" array list values...", ""+arrayReferUsers.get(i).getName());
-////            Log.e(" array list values...", ""+arrayReferUsers.get(i).getReferredName());
-//
-//
-            }
-//
-NewAdapter mNewAdapter=new NewAdapter(arrayReferUsers,childItem,getActivity());
-        listView.setAdapter(mNewAdapter);
-        listView.setOnChildClickListener(this);
-
-//        adapter = new ReferUserAdapter(arrayReferUsers,getActivity());
-//        listView.setAdapter(adapter);
-
-
-        return referral;
-    }
-//    public void setGroupData() {
-//        ArrayList<String> group = new ArrayList<String>();
-//        group.add("TechNology");
-//        group.add("Mobile");
-//        group.add("Manufacturer");
-//        group.add("Extras");
-//        for(int i=0;i<group.size();i++) {
-//            ReferalUsers referalUsers = new ReferalUsers();
-//
-//            referalUsers.setName((String) group.get(i));
-////            referalUsers.setReferredName((String) referedNames.get(i));
-//
-//            groupItem.add(referalUsers);}
-//
-//    }
-    ArrayList<ReferalUsers> groupItem=new ArrayList<ReferalUsers>();
-    ArrayList<ReferalUsers> childItem=new ArrayList<ReferalUsers>();
-    public void setChildGroupData(){
-
         ArrayList<String> child = new ArrayList<String>();
         child.add("Contact Us");
         child.add("About Us");
         child.add("Location");
-        child.add("Root Cause");
-        childItem.add(child);
-        for(int i=0;i<child.size();i++) {
+
+//         List<ReferalUsers> items = new ArrayList<ReferalUsers>();
+
+        // Populate our list with groups and it's children
+        for(int i = 0; i < names.size(); i++) {
             ReferalUsers referalUsers = new ReferalUsers();
 
-            referalUsers.setName((String) child.get(i));
-//            referalUsers.setReferredName((String) referedNames.get(i));
+            referalUsers.setName((String) names.get(i));
+            referalUsers.setReferredName((String) referedNames.get(i));
 
-            childItem.add(referalUsers);}
+            for(int j = 0; j < i; j++) {
+                ItemDetail items = new ItemDetail();
+                items.setDesc(child.get(j));
+
+
+                childItem.add(items);
+            }
+
+            groupItem.add(referalUsers);
+        }
+
+        NewAdapter mNewAdapter=new NewAdapter(groupItem,childItem,getActivity());
+        listView.setAdapter(mNewAdapter);
+        listView.setOnChildClickListener(this);
+
+        return referral;
     }
-
+//    public void setGroupData() {
+//        ArrayList names=new ArrayList<String>();
+//    names.add("Mathew Json");
+//    names.add("Sheldon Cooper");
+//    names.add("Howard Wolowitz");
+//
+//    ArrayList referedNames=new ArrayList<String>();
+//    referedNames.add("Walter White");
+//    referedNames.add("Amy Fowler");
+//    referedNames.add("Bernedette");
+//
+//
+//        for(int i=0;i<names.size();i++) {
+//            ReferalUsers referalUsers = new ReferalUsers();
+//
+//            referalUsers.setName((String) names.get(i));
+//            referalUsers.setReferredName((String) referedNames.get(i));
+//
+//            groupItem.add(referalUsers);}
+//
+//    }
+//
+//    public void setChildGroupData() {
+//
+//        ArrayList<String> child = new ArrayList<String>();
+//        child.add("Contact Us");
+//        child.add("About Us");
+//        child.add("Location");
+//        for (int j = 0; j < child.size(); j++) {
+//            ItemDetail items = new ItemDetail();
+//            items.setDesc((String) child.get(j));
+//            childItem.add(items);
+//        }
+//    }
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
