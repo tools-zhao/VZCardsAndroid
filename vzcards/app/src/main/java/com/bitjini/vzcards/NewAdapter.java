@@ -25,9 +25,9 @@ public class NewAdapter extends BaseExpandableListAdapter {
     RecyclerView.ViewHolder v;
 //    RoundImage roundedImage;
 public ArrayList<ReferalUsers> groupItem, tempChild;
-    public ArrayList<ItemDetail> ChildItem = new ArrayList<ItemDetail>();
+    public ArrayList<ReferalUsers> ChildItem = new ArrayList<ReferalUsers>();
 
-    public NewAdapter(ArrayList<ReferalUsers> group,ArrayList<ItemDetail> child,Context context)
+    public NewAdapter(ArrayList<ReferalUsers> group,ArrayList<ReferalUsers> child,Context context)
     {
         groupItem=group;
         ChildItem=child;
@@ -58,7 +58,7 @@ public ArrayList<ReferalUsers> groupItem, tempChild;
 
         TextView itemName = (TextView) v.findViewById(R.id.textView1);
 //
-         ItemDetail det = ChildItem.get(childPosition);
+        ReferalUsers det = ChildItem.get(childPosition);
 
 //        v.name.setText(_data.get(groupPosition).getName().get(childPosition));
 //        v.referredName.setText(_data.get(i).getReferredName());

@@ -45,7 +45,7 @@ public class VZFriends_Activity extends Fragment {
             public void onClick(View v)
             {
 
-                Fragment fragment = new Referal_Activity();
+                Fragment fragment = new ExpandAnimationDemo();
                 // get the id of fragment
                 FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.vzfrnds_frame);
 

@@ -13,13 +13,13 @@
 
 
 
-    <ExpandableListView
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/referralList"
         android:layout_below="@+id/Layout1"
         android:divider="#97e6ecf2"
-        android:dividerHeight="5.0sp"></ExpandableListView>
+        android:dividerHeight="5.0sp"></ListView>
 
 
     <LinearLayout

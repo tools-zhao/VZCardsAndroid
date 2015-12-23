@@ -9,7 +9,7 @@ public class ReferalUsers {
     String name;
     String referredName;
 //    Bitmap thumb;
-private List<ItemDetail> itemList = new ArrayList<ItemDetail>();
+private List<ReferalUsers> itemList = new ArrayList<ReferalUsers>();
     public String getName()
 
     {
@@ -41,11 +41,6 @@ private List<ItemDetail> itemList = new ArrayList<ItemDetail>();
     {
         this.referredName=referredName;
     }
-
-
-
-}
-class ItemDetail extends ReferalUsers {
     private String desc;
     public String getDesc()
 
@@ -56,4 +51,7 @@ class ItemDetail extends ReferalUsers {
     {
         this.desc=desc;
     }
+
+
 }
+
