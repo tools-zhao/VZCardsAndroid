@@ -36,6 +36,7 @@ public class VZFriends_Activity extends Fragment {
                 fragmentManager.beginTransaction()
                         .add(contentView.getId(), profilefragment).addToBackStack(contentView.toString())
                         .commit();
+                v.setSelected(true);
 
             }
         });
@@ -45,7 +46,7 @@ public class VZFriends_Activity extends Fragment {
             public void onClick(View v)
             {
 
-                Fragment fragment = new ExpandAnimationDemo();
+                Fragment fragment = new Referral_Activity();
                 // get the id of fragment
                 FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.vzfrnds_frame);
 
@@ -54,7 +55,7 @@ public class VZFriends_Activity extends Fragment {
                 fragmentManager.beginTransaction()
                         .replace(contentView.getId(),fragment).addToBackStack(contentView.toString())
                         .commit();
-
+                v.setSelected(true);
             }
         });
         return vzfrnds;

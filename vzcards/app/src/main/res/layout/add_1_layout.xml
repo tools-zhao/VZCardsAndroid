@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/add1_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -15,13 +19,14 @@
             android:layout_width="45dp"
             android:layout_height="40dp"
             android:layout_marginLeft="8dp"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/profile_pic_placeholder"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Name"
-            android:layout_marginLeft="8dp"
-            android:textSize="25sp"
+            android:layout_marginLeft="15dp"
+            android:textSize="20sp"
             android:gravity="center_vertical"
             android:textColor="#ffff"/>
         </LinearLayout>
@@ -95,3 +100,4 @@
 
 
 </RelativeLayout>
+    </FrameLayout>

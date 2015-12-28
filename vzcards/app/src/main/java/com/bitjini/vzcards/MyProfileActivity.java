@@ -59,6 +59,9 @@ public class MyProfileActivity extends Fragment {
                 fragmentManager.beginTransaction()
                         .replace(contentView.getId(), newfragment).addToBackStack(contentView.toString())
                         .commit();
+                v.setSelected(true);
+
+
 
             }
         });
@@ -67,7 +70,7 @@ public class MyProfileActivity extends Fragment {
             public void onClick(View v)
             {
 
-                Fragment fragment = new ExpandAnimationDemo();
+                Fragment fragment = new Referral_Activity();
                 // get the id of fragment
                 FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
 
@@ -76,6 +79,7 @@ public class MyProfileActivity extends Fragment {
                 fragmentManager.beginTransaction()
                         .replace(contentView.getId(),fragment).addToBackStack(contentView.toString())
                         .commit();
+                v.setSelected(true);
 
             }
         });
