@@ -9,7 +9,7 @@
                 android:color="#97fbfbfc" />
 
             <corners
-                android:radius="30px"/>
+                android:radius="20px"/>
         </shape>
     </item>
 </selector>

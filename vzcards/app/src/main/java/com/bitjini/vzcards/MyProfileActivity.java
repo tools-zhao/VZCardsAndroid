@@ -67,7 +67,7 @@ public class MyProfileActivity extends Fragment {
             public void onClick(View v)
             {
 
-                Fragment fragment = new Referal_Activity();
+                Fragment fragment = new ExpandAnimationDemo();
                 // get the id of fragment
                 FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
 
