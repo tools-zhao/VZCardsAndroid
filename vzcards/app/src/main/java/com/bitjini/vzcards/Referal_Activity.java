@@ -1,178 +1,124 @@
-//package com.bitjini.vzcards;
-//
-//import android.content.Context;
-//import android.os.Bundle;
-//import android.support.v4.app.Fragment;
-//import android.support.v4.app.FragmentManager;
-//import android.util.Log;
-//import android.view.LayoutInflater;
-//import android.view.View;
-//import android.view.ViewGroup;
-//import android.widget.Button;
-//import android.widget.ExpandableListView;
-//import android.widget.FrameLayout;
-//import android.view.View.OnClickListener;
-//import android.widget.ListView;
-//import android.widget.Toast;
-//
-//import java.sql.Ref;
-//import java.util.ArrayList;
-//import java.util.List;
-//
-///**
-// * Created by bitjini on 17/12/15.
-// */
-//public class Referal_Activity extends Fragment implements OnClickListener,ExpandableListView.OnChildClickListener {
-//
-//   Context context;
-//    Button vzfrnds,profilebtn;
-//
-//    ArrayList<ReferalUsers> groupItem=new ArrayList<ReferalUsers>();
-//    ArrayList<ReferalUsers> childItem=new ArrayList<ReferalUsers>();
-//    // Contact List
-//    ListView listView;
-//
-////    ReferUserAdapter adapter;
-//
-//
-//
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        View referral = inflater.inflate(R.layout.list_referal_activity, container, false);
-//
-////        listView=(ListView)referral.findViewById(R.id.referralList);
-////        ExpandableListView listView=(ExpandableListView)referral.findViewById(R.id.referralList);
-//
-////        setGroupData();
-////        setChildGroupData();
-//
-//
-//        profilebtn = (Button) referral.findViewById(R.id.profilebtn);
-//       vzfrnds = (Button) referral.findViewById(R.id.vzfrnds);
-//
-//        profilebtn.setOnClickListener(this);
-//        vzfrnds.setOnClickListener(this);
-//        ArrayList names=new ArrayList<String>();
-//        names.add("Mathew Json");
-//        names.add("Sheldon Cooper");
-//        names.add("Howard Wolowitz");
-//
-//        ArrayList referedNames=new ArrayList<String>();
-//        referedNames.add("Walter White");
-//        referedNames.add("Amy Fowler");
-//        referedNames.add("Bernedette");
-//
-//
-//        ArrayList<String> child = new ArrayList<String>();
-//        child.add("Contact Us");
-//        child.add("About Us");
-//        child.add("Location");
-//
-////         List<ReferalUsers> items = new ArrayList<ReferalUsers>();
-//
-//        // Populate our list with groups and it's children
-//        for(int i = 0; i < names.size(); i++) {
-//            ReferalUsers referalUsers = new ReferalUsers();
-//
-//            referalUsers.setName((String) names.get(i));
-//            referalUsers.setReferredName((String) referedNames.get(i));
-//
-//            for(int j = 0; j < i; j++) {
-//                ReferalUsers items = new ReferalUsers();
-//                items.setDesc(child.get(j));
-//
-//
-//                childItem.add(items);
-//            }
-//
-//            groupItem.add(referalUsers);
-//        }
-//
-//        NewAdapter mNewAdapter=new NewAdapter(groupItem,childItem,getActivity());
-//        listView.setAdapter(mNewAdapter);
-//        listView.setOnChildClickListener(this);
-//
-//        return referral;
-//    }
-////    public void setGroupData() {
-////        ArrayList names=new ArrayList<String>();
-////    names.add("Mathew Json");
-////    names.add("Sheldon Cooper");
-////    names.add("Howard Wolowitz");
-////
-////    ArrayList referedNames=new ArrayList<String>();
-////    referedNames.add("Walter White");
-////    referedNames.add("Amy Fowler");
-////    referedNames.add("Bernedette");
-////
-////
-////        for(int i=0;i<names.size();i++) {
-////            ReferalUsers referalUsers = new ReferalUsers();
-////
-////            referalUsers.setName((String) names.get(i));
-////            referalUsers.setReferredName((String) referedNames.get(i));
-////
-////            groupItem.add(referalUsers);}
-////
-////    }
-////
-////    public void setChildGroupData() {
-////
-////        ArrayList<String> child = new ArrayList<String>();
-////        child.add("Contact Us");
-////        child.add("About Us");
-////        child.add("Location");
-////        for (int j = 0; j < child.size(); j++) {
-////            ItemDetail items = new ItemDetail();
-////            items.setDesc((String) child.get(j));
-////            childItem.add(items);
-////        }
-////    }
-//    @Override
-//    public void onClick(View view) {
-//        switch (view.getId()) {
-//
-//            case R.id.profilebtn:
-//                Fragment profilefragment = new MyProfileActivity();
-//                // get the id of fragment
-//                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.referral_frame);
-//
-//                // Insert the fragment by replacing any existing fragment
-//                FragmentManager fragmentManager = getFragmentManager();
-//                fragmentManager.beginTransaction()
-//                        .add(contentView.getId(), profilefragment).addToBackStack(contentView.toString())
-//                        .commit();
-//
-//                break;
-//
-//            case R.id.vzfrnds:
-//                Fragment newfragment = new VZFriends_Activity();
-//                // get the id of fragment
-//                FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.referral_frame);
-//
-//                // Insert the fragment by replacing any existing fragment
-//                FragmentManager fragmentManager2 = getFragmentManager();
-//                fragmentManager2.beginTransaction()
-//                        .replace(contentView2.getId(), newfragment).addToBackStack(contentView2.toString())
-//                        .commit();
-//
-//                break;
-//
-//
-//            default:
-//                break;
-//        }
-//
-//
-//    }
-//
-//    @Override
-//    public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
-//        Toast.makeText(getActivity(), "Clicked On Child",
-//                Toast.LENGTH_SHORT).show();
-//        return true;
-//    }
-//
-//
-//}
+package com.bitjini.vzcards;
+
+import android.animation.Animator;
+import android.animation.ValueAnimator;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
+
+import com.bitjini.vzcards.R;
+
+public class Referal_Activity extends Activity {
+
+    LinearLayout mLinearLayout;
+    LinearLayout mLinearLayoutHeader;
+    ValueAnimator mAnimator;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.referral);
+
+        mLinearLayout = (LinearLayout) findViewById(R.id.toolbar);
+        //mLinearLayout.setVisibility(View.GONE);
+        mLinearLayoutHeader = (LinearLayout) findViewById(R.id.header);
+
+        //Add onPreDrawListener
+        mLinearLayout.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+
+                    @Override
+                    public boolean onPreDraw() {
+                        mLinearLayout.getViewTreeObserver().removeOnPreDrawListener(this);
+                        mLinearLayout.setVisibility(View.GONE);
+
+                        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                        mLinearLayout.measure(widthSpec, heightSpec);
+
+                        mAnimator = slideAnimator(0, mLinearLayout.getMeasuredHeight());
+                        return true;
+                    }
+                });
+
+
+        mLinearLayoutHeader.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (mLinearLayout.getVisibility()==View.GONE){
+                    expand();
+                }else{
+                    collapse();
+                }
+            }
+        });
+    }
+
+
+    private void expand() {
+        //set Visible
+        mLinearLayout.setVisibility(View.VISIBLE);
+		
+		/* Remove and used in preDrawListener
+		final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+		final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+		mLinearLayout.measure(widthSpec, heightSpec);
+		mAnimator = slideAnimator(0, mLinearLayout.getMeasuredHeight());
+		*/
+
+        mAnimator.start();
+    }
+
+    private void collapse() {
+        int finalHeight = mLinearLayout.getHeight();
+
+        ValueAnimator mAnimator = slideAnimator(finalHeight, 0);
+
+        mAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                //Height=0, but it set visibility to GONE
+                mLinearLayout.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationStart(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+            }
+        });
+        mAnimator.start();
+    }
+
+
+    private ValueAnimator slideAnimator(int start, int end) {
+
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                //Update Height
+                int value = (Integer) valueAnimator.getAnimatedValue();
+
+                ViewGroup.LayoutParams layoutParams = mLinearLayout.getLayoutParams();
+                layoutParams.height = value;
+                mLinearLayout.setLayoutParams(layoutParams);
+            }
+        });
+        return animator;
+    }
+
+
+}
