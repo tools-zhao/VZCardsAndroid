@@ -7,9 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 /**
- * Created by VEENA on 12/7/2015.
+ * Created by bitjini on 28/12/15.
  */
 public class FeedActivity extends Fragment {
 

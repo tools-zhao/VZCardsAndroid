@@ -134,10 +134,6 @@
         android:visibility="gone"
         android:layout_height="80dp"
         android:layout_width="fill_parent"
-        android:clickable="false"
-        android:descendantFocusability="blocksDescendants"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -148,9 +144,6 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="5dp"
-                android:clickable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
                 android:src="@drawable/no_pic_placeholder_with_border_800x800"/>
 
             <TextView
@@ -162,9 +155,6 @@
                 android:textColor="#f8050505"
                 android:layout_marginTop="10dp"
                 android:textSize="14sp"
-                android:clickable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
                 android:textStyle="bold" /></LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -178,22 +168,19 @@
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:text="call"
-                android:clickable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
                 android:layout_weight="1"
-                android:layout_below="@+id/textView1"/>
+                android:layout_below="@+id/textView1"
+                android:id="@+id/btnCall"/>
             <Button
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:text="VzCard"
                 android:layout_weight="1"
                 android:layout_marginLeft="5dp"
+                android:id="@+id/btnVzCard"
                 android:layout_marginRight="10dp"
-                android:clickable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:layout_below="@+id/textView1"/>
+
+                android:layout_below="@+id/btn"/>
         </LinearLayout>
         <View
             android:layout_width="match_parent"
