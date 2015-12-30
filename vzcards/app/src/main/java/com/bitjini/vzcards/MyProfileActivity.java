@@ -1,9 +1,6 @@
 package com.bitjini.vzcards;
 
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -16,23 +13,28 @@ import android.widget.FrameLayout;
 /**
  * Created by VEENA on 12/7/2015.
  */
-public class MyProfileActivity extends Fragment {
+public class MyProfileActivity extends Fragment implements View.OnClickListener {
 
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,
-                             Bundle savedInstanceState)
-    {
-        View profile=inflater.inflate(R.layout.profile_layout,container,false);
-        Button profilebtn=(Button) profile.findViewById(R.id.profilebtn);
-        Button referral=(Button) profile.findViewById(R.id.referral);
-        Button vzfrnds=(Button) profile.findViewById(R.id.vzfrnds);
+                             Bundle savedInstanceState) {
+        View profile = inflater.inflate(R.layout.profile_layout, container, false);
+        Button profilebtn = (Button) profile.findViewById(R.id.profilebtn);
+        Button referral = (Button) profile.findViewById(R.id.referralbtn);
+        Button vzfrnds = (Button) profile.findViewById(R.id.vzfrnds);
 
-        profilebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
+        profilebtn.setOnClickListener(this);
+        vzfrnds.setOnClickListener(this);
+        referral.setOnClickListener(this);
 
+        return profile;
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            case R.id.profilebtn:
                 Fragment profilefragment = new MyProfileActivity();
                 // get the id of fragment
                 FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
@@ -43,46 +45,39 @@ public class MyProfileActivity extends Fragment {
                         .add(contentView.getId(), profilefragment).addToBackStack(contentView.toString())
                         .commit();
 
-            }
-        });
-        vzfrnds.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
 
-            Fragment newfragment = new VZFriends_Activity();
+                break;
+
+            case R.id.vzfrnds:
+                Fragment newfragment = new VZFriends_Activity();
                 // get the id of fragment
-                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
-
-               // Insert the fragment by replacing any existing fragment
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(contentView.getId(), newfragment).addToBackStack(contentView.toString())
-                        .commit();
-                v.setSelected(true);
-
-
-
-            }
-        });
-        referral.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-
-                Fragment fragment = new Referral_Activity();
-                // get the id of fragment
-                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
+                FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
 
                 // Insert the fragment by replacing any existing fragment
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(contentView.getId(),fragment).addToBackStack(contentView.toString())
+                FragmentManager fragmentManager1 = getFragmentManager();
+                fragmentManager1.beginTransaction()
+                        .replace(contentView2.getId(), newfragment).addToBackStack(contentView2.toString())
                         .commit();
-                v.setSelected(true);
 
-            }
-        });
-        return profile;
+
+                break;
+
+            case R.id.referralbtn:
+                Fragment fragment = new Referral_Fragment();
+                // get the id of fragment
+                FrameLayout contentView3 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
+
+                // Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager2 = getFragmentManager();
+                fragmentManager2.beginTransaction()
+                        .replace(contentView3.getId(), fragment).addToBackStack(contentView3.toString())
+                        .commit();
+
+
+                break;
+            default:
+                break;
+
+        }
     }
 }

@@ -64,45 +64,57 @@
         android:weightSum="3"
         android:gravity="center">
 
-        <Button
-            android:layout_width="0dp"
+        <RadioGroup
+            android:id="@+id/rdogrp"
+            android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:id="@+id/profilebtn"
-            android:background="@drawable/button_color"
-            android:textColor="@drawable/text_color"
-            android:text="Profile"
-            android:textSize="15sp"
-            android:textAllCaps="false"
-            android:layout_marginLeft="15dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"/>
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:weightSum="3"
+            android:orientation="horizontal" >
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:id="@+id/vzfrnds"
-            android:textSize="15sp"
-            android:text="VZFriends"
-            android:background="@drawable/button_color2"
-            android:textColor="@drawable/text_color"
-            android:textAllCaps="false"
-            android:layout_marginLeft="-1dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"/>
+            <RadioButton
+                android:id="@+id/profilebtn"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_margin="0dp"
+                android:text="Profile"
+                android:background="@drawable/button_color"
+                android:button="@null"
+                android:textColor="@drawable/text_color"
+                android:layout_weight="1"
+                android:gravity="center" />
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:id="@+id/referral"
-            android:text="Referral"
-            android:textSize="15sp"
-            android:background="@drawable/button_color3"
-            android:textColor="@drawable/text_color"
-            android:textAllCaps="false"
-            android:layout_marginLeft="-1dp"
-            android:layout_weight="1"
-            android:layout_marginRight="15dp"
-            android:layout_gravity="center_vertical"/>
+            <RadioButton
+                android:id="@+id/vzfrnds"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_margin="0dp"
+                android:background="@drawable/button_color2"
+                android:text="VZFrnds"
+                android:button="@null"
+                android:textColor="@drawable/text_color"
+                android:layout_weight="1"
+                android:layout_marginLeft="-2dp"
+                android:checked="true"
+                android:gravity="center" />
+
+            <RadioButton
+                android:id="@+id/referralbtn"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:text="Referral"
+                android:layout_margin="0dp"
+                android:layout_marginLeft="-2dp"
+                android:textColor="@drawable/text_color"
+                android:background="@drawable/button_color3"
+                android:button="@null"
+                android:layout_weight="1"
+
+                android:gravity="center" />
+
+
+        </RadioGroup>
     </LinearLayout>
 
 

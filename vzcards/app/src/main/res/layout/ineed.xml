@@ -119,32 +119,47 @@
         android:weightSum="2"
         android:gravity="center">
 
-        <Button
-            android:layout_width="0dp"
+        <RadioGroup
+            android:id="@+id/rdogrp"
+            android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:id="@+id/ihave"
-            android:background="@drawable/button_color"
-            android:textColor="@drawable/text_color"
-            android:text="i Have"
-            android:textSize="15sp"
-            android:textAllCaps="false"
-            android:layout_marginLeft="30dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"/>
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:weightSum="2"
+            android:orientation="horizontal" >
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:id="@+id/ihave"
+                android:background="@drawable/button_color"
+                android:textColor="@drawable/text_color"
+                android:text="i Have"
+                android:button="@null"
+                android:textSize="15sp"
+                android:textAllCaps="false"
+                android:layout_weight="1"
+                android:layout_margin="0dp"
+                android:gravity="center" />
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:id="@+id/ineed"
-            android:textSize="15sp"
-            android:text="i Need"
-            android:background="@drawable/button_color3"
-            android:textColor="@drawable/text_color"
-            android:textAllCaps="false"
-            android:layout_marginRight="30dp"
-            android:layout_marginLeft="-1dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"/>
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:id="@+id/ineed"
+                android:checked="true"
+                android:text="i Need"
+                android:background="@drawable/button_color3"
+                android:textColor="@drawable/text_color"
+                android:layout_marginRight="30dp"
+                android:layout_marginLeft="-1dp"
+                android:layout_weight="1"
+                android:button="@null"
+                android:textSize="15sp"
+                android:textAllCaps="false"
+                android:layout_margin="0dp"
+                android:gravity="center"/>
+        </RadioGroup>
+
 
 
 
