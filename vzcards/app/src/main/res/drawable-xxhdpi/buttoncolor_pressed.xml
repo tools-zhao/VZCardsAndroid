@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:state_checked="true"
-       >
+        android:state_pressed="false">
 
         <shape android:shape="rectangle">
 
@@ -18,7 +17,7 @@
         </shape>
     </item>
     <item
-        android:state_checked="false">
+        android:state_pressed="true">
         <shape android:shape="rectangle"  >
             <stroke  android:width="0.9dp"
                 android:color="#f9f8f8"/>
