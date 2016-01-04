@@ -17,7 +17,7 @@ import android.widget.FrameLayout;
  */
 public class Add1_Activity extends Fragment implements View.OnClickListener {
 
-    Button referbtn;
+    Button referVZbtn,referContactbtn;
     Context context;
 
     public View onCreateView(LayoutInflater inflater,ViewGroup container,
@@ -26,8 +26,13 @@ public class Add1_Activity extends Fragment implements View.OnClickListener {
         View add1=inflater.inflate(R.layout.add_1_layout,container,false);
 
         context=add1.getContext();
-        referbtn=(Button)add1.findViewById(R.id.refer_vzfrnd);
-        referbtn.setOnClickListener(this);
+
+        referVZbtn=(Button)add1.findViewById(R.id.refer_vzfrnd);
+        referContactbtn=(Button)add1.findViewById(R.id.refer_contact);
+
+        referVZbtn.setOnClickListener(this);
+        referContactbtn.setOnClickListener(this);
+
         return add1;
     }
     public void onClick(View v)
@@ -37,6 +42,13 @@ public class Add1_Activity extends Fragment implements View.OnClickListener {
             case R.id.refer_vzfrnd:
                 Intent intent = new Intent(context, Refer_VZfriends.class);
                 startActivity(intent);
+                break;
+
+            case R.id.refer_contact:
+                Intent intent1=new Intent(context,ContactsMainActivity.class);
+                startActivity(intent1);
+                break;
+
 
 
 

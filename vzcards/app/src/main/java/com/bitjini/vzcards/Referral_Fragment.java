@@ -1,33 +1,21 @@
 package com.bitjini.vzcards;
 
-import android.animation.Animator;
 import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.*;
-import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.LinearLayout.LayoutParams;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import com.bitjini.vzcards.R;
 
-import java.net.URI;
 import java.util.ArrayList;
 
 /**
@@ -296,7 +284,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.vzfrnds:
-                Fragment newfragment = new VZFriends_Activity();
+                Fragment newfragment = new VZFriends_Fragment();
                 // get the id of fragment
                 FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.referral_frame);
 

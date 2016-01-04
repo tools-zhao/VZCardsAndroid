@@ -6,6 +6,15 @@ public class SelectUser {
     String name;
     String phone;
     Bitmap thumb;
+    SelectUser(String name, String phone,Bitmap thumb) {
+        this.name = name;
+        this.phone = phone;
+        this.thumb = thumb;
+    }
+
+    public SelectUser() {
+
+    }
 
     public String getName()
 

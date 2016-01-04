@@ -6,36 +6,39 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectUserAdapter extends BaseAdapter
+public class SelectUserAdapter extends BaseAdapter implements Filterable
 {
-    public List<SelectUser> _data;
+
     private ArrayList<SelectUser> arrayList;
+    private ArrayList<SelectUser> arrayListFilter;
     Context _c;
     ViewHolder v;
 //    RoundImage roundedImage;
 
-    public SelectUserAdapter(List<SelectUser> selectUsers,Context context)
-    {
-        _data=selectUsers;
-        _c=context;
-        this.arrayList=new ArrayList<SelectUser>();
-                this.arrayList.addAll(_data);
+    public SelectUserAdapter(ArrayList<SelectUser> arrayList,Context context)
+    { super();
+
+        this._c=context;
+
+       this.arrayList = arrayList;
     }
     @Override
     public int getCount()
     {
-        return _data.size();
+        return arrayList.size();
     }
     @Override
     public Object getItem(int i)
     {
-        return _data.get(i);
+        return arrayList.get(i);
     }
 @Override
     public long getItemId(int i)
@@ -69,7 +72,7 @@ public class SelectUserAdapter extends BaseAdapter
 //        Typeface typeface=new Typeface.createFromAsset(_c.getAssets(),"fonts/Helvetica.ttf");
 //        v.title.setTypeFace(typeface);
 
-        final  SelectUser data=(SelectUser) _data.get(i);
+        final  SelectUser data=(SelectUser) arrayList.get(i);
         v.title.setText(data.getName());
         v.phone.setText(data.getPhone());
 
@@ -85,7 +88,12 @@ public class SelectUserAdapter extends BaseAdapter
             //Load default image
 //            roundImage = new RoundImage(bm);
 //            v.imageView.setImageDrawable(roundedImage);
-        }catch (OutOfMemoryError e)
+        }
+        catch (ArrayIndexOutOfBoundsException ae) {
+            ae.printStackTrace();
+
+        }catch
+         (OutOfMemoryError e)
         {
           //  v.imageView.setImageDrawable(this._c.getDrawable(R.drawable.contact));
             e.printStackTrace();
@@ -98,7 +106,46 @@ public class SelectUserAdapter extends BaseAdapter
 
         return view;
     }
-    static class ViewHolder
+
+    public Filter getFilter() {
+        return new Filter() {
+
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                final FilterResults oReturn = new FilterResults();
+                final ArrayList<SelectUser> results = new ArrayList<SelectUser>();
+                if (arrayListFilter == null)
+                    arrayListFilter = arrayList;
+                if (constraint != null) {
+                    if (arrayListFilter != null && arrayListFilter.size() > 0) {
+                        for (final SelectUser g : arrayListFilter) {
+                            if (g.getName().toLowerCase()
+                                    .contains(constraint.toString()))
+                                results.add(g);
+                        }
+                    }
+                    oReturn.values = results;
+                }
+                return oReturn;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence constraint,
+                                          FilterResults results) {
+                arrayList = (ArrayList<SelectUser>) results.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+    }
+
+
+
+    class ViewHolder
     {
         ImageView imageView;
         TextView title,phone;

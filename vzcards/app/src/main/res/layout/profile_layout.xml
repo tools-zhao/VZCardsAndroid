@@ -247,7 +247,9 @@
                 android:textColor="@drawable/text_color"
                 android:layout_weight="1"
                 android:layout_marginLeft="-2dp"
-                android:gravity="center" />
+                android:gravity="center"
+                android:checked="false"
+                />
 
             <RadioButton
                 android:id="@+id/referralbtn"
@@ -260,7 +262,8 @@
                 android:background="@drawable/button_color3"
                 android:button="@null"
                 android:layout_weight="1"
-                android:gravity="center" />
+                android:gravity="center"
+                android:checked="false"/>
 
 
         </RadioGroup>

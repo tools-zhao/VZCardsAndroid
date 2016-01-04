@@ -49,7 +49,7 @@ public class MyProfileActivity extends Fragment implements View.OnClickListener 
                 break;
 
             case R.id.vzfrnds:
-                Fragment newfragment = new VZFriends_Activity();
+                Fragment newfragment = new VZFriends_Fragment();
                 // get the id of fragment
                 FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
 
@@ -58,6 +58,7 @@ public class MyProfileActivity extends Fragment implements View.OnClickListener 
                 fragmentManager1.beginTransaction()
                         .replace(contentView2.getId(), newfragment).addToBackStack(contentView2.toString())
                         .commit();
+
 
 
                 break;

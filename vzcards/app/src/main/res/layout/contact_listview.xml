@@ -27,7 +27,8 @@
         android:layout_height="50dp"
         android:background="#5f8ac7"
         android:orientation="vertical"
-        android:id="@+id/Layout1">
+        android:id="@+id/Layout1"
+        >
         <SearchView
             android:layout_width="300dp"
             android:layout_height="30dp"
@@ -35,14 +36,16 @@
             android:layout_gravity="center"
             android:layout_marginTop="9dp"
             android:id="@+id/searchview"
+            android:queryHint="Search...."
             android:gravity="center_vertical"></SearchView>
         <TextView
             android:layout_width="300dp"
-            android:layout_height="30dp"
+            android:layout_height="match_parent"
             android:layout_below="@+id/searchview"
-            android:layout_gravity="center"
+            android:text="search"
             android:gravity="center_vertical"
-            android:id="@+id/resultText"/></LinearLayout>
+            android:id="@+id/resultText"/>
+            </LinearLayout>
 
 
     <ListView
@@ -51,7 +54,8 @@
         android:id="@+id/contactList"
         android:layout_below="@+id/Layout1"
         android:divider="#97e6ecf2"
-        android:dividerHeight="5.0sp"></ListView>
+        android:dividerHeight="5.0sp"
+        android:layout_above="@+id/l8"></ListView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -68,7 +72,7 @@
             android:id="@+id/rdogrp"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:layout_margin="8dp"
+            android:layout_margin="10dp"
             android:gravity="center"
             android:weightSum="3"
             android:orientation="horizontal" >
