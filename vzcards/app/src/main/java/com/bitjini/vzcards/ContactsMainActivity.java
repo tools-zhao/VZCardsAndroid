@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -40,15 +41,16 @@ import java.util.List;
 public class ContactsMainActivity extends Activity implements SearchView.OnQueryTextListener {
 
     // ArrayList
-    ArrayList<SelectUser> selectUsers;
-    List<SelectUser> temp;
+    ArrayList<SelectUser> selectUsers=null;
+
     // Contact List
     ListView listView;
+
     // Cursor to load contacts list
     Cursor phones, email;
     SearchView mSearchView;
-    private TextView displayText;
 
+    Filter filter;
     // Pop up
     ContentResolver resolver;
    SelectUserAdapter adapter;
@@ -63,11 +65,10 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
         resolver = this.getContentResolver();
         listView = (ListView) findViewById(R.id.contactList);
         mSearchView = (SearchView) findViewById(R.id.searchview);
-        displayText = (TextView)findViewById(R.id.resultText);
+
 
 //        initSearchView();
-        listView.setTextFilterEnabled(true);
-        setupSearchView();
+
 
         phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
         LoadContact loadContact = new LoadContact();
@@ -142,8 +143,12 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             adapter = new SelectUserAdapter(selectUsers, ContactsMainActivity.this);
+            adapter.notifyDataSetChanged();
             listView.setAdapter(adapter);
-
+            listView.setTextFilterEnabled(true);
+           // place your adapter to a separate filter to remove pop up text
+           filter = adapter.getFilter();
+            setupSearchView();
 
             // Select item on listclick
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -151,7 +156,7 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                     Bitmap image = null;
-                    SelectUser data = selectUsers.get(position);
+                    SelectUser data = (SelectUser) parent.getItemAtPosition(position);
 
                     String name = data.getName();
                     String phoneNo = data.getPhone();
@@ -204,13 +209,12 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setOnQueryTextListener(this);
         mSearchView.setSubmitButtonEnabled(true);
-        mSearchView.setQueryHint("Search Here");
+        mSearchView.setQueryHint("Search");
     }
 
     @Override
     public boolean onQueryTextChange(String newText)
     {
-
         if (TextUtils.isEmpty(newText)) {
             listView.clearTextFilter();
         } else {
@@ -218,6 +222,7 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
         }
         return true;
     }
+
 
     @Override
     public boolean onQueryTextSubmit(String query)

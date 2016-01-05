@@ -32,7 +32,7 @@
                 android:layout_width="300dp"
                 android:layout_height="30dp"
                 android:background="@drawable/drawable_text"
-                android:layout_gravity="center"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="9dp"
                 android:id="@+id/searchview"
                 android:gravity="center_vertical"></SearchView>

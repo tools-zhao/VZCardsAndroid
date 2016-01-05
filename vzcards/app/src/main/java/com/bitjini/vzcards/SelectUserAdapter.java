@@ -17,26 +17,27 @@ import java.util.List;
 public class SelectUserAdapter extends BaseAdapter implements Filterable
 {
 
-    private ArrayList<SelectUser> arrayList;
-    private ArrayList<SelectUser> arrayListFilter;
+    private ArrayList<SelectUser> arrayList=null;
+    private ArrayList<SelectUser> arrayListFilter=null;
     Context _c;
     ViewHolder v;
-//    RoundImage roundedImage;
+      public SelectUserAdapter(ArrayList<SelectUser> arrayList,Context context)
+     { super();
 
-    public SelectUserAdapter(ArrayList<SelectUser> arrayList,Context context)
-    { super();
+    this._c=context;
 
-        this._c=context;
+    this.arrayList = arrayList;
+}
 
-       this.arrayList = arrayList;
-    }
+
+
     @Override
     public int getCount()
     {
         return arrayList.size();
     }
     @Override
-    public Object getItem(int i)
+    public  Object getItem(int i)
     {
         return arrayList.get(i);
     }
@@ -106,17 +107,29 @@ public class SelectUserAdapter extends BaseAdapter implements Filterable
 
         return view;
     }
-
     public Filter getFilter() {
         return new Filter() {
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                final FilterResults oReturn = new FilterResults();
+                final FilterResults oReturn = new FilterResults(); // Holds the results of a filtering operation for  publishing
+
                 final ArrayList<SelectUser> results = new ArrayList<SelectUser>();
+
+
                 if (arrayListFilter == null)
                     arrayListFilter = arrayList;
+
+                /**
+                 *
+                 * If constraint(CharSequence that is received) is null returns
+                 * the arraylist(Original) values else does the Filtering
+                 * and returns FilteredArrList(Filtered)
+                 *
+                 **/
+
                 if (constraint != null) {
+
                     if (arrayListFilter != null && arrayListFilter.size() > 0) {
                         for (final SelectUser g : arrayListFilter) {
                             if (g.getName().toLowerCase()
@@ -124,6 +137,7 @@ public class SelectUserAdapter extends BaseAdapter implements Filterable
                                 results.add(g);
                         }
                     }
+                    // set the Filtered result to return
                     oReturn.values = results;
                 }
                 return oReturn;
@@ -133,15 +147,15 @@ public class SelectUserAdapter extends BaseAdapter implements Filterable
             @Override
             protected void publishResults(CharSequence constraint,
                                           FilterResults results) {
+                // has the filtered values
                 arrayList = (ArrayList<SelectUser>) results.values;
+              // notifies the data with new filtered values. Only filtered values will be shown on the list
                 notifyDataSetChanged();
             }
         };
     }
 
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
-    }
+
 
 
 

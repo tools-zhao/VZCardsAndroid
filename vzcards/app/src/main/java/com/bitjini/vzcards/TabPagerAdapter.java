@@ -17,7 +17,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int arg0) {
         switch (arg0){
             case 0:
-                return new MyProfileActivity();
+                return new MyProfile_Fragment();
             case 1:
                 return new FeedActivity();
             case 2:

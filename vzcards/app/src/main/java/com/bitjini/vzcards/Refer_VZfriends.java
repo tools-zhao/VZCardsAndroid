@@ -183,7 +183,8 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
                     view = li.inflate(R.layout.vz_frnds, null);
 
                     Bitmap image = null;
-                    SelectUser data = selectUsers.get(position);
+                    SelectUser data = (SelectUser) parent.getItemAtPosition(position);
+
 
                     String name = data.getName();
                     String phoneNo = data.getPhone();
@@ -236,7 +237,7 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setOnQueryTextListener(this);
         mSearchView.setSubmitButtonEnabled(true);
-        mSearchView.setQueryHint("Search Here");
+        mSearchView.setQueryHint("Search");
     }
 
     @Override
