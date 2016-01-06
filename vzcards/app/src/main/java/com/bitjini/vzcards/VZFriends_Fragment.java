@@ -36,6 +36,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     View v;
     // ArrayList
     ArrayList<SelectUser> selectUsers;
+    SelectUserAdapter adapter;
     List<SelectUser> temp;
     // Contact List
     ListView listView;
@@ -46,7 +47,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     Filter filter;
     // Pop up
     ContentResolver resolver;
-    SelectUserAdapter adapter;
+
 
 
     @Override

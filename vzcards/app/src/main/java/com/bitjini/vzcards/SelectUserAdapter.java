@@ -69,10 +69,6 @@ public class SelectUserAdapter extends BaseAdapter implements Filterable
         v.phone=(TextView)view.findViewById(R.id.number);
      v.imageView=(ImageView)view.findViewById(R.id.contactImage);
 
-        //Loading font face
-//        Typeface typeface=new Typeface.createFromAsset(_c.getAssets(),"fonts/Helvetica.ttf");
-//        v.title.setTypeFace(typeface);
-
         final  SelectUser data=(SelectUser) arrayList.get(i);
         v.title.setText(data.getName());
         v.phone.setText(data.getPhone());

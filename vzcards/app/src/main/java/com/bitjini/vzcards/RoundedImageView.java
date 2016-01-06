@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 public class RoundedImageView extends ImageView {
 
+
     public RoundedImageView(Context ctx, AttributeSet attrs) {
         super(ctx, attrs);
     }
