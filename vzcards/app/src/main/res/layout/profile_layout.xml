@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/profile_frame"
     android:layout_width="match_parent"
+    android:clickable="true"
     android:background="?android:attr/colorBackground"
     android:layout_height="match_parent" >
 <RelativeLayout
@@ -44,12 +45,13 @@
         android:background="@drawable/drawable2"
         android:layout_marginTop="2dp"/>
 
-    <ImageView
+    <com.bitjini.vzcards.RoundedImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:layout_marginTop="2dp"
         android:layout_marginLeft="20dp"
+        android:id="@+id/profilePic"
         android:src="@drawable/profile_pic_placeholder"/>
         <ImageView
             android:layout_width="40dp"
@@ -58,6 +60,8 @@
             android:layout_gravity="center"
             android:background="@drawable/drawable2"
             android:layout_marginLeft="20dp"
+            android:id="@+id/btn_pick"
+
             android:layout_marginTop="2dp"/>
 
     </LinearLayout>
@@ -110,11 +114,11 @@
         android:gravity="left"/>
         <TextView
             android:layout_width="200dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/industry"
-            android:layout_marginTop="7dp"
             android:layout_gravity="center"
-            android:gravity="left"/>
+            android:gravity="left"
+            android:text="IT"/>
         </LinearLayout>
 
     <LinearLayout
@@ -126,22 +130,22 @@
         android:layout_marginTop="10dp"
         android:id="@+id/l5"
         android:layout_below="@id/l4"
+
         android:layout_marginRight="10dp">
         <TextView
             android:layout_width="100dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="Company:"
-            android:layout_marginTop="7dp"
             android:layout_marginStart="10dp"
             android:layout_gravity="center"
             android:gravity="left"/>
         <TextView
             android:layout_width="200dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/company"
-            android:layout_marginTop="7dp"
             android:layout_gravity="center"
-            android:gravity="left"/>
+            android:gravity="left"
+            android:text="Bitjini"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -155,19 +159,18 @@
         android:layout_marginTop="10dp">
         <TextView
             android:layout_width="100dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="Email:"
-            android:layout_marginTop="7dp"
             android:layout_marginStart="10dp"
             android:layout_gravity="center"
             android:gravity="left"/>
         <TextView
             android:layout_width="200dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/email"
-            android:layout_marginTop="7dp"
             android:layout_gravity="center"
-            android:gravity="left"/>
+            android:gravity="left"
+            android:text="veena@bitjini.com"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -181,20 +184,20 @@
         android:layout_below="@+id/l6">
         <TextView
             android:layout_width="100dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="Address:"
-            android:layout_marginTop="7dp"
             android:layout_marginStart="10dp"
             android:layout_gravity="center"
             android:gravity="left"/>
 
         <TextView
             android:layout_width="200dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/address"
-            android:layout_marginTop="7dp"
             android:layout_gravity="center"
-            android:gravity="left"/>
+            android:gravity="left"
+            android:text="Adarsh Nagar Vadgaon
+            Belgaum"/>
     </LinearLayout>
     </LinearLayout>
 

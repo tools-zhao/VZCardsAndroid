@@ -60,7 +60,7 @@
                 android:text="needs"
                 android:gravity="center"
                 android:textColor="#ffffff"
-                android:background="#efd72a2a"/>
+                android:background="@drawable/addimage_red"/>
             <TextView
                 android:layout_width="120dp"
                 android:layout_height="fill_parent"
@@ -88,7 +88,7 @@
 
             <Button
                 android:layout_width="60dp"
-                android:layout_height="30dp"
+                android:layout_height="25dp"
                 android:layout_below="@+id/profilePic"
                 android:layout_gravity="right"
                 android:layout_marginTop="15dp"
@@ -96,6 +96,7 @@
                 android:textColor="#771d1e10"
                 android:textAllCaps="false"
                 android:shadowColor="#771d1e10"
+                android:textSize="15sp"
                 android:background="@drawable/drawable_refer"
                 android:text="Refer"/>
         </LinearLayout>

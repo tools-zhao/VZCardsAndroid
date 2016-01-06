@@ -97,6 +97,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                         .commit();
 
 
+
+
                 break;
             case R.id.referralbtn:
 

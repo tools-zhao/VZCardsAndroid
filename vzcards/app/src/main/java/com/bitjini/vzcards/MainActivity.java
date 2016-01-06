@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         final TabPagerAdapter adapter = new TabPagerAdapter
                 (getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setOffscreenPageLimit(3); // the number of "off screen" pages to keep loaded each side of the current page
+
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -47,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
+//                ... anything you may need to do to handle pager state ...
+//                adapter.notifyDataSetChanged(); //this line will force all pages to be loaded fresh when changing between fragments
+
             }
 
             @Override
