@@ -10,7 +10,9 @@ public class SelectUser {
     Bitmap thumb;
 
     //for profile details
-    String industry,company,email,address;
+    String label,values;
+
+
     SelectUser(String name, String phone,Bitmap thumb) {
         this.name = name;
         this.phone = phone;
@@ -54,38 +56,21 @@ public class SelectUser {
 
 
     //for profile details
-    public String getIndustry()
+       public String getLabel() {
+        return label;
 
-    {
-        return industry;
-    }
-    public void setIndustry(String industry)
-    {
-        this.industry=industry;
     }
 
-    public String getCompany() {
-        return company;
+    public void setLabel(String label) {
+        this.label = label;
+    }
+    public String getValues() {
+        return values;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setValues(String values) {
+        this.values = values;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }
 

@@ -3,12 +3,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@+id/l3"
-        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -18,106 +12,23 @@
             android:background="@drawable/text_drawable"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:id="@+id/l4"
             android:layout_gravity="center_horizontal">
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
-                android:text="Industry:"
+                android:text="Fname:"
+                android:id="@+id/label"
                 android:layout_marginTop="7dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
                 android:layout_gravity="center"
                 android:gravity="left"/>
             <EditText
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/industry"
-                android:layout_gravity="center"
-                android:gravity="left"
-                android:text="IT"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/text_drawable"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:id="@+id/l5"
-            android:layout_below="@id/l4"
-
-            android:layout_marginRight="10dp">
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:text="Company:"
-                android:layout_marginStart="10dp"
+                android:id="@+id/values"
                 android:layout_gravity="center"
                 android:gravity="left"/>
-            <EditText
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/company"
-                android:layout_gravity="center"
-                android:gravity="left"
-                android:text="Bitjini"/>
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/text_drawable"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:id="@+id/l6"
-            android:layout_below="@id/l5"
-            android:layout_marginTop="10dp">
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:text="Email:"
-                android:layout_marginStart="10dp"
-                android:layout_gravity="center"
-                android:gravity="left"/>
-            <EditText
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/email"
-                android:layout_gravity="center"
-                android:gravity="left"
-                android:text="veena@bitjini.com"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/text_drawable"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:id="@+id/l7"
-            android:layout_below="@+id/l6">
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:text="Address:"
-                android:layout_marginStart="10dp"
-                android:layout_gravity="center"
-                android:gravity="left"/>
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/address"
-                android:layout_gravity="center"
-                android:gravity="left"
-                android:text="Adarsh Nagar Vadgaon
-            Belgaum"/>
-        </LinearLayout>
-
-    </LinearLayout>
-
 
 
 

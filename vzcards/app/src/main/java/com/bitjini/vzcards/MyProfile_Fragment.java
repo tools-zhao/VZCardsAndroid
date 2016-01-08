@@ -1,41 +1,35 @@
 package com.bitjini.vzcards;
 
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,21 +41,22 @@ import java.util.List;
  * Created by VEENA on 12/7/2015.
  */
 public class MyProfile_Fragment extends Fragment implements View.OnClickListener {
-
-    ArrayList<SelectUser> selectUsers;
-    SelectUserAdapter adapter;
+    ViewHolder holder;
+    ArrayList<SelectUser> selectUsers=null;
+    Context _c;
+    ProfileAdapter adapter;
     ListView listView;
     Button profilebtn, referral, vzfrnds;
     Button editbtn;
     int clickCount = 0;
     private final int SELECT_PHOTO = 1;
     private ImageView imageProfile, imageCompany;
-
+    public boolean activeVariable=false;
     private Uri outputFileUri;
-
-    TextView mIndustry, mCompany, mEmail, mAddress;
+    String input;
     ImageView currentImageView = null;
     View profile;
+    private View.OnClickListener handleClick;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,11 +64,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         profile = inflater.inflate(R.layout.profile_layout, container, false);
 
+        selectUsers = new ArrayList<SelectUser>();
         editbtn = (Button) profile.findViewById(R.id.edit);
-        listView = (ListView) vzfrnds.findViewById(R.id.profileList);
+        listView = (ListView) profile.findViewById(R.id.profileList);
+        LoadContact loadContact = new LoadContact();
 
-        //call actv method to enable or disable the edittext
-        actv(false);
+        loadContact.execute();
 
         //Picking Profile picture
         imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
@@ -88,38 +84,55 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         referral = (Button) profile.findViewById(R.id.referralbtn);
         vzfrnds = (Button) profile.findViewById(R.id.vzfrnds);
 
+        LayoutInflater inflater1 = (LayoutInflater) getActivity().getSystemService
+                (Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflater1.inflate(R.layout.profile_listitems, null);
+            //call actv method to enable or disable the edittext
+//            adapter.actv(false);
+
         //on edit clickbutton enable or disable the edit text by calling actv() method
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (clickCount == 0) {
-                    actv(true);
-                    clickCount = 1;
+
+                    editbtn.setText("Save");
+
+                    adapter.actv(true);
+
+                    holder.mValues.setTextColor(Color.GREEN);
+//                holder.mValues.setEnabled(true);
+//                holder.mValues.requestFocus();
+                    input = "hello";//holder.mValues.getText().toString();
+                    adapter = new ProfileAdapter(getActivity(),selectUsers,input);
+                    listView.setAdapter(adapter);
+                    Log.e("enable textview","");
+                    Toast.makeText(getActivity(), "click 0", Toast.LENGTH_LONG).show();
+
                 } else if (clickCount == 1) {
-                    actv(false);
                     clickCount = 0;
+                    editbtn.setText("Edit");
+
+                    adapter.actv(false);
+
+//                adapter.add(input);
+                    Toast.makeText(getActivity(), "click 1", Toast.LENGTH_LONG).show();
+
                 }
-            }
-        });
+
+            }});
+
+
         vzfrnds.setOnClickListener(this);
         referral.setOnClickListener(this);
         return profile;
     }
 
 
-    private void actv(final boolean active) {
-        mIndustry.setEnabled(active);
-        mCompany.setEnabled(active);
-        mEmail.setEnabled(active);
-        mAddress.setEnabled(active);
-        if (active) {
-            mIndustry.requestFocus();
-            mCompany.requestFocus();
-            mEmail.requestFocus();
-            mAddress.requestFocus();
-        }
-    }
+
+
+
 
     private void openImageIntent() {
 
@@ -197,7 +210,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     // downsizing image as it throws OutOfMemory Exception for larger
                     // images
                     options.inSampleSize = 8;
-                    try {//Using Input Stream to get uri did the trick
+                    try {//Using Input Stream to get uri
                         InputStream input = getActivity().getContentResolver().openInputStream(selectedImageUri);
                         final Bitmap bitmap = BitmapFactory.decodeStream(input);
 //                        imageProfile.setImageBitmap(bitmap);
@@ -283,30 +296,25 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         @Override
         protected Void doInBackground(Void... voids) {
 
-            ArrayList industry = new ArrayList<String>();
-            industry.add("Girish");
+            ArrayList<String> label=new ArrayList<String>();
+                    label.add("Fname");
+            label.add("Lname");
+            label.add("Industry");
+            label.add("Company");
+            label.add("Address");
 
-
-            ArrayList company = new ArrayList<String>();
-            company.add("+918904826345");
-
-            ArrayList email = new ArrayList<String>();
-            email.add("+veena@bitjini.com");
-
-            ArrayList address = new ArrayList<String>();
-            address.add("+Adarsh nagar Vadgaon");
-
-
-            SelectUser selectUser = new SelectUser();
-            selectUser.setIndustry((String) industry.get(i));
-            selectUser.setCompany((String) company.get(i));
-            selectUsers.add(selectUser);
-
-
-//        } else {
-//            Log.e("Cursor close 1", "----------------");
-//    }
-            //phones.close();
+            ArrayList<String> values=new ArrayList<String>();
+            values.add("Veena");
+            values.add("Mawarkar");
+            values.add("IT");
+            values.add("Bitjini");
+            values.add("GIT");
+         for(int i=0;i<label.size();i++) {
+          SelectUser selectUser = new SelectUser();
+          selectUser.setLabel(label.get(i));
+          selectUser.setValues(values.get(i));
+           selectUsers.add(selectUser);
+          }
             return null;
 
         }
@@ -314,65 +322,91 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            adapter = new SelectUserAdapter(selectUsers, getActivity());
+            adapter = new ProfileAdapter(getActivity(),selectUsers,input);
             listView.setAdapter(adapter);
 
 
         }
     }
+// Adopter class : handle list items
+        class ProfileAdapter extends BaseAdapter {
 
-   class CustomListAdapter extends BaseAdapter {
 
-        Context _c;
-        public ArrayList<ReferalUsers> groupItem;
-        int textViewResourceId;
+            Context _c;
+            public ArrayList<SelectUser> groupItem;
 
-        public CustomListAdapter(Context context, ArrayList<ReferalUsers> group, int textViewResourceId1) {
-            groupItem = group;
-            textViewResourceId = textViewResourceId1;
-            _c = context;
-        }
 
-        @Override
-        public int getCount() {
-            return groupItem.size();
-        }
+            public ProfileAdapter(Context context, ArrayList<SelectUser> group,String input) {
+                groupItem = group;
 
-        @Override
-        public Object getItem(int i) {
-            return groupItem.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            View v = convertView;
-
-            if (v == null) {
-                LayoutInflater inflater = (LayoutInflater) _c.getSystemService
-                        (Context.LAYOUT_INFLATER_SERVICE);
-                v = inflater.inflate(R.layout.profile_listitems, null);
+                _c = context;
             }
-            mIndustry = (TextView) profile.findViewById(R.id.industry);
-            mCompany = (TextView) profile.findViewById(R.id.company);
-            mEmail = (TextView) profile.findViewById(R.id.email);
-            mAddress = (TextView) profile.findViewById(R.id.address);
 
-            SelectUser cat = selectUsers.get(position);
+            @Override
+            public int getCount() {
+                return groupItem.size();
+            }
 
-            mIndustry.setText(cat.getIndustry());
-            mCompany.setText(cat.getCompany());
-            mEmail.setText(cat.getEmail());
-            mAddress.setText(cat.getAddress());
+            @Override
+            public Object getItem(int i) {
+                return groupItem.get(i);
+            }
+
+            @Override
+            public long getItemId(int i) {
+                return i;
+
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                View v = convertView;
+
+                if (v == null) {
+                    LayoutInflater inflater = (LayoutInflater) _c.getSystemService
+                            (Context.LAYOUT_INFLATER_SERVICE);
+                    v = inflater.inflate(R.layout.profile_listitems, null);
+                } else {
+                    v = convertView;
+
+                }
+                holder = new ViewHolder();
+                holder.mLable = (TextView) v.findViewById(R.id.label);
+                holder.mValues = (TextView) v.findViewById(R.id.values);
+
+                SelectUser cat = selectUsers.get(position);
+                holder.mLable.setText(cat.getLabel());
+                holder.mValues.setText(cat.getValues());
+
+                holder.mValues.setEnabled(false);
 
 
-            return v;
+                holder.mValues.requestFocus();
+                actv(false);
+
+                return v;
+
+
+            }
+    protected void actv(final boolean active) {
+
+
+        holder.mValues.setTextColor(Color.GREEN);
+            holder.mValues.setEnabled(active);
+            holder.mValues.setFocusable(active);
+            holder.mValues.requestFocus();
+
+
+
         }
+
+
     }
-}
+        class ViewHolder {
+
+            TextView mLable, mValues;
+        }
+
+
+    }

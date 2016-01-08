@@ -117,111 +117,14 @@
 
         >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/text_drawable"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:id="@+id/l4"
-        android:layout_gravity="center_horizontal">
-    <TextView
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="Industry:"
-        android:layout_marginStart="10dp"
-        android:layout_gravity="center"
-        android:gravity="left"/>
-        <EditText
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/industry"
-            android:background="@android:color/transparent"
-            android:layout_gravity="center"
-            android:gravity="left"
-            android:text="IT"/>
-        </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/text_drawable"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:id="@+id/l5"
-        android:layout_marginRight="10dp">
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="Company:"
-            android:layout_marginStart="10dp"
-            android:layout_gravity="center"
-            android:gravity="left"/>
-        <EditText
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/company"
-            android:background="@android:color/transparent"
-            android:layout_gravity="center"
-            android:gravity="left"
-            android:text="Bitjini"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/text_drawable"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:id="@+id/l6"
-        android:layout_marginTop="10dp">
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="Email:"
-            android:layout_marginStart="10dp"
-            android:layout_gravity="center"
-            android:gravity="left"/>
-        <EditText
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/email"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
-            android:gravity="left"
-            android:text="veena@bitjini.com"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/text_drawable"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_above="@+id/l8"
-        android:layout_marginTop="10dp"
-        android:id="@+id/l7">
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="Address:"
-            android:layout_marginStart="10dp"
-            android:layout_gravity="center"
-            android:gravity="left"/>
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/address"
-            android:layout_gravity="center"
-            android:gravity="left"
-            android:background="@android:color/transparent"
-            android:text="Adarsh Nagar Vadgaon
-            Belgaum"/>
-    </LinearLayout>
-
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/profileList"
+            android:layout_below="@+id/Layout1"
+            android:divider="#97e6ecf2"
+            android:dividerHeight="5.0sp"
+            android:layout_above="@+id/l8"></ListView>
     </LinearLayout>
         </RelativeLayout>
     </ScrollView>
@@ -265,7 +168,7 @@
                 android:layout_height="30dp"
                 android:layout_margin="0dp"
                 android:background="@drawable/button_color2"
-                android:text="VZFrnds"
+                android:text="VZFriends"
                 android:button="@null"
                 android:textColor="@drawable/text_color"
                 android:layout_weight="1"
