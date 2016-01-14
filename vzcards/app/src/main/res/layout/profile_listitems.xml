@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/values"
                 android:layout_gravity="center"
-                android:gravity="left"/>
+                android:gravity="fill"/>
         </LinearLayout>
 
 

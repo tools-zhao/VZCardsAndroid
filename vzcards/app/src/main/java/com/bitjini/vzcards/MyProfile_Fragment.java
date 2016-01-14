@@ -18,13 +18,17 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -41,9 +45,9 @@ import java.util.List;
  * Created by VEENA on 12/7/2015.
  */
 public class MyProfile_Fragment extends Fragment implements View.OnClickListener {
-    ViewHolder holder;
-    ArrayList<SelectUser> selectUsers=null;
-    Context _c;
+    ArrayList<String> label;
+    ArrayList<String> values;
+    ArrayList<SelectUser> selectUsers = null;
     ProfileAdapter adapter;
     ListView listView;
     Button profilebtn, referral, vzfrnds;
@@ -51,12 +55,10 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     int clickCount = 0;
     private final int SELECT_PHOTO = 1;
     private ImageView imageProfile, imageCompany;
-    public boolean activeVariable=false;
     private Uri outputFileUri;
-    String input;
     ImageView currentImageView = null;
     View profile;
-    private View.OnClickListener handleClick;
+    SelectUser cat;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,9 +69,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         selectUsers = new ArrayList<SelectUser>();
         editbtn = (Button) profile.findViewById(R.id.edit);
         listView = (ListView) profile.findViewById(R.id.profileList);
-        LoadContact loadContact = new LoadContact();
 
-        loadContact.execute();
 
         //Picking Profile picture
         imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
@@ -84,13 +84,29 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         referral = (Button) profile.findViewById(R.id.referralbtn);
         vzfrnds = (Button) profile.findViewById(R.id.vzfrnds);
 
-        LayoutInflater inflater1 = (LayoutInflater) getActivity().getSystemService
-                (Context.LAYOUT_INFLATER_SERVICE);
-        View v = inflater1.inflate(R.layout.profile_listitems, null);
-            //call actv method to enable or disable the edittext
-//            adapter.actv(false);
+        label = new ArrayList<String>();
+        label.add("Fname");
+        label.add("Lname");
+        label.add("Industry");
+        label.add("Company");
+        label.add("Address");
 
-        //on edit clickbutton enable or disable the edit text by calling actv() method
+        values = new ArrayList<String>();
+        values.add("Text1");
+        values.add("Text2");
+        values.add("Text3");
+        values.add("Text4");
+        values.add("Text5");
+        for (int i = 0; i < label.size(); i++) {
+            SelectUser selectUser = new SelectUser();
+            selectUser.setLabel(label.get(i));
+            selectUser.setValues(values.get(i));
+            selectUsers.add(selectUser);
+        }
+        adapter = new ProfileAdapter(getActivity(), selectUsers);
+        listView.setAdapter(adapter);
+
+//        on edit clickbutton enable or disable the edit text by calling actv() method
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,38 +116,41 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     editbtn.setText("Save");
 
                     adapter.actv(true);
-
-                    holder.mValues.setTextColor(Color.GREEN);
-//                holder.mValues.setEnabled(true);
-//                holder.mValues.requestFocus();
-                    input = "hello";//holder.mValues.getText().toString();
-                    adapter = new ProfileAdapter(getActivity(),selectUsers,input);
-                    listView.setAdapter(adapter);
-                    Log.e("enable textview","");
+                    adapter.notifyDataSetChanged();
+//                    listView.setAdapter(adapter);
+//                    Log.e("selected position of textview", "" + position);
                     Toast.makeText(getActivity(), "click 0", Toast.LENGTH_LONG).show();
+                    clickCount = 1;
 
                 } else if (clickCount == 1) {
-                    clickCount = 0;
+
                     editbtn.setText("Edit");
 
                     adapter.actv(false);
-
-//                adapter.add(input);
+//                    listView.setAdapter(adapter);
                     Toast.makeText(getActivity(), "click 1", Toast.LENGTH_LONG).show();
+                    clickCount = 0;
 
                 }
 
-            }});
-
-
+            }
+        });
+//        Select item on listclick
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                SelectUser data = adapter.getItem(position);
+//
+//
+//                String value=data.getValues();
+//                Toast.makeText(getActivity(),"you clicked "+ value,Toast.LENGTH_LONG).show();
+//            }
+//            });
         vzfrnds.setOnClickListener(this);
         referral.setOnClickListener(this);
         return profile;
     }
-
-
-
-
 
 
     private void openImageIntent() {
@@ -282,131 +301,146 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         }
     }
 
-    // Load data on background
-    class LoadContact extends AsyncTask<Void, Void, Void> {
 
-        View v;
+    // Adopter class : handle list items
+    class ProfileAdapter extends BaseAdapter {
+
+        ViewHolder holder = new ViewHolder();
+        Context _c;
+        public ArrayList<SelectUser> groupItem;
+
+        int flag=0;
+        public ProfileAdapter(Context context, ArrayList<SelectUser> group) {
+            groupItem = group;
+
+            _c = context;
+        }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        public int getCount() {
+            return groupItem.size();
+        }
+
+        @Override
+        public SelectUser getItem(int i) {
+            return groupItem.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
 
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-
-            ArrayList<String> label=new ArrayList<String>();
-                    label.add("Fname");
-            label.add("Lname");
-            label.add("Industry");
-            label.add("Company");
-            label.add("Address");
-
-            ArrayList<String> values=new ArrayList<String>();
-            values.add("Veena");
-            values.add("Mawarkar");
-            values.add("IT");
-            values.add("Bitjini");
-            values.add("GIT");
-         for(int i=0;i<label.size();i++) {
-          SelectUser selectUser = new SelectUser();
-          selectUser.setLabel(label.get(i));
-          selectUser.setValues(values.get(i));
-           selectUsers.add(selectUser);
-          }
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            adapter = new ProfileAdapter(getActivity(),selectUsers,input);
-            listView.setAdapter(adapter);
+        public View getView(final int position, final View convertView, ViewGroup parent) {
 
 
-        }
-    }
-// Adopter class : handle list items
-        class ProfileAdapter extends BaseAdapter {
+           View v = convertView;
 
+            if (v == null) {
+                LayoutInflater inflater = (LayoutInflater) _c.getSystemService
+                        (Context.LAYOUT_INFLATER_SERVICE);
+                v = inflater.inflate(R.layout.profile_listitems, parent, false);
 
-            Context _c;
-            public ArrayList<SelectUser> groupItem;
-
-
-            public ProfileAdapter(Context context, ArrayList<SelectUser> group,String input) {
-                groupItem = group;
-
-                _c = context;
+                v.setTag(holder);
+            } else {
+                holder = (ViewHolder) v.getTag();
             }
 
-            @Override
-            public int getCount() {
-                return groupItem.size();
-            }
 
-            @Override
-            public Object getItem(int i) {
-                return groupItem.get(i);
-            }
+            holder.mLable = (TextView) v.findViewById(R.id.label);
+            holder.mValues = (EditText) v.findViewById(R.id.values);
 
-            @Override
-            public long getItemId(int i) {
-                return i;
+//            holder.mValues.setTag(position);
+           flag=position;
+            cat = groupItem.get(flag);
 
-            }
+            holder.mLable.setText(cat.getLabel());
+            holder.mValues.setText(cat.getValues());
 
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
+            holder.mValues.setTag(flag);
+Log.e("position...",""+groupItem.get(flag).getValues()+"   "+position);
 
-                View v = convertView;
+        if(clickCount==0)
+        {
+            actv(false);
 
-                if (v == null) {
-                    LayoutInflater inflater = (LayoutInflater) _c.getSystemService
-                            (Context.LAYOUT_INFLATER_SERVICE);
-                    v = inflater.inflate(R.layout.profile_listitems, null);
-                } else {
-                    v = convertView;
+         }else {
+            holder.mValues.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
 
                 }
-                holder = new ViewHolder();
-                holder.mLable = (TextView) v.findViewById(R.id.label);
-                holder.mValues = (TextView) v.findViewById(R.id.values);
 
-                SelectUser cat = selectUsers.get(position);
-                holder.mLable.setText(cat.getLabel());
-                holder.mValues.setText(cat.getValues());
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+//                        final int position2 = holder.mValues.getId();
+//                        final EditText repsText = (EditText) holder.mValues;
+//                        if (repsText.getText().toString().length() > 0) {
+//                      }
+                }
 
-                holder.mValues.setEnabled(false);
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                    cat.setValues(editable.toString());
 
 
+
+                }
+
+            });
+        }
+if(clickCount==1) {
+    actv(true);
+}
+            return v;
+        }
+
+        protected void actv(final boolean active) {
+
+
+            holder.mValues.setTextColor(Color.GREEN);
+            holder.mValues.setEnabled(active);
+            if (active) {
                 holder.mValues.requestFocus();
-                actv(false);
-
-                return v;
-
 
             }
-    protected void actv(final boolean active) {
+        }
+    }
 
+    class ViewHolder {
 
-        holder.mValues.setTextColor(Color.GREEN);
-            holder.mValues.setEnabled(active);
-            holder.mValues.setFocusable(active);
-            holder.mValues.requestFocus();
+        TextView mLable;
+        EditText mValues;
+//        public MutableWatcher mWatcher;
+    }
 
+    //    c//Declaration
+    private class GenericTextWatcher implements TextWatcher {
 
+        private View view;
 
+        private GenericTextWatcher(View view) {
+            this.view = view;
         }
 
-
-    }
-        class ViewHolder {
-
-            TextView mLable, mValues;
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         }
 
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
 
+        public void afterTextChanged(Editable editable) {
+            String text = editable.toString();
+            switch (view.getId()) {
+                case R.id.values:
+                    cat.setValues(text);
+                    break;
+
+            }
+        }
     }
+}
