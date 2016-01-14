@@ -17,7 +17,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".VerifyScreen"></activity>
         <activity
-            android:name=".MainActivity" android:launchMode="singleTop"  android:windowSoftInputMode="adjustPan" android:configChanges="orientation|keyboardHidden" >
+            android:name=".Adding_Contacts"
+            android:launchMode="singleTop"  android:windowSoftInputMode="adjustPan" android:configChanges="orientation|keyboardHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -25,7 +26,7 @@
         </activity>
 
 
-
+<activity android:name=".Database_Activity"></activity>
         <activity android:name=".ContactsMainActivity"></activity>
         <activity android:name=".Refer_VZfriends"></activity>
         <activity android:name=".DisplayContact"></activity>
