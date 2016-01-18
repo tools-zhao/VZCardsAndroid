@@ -52,13 +52,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     ListView listView;
     Button profilebtn, referral, vzfrnds;
     Button editbtn;
-    int clickCount = 0;
+
     private final int SELECT_PHOTO = 1;
     private ImageView imageProfile, imageCompany;
     private Uri outputFileUri;
     ImageView currentImageView = null;
     View profile;
     SelectUser cat;
+    int clickCount = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,11 +93,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         label.add("Address");
 
         values = new ArrayList<String>();
-        values.add("Text1");
-        values.add("Text2");
-        values.add("Text3");
-        values.add("Text4");
-        values.add("Text5");
+        values.add("Supreet");
+        values.add("Dixit");
+        values.add("IT");
+        values.add("BITJIN");
+        values.add("GIT");
         for (int i = 0; i < label.size(); i++) {
             SelectUser selectUser = new SelectUser();
             selectUser.setLabel(label.get(i));
@@ -402,7 +403,7 @@ if(clickCount==1) {
         protected void actv(final boolean active) {
 
 
-            holder.mValues.setTextColor(Color.GREEN);
+
             holder.mValues.setEnabled(active);
             if (active) {
                 holder.mValues.requestFocus();

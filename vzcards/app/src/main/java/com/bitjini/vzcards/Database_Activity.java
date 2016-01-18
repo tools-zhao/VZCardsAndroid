@@ -9,8 +9,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Created by bitjini on 14/1/16.
- */
+* Created by bitjini on 14/1/16.
+*/
 
 
 public class Database_Activity extends Activity {
@@ -37,7 +37,7 @@ public class Database_Activity extends Activity {
 
     public void initializeViews() {
         bookTitle.setText(selectedContact.getName());
-        authorName.setText(selectedContact.getPhone_number());
+        authorName.setText(selectedContact.getLname());
 
     }
 
@@ -46,7 +46,7 @@ public class Database_Activity extends Activity {
 
         selectedContact.setName(((EditText) findViewById(R.id.nameEdit)).getText().toString());
 
-        selectedContact.setPhone_number(((EditText) findViewById(R.id.phoneEdit)).getText().toString());
+        selectedContact.setLname(((EditText) findViewById(R.id.phoneEdit)).getText().toString());
 
         // update contact  with changes
         db.updateContact(selectedContact);
@@ -61,7 +61,8 @@ public class Database_Activity extends Activity {
 
         // delete selected contact
      db.deleteContact(selectedContact);
-        Toast.makeText(getApplicationContext(), "This contact" + selectedContact.getName()+" is deleted.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "This contact"
+                + selectedContact.getName()+" is deleted.", Toast.LENGTH_SHORT).show();
         finish();
     }
 }

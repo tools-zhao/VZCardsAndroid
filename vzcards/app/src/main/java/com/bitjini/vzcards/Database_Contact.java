@@ -1,31 +1,65 @@
 package com.bitjini.vzcards;
 
+import java.util.ArrayList;
+
 /**
  * Created by bitjini on 14/1/16.
  */
 public class Database_Contact {
 
     int _id;
+    String label,values;
+
     String name;
-    String phone_number;
+    String lname,industry,company,address;
 
     public Database_Contact() {
 
     }
 
-    public Database_Contact(int _id, String name, String phone_number) {
-        this._id = _id;
-        this.name = name;
-        this.phone_number = phone_number;
-    }
-
-    public Database_Contact(String name, String phone_number) {
-        this.name = name;
-        this.phone_number = phone_number;
-    }
-
     public int get_id() {
         return _id;
+    }
+
+    public Database_Contact(String name, String lname, String industry, String company, String address) {
+        this.name = name;
+        this.lname = lname;
+        this.industry = industry;
+        this.company = company;
+        this.address = address;
+    }
+
+    public Database_Contact(int _id, String lname, String name, String industry, String company, String address) {
+        this._id = _id;
+        this.lname = lname;
+        this.name = name;
+        this.industry = industry;
+        this.company = company;
+        this.address = address;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public void set_id(int _id) {
@@ -40,11 +74,27 @@ public class Database_Contact {
         this.name = name;
     }
 
-    public String getPhone_number() {
-        return phone_number;
+    public String getLname() {
+        return lname;
     }
 
-    public void setPhone_number(String phone_number) {
-        this.phone_number = phone_number;
+    public void setLname(String lname) {
+        this.lname = lname;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getValues() {
+        return values;
+    }
+
+    public void setValues(String values) {
+        this.values = values;
     }
 }

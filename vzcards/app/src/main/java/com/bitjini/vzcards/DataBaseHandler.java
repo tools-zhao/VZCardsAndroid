@@ -15,11 +15,14 @@ import java.util.List;
 public class DataBaseHandler extends SQLiteOpenHelper {
 
     private  static final int DATABASE_VERSION=1;
-    private static final String DATABASE_NAME="contactsManager";
-    private static final String TABLE_CONTACTS=" contacts ";
+    private static final String DATABASE_NAME="profileManager";
+    private static final String TABLE_PROFILE=" profile ";
     private static final String KEY_ID=" id ";
     private static final String KEY_NAME=" name ";
-    private static final String KEY_PH_NO=" phone_number ";
+    private static final String LName=" lname ";
+    private static final String Industry=" industry";
+    private static final String Company=" company ";
+    private static final String Address=" address ";
 
     public DataBaseHandler(Context context)
     {
@@ -31,8 +34,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
 //       String CREATE_CONTACTS_TABLE = " CREATE TABLE  contacts  ( " + " id INTEGER PRIMARY KEY AUTOINCREMENT, " + " name TEXT, " + " phone_number TEXT )";
-        String CREATE_CONTACTS_TABLE = " CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + " ( "
-                + KEY_ID  + " INTEGER PRIMARY KEY, " + KEY_NAME  + " TEXT, " + KEY_PH_NO  + " TEXT ); ";
+        String CREATE_CONTACTS_TABLE = " CREATE TABLE IF NOT EXISTS " + TABLE_PROFILE + " ( "
+                + KEY_ID  + " INTEGER PRIMARY KEY, " + KEY_NAME  + " TEXT, " + LName  + " TEXT, "+Industry + "  Text, " + Company + " Text, "
+                + Address +" TEXT ); ";
         db.execSQL(CREATE_CONTACTS_TABLE);
 
     }
@@ -41,7 +45,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         // Drop older table if existed
-        db.execSQL(" DROP TABLE IF EXISTS " + TABLE_CONTACTS );
+        db.execSQL(" DROP TABLE IF EXISTS " + TABLE_PROFILE );
 
         // Create tables again
         onCreate(db);
@@ -56,11 +60,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, contact.getName());   //Contact Name
-        values.put(KEY_PH_NO, contact.getPhone_number());  //Contact Phone
+        values.put(KEY_NAME, contact.getName());   //Name
+        values.put(LName, contact.getLname());  // LName
+        values.put(Industry, contact.getIndustry());  // Industry
+        values.put(Company, contact.getCompany());  // Company
+        values.put(Address, contact.getAddress());  // Address
+
 
         // Inserting Row
-        db.insert(TABLE_CONTACTS, null, values);
+        db.insert(TABLE_PROFILE, null, values);
         // 2nd argument is String containing nullColumnHack
         db.close(); //Closing database connection
     }
@@ -72,7 +80,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db=this.getReadableDatabase();
 
         //get contact query
-        Cursor cursor=db.query(TABLE_CONTACTS,new String[]{KEY_ID,KEY_NAME,KEY_PH_NO},KEY_ID +"=?",
+        Cursor cursor=db.query(TABLE_PROFILE,new String[]{KEY_ID,KEY_NAME,LName,Industry,Company,Address},KEY_ID +"=?",
                 new String[]{ String.valueOf(id)}, null,null,null,null);
 
         //if results !=null , parse the 1st one
@@ -83,7 +91,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             Database_Contact contact=new Database_Contact();
          contact.set_id(Integer.parseInt(cursor.getString(0)));
         contact.setName(cursor.getString(1));
-        contact.setPhone_number(cursor.getString(2));
+        contact.setLname(cursor.getString(2));
+        contact.setIndustry(cursor.getString(3));
+        contact.setCompany(cursor.getString(4));
+        contact.setAddress(cursor.getString(5));
             //return contact
             return contact;
         }
@@ -92,7 +103,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         List<Database_Contact> contactList = new ArrayList<Database_Contact>();
 
         // Select All Query
-        String selectQuery = " SELECT * FROM " + TABLE_CONTACTS;
+        String selectQuery = " SELECT * FROM " + TABLE_PROFILE;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -103,7 +114,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 Database_Contact contact = new Database_Contact();
                 contact.set_id(Integer.parseInt(cursor.getString(0)));
                 contact.setName(cursor.getString(1));
-                contact.setPhone_number(cursor.getString(2));
+                contact.setLname(cursor.getString(2));
+                contact.setIndustry(cursor.getString(3));
+                contact.setCompany(cursor.getString(4));
+                contact.setAddress(cursor.getString(5));
 
                 // Adding contact to list
                 contactList.add(contact);
@@ -121,11 +135,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
             ContentValues values=new ContentValues();
             values.put(KEY_NAME,contact.getName());
-            values.put(KEY_PH_NO,contact.getPhone_number());
+            values.put(LName,contact.getLname());
+            values.put(Industry, contact.getIndustry());  // Industry
+            values.put(Company, contact.getCompany());  // Company
+            values.put(Address, contact.getAddress());  // Address
+
 
             // updating row
 
-            int i= db.update(TABLE_CONTACTS,values,KEY_ID + "=?", new String[]{ String.valueOf(contact.get_id())});
+            int i= db.update(TABLE_PROFILE,values,KEY_ID + "=?", new String[]{ String.valueOf(contact.get_id())});
             db.close();
             return i;
 
@@ -135,13 +153,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void deleteContact(Database_Contact contact)
     {
         SQLiteDatabase db= this.getWritableDatabase();
-        db.delete(TABLE_CONTACTS , KEY_ID + "=?", new String []{ String.valueOf(contact.get_id())});
+        db.delete(TABLE_PROFILE , KEY_ID + "=?", new String []{ String.valueOf(contact.get_id())});
         db.close();
     }
 
     //getting contacts count
     public int getContactsCount(){
-        String countQuery=" SELECT * FROM " +TABLE_CONTACTS;
+        String countQuery=" SELECT * FROM " +TABLE_PROFILE;
         SQLiteDatabase db=this.getReadableDatabase();
         Cursor cursor=db.rawQuery(countQuery,null);
         cursor.close();
