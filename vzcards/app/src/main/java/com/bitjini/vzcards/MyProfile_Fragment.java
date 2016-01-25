@@ -3,29 +3,27 @@ package com.bitjini.vzcards;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,9 +33,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,21 +47,30 @@ import java.util.List;
  * Created by VEENA on 12/7/2015.
  */
 public class MyProfile_Fragment extends Fragment implements View.OnClickListener {
-    ArrayList<String> label;
-    ArrayList<String> values;
-    ArrayList<SelectUser> selectUsers = null;
-    ProfileAdapter adapter;
-    ListView listView;
-    Button profilebtn, referral, vzfrnds;
-    Button editbtn;
 
+    public static final String mypreference = "mypref.txt";
+    public static final String TASKS = "key";
+    private static final String SAVED_STATE_KEY = "saved_state_key";
+
+    Context _c = getActivity();
     private final int SELECT_PHOTO = 1;
     private ImageView imageProfile, imageCompany;
     private Uri outputFileUri;
     ImageView currentImageView = null;
     View profile;
-    SelectUser cat;
+
+
+    ArrayList<String> label;
+    ArrayList<String> values;
     int clickCount = 0;
+    Button editbtn, profilebtn, vzfrnds, referral;
+    ListView listView;
+    EditTextAdapter editTextAdapter;
+    ArrayList<ListItem> arrayList = new ArrayList<ListItem>();
+    ArrayList<ListItem> adapterArrayList = new ArrayList<ListItem>();
+
+    public ArrayList<ListItem> groupItem = new ArrayList<ListItem>();
+    String json;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,10 +78,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         profile = inflater.inflate(R.layout.profile_layout, container, false);
 
-        selectUsers = new ArrayList<SelectUser>();
         editbtn = (Button) profile.findViewById(R.id.edit);
         listView = (ListView) profile.findViewById(R.id.profileList);
-
+        LoadPreferences();
 
         //Picking Profile picture
         imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
@@ -93,21 +103,19 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         label.add("Address");
 
         values = new ArrayList<String>();
-        values.add("Supreet");
-        values.add("Dixit");
+        values.add("veena");
+        values.add("M");
         values.add("IT");
         values.add("BITJIN");
         values.add("GIT");
-        for (int i = 0; i < label.size(); i++) {
-            SelectUser selectUser = new SelectUser();
-            selectUser.setLabel(label.get(i));
-            selectUser.setValues(values.get(i));
-            selectUsers.add(selectUser);
-        }
-        adapter = new ProfileAdapter(getActivity(), selectUsers);
-        listView.setAdapter(adapter);
 
-//        on edit clickbutton enable or disable the edit text by calling actv() method
+        for (int i = 0; i < label.size(); i++) {
+            ListItem item = new ListItem();
+            item.setLabel(label.get(i));
+            item.setValue(values.get(i));
+            arrayList.add(item);
+        }
+
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,9 +124,10 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                     editbtn.setText("Save");
 
-                    adapter.actv(true);
-                    adapter.notifyDataSetChanged();
-//                    listView.setAdapter(adapter);
+                    editTextAdapter.actv(true);
+                    editTextAdapter.notifyDataSetChanged();
+//                    listView.setAdapter(editTextAdapter);
+                    LoadPreferences();
 //                    Log.e("selected position of textview", "" + position);
                     Toast.makeText(getActivity(), "click 0", Toast.LENGTH_LONG).show();
                     clickCount = 1;
@@ -127,8 +136,13 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                     editbtn.setText("Edit");
 
-                    adapter.actv(false);
-//                    listView.setAdapter(adapter);
+                    editTextAdapter.actv(false);
+                    json = new Gson().toJson(groupItem);
+
+                    SavePreferences(TASKS, json);
+                    LoadPreferences();
+                    editTextAdapter.notifyDataSetChanged();
+//                    listView.setAdapter(editTextAdapter);
                     Toast.makeText(getActivity(), "click 1", Toast.LENGTH_LONG).show();
                     clickCount = 0;
 
@@ -136,21 +150,53 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
             }
         });
-//        Select item on listclick
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                SelectUser data = adapter.getItem(position);
-//
-//
-//                String value=data.getValues();
-//                Toast.makeText(getActivity(),"you clicked "+ value,Toast.LENGTH_LONG).show();
-//            }
-//            });
+        Log.e("updated array", "" + groupItem);
+        //converting arrayList to json to Save the values in sharedpreference by calling SavePrefernces
+        // Check if the updated array is equal to default array if false load default array else load updated array
+        if (groupItem == arrayList) {
+            json = new Gson().toJson(arrayList); //default array
+
+            SavePreferences(TASKS, json);
+        } else {
+            json = new Gson().toJson(groupItem);// updated array
+
+            SavePreferences(TASKS, json);
+        }
+        LoadPreferences();
+
+
         vzfrnds.setOnClickListener(this);
         referral.setOnClickListener(this);
         return profile;
+    }
+
+    protected void SavePreferences(String key, String value) {
+// TODO Auto-generated method stub
+        SharedPreferences data = getActivity().getSharedPreferences(mypreference, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(key, value);
+        editor.commit();
+        System.out.println(value);
+
+    }
+
+
+    // To retrived saved values in shared preference Now convert the JSON string back to your java object
+
+    protected void LoadPreferences() {
+
+        SharedPreferences prefs1 = getActivity().getSharedPreferences(mypreference, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs1.getString(TASKS, null);
+        Type type = new TypeToken<ArrayList<ListItem>>() {
+        }.getType();
+        adapterArrayList = gson.fromJson(json, type);
+
+        // send the adapterArraylist to the adapter and set it to listview
+        editTextAdapter = new EditTextAdapter(getActivity(), adapterArrayList, R.layout.profile_layout);
+        listView.setAdapter(editTextAdapter);
+
+
     }
 
 
@@ -302,19 +348,55 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         }
     }
 
+    /**
+     * The object we have a list of, probably more complex in your app
+     */
+    static class ListItem {
+        public String value;
+        public String label;
 
-    // Adopter class : handle list items
-    class ProfileAdapter extends BaseAdapter {
+        ListItem() {
+        }
 
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        ListItem(String label, String value) {
+            this.value = value;
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
+    }
+
+    //    /**
+//     * ViewHolder which also tracks the TextWatcher for an EditText
+//     */
+    static class ViewHolder {
+        public TextView textView;
+        public EditText editText;
+        public TextWatcher textWatcher;
+    }
+
+    class EditTextAdapter extends BaseAdapter {
         ViewHolder holder = new ViewHolder();
         Context _c;
-        public ArrayList<SelectUser> groupItem;
 
-        int flag=0;
-        public ProfileAdapter(Context context, ArrayList<SelectUser> group) {
-            groupItem = group;
+        EditTextAdapter(Context context, ArrayList<ListItem> groupItem, int resource) {
 
-            _c = context;
+            this._c = context;
+            MyProfile_Fragment.this.groupItem = groupItem;
         }
 
         @Override
@@ -323,125 +405,75 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         }
 
         @Override
-        public SelectUser getItem(int i) {
+        public ListItem getItem(int i) {
             return groupItem.get(i);
         }
 
         @Override
         public long getItemId(int i) {
             return i;
-
         }
 
         @Override
-        public View getView(final int position, final View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            View rowView = null;
+            convertView=null;
+            if (convertView == null) {
+                // Not recycled, inflate a new view
+                LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                rowView = li.inflate(R.layout.profile_listitems, null);
+//                rowView = getLayoutInflater().inflate(R.layout.profile_listitems, null);
 
 
-           View v = convertView;
-
-            if (v == null) {
-                LayoutInflater inflater = (LayoutInflater) _c.getSystemService
-                        (Context.LAYOUT_INFLATER_SERVICE);
-                v = inflater.inflate(R.layout.profile_listitems, parent, false);
-
-                v.setTag(holder);
-            } else {
-                holder = (ViewHolder) v.getTag();
+                rowView.setTag(holder);
             }
+            holder.textView = (TextView) rowView.findViewById(R.id.labels);
+            holder.editText = (EditText) rowView.findViewById(R.id.values1);
+            ViewHolder holder = (ViewHolder) rowView.getTag();
+            // Remove any existing TextWatcher that will be keyed to the wrong ListItem
+            if (holder.textWatcher != null)
+                holder.editText.removeTextChangedListener(holder.textWatcher);
 
+            final ListItem listItem = groupItem.get(position);
 
-            holder.mLable = (TextView) v.findViewById(R.id.label);
-            holder.mValues = (EditText) v.findViewById(R.id.values);
-
-//            holder.mValues.setTag(position);
-           flag=position;
-            cat = groupItem.get(flag);
-
-            holder.mLable.setText(cat.getLabel());
-            holder.mValues.setText(cat.getValues());
-
-            holder.mValues.setTag(flag);
-Log.e("position...",""+groupItem.get(flag).getValues()+"   "+position);
-
-        if(clickCount==0)
-        {
-            actv(false);
-
-         }else {
-            holder.mValues.addTextChangedListener(new TextWatcher() {
+            // Keep a reference to the TextWatcher so that we can remove it later
+            holder.textWatcher = new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    listItem.value= s.toString();
+                    System.out.println(listItem.value +""+groupItem.get(position));
 
                 }
 
                 @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-//                        final int position2 = holder.mValues.getId();
-//                        final EditText repsText = (EditText) holder.mValues;
-//                        if (repsText.getText().toString().length() > 0) {
-//                      }
+                public void afterTextChanged(Editable s) {
                 }
+            };
+            holder.editText.addTextChangedListener(holder.textWatcher);
 
-                @Override
-                public void afterTextChanged(Editable editable) {
+            holder.editText.setText(listItem.value);
 
-                    cat.setValues(editable.toString());
-
+            holder.textView.setText(listItem.getLabel().toString());
 
 
-                }
-
-            });
-        }
-if(clickCount==1) {
-    actv(true);
-}
-            return v;
+            if (clickCount == 0) {
+                actv(false);
+            }
+            return rowView;
         }
 
-        protected void actv(final boolean active) {
-
-
-
-            holder.mValues.setEnabled(active);
+    protected void actv(final boolean active) {
+        holder.editText.setEnabled(active);
             if (active) {
-                holder.mValues.requestFocus();
-
-            }
-        }
-    }
-
-    class ViewHolder {
-
-        TextView mLable;
-        EditText mValues;
-//        public MutableWatcher mWatcher;
-    }
-
-    //    c//Declaration
-    private class GenericTextWatcher implements TextWatcher {
-
-        private View view;
-
-        private GenericTextWatcher(View view) {
-            this.view = view;
-        }
-
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        public void afterTextChanged(Editable editable) {
-            String text = editable.toString();
-            switch (view.getId()) {
-                case R.id.values:
-                    cat.setValues(text);
-                    break;
+                holder.editText.requestFocus();
 
             }
         }
     }
 }
+
+

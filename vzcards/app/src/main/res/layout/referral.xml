@@ -131,7 +131,7 @@
             <!--***********************-->
 
             <LinearLayout android:id="@+id/toolbar"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
                 android:orientation="vertical">

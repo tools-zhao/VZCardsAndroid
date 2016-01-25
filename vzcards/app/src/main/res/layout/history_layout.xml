@@ -12,6 +12,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:orientation="horizontal"
+        android:elevation="3dp"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/text_drawable"
         android:layout_below="@+id/l0">

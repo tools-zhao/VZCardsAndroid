@@ -17,6 +17,7 @@
             android:background="@drawable/drawable_text"
            android:layout_gravity="center"
             android:layout_marginTop="9dp"
+            android:elevation="3dp"
             android:gravity="center_vertical"></SearchView>
 </LinearLayout>
 
@@ -28,6 +29,7 @@
         android:orientation="horizontal"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
+          android:elevation="3dp"
         android:layout_below="@+id/Layout1">
         <ImageView
             android:layout_width="80dp"

@@ -163,8 +163,8 @@ int id=0;
             }
 
 
-            holder.mLable = (TextView) v.findViewById(R.id.label);
-            holder.mValues = (EditText) v.findViewById(R.id.values);
+            holder.mLable = (TextView) v.findViewById(R.id.labels);
+            holder.mValues = (EditText) v.findViewById(R.id.values1);
 
 //            holder.mValues.setTag(position);
             flag=position;

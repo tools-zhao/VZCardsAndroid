@@ -89,6 +89,7 @@
             android:layout_height="25dp"
             android:text="Edit"
             android:id="@+id/edit"
+            android:elevation="2dp"
             android:layout_weight="1"
             android:layout_marginLeft="250dp"
             android:layout_marginRight="15dp"
@@ -114,8 +115,10 @@
             android:id="@+id/profileList"
             android:layout_below="@+id/Layout1"
             android:divider="#97e6ecf2"
+            android:descendantFocusability="afterDescendants"
             android:dividerHeight="5.0sp"
             android:layout_above="@+id/l8"></ListView>
+
     </LinearLayout>
         </RelativeLayout>
     </ScrollView>

@@ -19,10 +19,10 @@ public class SharedPrefManager {
     private static Context mContext;
 
     // will get user input in below variables, then will store in to shared pref
-    private static String 	mName 			= "";
-    private static String 	mEid 			= "";
-    private static String  memail 			= "";
-    public static String  mindustry 			= "";
+    public static String 	mName 			= "";
+    public static String 	mEid 			= "";
+    public static String  memail 			= "";
+    public static String  mindustry 		= "";
     public static String  mcompany 			= "";
     public static String  maddress 			= "";
 
