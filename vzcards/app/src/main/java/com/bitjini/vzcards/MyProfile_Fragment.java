@@ -50,6 +50,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     public static final String mypreference = "mypref.txt";
     public static final String TASKS = "key";
+    public static final String IMAGE = "image";
     private static final String SAVED_STATE_KEY = "saved_state_key";
 
     Context _c = getActivity();
@@ -58,19 +59,19 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     private Uri outputFileUri;
     ImageView currentImageView = null;
     View profile;
-
+    SharedPreferences data ;
 
     ArrayList<String> label;
     ArrayList<String> values;
     int clickCount = 0;
-    Button editbtn, profilebtn, vzfrnds, referral;
+    Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
     ListView listView;
     EditTextAdapter editTextAdapter;
     ArrayList<ListItem> arrayList = new ArrayList<ListItem>();
     ArrayList<ListItem> adapterArrayList = new ArrayList<ListItem>();
 
     public ArrayList<ListItem> groupItem = new ArrayList<ListItem>();
-    String json;
+    String json,json2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,8 +81,10 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         editbtn = (Button) profile.findViewById(R.id.edit);
         listView = (ListView) profile.findViewById(R.id.profileList);
-        LoadPreferences();
-
+      data = getActivity().getSharedPreferences(mypreference, Context.MODE_PRIVATE);
+        if(data.contains(TASKS)) {
+            LoadPreferences();
+        }
         //Picking Profile picture
         imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
         imageCompany = (ImageView) profile.findViewById(R.id.btn_pick);
@@ -92,8 +95,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
         profilebtn = (Button) profile.findViewById(R.id.profilebtn);
-        referral = (Button) profile.findViewById(R.id.referralbtn);
-        vzfrnds = (Button) profile.findViewById(R.id.vzfrnds);
+        referralbtn = (Button) profile.findViewById(R.id.referralbtn);
+        vzfrndsbtn = (Button) profile.findViewById(R.id.vzfrnds);
 
         label = new ArrayList<String>();
         label.add("Fname");
@@ -127,7 +130,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     editTextAdapter.actv(true);
                     editTextAdapter.notifyDataSetChanged();
 //                    listView.setAdapter(editTextAdapter);
-                    LoadPreferences();
+//                    LoadPreferences();
 //                    Log.e("selected position of textview", "" + position);
                     Toast.makeText(getActivity(), "click 0", Toast.LENGTH_LONG).show();
                     clickCount = 1;
@@ -137,9 +140,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     editbtn.setText("Edit");
 
                     editTextAdapter.actv(false);
-                    json = new Gson().toJson(groupItem);
+                  json2= new Gson().toJson(groupItem);// updated array
 
-                    SavePreferences(TASKS, json);
+                    SavePreferences(TASKS, json2);
                     LoadPreferences();
                     editTextAdapter.notifyDataSetChanged();
 //                    listView.setAdapter(editTextAdapter);
@@ -150,29 +153,35 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
             }
         });
-        Log.e("updated array", "" + groupItem);
+
+        if(!groupItem.isEmpty())
+        json2= new Gson().toJson(groupItem);// updated array
+        Log.e("updated array", "" + json2);
+        json = new Gson().toJson(arrayList); //default array
+
+
+
         //converting arrayList to json to Save the values in sharedpreference by calling SavePrefernces
         // Check if the updated array is equal to default array if false load default array else load updated array
-        if (groupItem == arrayList) {
-            json = new Gson().toJson(arrayList); //default array
+        if (json.equals(json2) || json2==null) {
 
             SavePreferences(TASKS, json);
         } else {
-            json = new Gson().toJson(groupItem);// updated array
 
-            SavePreferences(TASKS, json);
+
+            SavePreferences(TASKS, json2);
         }
         LoadPreferences();
 
 
-        vzfrnds.setOnClickListener(this);
-        referral.setOnClickListener(this);
+        vzfrndsbtn.setOnClickListener(this);
+        referralbtn.setOnClickListener(this);
         return profile;
     }
 
     protected void SavePreferences(String key, String value) {
 // TODO Auto-generated method stub
-        SharedPreferences data = getActivity().getSharedPreferences(mypreference, Context.MODE_PRIVATE);
+       data = getActivity().getSharedPreferences(mypreference, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
         editor.putString(key, value);
         editor.commit();
@@ -181,7 +190,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     }
 
 
-    // To retrived saved values in shared preference Now convert the JSON string back to your java object
+    // To retrive saved values in shared preference Now convert the JSON string back to your java object
 
     protected void LoadPreferences() {
 
