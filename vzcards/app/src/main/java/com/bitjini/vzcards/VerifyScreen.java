@@ -1,49 +1,457 @@
 package com.bitjini.vzcards;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.renderscript.Sampler;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by VEENA on 12/8/2015.
  */
 public class VerifyScreen extends Activity {
 
-    EditText phoneNo;
-    Button ok;
-    final Context context=this;
+    String URL_REGISTER = "http://vzcards-api.herokuapp.com/user_register/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    String URL_VERIFY = "http://vzcards-api.herokuapp.com/verify/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    String URL_RESEND="http://vzcards-api.herokuapp.com/send_again/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    public static final String MY_EMP_PREFS = "MySharedPref";
+    SharedPreferences sharedPreferences;
 
 
+    private ProgressDialog progress;
+    private EditText editTextPhoneNo, editTextOTP;
+    String company_photo, photo, firstname, lastname, email;
+    String industry, company, address_line_1, address_line_2, city, pin_code;
+    public String otp, phone;
+    private Button btn;
 
+    TextView  textView;
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.verify_activity);
+        editTextPhoneNo = (EditText) findViewById(R.id.phoneNo);
+        textView=(TextView)findViewById(R.id.initial);
+        btn = (Button) findViewById(R.id.verify);
 
-        phoneNo=(EditText) findViewById(R.id.phoneNo);
-        ok=(Button)findViewById(R.id.verify);
-
-        ok.setOnClickListener(new View.OnClickListener() {
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                CustomDialogClass cdd = new CustomDialogClass(VerifyScreen.this);
-                cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                cdd.show();
+            public void onClick(View view) {
+
+                sendPostRequest(view);
 
             }
-
         });
     }
 
+    // method to call AsyncTask PostClass for registration
+    public void sendPostRequest(View View) {
+        new PostClass(this).execute(URL_REGISTER);
+    }
+
+//    public void sendGetRequest(View View) {
+//        new GetClass(this).execute();
+//    }
+
+    /* *
+      * PostClass for registration
+      */
+    private class PostClass extends AsyncTask<String, Void, String> {
+
+        private final Context context;
+
+        public PostClass(Context c) {
+            this.context = c;
+        }
+
+        protected void onPreExecute() {
+            progress = new ProgressDialog(this.context);
+            progress.setMessage("Loading");
+            progress.show();
+        }
+        @Override
+        protected String doInBackground(String... urls) {
+            // params comes from the execute() call: params[0] is the url.
+            try {
+                return downloadUrl(urls[0]);
+            } catch (IOException e) {
+                return "Unable to download the requested page.";
+            }
+        }
+        private String downloadUrl(String urlString) throws IOException {
+            String response=null;
+            try {
+//                final TextView outputView = (TextView) findViewById(R.id.content);
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                company_photo = "";
+                photo = "";
+                firstname = "";
+                lastname = "";
+                email = "";
+                phone = textView.getText()+editTextPhoneNo.getText().toString();
+                industry = "";
+                company = "";
+                address_line_1 = "";
+                address_line_2 = "";
+                city = "";
+                pin_code = "";
+
+                HttpClient client = new DefaultHttpClient();
+                String postURL = URL_REGISTER;
+                HttpPost post = new HttpPost(postURL);
+
+                List<NameValuePair> params1 = new ArrayList<NameValuePair>();
+                params1.add(new BasicNameValuePair("company_photo", company_photo));
+                params1.add(new BasicNameValuePair("photo", photo));
+                params1.add(new BasicNameValuePair("firstname", firstname));
+                params1.add(new BasicNameValuePair("lastname", lastname));
+                params1.add(new BasicNameValuePair("email", email));
+                params1.add(new BasicNameValuePair("phone", phone));
+                params1.add(new BasicNameValuePair("industry", industry));
+                params1.add(new BasicNameValuePair("company", company));
+                params1.add(new BasicNameValuePair("address_line_1", address_line_1));
+                params1.add(new BasicNameValuePair("address_line_2", address_line_2));
+                params1.add(new BasicNameValuePair("city", city));
+                params1.add(new BasicNameValuePair("pin_code", pin_code));
+
+
+                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
+                post.setEntity(ent);
+                HttpResponse responsePOST = client.execute(post);
+                HttpEntity resEntity = responsePOST.getEntity();
+
+                if (resEntity != null) {
+                    response=EntityUtils.toString(resEntity);
+                    Log.i("RESPONSE", response);
+
+                }
+                StringBuilder sb = new StringBuilder();
+                try {
+                    BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
+                    String line = null;
+
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                System.out.println("finalResult " + sb.toString());
+                return sb.toString();
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+            progress.dismiss();
+
+            CustomDialogClass cdd = new CustomDialogClass(VerifyScreen.this);
+            cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            cdd.show();
+        }
+
+    }
+
+    /* *
+       * class for creating  custom dialog box
+       */
+    class CustomDialogClass extends Dialog implements View.OnClickListener {
+
+        public Activity c;
+        public Dialog d;
+        public Button ok, cancel, resend;
+        private ProgressDialog progress;
+
+
+        public CustomDialogClass(Activity a) {
+            super(a);
+            this.c = a;
+        }
+
+        public CustomDialogClass() {
+            super(getApplicationContext());
+
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.prompt);
+
+            editTextOTP = (EditText) findViewById(R.id.otp);
+            ok = (Button) findViewById(R.id.btnOK);
+            resend = (Button) findViewById(R.id.btnResend);
+            cancel = (Button) findViewById(R.id.btnCancel);
+
+            ok.setOnClickListener(this);
+            cancel.setOnClickListener(this);
+            resend.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.btnOK:
+                    // TODO Auto-generated method stub
+                    if (editTextOTP.getText().toString().length() == 6) {
+
+                        sendPostRequestOtp(v);
+
+                        // do something, using return value from network
+
+                        // out of range
+                    } else {
+                        Toast.makeText(getContext(), "please enter a valid 6 digit number", Toast.LENGTH_LONG).show();
+                    }
+
+
+                    break;
+                case R.id.btnResend:
+                    ReSendPostRequest(v);
+
+                case R.id.btnCancel:
+                    dismiss();
+                default:
+
+                    break;
+
+            }
+            dismiss();
+        }
+
+        // method to verify otp. call to verify url
+        public void sendPostRequestOtp(View View) {
+            new PostClassOTP(getContext()).execute();
+        }
+
+        // method to resend otp
+        public void ReSendPostRequest(View View) {
+            new PostClass(getContext()).execute(URL_RESEND);
+        }
+
+    }
+   /* *
+    * class for Verifying otp
+    */
+    private class PostClassOTP extends AsyncTask<String, Void, JSONObject> {
+        String reply;
+
+        private final Context context;
+
+        public PostClassOTP(Context c) {
+            this.context = c;
+        }
+
+        protected void onPreExecute() {
+            progress = new ProgressDialog(this.context);
+            progress.setMessage("Loading");
+            progress.show();
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... params) {
+            String response = null;
+            try {
+                otp = editTextOTP.getText().toString().trim();
+                HttpClient client = new DefaultHttpClient();
+                String postURL = URL_VERIFY;
+
+                // making Post request
+                HttpPost post = new HttpPost(postURL);
+
+                // Post data
+                List<NameValuePair> params1 = new ArrayList<NameValuePair>();
+                params1.add(new BasicNameValuePair("phone", phone));
+                params1.add(new BasicNameValuePair("otp", otp));
+
+                // encode post data in url format
+                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
+                post.setEntity(ent);
+                HttpResponse responsePOST = client.execute(post);
+                HttpEntity resEntity = responsePOST.getEntity();
+                if (resEntity != null) {
+                    // storing the response
+                    response=EntityUtils.toString(resEntity);
+                    Log.i("RESPONSE", response);
+
+                }
+                StringBuilder sb = new StringBuilder();
+                try {
+                    BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
+                    String line = null;
+
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                System.out.println("finalResult " + sb.toString());
+                // return response
+                return new JSONObject(response);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(JSONObject result) {
+            progress.dismiss();
+            if (result != null) {
+                Log.e("valid =", "" + result.toString());
+                try {
+                    JSONObject res=new JSONObject(result.toString());
+                    int valid = res.getInt("valid");
+                    String token=res.getString("token_generated");
+
+                    Log.e("token generated =", "" + token);
+                    Log.e("valid =", "" + valid);
+
+
+                   // saving token in shared prefernces
+                    sharedPreferences = getSharedPreferences(MY_EMP_PREFS, 0);
+                    SharedPreferences.Editor sEdit = sharedPreferences.edit();
+                    System.out.println(" saving token generated "+ sEdit.putString("token", token));
+                    sEdit.commit();
+
+                    String token_sharedPreference=sharedPreferences.getString("token",token);
+                    System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
+
+                    if(valid==1)
+                    {
+                        Intent positveActivity = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(positveActivity);
+                        finish();
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext()," OTP Not valid",Toast.LENGTH_LONG).show();
+
+                    }
+//
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+
+
+            }
+
+        }
+    }
 }
+//    private class GetClass extends AsyncTask<String, Void, Void> {
+//
+//        private final Context context;
+//
+//        public GetClass(Context c) {
+//            this.context = c;
+//        }
+//
+//        protected void onPreExecute() {
+//            progress = new ProgressDialog(this.context);
+//            progress.setMessage("Loading");
+//            progress.show();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(String... params) {
+//            try {
+//
+//                URL url = new URL("Your URL");
+//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                String urlParameters = "fizz=buzz";
+//                connection.setRequestMethod("GET");
+//                connection.setRequestProperty("USER-AGENT", "Mozilla/5.0");
+//                connection.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
+//
+//                int responseCode = connection.getResponseCode();
+//
+//                final StringBuilder output = new StringBuilder("Request URL " + url);
+//                output.append(System.getProperty("line.separator") + "Response Code " + responseCode);
+//                output.append(System.getProperty("line.separator") + "Type " + "GET");
+//                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//                String line = "";
+//                StringBuilder responseOutput = new StringBuilder();
+//                System.out.println("output===============" + br);
+//                while ((line = br.readLine()) != null) {
+//                    responseOutput.append(line);
+//                }
+//                br.close();
+//
+//                output.append(System.getProperty("line.separator") + "Response " + System.getProperty("line.separator") + System.getProperty("line.separator") + responseOutput.toString());
+//
+//                Post_example.this.runOnUiThread(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        outputView.setText(output);
+//                        progress.dismiss();
+//
+//                    }
+//                });
+//
+//            } catch (MalformedURLException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//    }

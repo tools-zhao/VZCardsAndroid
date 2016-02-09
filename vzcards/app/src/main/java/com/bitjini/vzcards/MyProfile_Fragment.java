@@ -467,7 +467,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             holder.editText.setText(listItem.value);
 
             holder.textView.setText(listItem.getLabel().toString());
-
+//              holder.editText.setEnabled(false);
 
             if (clickCount == 0) {
                 actv(false);
