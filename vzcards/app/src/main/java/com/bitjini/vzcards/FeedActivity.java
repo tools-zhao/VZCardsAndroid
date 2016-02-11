@@ -182,19 +182,24 @@ public class FeedActivity extends Fragment {
                     String question = feed.getString("question");
                     String item_photo = feed.getString("item_photo");
                     String description = feed.getString("description");
+                    String isNeeds = null, isHas = null;
+                    boolean isRefered = false,isSelected = false;
                     Log.d("item :", "" + item);
 //                    Log.d("question :", "" + question);
 
                     if(Integer.parseInt(question)==1)
-                    {
+                    {          isNeeds=question.toString();
 //                        Log.d("question with value 1:", "" + question);
                         queArray1.add(question);
 
+
+
                     }
                     if(Integer.parseInt(question)==0)
-                    {
+                    { isHas=question.toString();
 //                        Log.d("question with value 0 :", "" + question);
                         queArray0.add(question);
+
                     }
                     // user_details node is JSON Object
                     JSONObject user_detail = c.getJSONObject("user_details");
@@ -212,6 +217,10 @@ public class FeedActivity extends Fragment {
                      dataFeeds.setPhoto(photo);
                     dataFeeds.setItem_photo(item_photo);
                     dataFeeds.setDescription(description);
+                    dataFeeds.setIsHas(isHas);
+                    dataFeeds.setIsNeeds(isNeeds);
+                    dataFeeds.setSelected(isSelected);
+                    dataFeeds.setRefered(isRefered);
                     feedsArrayList.add(dataFeeds);
 
                 }
@@ -277,7 +286,7 @@ public class FeedActivity extends Fragment {
         public TextView name,question,item;
         public  View viewLine;
         public ImageView item_photo,photo;
-        public Button referButtonRed,referButtonGreen;
+        public Button referButton,referButtonGreen;
     }
 
  public class FeedsAdapter extends ArrayAdapter<DataFeeds> {
@@ -313,8 +322,8 @@ public class FeedActivity extends Fragment {
              holder.item_photo = (ImageView) v.findViewById(R.id.itemPhoto);
              holder.photo = (ImageView) v.findViewById(R.id.profilePic);
              holder.viewLine = (View) v.findViewById(R.id.viewLine);
-             holder.referButtonRed = (Button) v.findViewById(R.id.referButton);
-             holder.referButtonGreen = (Button) v.findViewById(R.id.referButton);
+             holder.referButton= (Button) v.findViewById(R.id.referButton);
+
 
 //         holder.referButtonRed.setSelected(!holder.referButtonRed.isSelected());
 
@@ -328,56 +337,45 @@ public class FeedActivity extends Fragment {
                  holder.question.setBackgroundColor(Color.RED);
                  holder.question.setText("needs");
                  holder.viewLine.setBackgroundColor(Color.RED);
-//                 holder.referButtonRed.setId(position);
-                 holder.referButtonRed.setTag(position);
-                 holder.referButtonRed.setOnClickListener(myButtonRedListener);
+                 holder.referButton.setTag(position);
+
+
               }
              if (Integer.parseInt(data.getQuestion()) == 0) {
                  holder.question.setBackgroundColor(Color.GREEN);
                  holder.question.setText("has");
                  holder.viewLine.setBackgroundColor(Color.GREEN);
-                 holder.referButtonGreen.setTag(position);
 
-                 holder.referButtonGreen.setOnClickListener(myButtonGreenListener);
               }
-         if(holder.referButtonRed.isEnabled()==true && holder.referButtonGreen.isEnabled()==true);
-         {
-//             initiatePopupWindow();
-         }
+         holder.referButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 int position = (Integer) view.getTag();
+                 Toast.makeText(getActivity(), "you selected red at position" + position, Toast.LENGTH_LONG).show();
+                 DataFeeds item = feeds.get(position);
+                 if (!item.isSelected()) {
+                     item.isSelected = false;
+
+                 } // check function(question)
+                 else if (item.getQuestion() == item.getIsNeeds()) {
+                     item.isSelected = true;
+                 }
+
+
+                     if (!item.isSelected()) {
+                         item.isSelected = false;
+
+                     } // check function(question)
+                     else if (item.getQuestion() == item.getIsNeeds()) {
+                         item.isSelected = true;
+                     }
+
+                     }
+         });
          return v;
      }
-//     public void DeselectButtons() {
-//         for(int i=0; i<feeds.size();i++){
-//             if (EnabledButton!= i)
-//                 getActivity().findViewById(i).setSelected(false);
-//         }
-//
-//     }
-private View.OnClickListener myButtonRedListener = new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        int position = (Integer) v.getTag();
-        Toast.makeText(getActivity(), "you selected red at position" + position, Toast.LENGTH_LONG).show();
-//                     EnabledButton=holder.referButton.getId();
-//                     DeselectButtons();
-//        holder.referButtonRed.setSelected(false);
-//        initiatePopupWindow();
-        isEnabled(position);
-    }
-};
-     private View.OnClickListener myButtonGreenListener = new View.OnClickListener() {
-         @Override
-         public void onClick(View v) {
-             int position = (Integer) v.getTag();
-             Toast.makeText(getActivity(), "you selected green at position" + position, Toast.LENGTH_LONG).show();
-//                     EnabledButton=holder.referButton.getId();
-//                     DeselectButtons();
-//             holder.referButtonGreen.setSelected(false);
-//             initiatePopupWindow();
-             isEnabled(position);
-         }
-     };
-     public boolean isEnabled(int position)
+
+public boolean isEnabled(int position)
      {
          return true;
      }
@@ -449,8 +447,42 @@ private View.OnClickListener myButtonRedListener = new View.OnClickListener() {
 
 public class DataFeeds extends ArrayList<DataFeeds> {
     String fname,item,question,ticket_id,item_photo,photo,description;
+    boolean isRefered,isSelected;
+    String isHas,isNeeds;
 
     private DataFeeds() {
+    }
+
+    public String getIsHas() {
+        return isHas;
+    }
+
+    public void setIsHas(String isHas) {
+        this.isHas = isHas;
+    }
+
+    public String getIsNeeds() {
+        return isNeeds;
+    }
+
+    public void setIsNeeds(String isNeeds) {
+        this.isNeeds = isNeeds;
+    }
+
+    public boolean isRefered() {
+        return isRefered;
+    }
+
+    public void setRefered(boolean isRefered) {
+        this.isRefered = isRefered;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean isSelected) {
+        this.isSelected = isSelected;
     }
 
     public String getItem_photo() {

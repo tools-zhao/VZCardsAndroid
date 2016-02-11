@@ -86,7 +86,6 @@
                 android:textColor="#771d1e10"
                 android:textAllCaps="false"
                 android:shadowColor="#771d1e10"
-                android:focusable="false"
                 android:textSize="15sp"
                 android:background="@drawable/drawable_refer"
                 android:text="Refer"/>
