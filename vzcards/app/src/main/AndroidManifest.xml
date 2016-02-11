@@ -18,9 +18,9 @@
         android:icon="@drawable/ic_launcher"
         android:label=""
         android:theme="@style/AppTheme">
-        <activity android:name=".VerifyScreen" android:windowSoftInputMode="adjustPan" android:configChanges="orientation|keyboardHidden"></activity>
+        <activity android:name=".MainActivity" android:windowSoftInputMode="adjustPan" android:configChanges="orientation|keyboardHidden"></activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".VerifyScreen"
             android:label=""
              android:windowSoftInputMode="adjustPan" android:configChanges="orientation|keyboardHidden">
             <intent-filter>
@@ -34,6 +34,7 @@
         <activity android:name=".ContactsMainActivity"></activity>
         <activity android:name=".Refer_VZfriends"></activity>
         <activity android:name=".DisplayContact"></activity>
+        <activity android:name=".ResultActivity"></activity>
     </application>
 
 </manifest>

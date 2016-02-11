@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   android:background="@color/accent_material_dark"
+    android:baselineAligned="false"
+    android:descendantFocusability="blocksDescendants">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:id="@+id/linearLayout1"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:elevation="3dp"
+        android:layout_below="@+id/Layout1">
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/itemPhoto"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/no_pic_placeholder_with_border_800x800"/>
+        />
+        <LinearLayout
+            android:layout_width="160dp"
+            android:layout_height="90dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="30dp"
+                android:text=" Name "
+                android:id="@+id/feedName"
+                android:layout_toRightOf="@+id/image1"
+                android:layout_alignTop="@id/image1"
+                android:layout_marginLeft="5dp"
+                android:textSize="14sp" />
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="20dp"
+                android:id="@+id/selectionText"
+                android:layout_marginLeft="5dp"
+                android:text="needs"
+                android:gravity="center"
+                android:textColor="#ffffff"
+                android:background="@drawable/addimage_red"/>
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/name"
+                android:textSize="12sp"
+                android:text="profile"
+                android:id="@+id/feedProfile"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="10dp"
+                android:id="@+id/profilePic"
+                android:src="@drawable/profile_pic_placeholder"/>
+
+            <Button
+                android:layout_width="60dp"
+                android:layout_height="25dp"
+                android:id="@+id/referButton"
+                android:layout_below="@+id/profilePic"
+                android:layout_gravity="right"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="10dp"
+                android:textColor="#771d1e10"
+                android:textAllCaps="false"
+                android:shadowColor="#771d1e10"
+                android:focusable="false"
+                android:textSize="15sp"
+                android:background="@drawable/drawable_refer"
+                android:text="Refer"/>
+
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:id="@+id/viewLine"
+        android:layout_marginRight="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_below="@+id/linearLayout1"
+        android:background="#ea1624"></View>
+
+
+
+
+    <Button
+        android:id="@+id/btn_close_popup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Close"
+        android:layout_below="@+id/viewLine"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>

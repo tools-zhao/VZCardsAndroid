@@ -47,8 +47,10 @@ public class VerifyScreen extends Activity {
     String URL_REGISTER = "http://vzcards-api.herokuapp.com/user_register/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
     String URL_VERIFY = "http://vzcards-api.herokuapp.com/verify/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
     String URL_RESEND="http://vzcards-api.herokuapp.com/send_again/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-    public static final String MY_EMP_PREFS = "MySharedPref";
-    SharedPreferences sharedPreferences;
+
+    public static final String VZCARD_PREFS = "MySharedPref";
+    public SharedPreferences sharedPreferences;
+    public String TOKEN_KEY="token";
 
 
     private ProgressDialog progress;
@@ -63,6 +65,17 @@ public class VerifyScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.verify_activity);
+
+       sharedPreferences = getSharedPreferences(VZCARD_PREFS, 0);
+        String token_sharedPreference=sharedPreferences.getString(TOKEN_KEY,null);
+        if(token_sharedPreference!=null)
+        {
+            Intent positveActivity = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(positveActivity);
+            finish();
+        }
+        System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
+
         editTextPhoneNo = (EditText) findViewById(R.id.phoneNo);
         textView=(TextView)findViewById(R.id.initial);
         btn = (Button) findViewById(R.id.verify);
@@ -360,7 +373,7 @@ public class VerifyScreen extends Activity {
 
 
                    // saving token in shared prefernces
-                    sharedPreferences = getSharedPreferences(MY_EMP_PREFS, 0);
+                    sharedPreferences = getSharedPreferences(VZCARD_PREFS, 0);
                     SharedPreferences.Editor sEdit = sharedPreferences.edit();
                     System.out.println(" saving token generated "+ sEdit.putString("token", token));
                     sEdit.commit();
