@@ -1,73 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    <TextView android:id="@+id/title"
-        android:padding="20dip"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"/>
+    android:padding="25dp" >
 
-    <!--***********************-->
-    <!--*** TOOLBAR LAYOUT ****-->
-    <!--***********************-->
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:layout_marginLeft="5dp" >
 
-    <LinearLayout android:id="@+id/toolbar"
-        android:layout_marginBottom="-50dip"
-        android:visibility="gone"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:id="@+id/lay1">
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/no_pic_placeholder_with_border_800x800"/>
+<TextView
+    android:id="@+id/nameLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Name: "
+    android:textAppearance="?android:attr/textAppearanceLarge" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView1"
-                android:layout_marginLeft="20dp"
-                android:text="@string/hello_world"
-                android:textColor="#f8050505"
-                android:layout_marginTop="10dp"
-                android:textSize="14sp"
-                android:textStyle="bold" /></LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_below="@+id/textView1"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="150dp"
-            android:weightSum="2">
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:text="call"
-                android:layout_weight="1"
-                android:layout_below="@+id/textView1"/>
-            <Button
-                android:layout_width="60dp"
-                android:layout_height="40dp"
-                android:text="VzCard"
-                android:layout_weight="1"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="10dp"
-                android:layout_below="@+id/textView1"/>
-        </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#784658" />
+<TextView
+    android:id="@+id/name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="name"
+    android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:layout_marginLeft="5dp" >
+
+<TextView
+    android:id="@+id/phoneLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Phone No: "
+    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+<TextView
+    android:id="@+id/phoneNo"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="number"
+    android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
+
+<Button
+    android:id="@+id/delete"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="30dp"
+    android:onClick="delete"
+    android:text="Delete contact" />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:layout_marginLeft="5dp" >
+
+<TextView
+    android:id="@+id/titleEditLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Name : "
+    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+<EditText
+    android:id="@+id/nameEdit"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_weight="1"
+    android:ems="10" >
+
+<requestFocus />
+    </EditText>
+    </LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:layout_marginLeft="5dp" >
+
+<TextView
+    android:id="@+id/authorEditLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Phone No.: "
+    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+<EditText
+    android:id="@+id/phoneEdit"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_weight="1"
+    android:ems="10" >
+    </EditText>
 
     </LinearLayout>
-</LinearLayout>
+
+<Button
+    android:id="@+id/update"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:onClick="update"
+    android:text="Update Contact" />
+
+    </LinearLayout>

@@ -1,27 +1,27 @@
 package com.bitjini.vzcards;
 
-import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -30,23 +30,24 @@ import java.util.List;
 /**
  * Created by bitjini on 18/12/15.
  */
-public class VZFriends_Activity extends Fragment implements View.OnClickListener {
+public class VZFriends_Fragment extends Fragment implements View.OnClickListener,SearchView.OnQueryTextListener  {
 
     Context c;
     View v;
     // ArrayList
     ArrayList<SelectUser> selectUsers;
+    SelectUserAdapter adapter;
     List<SelectUser> temp;
     // Contact List
     ListView listView;
     // Cursor to load contacts list
     Cursor phones, email;
-
+    SearchView mSearchView;
     private TextView displayText;
-
+    Filter filter;
     // Pop up
     ContentResolver resolver;
-    SelectUserAdapter adapter;
+
 
 
     @Override
@@ -54,12 +55,15 @@ public class VZFriends_Activity extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
         View vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
 
-
+            c=vzfrnds.getContext();
         selectUsers = new ArrayList<SelectUser>();
 //            resolver = c.getContentResolver();
         listView = (ListView) vzfrnds.findViewById(R.id.contactList);
+        mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
+//        displayText = (TextView) findViewById(R.id.resultText);
 
-        displayText = (TextView) vzfrnds.findViewById(R.id.resultText);
+        listView.setTextFilterEnabled(true);
+        setupSearchView();
 
 //            initSearchView();
 
@@ -83,7 +87,7 @@ public class VZFriends_Activity extends Fragment implements View.OnClickListener
         switch (v.getId()) {
 
             case R.id.profilebtn:
-                Fragment profilefragment = new MyProfileActivity();
+                Fragment profilefragment = new MyProfile_Fragment();
                 // get the id of fragment
                 FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.vzfrnds_frame);
 
@@ -92,6 +96,8 @@ public class VZFriends_Activity extends Fragment implements View.OnClickListener
                 fragmentManager.beginTransaction()
                         .add(contentView.getId(), profilefragment).addToBackStack(contentView.toString())
                         .commit();
+
+
 
 
                 break;
@@ -206,47 +212,51 @@ public class VZFriends_Activity extends Fragment implements View.OnClickListener
         super.onPostExecute(aVoid);
         adapter = new SelectUserAdapter(selectUsers, getActivity());
         listView.setAdapter(adapter);
-
+        filter = adapter.getFilter();
+        setupSearchView();
         // Select item on listclick
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                LayoutInflater li = (LayoutInflater)c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = li.inflate(R.layout.vz_frnds, null);
+
                 Bitmap image = null;
-                SelectUser data = selectUsers.get(position);
+                SelectUser data = (SelectUser) parent.getItemAtPosition(position);
 
                 String name = data.getName();
                 String phoneNo = data.getPhone();
-                image = data.getThumb();
-
-
-                if (image== null) {
+//                image = data.getThumb();
+//
+//
+//                if (image== null) {
 
                     Drawable d = getResources().getDrawable(R.drawable.simple_profile_placeholder1);
-                    ImageView contactimage = (ImageView)v.findViewById(R.id.contactImage);
+                    ImageView contactimage = (ImageView)view.findViewById(R.id.contactImage);
                     contactimage.setImageDrawable(d);
                     contactimage.buildDrawingCache();
                     image = contactimage.getDrawingCache();
-                }
+//                }
 
                 //dynamically increase the size of the imageview
-                int width = image.getWidth();
-                int height = image.getHeight();
-                int newWidth = 300;
-                int newHeight = 240;
-                float scaleWidth = ((float) newWidth) / width;
-                float scaleHeight = ((float) newHeight) / height;
-                Matrix matrix = new Matrix();
-                matrix.postScale(scaleWidth, scaleHeight);
-                Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix,true);
+//                int width = image.getWidth();
+//                int height = image.getHeight();
+//                int newWidth = 300;
+//                int newHeight = 240;
+//                float scaleWidth = ((float) newWidth) / width;
+//                float scaleHeight = ((float) newHeight) / height;
+//                Matrix matrix = new Matrix();
+//                matrix.postScale(scaleWidth, scaleHeight);
+//                Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix,true);
 
                 //Passing data to nextscreen
-                Intent nextScreenIntent = new Intent(getActivity(), DisplayContact.class);
+                Intent nextScreenIntent = new Intent(c, DisplayContact.class);
                 nextScreenIntent.putExtra("name", name);
                 nextScreenIntent.putExtra("phoneNo", phoneNo);
 
                 Bundle extras = new Bundle();
-                extras.putParcelable("photo", newbm);
+                extras.putParcelable("photo", image);
 
                 nextScreenIntent.putExtras(extras);
 
@@ -258,35 +268,38 @@ public class VZFriends_Activity extends Fragment implements View.OnClickListener
 
         listView.setFastScrollEnabled(true);
     }
-}
+}  private void setupSearchView()
+    {
+        mSearchView.setIconifiedByDefault(false);
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.setSubmitButtonEnabled(true);
+        mSearchView.setQueryHint("Search");
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText)
+    {
+
+        if (TextUtils.isEmpty(newText)) {
+            listView.clearTextFilter();
+        } else {
+            // following line was causes the popup window.
+            listView.setFilterText(newText);
 
 
-//    private void initSearchView() {
-//        SearchManager searchManager = (SearchManager)c.getSystemService(Context.SEARCH_SERVICE);
-//        final SearchView searchView = (SearchView) v.findViewById(R.id.searchview);
-//        SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
-//        searchView.setSearchableInfo(searchableInfo);
-//    }
-
-
-    protected void onNewIntent(Intent intent) {
-        if (ContactsContract.Intents.SEARCH_SUGGESTION_CLICKED.equals(intent.getAction())) {
-            String displayName = getContactName(intent);
-            displayText.setText(displayName);
-        } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            displayText.setText("search for: '" + query + "'...");
         }
+        return true;
     }
 
-    private String getContactName(Intent intent) {
-        Cursor phoneCursor = c.getContentResolver().query(intent.getData(), null, null, null, null);
-        phoneCursor.moveToFirst();
-        int colNameIndex = phoneCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-        String contactName = phoneCursor.getString(colNameIndex);
-        phoneCursor.close();
-        return contactName;
+    @Override
+    public boolean onQueryTextSubmit(String query)
+    {
+        return false;
     }
+
+
+
+
     @Override
     public void onStop() {
         super.onStop();

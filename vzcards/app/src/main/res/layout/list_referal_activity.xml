@@ -56,7 +56,7 @@
                 android:background="@drawable/button_color"
                 android:button="@null"
                 android:textColor="@drawable/text_color"
-
+                android:checked="false"
                 android:layout_weight="1"
                 android:gravity="center" />
 
@@ -66,12 +66,13 @@
                 android:layout_height="30dp"
                 android:layout_margin="0dp"
                 android:background="@drawable/button_color2"
-                android:text="VZFrnds"
+                android:text="VZFriends"
                 android:button="@null"
                 android:textColor="@drawable/text_color"
                 android:layout_weight="1"
                 android:layout_marginLeft="-2dp"
-                android:gravity="center" />
+                android:gravity="center"
+                android:checked="false"/>
 
             <RadioButton
                 android:id="@+id/referralbtn"

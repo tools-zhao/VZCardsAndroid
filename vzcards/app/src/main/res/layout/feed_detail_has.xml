@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/add1_frame"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -15,16 +19,19 @@
             android:layout_width="45dp"
             android:layout_height="40dp"
             android:layout_marginLeft="8dp"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/profilePic"
             android:src="@drawable/profile_pic_placeholder"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Name"
-            android:layout_marginLeft="8dp"
-            android:textSize="25sp"
+            android:id="@+id/name"
+            android:layout_marginLeft="15dp"
+            android:textSize="20sp"
             android:gravity="center_vertical"
             android:textColor="#ffff"/>
-    </LinearLayout>
+        </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="130dp"
@@ -34,10 +41,12 @@
         android:layout_below="@+id/l1"
         android:gravity="center_horizontal">
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="60dp"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:id="@+id/item_photo"
             android:src="@drawable/no_pic_placeholder"/></LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,8 +60,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Web Developer"
+            android:text="Title"
             android:textSize="25sp"
+            android:id="@+id/title"
             android:gravity="center"/>
     </LinearLayout>
     <LinearLayout
@@ -68,6 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="Enter your Description"
+            android:id="@+id/description"
             android:gravity="center"/>
     </LinearLayout>
     <Button
@@ -75,7 +86,7 @@
         android:layout_height="40dp"
         android:layout_marginLeft="25dp"
         android:text="Refer VZ Friend"
-        android:background="@drawable/drawable_refer_red"
+        android:background="@drawable/drawable_refer_frnd"
         android:layout_below="@+id/l4"
         android:layout_marginRight="25dp"
         android:layout_marginTop="5dp"
@@ -85,7 +96,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="Refer Phonebook Contact"
-        android:background="@drawable/drawable_refer_red"
+        android:background="@drawable/drawable_refer_frnd"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:layout_marginTop="10dp"
@@ -95,3 +106,4 @@
 
 
 </RelativeLayout>
+    </FrameLayout>

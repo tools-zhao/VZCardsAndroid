@@ -1,33 +1,20 @@
 package com.bitjini.vzcards;
 
-import android.animation.Animator;
 import android.animation.LayoutTransition;
-import android.animation.ValueAnimator;
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.*;
-import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.LinearLayout.LayoutParams;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import com.bitjini.vzcards.R;
 
-import java.net.URI;
 import java.util.ArrayList;
 
 /**
@@ -37,9 +24,6 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
     ArrayList<ReferalUsers> groupItem=new ArrayList<ReferalUsers>();
     Button vzfrnds,profilebtn,referralbtn;
     ListView list;
-    LinearLayout mLinearLayout;
-    LinearLayout mLinearLayoutHeader;
-    ValueAnimator mAnimator;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,11 +75,6 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
         list.setAdapter(listAdapter);
 
         // Creating an item click listener, to open/close our toolbar for each item
-//        list.setOnItemClickListener(this) ;
-
-
-
-
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -185,13 +164,14 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
         public void onClick(View view) {
           switch (view.getId()) {
               case R.id.btnCall:
-                     Intent in=new Intent(Intent.ACTION_CALL, Uri.parse("00000000000")) ;
                   try{
-                      startActivity(in);
+                      Intent callIntent = new Intent(Intent.ACTION_CALL);
+                      callIntent.setData(Uri.parse("tel:"+"8904826233"));
+                      startActivity(callIntent);
                   }
                   catch (android.content.ActivityNotFoundException ex)
               {
-                  Toast.makeText(getActivity(),"your Activity is not found",Toast.LENGTH_LONG).show();
+                  Toast.makeText(_c,"your Activity is not found",Toast.LENGTH_LONG).show();
               }
                   break;
 
@@ -283,7 +263,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
         switch (v.getId()) {
 
             case R.id.profilebtn:
-                Fragment profilefragment = new MyProfileActivity();
+                Fragment profilefragment = new MyProfile_Fragment();
                 // get the id of fragment
                 FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.referral_frame);
 
@@ -296,7 +276,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.vzfrnds:
-                Fragment newfragment = new VZFriends_Activity();
+                Fragment newfragment = new VZFriends_Fragment();
                 // get the id of fragment
                 FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.referral_frame);
 

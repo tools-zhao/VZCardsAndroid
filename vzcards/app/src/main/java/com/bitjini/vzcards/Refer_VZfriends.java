@@ -20,9 +20,11 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -41,7 +43,7 @@ import java.util.List;
 /**
  * Created by bitjini on 18/12/15.
  */
-public class Refer_VZfriends extends Activity {
+public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextListener {
 
     // ArrayList
     ArrayList<SelectUser> selectUsers;
@@ -50,7 +52,7 @@ public class Refer_VZfriends extends Activity {
     ListView listView;
     // Cursor to load contacts list
     Cursor phones, email;
-
+    SearchView mSearchView;
     private TextView displayText;
 
     // Pop up
@@ -65,9 +67,11 @@ public class Refer_VZfriends extends Activity {
         selectUsers = new ArrayList<SelectUser>();
 //            resolver = c.getContentResolver();
         listView = (ListView) findViewById(R.id.contactList);
+        mSearchView = (SearchView) findViewById(R.id.searchview);
+//        displayText = (TextView) findViewById(R.id.resultText);
 
-        displayText = (TextView) findViewById(R.id.resultText);
-
+        listView.setTextFilterEnabled(true);
+        setupSearchView();
 //            initSearchView();
 
 //            phones = c.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
@@ -167,46 +171,53 @@ public class Refer_VZfriends extends Activity {
             adapter = new SelectUserAdapter(selectUsers, Refer_VZfriends.this);
             listView.setAdapter(adapter);
 
+
+
+
             // Select item on listclick
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                    LayoutInflater li = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    view = li.inflate(R.layout.vz_frnds, null);
+
                     Bitmap image = null;
-                    SelectUser data = selectUsers.get(position);
+                    SelectUser data = (SelectUser) parent.getItemAtPosition(position);
+
 
                     String name = data.getName();
                     String phoneNo = data.getPhone();
-                    image = data.getThumb();
-
-
-                    if (image == null) {
+//                    image = data.getThumb();
+//
+//
+//                    if (image == null) {
 
                         Drawable d = getResources().getDrawable(R.drawable.simple_profile_placeholder1);
-                        ImageView contactimage = (ImageView) v.findViewById(R.id.contactImage);
+                        ImageView contactimage = (ImageView) view.findViewById(R.id.contactImage);
                         contactimage.setImageDrawable(d);
                         contactimage.buildDrawingCache();
                         image = contactimage.getDrawingCache();
-                    }
+//                    }
 
                     //dynamically increase the size of the imageview
-                    int width = image.getWidth();
-                    int height = image.getHeight();
-                    int newWidth = 300;
-                    int newHeight = 240;
-                    float scaleWidth = ((float) newWidth) / width;
-                    float scaleHeight = ((float) newHeight) / height;
-                    Matrix matrix = new Matrix();
-                    matrix.postScale(scaleWidth, scaleHeight);
-                    Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix, true);
+//                    int width = image.getWidth();
+//                    int height = image.getHeight();
+//                    int newWidth = 300;
+//                    int newHeight = 240;
+//                    float scaleWidth = ((float) newWidth) / width;
+//                    float scaleHeight = ((float) newHeight) / height;
+//                    Matrix matrix = new Matrix();
+//                    matrix.postScale(scaleWidth, scaleHeight);
+//                    Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix, true);
 
                     //Passing data to nextscreen
-                    Intent nextScreenIntent = new Intent(Refer_VZfriends.this, DisplayContact.class);
+                    Intent nextScreenIntent = new Intent(getApplicationContext(), DisplayContact.class);
                     nextScreenIntent.putExtra("name", name);
                     nextScreenIntent.putExtra("phoneNo", phoneNo);
 
                     Bundle extras = new Bundle();
-                    extras.putParcelable("photo", newbm);
+                    extras.putParcelable("photo", image);
 
                     nextScreenIntent.putExtras(extras);
 
@@ -221,38 +232,34 @@ public class Refer_VZfriends extends Activity {
     }
 
 
-//    private void initSearchView() {
-//        SearchManager searchManager = (SearchManager)c.getSystemService(Context.SEARCH_SERVICE);
-//        final SearchView searchView = (SearchView) v.findViewById(R.id.searchview);
-//        SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
-//        searchView.setSearchableInfo(searchableInfo);
-//    }
-
-
-    protected void onNewIntent(Intent intent) {
-        if (ContactsContract.Intents.SEARCH_SUGGESTION_CLICKED.equals(intent.getAction())) {
-            String displayName = getContactName(intent);
-            displayText.setText(displayName);
-        } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            displayText.setText("search for: '" + query + "'...");
-        }
-    }
-
-    private String getContactName(Intent intent) {
-        Cursor phoneCursor = getContentResolver().query(intent.getData(), null, null, null, null);
-        phoneCursor.moveToFirst();
-        int colNameIndex = phoneCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-        String contactName = phoneCursor.getString(colNameIndex);
-        phoneCursor.close();
-        return contactName;
+    private void setupSearchView()
+    {
+        mSearchView.setIconifiedByDefault(false);
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.setSubmitButtonEnabled(true);
+        mSearchView.setQueryHint("Search");
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        phones.close();
+    public boolean onQueryTextChange(String newText)
+    {
+
+        if (TextUtils.isEmpty(newText)) {
+            listView.clearTextFilter();
+        } else {
+            listView.setFilterText(newText);
+        }
+        return true;
     }
+
+    @Override
+    public boolean onQueryTextSubmit(String query)
+    {
+        return false;
+    }
+
+
+
 
     @Override
     public void onBackPressed() {

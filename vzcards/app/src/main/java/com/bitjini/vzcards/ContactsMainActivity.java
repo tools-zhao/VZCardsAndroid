@@ -17,10 +17,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -34,18 +38,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsMainActivity extends Activity {
+public class ContactsMainActivity extends Activity implements SearchView.OnQueryTextListener {
 
     // ArrayList
-    ArrayList<SelectUser> selectUsers;
-    List<SelectUser> temp;
+    ArrayList<SelectUser> selectUsers=null;
+
     // Contact List
     ListView listView;
+
     // Cursor to load contacts list
     Cursor phones, email;
+    SearchView mSearchView;
 
-    private TextView displayText;
-
+    Filter filter;
     // Pop up
     ContentResolver resolver;
    SelectUserAdapter adapter;
@@ -53,21 +58,22 @@ public class ContactsMainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.contact_listview);
+        setContentView(R.layout.vzfriends_list);
 
 
         selectUsers = new ArrayList<SelectUser>();
         resolver = this.getContentResolver();
         listView = (ListView) findViewById(R.id.contactList);
+        mSearchView = (SearchView) findViewById(R.id.searchview);
 
-        displayText = (TextView)findViewById(R.id.resultText);
 
-        initSearchView();
+//        initSearchView();
+
 
         phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
         LoadContact loadContact = new LoadContact();
-        loadContact.execute();
 
+        loadContact.execute();
 
         //getting screen size--(1280 X 720)
         DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -82,7 +88,7 @@ public class ContactsMainActivity extends Activity {
     }
 
     // Load data on background
-    class LoadContact extends AsyncTask<Void, Void, Void> {
+    class LoadContact extends AsyncTask<Void, Void, Void>  {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -137,7 +143,12 @@ public class ContactsMainActivity extends Activity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             adapter = new SelectUserAdapter(selectUsers, ContactsMainActivity.this);
+            adapter.notifyDataSetChanged();
             listView.setAdapter(adapter);
+            listView.setTextFilterEnabled(true);
+           // place your adapter to a separate filter to remove pop up text
+           filter = adapter.getFilter();
+            setupSearchView();
 
             // Select item on listclick
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -145,7 +156,7 @@ public class ContactsMainActivity extends Activity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                     Bitmap image = null;
-                    SelectUser data = selectUsers.get(position);
+                    SelectUser data = (SelectUser) parent.getItemAtPosition(position);
 
                     String name = data.getName();
                     String phoneNo = data.getPhone();
@@ -189,38 +200,101 @@ public class ContactsMainActivity extends Activity {
             });
 
             listView.setFastScrollEnabled(true);
+
+
         }
     }
-
-    private void initSearchView() {
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        final SearchView searchView = (SearchView) findViewById(R.id.searchview);
-        SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
-        searchView.setSearchableInfo(searchableInfo);
+    private void setupSearchView()
+    {
+        mSearchView.setIconifiedByDefault(false);
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.setSubmitButtonEnabled(true);
+        mSearchView.setQueryHint("Search");
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        if (ContactsContract.Intents.SEARCH_SUGGESTION_CLICKED.equals(intent.getAction())) {
-            String displayName = getContactName(intent);
-            displayText.setText(displayName);
-        } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            displayText.setText("search for: '" + query + "'...");
+    public boolean onQueryTextChange(String newText)
+    {
+        if (TextUtils.isEmpty(newText)) {
+            listView.clearTextFilter();
+        } else {
+            listView.setFilterText(newText);
         }
+        return true;
     }
 
-    private String getContactName(Intent intent) {
-        Cursor phoneCursor = getContentResolver().query(intent.getData(), null, null, null, null);
-        phoneCursor.moveToFirst();
-        int colNameIndex = phoneCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-        String contactName = phoneCursor.getString(colNameIndex);
-        phoneCursor.close();
-        return contactName;
+
+    @Override
+    public boolean onQueryTextSubmit(String query)
+    {
+        return false;
     }
+
+
+
+
     @Override
     protected void onStop() {
         super.onStop();
         phones.close();
     }
-}
+
+    @Override
+    public void onBackPressed() {
+        int count = getFragmentManager().getBackStackEntryCount();
+        if (count == 0) {
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStack();
+        }
+
+
+    }}
+
+//
+///**
+// * Shows a list that can be filtered in-place with a SearchView in non-iconified mode.
+// */
+//        public class SearchViewFilterMode extends Activity implements SearchView.OnQueryTextListener {
+//
+//            private SearchView mSearchView;
+//            private ListView mListView;
+//
+//            private final String[] mStrings = Cheeses.sCheeseStrings;
+//
+//            @Override
+//            protected void onCreate(Bundle savedInstanceState) {
+//                super.onCreate(savedInstanceState);
+//                getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+//
+//                setContentView(R.layout.contact_listview);
+//
+//                mSearchView = (SearchView) findViewById(R.id.searchview);
+//                mListView = (ListView) findViewById(R.id.contactList);
+//                mListView.setAdapter(new ArrayAdapter<String>(this,
+//                        android.R.layout.simple_list_item_1,
+//                        mStrings));
+//                mListView.setTextFilterEnabled(true);
+//                setupSearchView();
+//            }
+//
+//            private void setupSearchView() {
+//                mSearchView.setIconifiedByDefault(false);
+//                mSearchView.setOnQueryTextListener(this);
+//                mSearchView.setSubmitButtonEnabled(true);
+//                mSearchView.setQueryHint("Search Here");
+//            }
+//
+//            public boolean onQueryTextChange(String newText) {
+//                if (TextUtils.isEmpty(newText)) {
+//                    mListView.clearTextFilter();
+//                } else {
+//                    mListView.setFilterText(newText.toString());
+//                }
+//                return true;
+//            }
+//
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//        }

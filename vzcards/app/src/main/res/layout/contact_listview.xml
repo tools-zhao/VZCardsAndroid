@@ -27,7 +27,8 @@
         android:layout_height="50dp"
         android:background="#5f8ac7"
         android:orientation="vertical"
-        android:id="@+id/Layout1">
+        android:id="@+id/Layout1"
+        >
         <SearchView
             android:layout_width="300dp"
             android:layout_height="30dp"
@@ -35,14 +36,10 @@
             android:layout_gravity="center"
             android:layout_marginTop="9dp"
             android:id="@+id/searchview"
-            android:gravity="center_vertical"></SearchView>
-        <TextView
-            android:layout_width="300dp"
-            android:layout_height="30dp"
-            android:layout_below="@+id/searchview"
-            android:layout_gravity="center"
-            android:gravity="center_vertical"
-            android:id="@+id/resultText"/></LinearLayout>
+            android:textAlignment="gravity"
+            android:gravity="center_horizontal"></SearchView>
+
+            </LinearLayout>
 
 
     <ListView
@@ -51,7 +48,8 @@
         android:id="@+id/contactList"
         android:layout_below="@+id/Layout1"
         android:divider="#97e6ecf2"
-        android:dividerHeight="5.0sp"></ListView>
+        android:dividerHeight="5.0sp"
+        android:layout_above="@+id/l8"></ListView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -68,7 +66,7 @@
             android:id="@+id/rdogrp"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:layout_margin="8dp"
+            android:layout_margin="10dp"
             android:gravity="center"
             android:weightSum="3"
             android:orientation="horizontal" >
@@ -83,7 +81,8 @@
                 android:button="@null"
                 android:textColor="@drawable/text_color"
                 android:layout_weight="1"
-                android:gravity="center" />
+                android:gravity="center"
+                android:checked="false" />
 
             <RadioButton
                 android:id="@+id/vzfrnds"
@@ -110,7 +109,7 @@
                 android:background="@drawable/button_color3"
                 android:button="@null"
                 android:layout_weight="1"
-
+                android:checked="false"
                 android:gravity="center" />
 
 
