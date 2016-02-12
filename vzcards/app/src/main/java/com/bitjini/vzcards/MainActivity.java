@@ -63,7 +63,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-        });    }
+        });
+        viewPager.setCurrentItem(1);}
+
 //    @Override
 //    public CharSequence getPageTitle(int position) {
 //        // Generate title based on item position

@@ -1,25 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#5f8ac7"
-        android:orientation="vertical"
-        android:id="@+id/Layout1"
-        android:layout_below="@id/l0">
+    android:baselineAligned="false"
+    android:descendantFocusability="blocksDescendants">
 
-        <SearchView
-            android:layout_width="300dp"
-            android:layout_height="30dp"
-            android:background="@drawable/drawable_text"
-           android:layout_gravity="center"
-            android:layout_marginTop="9dp"
-            android:elevation="3dp"
-            android:gravity="center_vertical"></SearchView>
-</LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,7 +21,7 @@
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:id="@+id/feedImage"
+            android:id="@+id/itemPhoto"
             android:layout_marginTop="4dp"
             android:layout_marginLeft="5dp"
             android:layout_alignParentTop="true"
@@ -91,6 +78,7 @@
             <Button
                 android:layout_width="60dp"
                 android:layout_height="25dp"
+                android:id="@+id/referButton"
                 android:layout_below="@+id/profilePic"
                 android:layout_gravity="right"
                 android:layout_marginTop="15dp"
@@ -101,11 +89,13 @@
                 android:textSize="15sp"
                 android:background="@drawable/drawable_refer"
                 android:text="Refer"/>
+
         </LinearLayout>
     </LinearLayout>
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
+        android:id="@+id/viewLine"
         android:layout_marginRight="2dp"
         android:layout_marginLeft="2dp"
         android:layout_below="@+id/linearLayout1"

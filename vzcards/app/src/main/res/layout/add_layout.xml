@@ -47,7 +47,6 @@
         android:background="#877980"
         android:orientation="vertical"
         android:id="@+id/l1"
-        android:layout_below="@id/l0"
         android:gravity="center_horizontal">
         <ImageView
             android:id="@+id/img1"

@@ -18,16 +18,40 @@
             android:src="@drawable/navbarlogo2x"
             android:gravity="center"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
         <EditText
-            android:layout_width="240dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/initial"
+            android:layout_marginTop="30dp"
+            android:background="#81a3d4"
+            android:layout_marginLeft="70dp"
+            android:text="91"
+            android:paddingTop="5dp"
+            android:gravity="right"
+            android:textColor="#ffffff"
+            />
+        <EditText
+            android:layout_width="200dp"
             android:layout_height="30dp"
             android:id="@+id/phoneNo"
-            android:gravity="center"
+            android:paddingTop="5dp"
+            android:gravity="left"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_toRightOf="@+id/initial"
             android:layout_marginTop="30dp"
             android:background="#81a3d4"
             android:hint="Mobile Number"
+            android:inputType="number"
+            android:layout_marginRight="70dp"
             android:textColorHint="#ffffff"
            />
+    </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
