@@ -182,21 +182,21 @@ public class FeedActivity extends Fragment {
                     String question = feed.getString("question");
                     String item_photo = feed.getString("item_photo");
                     String description = feed.getString("description");
-                    String isNeeds = null, isHas = null;
+                    String isNeeds = "1", isHas = "0";
                     boolean isRefered = false,isSelected = false;
                     Log.d("item :", "" + item);
 //                    Log.d("question :", "" + question);
 
-                    if(Integer.parseInt(question)==1)
-                    {          isNeeds=question.toString();
+                    if(question==isNeeds)
+                    {          isNeeds=question;
 //                        Log.d("question with value 1:", "" + question);
                         queArray1.add(question);
 
 
 
                     }
-                    if(Integer.parseInt(question)==0)
-                    { isHas=question.toString();
+                    if(question==isHas)
+                    { isHas=question;
 //                        Log.d("question with value 0 :", "" + question);
                         queArray0.add(question);
 
@@ -227,14 +227,7 @@ public class FeedActivity extends Fragment {
                 adapter=new FeedsAdapter(getActivity(),R.layout.feed_layout,feedsArrayList);
                 listView.setAdapter(adapter);
 
-                for (int i=0;i<queArray1.size();i++)
-                {
-                    Log.e("queArray1 ",""+queArray1.get(i));
-                }
-                for (int i=0;i<queArray0.size();i++)
-                {
-                    Log.e("queArray0 ",""+queArray0.get(i));
-                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

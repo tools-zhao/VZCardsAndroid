@@ -75,7 +75,17 @@
                 android:id="@+id/profilePic"
                 android:src="@drawable/profile_pic_placeholder"/>
 
-            <Button
+
+            <RadioGroup
+                android:id="@+id/radioGroup1"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:weightSum="3"
+                android:orientation="horizontal" >
+
+            <RadioButton
                 android:layout_width="60dp"
                 android:layout_height="25dp"
                 android:id="@+id/referButton"
@@ -88,7 +98,10 @@
                 android:shadowColor="#771d1e10"
                 android:textSize="15sp"
                 android:background="@drawable/drawable_refer"
-                android:text="Refer"/>
+                android:text="Refer"
+                android:button="@null"
+                android:gravity="center" />
+           </RadioGroup>
 
         </LinearLayout>
     </LinearLayout>
