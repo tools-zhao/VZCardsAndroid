@@ -28,6 +28,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -141,6 +143,7 @@ public class FeedActivity extends Fragment {
 
         return feed;
     }
+
     public boolean isConnected(){
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -182,21 +185,21 @@ public class FeedActivity extends Fragment {
                     String question = feed.getString("question");
                     String item_photo = feed.getString("item_photo");
                     String description = feed.getString("description");
-                    String isNeeds = null, isHas = null;
+                    String isNeeds = "1", isHas = "0";
                     boolean isRefered = false,isSelected = false;
                     Log.d("item :", "" + item);
 //                    Log.d("question :", "" + question);
 
-                    if(Integer.parseInt(question)==1)
-                    {          isNeeds=question.toString();
+                    if(question==isNeeds)
+                    {          isNeeds=question;
 //                        Log.d("question with value 1:", "" + question);
                         queArray1.add(question);
 
 
 
                     }
-                    if(Integer.parseInt(question)==0)
-                    { isHas=question.toString();
+                    if(question==isHas)
+                    { isHas=question;
 //                        Log.d("question with value 0 :", "" + question);
                         queArray0.add(question);
 
@@ -227,14 +230,7 @@ public class FeedActivity extends Fragment {
                 adapter=new FeedsAdapter(getActivity(),R.layout.feed_layout,feedsArrayList);
                 listView.setAdapter(adapter);
 
-                for (int i=0;i<queArray1.size();i++)
-                {
-                    Log.e("queArray1 ",""+queArray1.get(i));
-                }
-                for (int i=0;i<queArray0.size();i++)
-                {
-                    Log.e("queArray0 ",""+queArray0.get(i));
-                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -286,14 +282,18 @@ public class FeedActivity extends Fragment {
         public TextView name,question,item;
         public  View viewLine;
         public ImageView item_photo,photo;
-        public Button referButton,referButtonGreen;
+        public RadioButton referButtonRed,referButtonGreen;
+
     }
 
  public class FeedsAdapter extends ArrayAdapter<DataFeeds> {
 
      Context context;
      private int EnabledButton;
-
+     private RadioButton mSelectedRB,mSelectedRB2;
+     private int mSelectedPosition = -1,mSelectedPosition2 = -1;
+     boolean red=false,green=false;
+       RadioGroup radioGroup;
      public FeedsAdapter(Context context, int textViewResourceId, ArrayList<DataFeeds> items) {
          super(context, textViewResourceId, items);
          this.context = context;
@@ -301,8 +301,8 @@ public class FeedActivity extends Fragment {
      }
 
      @Override
-     public View getView(int position, View convertView, ViewGroup parent) {
-         View v = null;
+     public View getView(final int position, View convertView, ViewGroup parent) {
+          View v = null;
          convertView = null;
          if (convertView == null) {
              LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -313,7 +313,7 @@ public class FeedActivity extends Fragment {
       else {
          holder = (ViewHolder) convertView.getTag();
      }
-         DataFeeds data = feeds.get(position);
+         final DataFeeds data = feeds.get(position);
 
              holder = new ViewHolder();
              holder.name = (TextView) v.findViewById(R.id.feedName);
@@ -322,10 +322,10 @@ public class FeedActivity extends Fragment {
              holder.item_photo = (ImageView) v.findViewById(R.id.itemPhoto);
              holder.photo = (ImageView) v.findViewById(R.id.profilePic);
              holder.viewLine = (View) v.findViewById(R.id.viewLine);
-             holder.referButton= (Button) v.findViewById(R.id.referButton);
 
-
-//         holder.referButtonRed.setSelected(!holder.referButtonRed.isSelected());
+             holder.referButtonRed= (RadioButton) v.findViewById(R.id.referButton);
+             holder.referButtonGreen= (RadioButton) v.findViewById(R.id.referButton);
+         radioGroup=(RadioGroup)v.findViewById(R.id.radioGroup1);
 
 
              holder.name.setText(String.valueOf(data.getFname()));
@@ -337,49 +337,91 @@ public class FeedActivity extends Fragment {
                  holder.question.setBackgroundColor(Color.RED);
                  holder.question.setText("needs");
                  holder.viewLine.setBackgroundColor(Color.RED);
-                 holder.referButton.setTag(position);
+                 holder.referButtonRed.setTag(position);
+                 holder.referButtonRed.setId(position);
+
+                 holder.referButtonRed.setOnClickListener(new View.OnClickListener() {
+
+                     @Override
+                     public void onClick(View v) {
+                         int position = (Integer) v.getTag();
+
+                         if (position != mSelectedPosition && mSelectedRB != null) {
+                             mSelectedRB.setChecked(false);
+                         }
+
+                         mSelectedPosition = position;
+                         mSelectedRB = (RadioButton) v;
+                         notifyDataSetChanged();
+                     }
+                 });
 
 
-              }
+                 if (mSelectedPosition != position) {
+                     holder.referButtonRed.setChecked(false);
+
+                 } else {
+
+                     holder.referButtonRed.setChecked(true);
+                     red=true;
+
+                     if (mSelectedRB != null && holder.referButtonRed != mSelectedRB) {
+                         mSelectedRB = holder.referButtonRed;
+                     }
+                 }
+             }
+
              if (Integer.parseInt(data.getQuestion()) == 0) {
                  holder.question.setBackgroundColor(Color.GREEN);
                  holder.question.setText("has");
                  holder.viewLine.setBackgroundColor(Color.GREEN);
+                 holder.referButtonGreen.setTag(position);
+                 holder.referButtonGreen.setId(position);
 
-              }
-         holder.referButton.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-                 int position = (Integer) view.getTag();
-                 Toast.makeText(getActivity(), "you selected red at position" + position, Toast.LENGTH_LONG).show();
-                 DataFeeds item = feeds.get(position);
-                 if (!item.isSelected()) {
-                     item.isSelected = false;
+                 holder.referButtonGreen.setOnClickListener(new View.OnClickListener() {
 
-                 } // check function(question)
-                 else if (item.getQuestion() == item.getIsNeeds()) {
-                     item.isSelected = true;
+                     @Override
+                     public void onClick(View v) {
+                         int position = (Integer) v.getTag();
+
+                         if (position != mSelectedPosition2 && mSelectedRB2 != null) {
+                             mSelectedRB2.setChecked(false);
+                         }
+
+                         mSelectedPosition2 = position;
+                         mSelectedRB2 = (RadioButton) v;
+                         notifyDataSetChanged();
+                     }
+                 });
+
+
+                 if (mSelectedPosition2 != position) {
+                     holder.referButtonGreen.setChecked(false);
+
+                 } else {
+
+                         holder.referButtonGreen.setChecked(true);
+                         green=true;
+
+                     if (mSelectedRB2 != null && holder.referButtonGreen != mSelectedRB2) {
+                         mSelectedRB2 = holder.referButtonGreen;
+                     }
                  }
 
 
-                     if (!item.isSelected()) {
-                         item.isSelected = false;
+             }
 
-                     } // check function(question)
-                     else if (item.getQuestion() == item.getIsNeeds()) {
-                         item.isSelected = true;
-                     }
+         if(red==true && green==true)
+         {
+             initiatePopupWindow();
+             red=false;
+             green=false;
 
-                     }
-         });
+         }
+
+
          return v;
      }
-
-public boolean isEnabled(int position)
-     {
-         return true;
-     }
-
 
  }
     public static Bitmap getBitmapFromURL(String src) {
@@ -399,47 +441,47 @@ public boolean isEnabled(int position)
             return null;
         }
     }
-    private PopupWindow pwindo;
 
     private void initiatePopupWindow() {
         View v = null;
         Button btnClosePopup;
-        try {
+        final PopupWindow pwindo;
+
+//        try {
 // We need to get the instance of the LayoutInflater
-            LayoutInflater inflater = (LayoutInflater) getActivity()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            View layout = inflater.inflate(R.layout.screen_popup,null);
-
-            pwindo = new PopupWindow(layout, 700, 370, true);
-
-            pwindo.showAtLocation(layout, Gravity.CENTER, 0, 0);
-
-            btnClosePopup = (Button) layout.findViewById(R.id.btn_close_popup);
-            btnClosePopup.setOnClickListener(cancel_button_click_listener);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-//        LayoutInflater inflater = (LayoutInflater) getActivity()
+//            LayoutInflater inflater = (LayoutInflater) getActivity()
 //                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View convertView = (View) inflater.inflate(R.layout.feed_listview, null);
-//        alertDialog.setView(convertView);
-//        alertDialog.setTitle("List");
-//        ListView lv = (ListView) convertView.findViewById(R.id.feedList);
-//        adapter=new FeedsAdapter(getActivity(),R.layout.feed_layout,feedsArrayList);
 //
-//        lv.setAdapter(adapter);
-//        alertDialog.show();
+//            View layout = inflater.inflate(R.layout.screen_popup,null);
+//
+//            pwindo = new PopupWindow(layout, 700, 370, true);
+//
+//            pwindo.showAtLocation(layout, Gravity.CENTER, 0, 0);
+//
+//            btnClosePopup = (Button) layout.findViewById(R.id.btn_close_popup);
+//            btnClosePopup.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    pwindo.dismiss();
+//                }
+//            });
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = (LayoutInflater) getActivity()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View convertView = (View) inflater.inflate(R.layout.feed_listview, null);
+        alertDialog.setView(convertView);
+        ListView lv = (ListView) convertView.findViewById(R.id.feedList);
+        adapter=new FeedsAdapter(getActivity(),R.layout.feed_layout,feedsArrayList);
+
+        lv.setAdapter(adapter);
+        alertDialog.show();
     }
 
-    private View.OnClickListener cancel_button_click_listener = new View.OnClickListener() {
-        public void onClick(View v) {
-            pwindo.dismiss();
 
-        }
-    };
 
 
 

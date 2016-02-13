@@ -16,12 +16,12 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label=""
+        android:label="VZcards"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity" android:windowSoftInputMode="adjustPan" android:configChanges="orientation|keyboardHidden"></activity>
         <activity
             android:name=".VerifyScreen"
-            android:label=""
+            android:label="VZcards"
              android:windowSoftInputMode="adjustPan" android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
