@@ -283,7 +283,7 @@ public class FeedActivity extends Fragment {
         public  View viewLine;
         public ImageView item_photo,photo;
         public RadioButton referButtonRed,referButtonGreen;
-        public RadioGroup radioGroup;
+
     }
 
  public class FeedsAdapter extends ArrayAdapter<DataFeeds> {
@@ -293,7 +293,7 @@ public class FeedActivity extends Fragment {
      private RadioButton mSelectedRB,mSelectedRB2;
      private int mSelectedPosition = -1,mSelectedPosition2 = -1;
      boolean red=false,green=false;
-
+       RadioGroup radioGroup;
      public FeedsAdapter(Context context, int textViewResourceId, ArrayList<DataFeeds> items) {
          super(context, textViewResourceId, items);
          this.context = context;
@@ -325,7 +325,7 @@ public class FeedActivity extends Fragment {
 
              holder.referButtonRed= (RadioButton) v.findViewById(R.id.referButton);
              holder.referButtonGreen= (RadioButton) v.findViewById(R.id.referButton);
-         holder.radioGroup=(RadioGroup)v.findViewById(R.id.radioGroup1);
+         radioGroup=(RadioGroup)v.findViewById(R.id.radioGroup1);
 
 
              holder.name.setText(String.valueOf(data.getFname()));
@@ -339,6 +339,7 @@ public class FeedActivity extends Fragment {
                  holder.viewLine.setBackgroundColor(Color.RED);
                  holder.referButtonRed.setTag(position);
                  holder.referButtonRed.setId(position);
+
                  holder.referButtonRed.setOnClickListener(new View.OnClickListener() {
 
                      @Override
@@ -363,6 +364,7 @@ public class FeedActivity extends Fragment {
 
                      holder.referButtonRed.setChecked(true);
                      red=true;
+
                      if (mSelectedRB != null && holder.referButtonRed != mSelectedRB) {
                          mSelectedRB = holder.referButtonRed;
                      }
@@ -400,6 +402,7 @@ public class FeedActivity extends Fragment {
 
                          holder.referButtonGreen.setChecked(true);
                          green=true;
+
                      if (mSelectedRB2 != null && holder.referButtonGreen != mSelectedRB2) {
                          mSelectedRB2 = holder.referButtonGreen;
                      }
@@ -444,47 +447,41 @@ public class FeedActivity extends Fragment {
         Button btnClosePopup;
         final PopupWindow pwindo;
 
-        try {
+//        try {
 // We need to get the instance of the LayoutInflater
-            LayoutInflater inflater = (LayoutInflater) getActivity()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            View layout = inflater.inflate(R.layout.screen_popup,null);
-
-            pwindo = new PopupWindow(layout, 700, 370, true);
-
-            pwindo.showAtLocation(layout, Gravity.CENTER, 0, 0);
-
-            btnClosePopup = (Button) layout.findViewById(R.id.btn_close_popup);
-            btnClosePopup.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pwindo.dismiss();
-                }
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-//        LayoutInflater inflater = (LayoutInflater) getActivity()
+//            LayoutInflater inflater = (LayoutInflater) getActivity()
 //                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View convertView = (View) inflater.inflate(R.layout.feed_listview, null);
-//        alertDialog.setView(convertView);
-//        alertDialog.setTitle("List");
-//        ListView lv = (ListView) convertView.findViewById(R.id.feedList);
-//        adapter=new FeedsAdapter(getActivity(),R.layout.feed_layout,feedsArrayList);
 //
-//        lv.setAdapter(adapter);
-//        alertDialog.show();
+//            View layout = inflater.inflate(R.layout.screen_popup,null);
+//
+//            pwindo = new PopupWindow(layout, 700, 370, true);
+//
+//            pwindo.showAtLocation(layout, Gravity.CENTER, 0, 0);
+//
+//            btnClosePopup = (Button) layout.findViewById(R.id.btn_close_popup);
+//            btnClosePopup.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    pwindo.dismiss();
+//                }
+//            });
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = (LayoutInflater) getActivity()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View convertView = (View) inflater.inflate(R.layout.feed_listview, null);
+        alertDialog.setView(convertView);
+        ListView lv = (ListView) convertView.findViewById(R.id.feedList);
+        adapter=new FeedsAdapter(getActivity(),R.layout.feed_layout,feedsArrayList);
+
+        lv.setAdapter(adapter);
+        alertDialog.show();
     }
 
-//    private View.OnClickListener cancel_button_click_listener = new View.OnClickListener() {
-//        public void onClick(View v) {
-//
-//            pwindo.dismiss();
-//        }
-//    };
+
 
 
 
