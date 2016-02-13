@@ -362,6 +362,10 @@ public class FeedActivity extends Fragment {
                  } else {
 
                      holder.referButtonRed.setChecked(true);
+                     String name=data.getFname();
+                     String item=data.getItem();
+                     Log.e("item after red button click",""+item);
+                     Log.e("name after red button click",""+name);
                      red=true;
                      if (mSelectedRB != null && holder.referButtonRed != mSelectedRB) {
                          mSelectedRB = holder.referButtonRed;
@@ -399,6 +403,10 @@ public class FeedActivity extends Fragment {
                  } else {
 
                          holder.referButtonGreen.setChecked(true);
+                     String name=data.getFname();
+                     String has=data.getIsHas();
+                     Log.e("name after green button click",""+name);
+                     Log.e("has after green button click",""+has);
                          green=true;
                      if (mSelectedRB2 != null && holder.referButtonGreen != mSelectedRB2) {
                          mSelectedRB2 = holder.referButtonGreen;
