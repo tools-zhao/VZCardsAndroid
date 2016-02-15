@@ -2,20 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:baselineAligned="false"
-    android:descendantFocusability="blocksDescendants">
-
+    android:background="#43c1d9f2"
+    android:descendantFocusability="blocksDescendants"
+ >
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:id="@+id/linearLayout1"
-        android:layout_marginTop="5dp"
         android:orientation="horizontal"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
+        android:layout_marginTop="5dp"
+         android:background="@drawable/text_drawable"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
           android:elevation="3dp"
         android:layout_below="@+id/Layout1">
         <ImageView
@@ -72,6 +73,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="right"
                 android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
                 android:id="@+id/profilePic"
                 android:src="@drawable/profile_pic_placeholder"/>
 
@@ -80,39 +82,40 @@
                 android:id="@+id/radioGroup1"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:layout_margin="8dp"
-                android:gravity="center"
-                android:weightSum="3"
-                android:orientation="horizontal" >
+                android:layout_marginTop="10dp"
+                android:gravity="bottom"
+                android:layout_gravity="bottom" >
 
             <RadioButton
-                android:layout_width="60dp"
+                android:layout_width="80dp"
                 android:layout_height="25dp"
                 android:id="@+id/referButton"
                 android:layout_below="@+id/profilePic"
                 android:layout_gravity="right"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="10dp"
-                android:textColor="#771d1e10"
-                android:textAllCaps="false"
-                android:shadowColor="#771d1e10"
-                android:textSize="15sp"
-                android:background="@drawable/drawable_refer"
+                android:textColor="#ff363b81"
+                android:layout_marginTop="12dp"
+                android:textAllCaps="true"
+                android:shadowColor="#5f8ac7"
+                android:textSize="10sp"
+                android:layout_marginRight="2dp"
+             android:background="@drawable/drawable_refer"
                 android:text="Refer"
                 android:button="@null"
                 android:gravity="center" />
            </RadioGroup>
 
         </LinearLayout>
+
     </LinearLayout>
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:id="@+id/viewLine"
-        android:layout_marginRight="2dp"
-        android:layout_marginLeft="2dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_below="@+id/linearLayout1"
-        android:background="#ea1624"></View>
+        android:background="#f27166"></View>
+
 
 
 

@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +39,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by VEENA on 12/8/2015.
@@ -60,7 +62,7 @@ public class VerifyScreen extends Activity {
     public String otp, phone;
     private Button btn;
 
-    TextView  textView;
+    TextView  textViewCountryCode, textViewCountryPrefix;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,9 +78,18 @@ public class VerifyScreen extends Activity {
         }
         System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
 
+        // get the country code
+        TelephonyManager tm = (TelephonyManager)getSystemService(getApplicationContext().TELEPHONY_SERVICE);
+        String countryCode = tm.getNetworkCountryIso();
+
+
         editTextPhoneNo = (EditText) findViewById(R.id.phoneNo);
-        textView=(TextView)findViewById(R.id.initial);
+        textViewCountryPrefix=(TextView)findViewById(R.id.initial);
+        textViewCountryCode=(TextView)findViewById(R.id.countryCode);
+
         btn = (Button) findViewById(R.id.verify);
+        // set the country code to textview
+        textViewCountryCode.setText(countryCode);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,7 +146,7 @@ public class VerifyScreen extends Activity {
                 firstname = "";
                 lastname = "";
                 email = "";
-                phone = textView.getText()+editTextPhoneNo.getText().toString();
+                phone = textViewCountryPrefix.getText()+editTextPhoneNo.getText().toString();
                 industry = "";
                 company = "";
                 address_line_1 = "";

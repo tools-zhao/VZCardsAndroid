@@ -184,6 +184,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
        data = getActivity().getSharedPreferences(mypreference, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
         editor.putString(key, value);
+//        SavePreferences(IMAGE, currentImageView.toString());
+
         editor.commit();
         System.out.println(value);
 
