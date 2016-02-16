@@ -97,6 +97,7 @@
                 android:textAllCaps="true"
                 android:shadowColor="#5f8ac7"
                 android:textSize="10sp"
+                android:checked="false"
                 android:layout_marginRight="2dp"
              android:background="@drawable/drawable_refer"
                 android:text="Refer"

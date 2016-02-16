@@ -215,6 +215,7 @@ public class VerifyScreen extends Activity {
 
             CustomDialogClass cdd = new CustomDialogClass(VerifyScreen.this);
             cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            cdd.setCanceledOnTouchOutside(false);
             cdd.show();
         }
 

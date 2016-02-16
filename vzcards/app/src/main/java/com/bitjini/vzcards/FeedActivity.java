@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -101,37 +102,52 @@ public class FeedActivity extends Fragment {
                 String name = dataFeeds.getFname();
                 String photo = dataFeeds.getPhoto();
                 String item_photo = dataFeeds.getItem_photo();
+                String ticket_id= dataFeeds.getTicket_id();
+                String phone1=dataFeeds.getPhone();
+                String connector_vz_id=dataFeeds.getVz_id();
+                String question=dataFeeds.getQuestion();
 
 
                 if (Integer.parseInt(dataFeeds.getQuestion()) == 0) {
-                    //Put the value for has
+                    //Put the value for has to feed detail has
                     Feed_detail_has ldf = new Feed_detail_has();
+
                     Bundle args = new Bundle();
                     args.putString("title", title);
                     args.putString("desc", desc);
                     args.putString("name", name);
                     args.putString("photo", photo);
+                    args.putString("ticket_id", ticket_id);
                     args.putString("item_photo", item_photo);
+                    args.putString("phone1", phone1);
+                    args.putString("connector_vz_id", connector_vz_id);
+                    args.putString("question",question);
 
                     ldf.setArguments(args);
 
                     //Inflate the fragment
-                    getFragmentManager().beginTransaction().add(R.id.feed_detail_has, ldf).addToBackStack(ldf.toString())
+                    getFragmentManager().beginTransaction().add(R.id.feed_detail, ldf).addToBackStack(ldf.toString())
                             .commit();
                 }
                 if (Integer.parseInt(dataFeeds.getQuestion()) == 1) {
-                    //Put the value needs
-                    Feed_detail_has.Feed_detail_needs ldf = new Feed_detail_has.Feed_detail_needs();
+                    //Put the value needs to feed_details
+                   Feed_detail_needs ldf = new Feed_detail_needs();
+
                     Bundle args = new Bundle();
+
                     args.putString("title", title);
                     args.putString("desc", desc);
                     args.putString("name", name);
                     args.putString("photo", photo);
+                    args.putString("ticket_id", ticket_id);
                     args.putString("item_photo", item_photo);
+                    args.putString("phone1", phone1);
+                    args.putString("connector_vz_id", connector_vz_id);
+                    args.putString("question",question);
                     ldf.setArguments(args);
 
                     //Inflate the fragment
-                    getFragmentManager().beginTransaction().add(R.id.feed_detail_has, ldf).addToBackStack(ldf.toString())
+                    getFragmentManager().beginTransaction().add(R.id.feed_detail, ldf).addToBackStack(ldf.toString())
                             .commit();
                 }
             }
@@ -199,6 +215,7 @@ public class FeedActivity extends Fragment {
 
                     String firstname = user_detail.getString("firstname");
                     String photo = user_detail.getString("photo");
+                    String phone = user_detail.getString("phone");
 
                     DataFeeds dataFeeds = new DataFeeds();
 
@@ -212,6 +229,7 @@ public class FeedActivity extends Fragment {
                     dataFeeds.setIsNeeds(isNeeds);
                     dataFeeds.setTicket_id(ticket_id);
                     dataFeeds.setVz_id(vz_id);
+                    dataFeeds.setPhone(phone);
 
                     feedsArrayList.add(dataFeeds);
 
@@ -318,8 +336,14 @@ public class FeedActivity extends Fragment {
 
             holder.name.setText(String.valueOf(data.getFname()));
             holder.item.setText(String.valueOf(data.getItem()));
-            holder.item_photo.setImageBitmap(getBitmapFromURL(String.valueOf(data.getItem_photo())));
-            holder.photo.setImageBitmap(getBitmapFromURL(String.valueOf(data.getPhoto())));
+
+            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
+            new DownloadImagesTask().execute(holder.item_photo);
+
+            holder.photo.setTag(String.valueOf(data.getPhoto()));
+            new DownloadImagesTask().execute(holder.photo);
+
+
 
             if (Integer.parseInt(data.getQuestion()) == 1) {
                 holder.question.setBackgroundColor(Color.parseColor("#f27166"));
@@ -362,7 +386,7 @@ public class FeedActivity extends Fragment {
                     dataFeeds1.setIsNeeds(data.getIsNeeds());
                     dataFeeds1.setTicket_id(data.getTicket_id());
                     dataFeeds1.setVz_id(data.getVz_id());
-
+                    dataFeeds1.setPhone(data.getPhone());
                     red = true;
                     if (mSelectedRB != null && holder.referButtonRed != mSelectedRB) {
                         mSelectedRB = holder.referButtonRed;
@@ -410,6 +434,7 @@ public class FeedActivity extends Fragment {
                     dataFeeds2.setIsHas(data.getIsHas());
                      dataFeeds2.setTicket_id(data.getTicket_id());
                     dataFeeds2.setVz_id(data.getVz_id());
+                    dataFeeds2.setPhone(data.getPhone());
 
                     green = true;
                     if (mSelectedRB2 != null && holder.referButtonGreen != mSelectedRB2) {
@@ -420,6 +445,7 @@ public class FeedActivity extends Fragment {
 
             if (red == true && green == true) {
                 initiatePopupWindow();
+
                 red = false;
                 green = false;
             }
@@ -427,26 +453,7 @@ public class FeedActivity extends Fragment {
         }
 
     }
-
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            Log.e("src", src);
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            Log.e("Bitmap", "returned");
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("Exception", e.getMessage());
-            return null;
-        }
-    }
-
-    private void initiatePopupWindow() {
+private void initiatePopupWindow() {
         View v = null;
         Button btnClosePopup,btnOkPopup;
         final PopupWindow pwindo;
@@ -461,7 +468,10 @@ public class FeedActivity extends Fragment {
             pwindo = new PopupWindow(layout, 700, 500, true);
 
             pwindo.showAtLocation(layout, Gravity.CENTER, 0, 0);
+            pwindo.getAnimationStyle();
+            pwindo.setBackgroundDrawable(new ColorDrawable(Color.LTGRAY));
 
+            // Object 1
             TextView name = (TextView) layout.findViewById(R.id.feedName);
             TextView question = (TextView) layout.findViewById(R.id.selectionText);
             TextView item = (TextView) layout.findViewById(R.id.feedProfile);
@@ -472,15 +482,21 @@ public class FeedActivity extends Fragment {
 
             name.setText(dataFeeds1.getFname());
             item.setText(dataFeeds1.getItem());
-            item_photo.setImageBitmap(getBitmapFromURL(dataFeeds1.getItem_photo()));
-            photo.setImageBitmap(getBitmapFromURL(dataFeeds1.getPhoto()));
+
+            item_photo.setTag(dataFeeds1.getItem_photo());
+            new DownloadImagesTask().execute(item_photo); // Download item_photo from AsynTask
+
+            photo.setTag(dataFeeds1.getPhoto());
+            new DownloadImagesTask().execute(photo);// Download photo from AsynTask
+
+            // check if it is needs change the color to red
             if (Integer.parseInt(dataFeeds1.getIsNeeds()) == 1) {
                 viewLine.setBackgroundColor(Color.parseColor("#f27166"));
                 question.setText("needs");
                 question.setBackgroundColor(Color.parseColor("#f27166"));
             }
 
-
+            // Object 2
             TextView name2 = (TextView) layout.findViewById(R.id.feedName2);
             TextView question2 = (TextView) layout.findViewById(R.id.selectionText2);
             TextView item2 = (TextView) layout.findViewById(R.id.feedProfile2);
@@ -490,30 +506,61 @@ public class FeedActivity extends Fragment {
 
             name2.setText(dataFeeds2.getFname());
             item2.setText(dataFeeds2.getItem());
-            item_photo2.setImageBitmap(getBitmapFromURL(dataFeeds2.getItem_photo()));
-            photo2.setImageBitmap(getBitmapFromURL(dataFeeds2.getPhoto()));
 
+            item_photo2.setTag(dataFeeds2.getItem_photo());
+            new DownloadImagesTask().execute(item_photo2);// Download item_photo from AsynTask
+
+            photo2.setTag(dataFeeds2.getPhoto());
+            new DownloadImagesTask().execute(photo2);// Download photo from AsynTask
+
+            // check if it is has change the color to green
             if (Integer.parseInt(dataFeeds2.getIsHas()) == 0) {
                 viewLine2.setBackgroundColor(Color.parseColor("#add58a"));
                 question2.setText("has");
                 question2.setBackgroundColor(Color.parseColor("#add58a"));
             }
 
+
             btnOkPopup=(Button) layout.findViewById(R.id.btn_Ok_popup);
             btnClosePopup = (Button) layout.findViewById(R.id.btn_close_popup);
+            // set button close listener
             btnClosePopup.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     pwindo.dismiss();
+
                 }
             });
-//            btnOkPopup.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//
-//                    dataFeeds1.getTicket_id()
-//                }
-//            });
+            // set button connect listener
+            btnOkPopup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                      // get the data from objects
+                    String ticket_id_1= dataFeeds1.getTicket_id();
+                    String ticket_id_2=dataFeeds2.getTicket_id();
+                    String phone1=dataFeeds1.getPhone();
+                    String phone2=dataFeeds2.getPhone();
+                    String connector_vz_id=dataFeeds1.getVz_id();
+
+                    // send data to Connect_2_Tickets
+                    Connect_2_Tickets connect = new Connect_2_Tickets();
+
+                    Bundle args = new Bundle();
+                    args.putString("ticket_id_1", ticket_id_1);
+                    args.putString("ticket_id_2", ticket_id_2);
+                    args.putString("phone1", phone1);
+                    args.putString("phone2", phone2);
+                    args.putString("connector_vz_id", connector_vz_id);
+
+                    connect.setArguments(args);
+
+                    //Inflate the fragment
+                    getFragmentManager().beginTransaction().add(R.id.feed_detail, connect).addToBackStack(connect.toString())
+                            .commit();
+                    pwindo.dismiss();
+
+                }
+            });
 
 
         } catch (Exception e) {

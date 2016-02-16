@@ -23,6 +23,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,29 +39,31 @@ import java.util.List;
  */
 public class Connect_2_Tickets extends Fragment {
 
-    String URL_CONNECT ="https://vzcards-api.herokuapp.com/connect/?access_token=";
+    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
+    String token_sharedPreference;
     private ProgressDialog progress;
-    String connecter_vz_id,phone_1,ticket_id_1,phone_2,ticket_id_2,my_ticket,reffered_ticket,reffered_phone;
+    String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View connectFeeds = inflater.inflate(R.layout.connect_tickets, container, false);
 
-
-         connecter_vz_id = getArguments().getString("connector_vz_id");
-         phone_1 = getArguments().getString("phone1");
-         ticket_id_1 = getArguments().getString("ticketId1");
-         phone_2 = getArguments().getString("phone2");
-         ticket_id_2 = getArguments().getString("ticketId2");
-         my_ticket = "";
+        //Retrieve the value
+        connecter_vz_id = getArguments().getString("connector_vz_id");
+        phone_1 = getArguments().getString("phone1");
+        ticket_id_1 = getArguments().getString("ticket_id_1");
+        phone_2 = getArguments().getString("phone2");
+        ticket_id_2 = getArguments().getString("ticket_id_2");
+        my_ticket = "";
         reffered_ticket = "";
-         reffered_phone = "";
+        reffered_phone = "";
 
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        String token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         System.out.println(" getting token from sharedpreference " + token_sharedPreference);
         // call AsynTask to perform network operation on separate thread
-        new HttpPostClass(getActivity()).execute( URL_CONNECT+ token_sharedPreference);
+        new HttpPostClass(getActivity()).execute(URL_CONNECT + token_sharedPreference);
 
         return connectFeeds;
     }
@@ -77,6 +81,7 @@ public class Connect_2_Tickets extends Fragment {
             progress.setMessage("Loading");
             progress.show();
         }
+
         @Override
         protected String doInBackground(String... urls) {
             // params comes from the execute() call: params[0] is the url.
@@ -86,8 +91,9 @@ public class Connect_2_Tickets extends Fragment {
                 return "Unable to download the requested page.";
             }
         }
+
         private String downloadUrl(String urlString) throws IOException {
-            String response=null;
+            String response = null;
             try {
 //                final TextView outputView = (TextView) findViewById(R.id.content);
                 URL url = new URL(urlString);
@@ -95,7 +101,7 @@ public class Connect_2_Tickets extends Fragment {
 
 
                 HttpClient client = new DefaultHttpClient();
-                String postURL = URL_CONNECT;
+                String postURL = URL_CONNECT + token_sharedPreference;
                 HttpPost post = new HttpPost(postURL);
 
                 List<NameValuePair> params1 = new ArrayList<NameValuePair>();
@@ -115,7 +121,7 @@ public class Connect_2_Tickets extends Fragment {
                 HttpEntity resEntity = responsePOST.getEntity();
 
                 if (resEntity != null) {
-                    response= EntityUtils.toString(resEntity);
+                    response = EntityUtils.toString(resEntity);
                     Log.i("RESPONSE", response);
 
                 }
@@ -148,10 +154,24 @@ public class Connect_2_Tickets extends Fragment {
 
         protected void onPostExecute(String result) {
             progress.dismiss();
-            Toast.makeText(getActivity(),"Connected tickets",Toast.LENGTH_LONG).show();
-
-
+            Toast.makeText(getActivity(), "Connected tickets", Toast.LENGTH_LONG).show();
+//            if (result != null) {
+//                Log.e("valid =", "" + result.toString());
+//                try {
+//                    JSONObject res = new JSONObject(result);
+//                    String my_ticket = res.getString("my_ticket");
+//                    String reffered_ticket = res.getString("reffered_ticket");
+//                    String reffered_phone = res.getString("reffered_phone");
+//
+//                    Log.e(" my_ticket =", "" + my_ticket);
+//                    Log.e("reffered_ticket =", "" + reffered_ticket);
+//                    Log.e("reffered_phone =", "" + reffered_phone);
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
         }
-
     }
 }
