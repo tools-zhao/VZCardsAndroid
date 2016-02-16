@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-   android:background="@color/colorAccent"
+   android:background="#80FFFFFF"
     android:baselineAligned="false"
     android:descendantFocusability="blocksDescendants">
 
@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:id="@+id/linearLayout1"
+        android:background="@color/colorAccent"
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
         android:layout_marginLeft="2dp"
@@ -107,6 +108,7 @@
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:id="@+id/linearLayout2"
+        android:background="@color/colorAccent"
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
         android:layout_marginLeft="2dp"
@@ -198,28 +200,35 @@
         android:background="#f27166"></View>
 
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:orientation="horizontal"
+    android:layout_below="@+id/viewLine2"
+    android:gravity="center_horizontal"
+    android:id="@+id/linearLayout">
+
+    <Button
+        android:id="@+id/btn_Ok_popup"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="Refer"
+        android:layout_gravity="center"
+        android:background="@drawable/drawable_refer"
+        android:layout_alignTop="@+id/linearLayout"/>
 
     <Button
         android:id="@+id/btn_close_popup"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:layout_margin="8dp"
         android:text="Close"
+        android:layout_marginLeft="10dp"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/drawable_refer"
-        android:layout_below="@+id/viewLine2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-    <Button
-        android:id="@+id/btn_Ok_popup"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:text="Connect"
-        android:layout_margin="8dp"
-        android:background="@drawable/drawable_refer"
-        android:layout_toRightOf="@+id/btn_close_popup"
-        android:layout_below="@+id/viewLine2"/>
+        android:layout_toLeftOf="@+id/btn_Ok_popup"
+        android:layout_toStartOf="@+id/btn_Ok_popup" />
+</LinearLayout>
 
 
 </RelativeLayout>

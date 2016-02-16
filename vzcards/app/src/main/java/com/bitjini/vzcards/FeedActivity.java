@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.Layout;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
@@ -58,7 +59,7 @@ public class FeedActivity extends Fragment {
     ListView listView;
     public FeedsAdapter adapter;
     ViewHolder holder;
-
+FrameLayout layout_MainMenu;
 
     DataFeeds dataFeeds2 = new DataFeeds();
     DataFeeds dataFeeds1 = new DataFeeds();
@@ -66,7 +67,8 @@ public class FeedActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
-
+        layout_MainMenu = (FrameLayout) feed.findViewById(R.id.feed_detail);
+        layout_MainMenu.getForeground().setAlpha( 0);
 
         // To avoid NetworkOnMainThreadException
         if (android.os.Build.VERSION.SDK_INT > 9) {
@@ -445,7 +447,7 @@ public class FeedActivity extends Fragment {
 
             if (red == true && green == true) {
                 initiatePopupWindow();
-
+                 
                 red = false;
                 green = false;
             }
@@ -453,10 +455,15 @@ public class FeedActivity extends Fragment {
         }
 
     }
-private void initiatePopupWindow() {
+
+
+
+    private void initiatePopupWindow() {
         View v = null;
         Button btnClosePopup,btnOkPopup;
         final PopupWindow pwindo;
+        layout_MainMenu.getForeground().setAlpha( 150); // dim
+
 
         try {
 // We need to get the instance of the LayoutInflater
@@ -528,6 +535,7 @@ private void initiatePopupWindow() {
                 @Override
                 public void onClick(View view) {
                     pwindo.dismiss();
+                    layout_MainMenu.getForeground().setAlpha( 0); // restore
 
                 }
             });
@@ -558,6 +566,7 @@ private void initiatePopupWindow() {
                     getFragmentManager().beginTransaction().add(R.id.feed_detail, connect).addToBackStack(connect.toString())
                             .commit();
                     pwindo.dismiss();
+                    layout_MainMenu.getForeground().setAlpha( 0); // restore
 
                 }
             });
