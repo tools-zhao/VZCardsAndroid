@@ -184,7 +184,7 @@ FrameLayout layout_MainMenu;
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(getActivity(), "Received!", Toast.LENGTH_LONG).show();
-            Log.e("response...", "" + result);
+            Log.e("response of feeds...", "" + result);
             try {
 
                 JSONObject jsonObj = new JSONObject(result.toString());
@@ -447,7 +447,8 @@ FrameLayout layout_MainMenu;
 
             if (red == true && green == true) {
                 initiatePopupWindow();
-                 
+
+
                 red = false;
                 green = false;
             }

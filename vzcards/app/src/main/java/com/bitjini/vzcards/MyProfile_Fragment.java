@@ -1,6 +1,7 @@
 package com.bitjini.vzcards;
 
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +10,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -36,10 +40,30 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +71,9 @@ import java.util.List;
  * Created by VEENA on 12/7/2015.
  */
 public class MyProfile_Fragment extends Fragment implements View.OnClickListener {
+    String URL_MY_PROFILE = "http://vzcards-api.herokuapp.com/my_profile/?access_token=";
+//    public static final String mypreference = "mypref.txt";
 
-    public static final String mypreference = "mypref.txt";
     public static final String TASKS = "key";
     public static final String IMAGE = "image";
     private static final String SAVED_STATE_KEY = "saved_state_key";
@@ -59,19 +84,21 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     private Uri outputFileUri;
     ImageView currentImageView = null;
     View profile;
-    SharedPreferences data ;
+//    SharedPreferences data;
+    String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
 
     ArrayList<String> label;
     ArrayList<String> values;
     int clickCount = 0;
     Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
+    private ProgressDialog progress;
     ListView listView;
     EditTextAdapter editTextAdapter;
     ArrayList<ListItem> arrayList = new ArrayList<ListItem>();
     ArrayList<ListItem> adapterArrayList = new ArrayList<ListItem>();
-
+    VerifyScreen p = new VerifyScreen();
     public ArrayList<ListItem> groupItem = new ArrayList<ListItem>();
-    String json,json2;
+    String json, json2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,8 +108,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         editbtn = (Button) profile.findViewById(R.id.edit);
         listView = (ListView) profile.findViewById(R.id.profileList);
-      data = getActivity().getSharedPreferences(mypreference, Context.MODE_PRIVATE);
-        if(data.contains(TASKS)) {
+
+        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
+        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+        phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
+        vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
+        System.out.println(" getting token from sharedpreference " + token_sharedPreference);
+
+        if (p.sharedPreferences.contains(TASKS)) {
             LoadPreferences();
         }
         //Picking Profile picture
@@ -98,19 +131,33 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         referralbtn = (Button) profile.findViewById(R.id.referralbtn);
         vzfrndsbtn = (Button) profile.findViewById(R.id.vzfrnds);
 
+
+
         label = new ArrayList<String>();
-        label.add("Fname");
-        label.add("Lname");
+        label.add("Firstname");
+        label.add("Lastname");
+        label.add("Email");
+        label.add("Phone");
         label.add("Industry");
         label.add("Company");
-        label.add("Address");
+        label.add("Address_line_1");
+        label.add("Address_line_2");
+        label.add("City");
+        label.add("Pin_code");
+
+
 
         values = new ArrayList<String>();
-        values.add("veena");
-        values.add("M");
-        values.add("IT");
-        values.add("BITJIN");
-        values.add("GIT");
+        values.add("");
+        values.add("");
+        values.add("");
+        values.add(phone_sharedPreference);
+        values.add("");
+        values.add("");
+        values.add("");
+        values.add("");
+        values.add("");
+        values.add("");
 
         for (int i = 0; i < label.size(); i++) {
             ListItem item = new ListItem();
@@ -129,9 +176,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                     editTextAdapter.actv(true);
                     editTextAdapter.notifyDataSetChanged();
-//                    listView.setAdapter(editTextAdapter);
-//                    LoadPreferences();
-//                    Log.e("selected position of textview", "" + position);
+
                     Toast.makeText(getActivity(), "click 0", Toast.LENGTH_LONG).show();
                     clickCount = 1;
 
@@ -140,12 +185,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     editbtn.setText("Edit");
 
                     editTextAdapter.actv(false);
-                  json2= new Gson().toJson(groupItem);// updated array
+                    json2 = new Gson().toJson(groupItem);// updated array
 
                     SavePreferences(TASKS, json2);
-                    LoadPreferences();
+
                     editTextAdapter.notifyDataSetChanged();
-//                    listView.setAdapter(editTextAdapter);
+
                     Toast.makeText(getActivity(), "click 1", Toast.LENGTH_LONG).show();
                     clickCount = 0;
 
@@ -154,16 +199,15 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             }
         });
 
-        if(!groupItem.isEmpty())
-        json2= new Gson().toJson(groupItem);// updated array
+        if (!groupItem.isEmpty())
+            json2 = new Gson().toJson(groupItem);// updated array
         Log.e("updated array", "" + json2);
         json = new Gson().toJson(arrayList); //default array
 
 
-
         //converting arrayList to json to Save the values in sharedpreference by calling SavePrefernces
         // Check if the updated array is equal to default array if false load default array else load updated array
-        if (json.equals(json2) || json2==null) {
+        if (json.equals(json2) || json2 == null) {
 
             SavePreferences(TASKS, json);
         } else {
@@ -181,8 +225,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     protected void SavePreferences(String key, String value) {
 // TODO Auto-generated method stub
-       data = getActivity().getSharedPreferences(mypreference, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = data.edit();
+        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
+        SharedPreferences.Editor editor = p.sharedPreferences .edit();
         editor.putString(key, value);
 //        SavePreferences(IMAGE, currentImageView.toString());
 
@@ -196,9 +240,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     protected void LoadPreferences() {
 
-        SharedPreferences prefs1 = getActivity().getSharedPreferences(mypreference, Context.MODE_PRIVATE);
+        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         Gson gson = new Gson();
-        String json = prefs1.getString(TASKS, null);
+        String json = p.sharedPreferences.getString(TASKS, null);
         Type type = new TypeToken<ArrayList<ListItem>>() {
         }.getType();
         adapterArrayList = gson.fromJson(json, type);
@@ -366,6 +410,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         public String value;
         public String label;
 
+
         ListItem() {
         }
 
@@ -428,7 +473,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             View rowView = null;
-            convertView=null;
+            convertView = null;
             if (convertView == null) {
                 // Not recycled, inflate a new view
                 LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -455,8 +500,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    listItem.value= s.toString();
-                    System.out.println(listItem.value +""+groupItem.get(position));
+                    listItem.value = s.toString();
+                    System.out.println(listItem.value + "" + groupItem.get(position));
 
                 }
 
@@ -477,8 +522,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             return rowView;
         }
 
-    protected void actv(final boolean active) {
-        holder.editText.setEnabled(active);
+        protected void actv(final boolean active) {
+            holder.editText.setEnabled(active);
             if (active) {
                 holder.editText.requestFocus();
 
@@ -486,5 +531,6 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         }
     }
 }
+
 
 

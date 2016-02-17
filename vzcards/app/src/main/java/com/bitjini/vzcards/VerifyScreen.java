@@ -53,6 +53,8 @@ public class VerifyScreen extends Activity {
     public static final String VZCARD_PREFS = "MySharedPref";
     public SharedPreferences sharedPreferences;
     public String TOKEN_KEY="token";
+    public String VZ_ID_KEY="vz_id";
+    public String PHONE_KEY="phone";
 
 
     private ProgressDialog progress;
@@ -91,11 +93,19 @@ public class VerifyScreen extends Activity {
         // set the country code to textview
         textViewCountryCode.setText(countryCode);
 
+
+
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(editTextPhoneNo.getText().toString().length()==10){
+                    sendPostRequest(view);
 
-                sendPostRequest(view);
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),"Enter a valid 10 digit phone number",Toast.LENGTH_LONG).show();
+
+                }
 
             }
         });
@@ -141,6 +151,10 @@ public class VerifyScreen extends Activity {
 //                final TextView outputView = (TextView) findViewById(R.id.content);
                 URL url = new URL(urlString);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                HttpClient client = new DefaultHttpClient();
+                String postURL = URL_REGISTER;
+                HttpPost post = new HttpPost(postURL);
                 company_photo = "";
                 photo = "";
                 firstname = "";
@@ -153,11 +167,6 @@ public class VerifyScreen extends Activity {
                 address_line_2 = "";
                 city = "";
                 pin_code = "";
-
-                HttpClient client = new DefaultHttpClient();
-                String postURL = URL_REGISTER;
-                HttpPost post = new HttpPost(postURL);
-
                 List<NameValuePair> params1 = new ArrayList<NameValuePair>();
                 params1.add(new BasicNameValuePair("company_photo", company_photo));
                 params1.add(new BasicNameValuePair("photo", photo));
@@ -213,10 +222,12 @@ public class VerifyScreen extends Activity {
         protected void onPostExecute(String result) {
             progress.dismiss();
 
-            CustomDialogClass cdd = new CustomDialogClass(VerifyScreen.this);
-            cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            cdd.setCanceledOnTouchOutside(false);
-            cdd.show();
+
+                CustomDialogClass cdd = new CustomDialogClass(VerifyScreen.this);
+                cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                cdd.setCanceledOnTouchOutside(false);
+                cdd.show();
+
         }
 
     }
@@ -379,7 +390,8 @@ public class VerifyScreen extends Activity {
                     JSONObject res=new JSONObject(result.toString());
                     int valid = res.getInt("valid");
                     String token=res.getString("token_generated");
-
+                     String vz_id=res.getString("vz_id");
+                    String phone=res.getString("phone");
                     Log.e("token generated =", "" + token);
                     Log.e("valid =", "" + valid);
 
@@ -388,10 +400,16 @@ public class VerifyScreen extends Activity {
                     sharedPreferences = getSharedPreferences(VZCARD_PREFS, 0);
                     SharedPreferences.Editor sEdit = sharedPreferences.edit();
                     System.out.println(" saving token generated "+ sEdit.putString("token", token));
+                    System.out.println(" saving vz_id "+ sEdit.putString("vz_id", vz_id));
+                    System.out.println(" saving phone "+ sEdit.putString("phone", phone));
                     sEdit.commit();
 
                     String token_sharedPreference=sharedPreferences.getString("token",token);
+                    String vz_id_sharedPreference=sharedPreferences.getString("vz_id",vz_id);
+                    String phone_sharedPreference=sharedPreferences.getString("phone",phone);
                     System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
+                    System.out.println(" getting vz_id from sharedpreference "+ vz_id_sharedPreference);
+                    System.out.println(" getting phone from sharedpreference "+ phone_sharedPreference);
 
                     if(valid==1)
                     {

@@ -3,6 +3,8 @@
     android:id="@+id/vzfrnds_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+    android:descendantFocusability="blocksDescendants"
     android:background="?android:attr/colorBackground">
 <RelativeLayout
     android:layout_width="match_parent"

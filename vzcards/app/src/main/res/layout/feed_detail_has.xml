@@ -3,6 +3,7 @@
     android:id="@+id/feed_detail_has_Frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
     android:background="?android:attr/colorBackground">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_width="match_parent"
@@ -74,7 +75,7 @@
         android:layout_marginTop="10dp"
         android:id="@+id/l4"
         android:layout_below="@+id/l3">
-        <EditText
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="Enter your Description"
@@ -90,7 +91,7 @@
         android:layout_below="@+id/l4"
         android:layout_marginRight="25dp"
         android:layout_marginTop="5dp"
-        android:textColor="#ffff"
+        android:textColor="#add58a"
         android:id="@+id/refer_vzfrnd"/>
     <Button
         android:layout_width="match_parent"
@@ -101,7 +102,7 @@
         android:layout_marginRight="25dp"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/refer_vzfrnd"
-        android:textColor="#ffff"
+        android:textColor="#add58a"
         android:id="@+id/refer_contact"/>
 
 

@@ -3,13 +3,14 @@ package com.bitjini.vzcards;
 import java.util.ArrayList;
 
 public class DataFeeds extends ArrayList<DataFeeds> {
-    String fname,item,question,item_photo,photo,description;
-    String ticket_id,vz_id;
-    String phone;
+
+    // Required fields for Feeds
+    String item,question,item_photo,description;
+    String ticket_id;
     String isHas,isNeeds;
 
-    public DataFeeds() {
-    }
+    //Required fields for profile and Feeds
+    String phone,fname,vz_id,photo;
 
     public String getPhone() {
         return phone;
