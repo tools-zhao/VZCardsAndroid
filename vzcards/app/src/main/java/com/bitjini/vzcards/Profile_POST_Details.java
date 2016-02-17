@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.HttpEntity;
@@ -67,23 +68,28 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by VEENA on 12/7/2015.
- */
+* Created by VEENA on 12/7/2015.
+*/
 public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
-        private final Context context;
+    private Context context;
+    MyProfile_Fragment pr=new MyProfile_Fragment();
+    VerifyScreen p = new VerifyScreen();
 
-        public Profile_POST_Details(Context c) {
+    public Profile_POST_Details(Context c) {
             this.context = c;
         }
 
         protected void onPreExecute() {
-            progress = new ProgressDialog(this.context);
-            progress.setMessage("Loading");
-            progress.show();
+
+            pr.progress = new ProgressDialog(this.context);
+            pr.progress.setMessage("Loading");
+            pr.progress.show();
         }
 
         @Override
@@ -101,55 +107,99 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             try {
 //
                 HttpClient client = new DefaultHttpClient();
-                postURL = URL_MY_PROFILE+token_sharedPreference;
+                postURL = pr.URL_MY_PROFILE + pr.token_sharedPreference;
                 HttpPost post = new HttpPost(postURL);
 
-                List<NameValuePair> params1 = new ArrayList<NameValuePair>();
+                String photo="",company_photo="",vz_id="";
+                String firstname = "";
+                String lastname = "";
+                String industry = "";
+                String company = "";
+                String address_line_1 = "";
+                String address_line_2 = "";
+                String city = "";
+                String pin_code = "";
+                p.sharedPreferences = context.getSharedPreferences(p.VZCARD_PREFS, 0);
+                pr.phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
+                pr.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
+
+
+                String resultjson = p.sharedPreferences.getString(pr.TASKS, null);
+               JSONObject json=new JSONObject(resultjson);
+                Iterator<String> iter = json.keys();
+                while (iter.hasNext()) {
+                    String key = iter.next();
+                    try {
+                        Object value = json.get(key);
+                        Log.e("value of json",""+value);
+                        Log.e("key of json",""+key);
+                    } catch (JSONException e) {
+                        // Something went wrong!
+                    }
+                }
+
+//                JSONArray jsonRoot = new JSONArray(resultjson);
+//                for (int i=0;i<jsonRoot.length();i++) {
+//                    JSONObject c = jsonRoot.getJSONObject(i);
+////                    firstname = c.getString("label");
+////                    lastname = c.getString("value");
+//////                   industry = c.getString("industry");
+//////                    company = c.getString("company");
+//////                   address_line_1 = c.getString("address_line_1");
+//////                     address_line_2 = c.getString("address_line_2");
+//////                     city = c.getString("city");
+//////                     pin_code = c.getString("pin_code");
+//                }
+                 String phone = pr.phone_sharedPreference;
+//                 photo=pr.imageProfile.toString();
+//                 company_photo=pr.imageCompany.toString();
+                 vz_id=pr.vz_id_sharedPreference;
+
+                    List<NameValuePair> params1 = new ArrayList<NameValuePair>();
 
                     params1.add(new BasicNameValuePair("photo", photo));
                     params1.add(new BasicNameValuePair("company_photo", company_photo));
-                    params1.add(new BasicNameValuePair("vz_id", vz_id_sharedPreference));
+                    params1.add(new BasicNameValuePair("vz_id", vz_id));
                     params1.add(new BasicNameValuePair("firstname", firstname));
                     params1.add(new BasicNameValuePair("lastname", lastname));
                     params1.add(new BasicNameValuePair("phone", phone));
-                params1.add(new BasicNameValuePair("industry", industry));
-                params1.add(new BasicNameValuePair("company", company));
-                params1.add(new BasicNameValuePair("address_line_1", address_line_1));
-                params1.add(new BasicNameValuePair("address_line_2", address_line_2));
-                params1.add(new BasicNameValuePair("city", city));
-                params1.add(new BasicNameValuePair("pin_code", pin_code));
+                    params1.add(new BasicNameValuePair("industry", industry));
+                    params1.add(new BasicNameValuePair("company", company));
+                    params1.add(new BasicNameValuePair("address_line_1", address_line_1));
+                    params1.add(new BasicNameValuePair("address_line_2", address_line_2));
+                    params1.add(new BasicNameValuePair("city", city));
+                    params1.add(new BasicNameValuePair("pin_code", pin_code));
 
 
+                    UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
+                    post.setEntity(ent);
+                    HttpResponse responsePOST = client.execute(post);
+                    HttpEntity resEntity = responsePOST.getEntity();
 
+                    if (resEntity != null) {
+                        response = EntityUtils.toString(resEntity);
+                        Log.i("RESPONSE", response);
 
-                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
-                post.setEntity(ent);
-                HttpResponse responsePOST = client.execute(post);
-                HttpEntity resEntity = responsePOST.getEntity();
-
-                if (resEntity != null) {
-                    response = EntityUtils.toString(resEntity);
-                    Log.i("RESPONSE", response);
-
-                }
-                StringBuilder sb = new StringBuilder();
-                try {
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
-                    String line = null;
-
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    StringBuilder sb = new StringBuilder();
+                    try {
+                        BufferedReader reader =
+                                new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
+                        String line = null;
+
+                        while ((line = reader.readLine()) != null) {
+                            sb.append(line);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
 
-                System.out.println("finalResult " + sb.toString());
-                return sb.toString();
+                    System.out.println("finalResult " + sb.toString());
+                    return sb.toString();
+
 
 
             } catch (Exception e) {
@@ -159,162 +209,15 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             return null;
         }
 
-        protected void onPostExecute(String result) {
-            progress.dismiss();
+
+    protected void onPostExecute(String result) {
+            pr.progress.dismiss();
 
 
         }
 
     }
-    private void openImageIntent() {
 
-        // Determine Uri of camera image to save.
-        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
-        root.mkdir();
-        final String fname = "img_" + System.currentTimeMillis() + ".jpg";
-        final File sdImageMainDirectory = new File(root, fname);
-        outputFileUri = Uri.fromFile(sdImageMainDirectory);
-
-        // Camera.
-        final List<Intent> cameraIntents = new ArrayList<Intent>();
-        final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        final PackageManager packageManager = getActivity().getPackageManager();
-        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-        for (ResolveInfo res : listCam) {
-            final String packageName = res.activityInfo.packageName;
-            final Intent intent = new Intent(captureIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(packageName);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-            cameraIntents.add(intent);
-        }
-
-        //FileSystem
-        final Intent galleryIntent = new Intent();
-        galleryIntent.setType("image/");
-        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-
-        // Chooser of filesystem options.
-        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
-        // Add the camera options.
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
-        startActivityForResult(chooserIntent, SELECT_PHOTO);
-
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == getActivity().RESULT_OK) {
-            if (requestCode == SELECT_PHOTO) {
-                final boolean isCamera;
-                if (data == null) {
-                    isCamera = true;
-                } else {
-                    final String action = data.getAction();
-                    if (action == null) {
-                        isCamera = false;
-                    } else {
-                        isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
-                    }
-                }
-
-                Uri selectedImageUri;
-                if (isCamera) {
-                    selectedImageUri = outputFileUri;
-                    //Bitmap factory
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    // downsizing image as it throws OutOfMemory Exception for larger
-                    // images
-                    options.inSampleSize = 8;
-                    final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
-
-//            v.imageView.setImageDrawable(roundedImage);
-                    currentImageView.setImageBitmap(bitmap);
-//                    imageProfile.setImageBitmap(bitmap);
-//                    imageCompany.setImageBitmap(bitmap);
-                } else {
-                    selectedImageUri = data == null ? null : data.getData();
-                    Log.d("ImageURI", selectedImageUri.getLastPathSegment());
-                    // /Bitmap factory
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    // downsizing image as it throws OutOfMemory Exception for larger
-                    // images
-                    options.inSampleSize = 8;
-                    try {//Using Input Stream to get uri
-                        InputStream input = getActivity().getContentResolver().openInputStream(selectedImageUri);
-                        final Bitmap bitmap = BitmapFactory.decodeStream(input);
-//                        imageProfile.setImageBitmap(bitmap);
-
-                        currentImageView.setImageBitmap(bitmap);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        } else if (resultCode == getActivity().RESULT_CANCELED) {
-            // user cancelled Image capture
-            Toast.makeText(getActivity(),
-                    "User cancelled image capture", Toast.LENGTH_SHORT)
-                    .show();
-        } else {
-            // failed to capture image
-            Toast.makeText(getActivity(),
-                    "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
-                    .show();
-        }
-    }
-
-    public void onClick(View v) {
-        switch (v.getId()) {
-
-            //setting profile picture
-            case R.id.profilePic:
-                currentImageView = (ImageView) v;
-                openImageIntent();
-                break;
-
-            //setting company picture
-            case R.id.btn_pick:
-                currentImageView = (ImageView) v;
-                openImageIntent();
-                break;
-
-            //redirecting to VZFriends_Fragment
-            case R.id.vzfrnds:
-                Fragment newfragment = new VZFriends_Fragment();
-                // get the id of fragment
-                FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
-
-                // Insert the fragment by replacing any existing fragment
-                FragmentManager fragmentManager1 = getFragmentManager();
-                fragmentManager1.beginTransaction()
-                        .replace(contentView2.getId(), newfragment).addToBackStack(contentView2.toString())
-                        .commit();
-                break;
-
-            //redirecting to Referral_Fragmen
-            case R.id.referralbtn:
-                Fragment fragment = new Referral_Fragment();
-                // get the id of fragment
-                FrameLayout contentView3 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
-
-                // Insert the fragment by replacing any existing fragment
-                FragmentManager fragmentManager2 = getFragmentManager();
-                fragmentManager2.beginTransaction()
-                        .replace(contentView3.getId(), fragment).addToBackStack(contentView3.toString())
-                        .commit();
-
-
-                break;
-            default:
-                break;
-
-        }
-    }
-
-}
 
 
     /* *

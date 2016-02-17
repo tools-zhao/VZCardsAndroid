@@ -71,7 +71,7 @@ import java.util.List;
  * Created by VEENA on 12/7/2015.
  */
 public class MyProfile_Fragment extends Fragment implements View.OnClickListener {
-    String URL_MY_PROFILE = "http://vzcards-api.herokuapp.com/my_profile/?access_token=";
+    public static final String URL_MY_PROFILE = "http://vzcards-api.herokuapp.com/my_profile/update?access_token=";
 //    public static final String mypreference = "mypref.txt";
 
     public static final String TASKS = "key";
@@ -80,9 +80,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     Context _c = getActivity();
     private final int SELECT_PHOTO = 1;
-    private ImageView imageProfile, imageCompany;
+    public ImageView imageProfile, imageCompany;
     private Uri outputFileUri;
-    ImageView currentImageView = null;
+    public ImageView currentImageView = null;
     View profile;
 //    SharedPreferences data;
     String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
@@ -91,7 +91,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     ArrayList<String> values;
     int clickCount = 0;
     Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
-    private ProgressDialog progress;
+    public ProgressDialog progress;
     ListView listView;
     EditTextAdapter editTextAdapter;
     ArrayList<ListItem> arrayList = new ArrayList<ListItem>();
@@ -188,6 +188,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     json2 = new Gson().toJson(groupItem);// updated array
 
                     SavePreferences(TASKS, json2);
+                    new Profile_POST_Details(getActivity()).execute(URL_MY_PROFILE+token_sharedPreference);
 
                     editTextAdapter.notifyDataSetChanged();
 
@@ -231,7 +232,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //        SavePreferences(IMAGE, currentImageView.toString());
 
         editor.commit();
-        System.out.println(value);
+//        System.out.println(value);
 
     }
 
@@ -243,6 +244,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         Gson gson = new Gson();
         String json = p.sharedPreferences.getString(TASKS, null);
+        Log.e("Load json from shared prefs ",""+json);
+
         Type type = new TypeToken<ArrayList<ListItem>>() {
         }.getType();
         adapterArrayList = gson.fromJson(json, type);
