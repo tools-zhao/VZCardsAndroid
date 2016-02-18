@@ -71,7 +71,8 @@ import java.util.List;
  * Created by VEENA on 12/7/2015.
  */
 public class MyProfile_Fragment extends Fragment implements View.OnClickListener {
-    public static final String URL_MY_PROFILE = "http://vzcards-api.herokuapp.com/my_profile/update?access_token=";
+    public static final String URL_PROFILE_UPDATE = "http://vzcards-api.herokuapp.com/my_profile/update/?access_token=";
+    public static final String URL_GET_PROFILE = "http://vzcards-api.herokuapp.com/my_profile/?access_token=";
 //    public static final String mypreference = "mypref.txt";
 
     public static final String TASKS = "key";
@@ -85,12 +86,13 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public ImageView currentImageView = null;
     View profile;
 //    SharedPreferences data;
-    String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
+
 
     ArrayList<String> label;
-    ArrayList<String> values;
+
     int clickCount = 0;
     Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
+    TextView textViewName;
     public ProgressDialog progress;
     ListView listView;
     EditTextAdapter editTextAdapter;
@@ -110,14 +112,16 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         listView = (ListView) profile.findViewById(R.id.profileList);
 
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
-        phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
-        vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
-        System.out.println(" getting token from sharedpreference " + token_sharedPreference);
+        p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+        p.phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
+        p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
+        System.out.println(" getting token from sharedpreference " + p.token_sharedPreference);
 
         if (p.sharedPreferences.contains(TASKS)) {
+
             LoadPreferences();
         }
+        textViewName=(TextView) profile.findViewById(R.id.name);
         //Picking Profile picture
         imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
         imageCompany = (ImageView) profile.findViewById(R.id.btn_pick);
@@ -131,7 +135,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         referralbtn = (Button) profile.findViewById(R.id.referralbtn);
         vzfrndsbtn = (Button) profile.findViewById(R.id.vzfrnds);
 
-
+        new Get_Profile_AsyncTask().execute(URL_GET_PROFILE+p.token_sharedPreference);
 
         label = new ArrayList<String>();
         label.add("Firstname");
@@ -145,24 +149,29 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         label.add("City");
         label.add("Pin_code");
 
+             Get_Profile_AsyncTask get=new Get_Profile_AsyncTask();
 
 
-        values = new ArrayList<String>();
-        values.add("");
-        values.add("");
-        values.add("");
-        values.add(phone_sharedPreference);
-        values.add("");
-        values.add("");
-        values.add("");
-        values.add("");
-        values.add("");
-        values.add("");
+
+//        values = new ArrayList<String>();
+//        values.add("");
+//        values.add("");
+//        values.add("");
+//        values.add(p.phone_sharedPreference);
+//        values.add("");
+//        values.add("");
+//        values.add("");
+//        values.add("");
+//        values.add("");
+//        values.add("");
+//        values.add("");
+//        values.add("");
+//        values.add(textViewName.getText().toString());
 
         for (int i = 0; i < label.size(); i++) {
             ListItem item = new ListItem();
             item.setLabel(label.get(i));
-            item.setValue(values.get(i));
+            item.setValue(get.values.get(i));
             arrayList.add(item);
         }
 
@@ -188,7 +197,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     json2 = new Gson().toJson(groupItem);// updated array
 
                     SavePreferences(TASKS, json2);
-                    new Profile_POST_Details(getActivity()).execute(URL_MY_PROFILE+token_sharedPreference);
+                    new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE+p.token_sharedPreference);
 
                     editTextAdapter.notifyDataSetChanged();
 

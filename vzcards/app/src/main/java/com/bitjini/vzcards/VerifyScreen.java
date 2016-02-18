@@ -49,6 +49,7 @@ public class VerifyScreen extends Activity {
     String URL_REGISTER = "http://vzcards-api.herokuapp.com/user_register/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
     String URL_VERIFY = "http://vzcards-api.herokuapp.com/verify/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
     String URL_RESEND="http://vzcards-api.herokuapp.com/send_again/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
 
     public static final String VZCARD_PREFS = "MySharedPref";
     public SharedPreferences sharedPreferences;
@@ -404,9 +405,9 @@ public class VerifyScreen extends Activity {
                     System.out.println(" saving phone "+ sEdit.putString("phone", phone));
                     sEdit.commit();
 
-                    String token_sharedPreference=sharedPreferences.getString("token",token);
-                    String vz_id_sharedPreference=sharedPreferences.getString("vz_id",vz_id);
-                    String phone_sharedPreference=sharedPreferences.getString("phone",phone);
+                     token_sharedPreference=sharedPreferences.getString("token",token);
+                     vz_id_sharedPreference=sharedPreferences.getString("vz_id",vz_id);
+                    phone_sharedPreference=sharedPreferences.getString("phone",phone);
                     System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
                     System.out.println(" getting vz_id from sharedpreference "+ vz_id_sharedPreference);
                     System.out.println(" getting phone from sharedpreference "+ phone_sharedPreference);

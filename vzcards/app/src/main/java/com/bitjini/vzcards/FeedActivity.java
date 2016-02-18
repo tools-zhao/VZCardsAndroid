@@ -187,7 +187,7 @@ FrameLayout layout_MainMenu;
             Log.e("response of feeds...", "" + result);
             try {
 
-                JSONObject jsonObj = new JSONObject(result.toString());
+                JSONObject jsonObj = new JSONObject(result);
 
                 // Getting JSON Array node
                 JSONArray arr = jsonObj.getJSONArray("response");
