@@ -1,7 +1,7 @@
 package com.bitjini.vzcards;
 
 
-import android.app.ProgressDialog;
+        import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,24 +10,21 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+        import android.util.Base64;
+        import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,22 +37,12 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
+        import java.io.ByteArrayOutputStream;
+        import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,6 +53,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+        import java.util.concurrent.ExecutionException;
 
 /**
  * Created by VEENA on 12/7/2015.
@@ -73,11 +61,13 @@ import java.util.List;
 public class MyProfile_Fragment extends Fragment implements View.OnClickListener {
     public static final String URL_PROFILE_UPDATE = "http://vzcards-api.herokuapp.com/my_profile/update/?access_token=";
     public static final String URL_GET_PROFILE = "http://vzcards-api.herokuapp.com/my_profile/?access_token=";
-//    public static final String mypreference = "mypref.txt";
-
+    public static final String URL_UPLOAD_IMAGE = "http://vzcards-api.herokuapp.com/upload_image/?access_token=";
+    public static final String MY_PROFILE_PREFERENCES = "mypref.txt";
+    public static final String VALUES = "values";
     public static final String TASKS = "key";
-    public static final String IMAGE = "image";
+    public static final String UPLOAD_IMAGE = "image";
     private static final String SAVED_STATE_KEY = "saved_state_key";
+    SharedPreferences values_sharedPreferences;
 
     Context _c = getActivity();
     private final int SELECT_PHOTO = 1;
@@ -85,11 +75,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     private Uri outputFileUri;
     public ImageView currentImageView = null;
     View profile;
-//    SharedPreferences data;
-
-
+    SharedPreferences data;
+    public String datavalues;
+    public JSONObject jsonObj;
     ArrayList<String> label;
-
+    ArrayList<String> values;
     int clickCount = 0;
     Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
     TextView textViewName;
@@ -101,7 +91,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     VerifyScreen p = new VerifyScreen();
     public ArrayList<ListItem> groupItem = new ArrayList<ListItem>();
     String json, json2;
-
+    public String firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "", city, pin_code = "";
+    public Bitmap bitmap=null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -117,11 +108,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
         System.out.println(" getting token from sharedpreference " + p.token_sharedPreference);
 
-        if (p.sharedPreferences.contains(TASKS)) {
 
-            LoadPreferences();
-        }
-        textViewName=(TextView) profile.findViewById(R.id.name);
+        textViewName = (TextView) profile.findViewById(R.id.name);
         //Picking Profile picture
         imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
         imageCompany = (ImageView) profile.findViewById(R.id.btn_pick);
@@ -135,8 +123,15 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         referralbtn = (Button) profile.findViewById(R.id.referralbtn);
         vzfrndsbtn = (Button) profile.findViewById(R.id.vzfrnds);
 
-        new Get_Profile_AsyncTask().execute(URL_GET_PROFILE+p.token_sharedPreference);
+        new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference);
 
+
+        data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
+        String details = data.getString(TASKS, null);
+        if (details != null) {
+
+            LoadPreferences();
+        }
         label = new ArrayList<String>();
         label.add("Firstname");
         label.add("Lastname");
@@ -148,30 +143,48 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         label.add("Address_line_2");
         label.add("City");
         label.add("Pin_code");
+        // Makinh http get request to load profile details
+        try {
 
-             Get_Profile_AsyncTask get=new Get_Profile_AsyncTask();
+            String receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference).get();
+
+            JSONObject jsonObj = new JSONObject(receivedData);
+
+            firstname = jsonObj.getString("firstname");
+            lastname = jsonObj.getString("lastname");
+            email = jsonObj.getString("email");
+            industry = jsonObj.getString("industry");
+            company = jsonObj.getString("company");
+            address_line_1 = jsonObj.getString("address_line_1");
+            address_line_2 = jsonObj.getString("address_line_2");
+            city = jsonObj.getString("city");
+            pin_code = jsonObj.getString("pin_code");
 
 
-
-//        values = new ArrayList<String>();
-//        values.add("");
-//        values.add("");
-//        values.add("");
-//        values.add(p.phone_sharedPreference);
-//        values.add("");
-//        values.add("");
-//        values.add("");
-//        values.add("");
-//        values.add("");
-//        values.add("");
-//        values.add("");
-//        values.add("");
-//        values.add(textViewName.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        textViewName.setText(firstname+ " "+lastname);
+        values = new ArrayList<String>();
+        values.add(firstname);
+        values.add(lastname);
+        values.add(email);
+        values.add(p.phone_sharedPreference);
+        values.add(industry);
+        values.add(company);
+        values.add(address_line_1);
+        values.add(address_line_2);
+        values.add(city);
+        values.add(pin_code);
 
         for (int i = 0; i < label.size(); i++) {
             ListItem item = new ListItem();
             item.setLabel(label.get(i));
-            item.setValue(get.values.get(i));
+            item.setValue(values.get(i));
             arrayList.add(item);
         }
 
@@ -197,7 +210,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     json2 = new Gson().toJson(groupItem);// updated array
 
                     SavePreferences(TASKS, json2);
-                    new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE+p.token_sharedPreference);
+                    new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE + p.token_sharedPreference);
 
                     editTextAdapter.notifyDataSetChanged();
 
@@ -235,8 +248,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     protected void SavePreferences(String key, String value) {
 // TODO Auto-generated method stub
-        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        SharedPreferences.Editor editor = p.sharedPreferences .edit();
+        data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
+        SharedPreferences.Editor editor = data.edit();
         editor.putString(key, value);
 //        SavePreferences(IMAGE, currentImageView.toString());
 
@@ -250,10 +263,10 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     protected void LoadPreferences() {
 
-        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
+        data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
         Gson gson = new Gson();
-        String json = p.sharedPreferences.getString(TASKS, null);
-        Log.e("Load json from shared prefs ",""+json);
+        String json = data.getString(TASKS, null);
+        Log.e("Load json from shared prefs ", "" + json);
 
         Type type = new TypeToken<ArrayList<ListItem>>() {
         }.getType();
@@ -303,6 +316,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     }
 
+    public String getStringImage(Bitmap bmp){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -329,10 +350,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     // downsizing image as it throws OutOfMemory Exception for larger
                     // images
                     options.inSampleSize = 8;
-                    final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
+                    Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
 
 //            v.imageView.setImageDrawable(roundedImage);
                     currentImageView.setImageBitmap(bitmap);
+                    new UploadImageTask().execute();
 //                    imageProfile.setImageBitmap(bitmap);
 //                    imageCompany.setImageBitmap(bitmap);
                 } else {
@@ -349,6 +371,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //                        imageProfile.setImageBitmap(bitmap);
 
                         currentImageView.setImageBitmap(bitmap);
+                        new UploadImageTask().execute();
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -414,6 +437,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         }
     }
+
+
+
 
     /**
      * The object we have a list of, probably more complex in your app
@@ -542,7 +568,5 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             }
         }
     }
+
 }
-
-
-

@@ -86,8 +86,8 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             String pin_code = "";
             String vz_id = p.vz_id_sharedPreference;
 
-
-            String json = p.sharedPreferences.getString(pr.TASKS, null);
+            pr.data = context.getSharedPreferences(pr.MY_PROFILE_PREFERENCES, 0);
+            String json = pr.data.getString(pr.TASKS, null);
             JSONArray jsonArray = new JSONArray(json);
             firstname = jsonArray.getJSONObject(0).getString("value");
             lastname = jsonArray.getJSONObject(1).getString("value");

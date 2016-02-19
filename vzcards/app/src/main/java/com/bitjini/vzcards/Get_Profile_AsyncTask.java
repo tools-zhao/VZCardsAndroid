@@ -1,9 +1,12 @@
 package com.bitjini.vzcards;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,11 +25,17 @@ import java.util.ArrayList;
  * Created by bitjini on 18/2/16.
  */
 public class Get_Profile_AsyncTask extends AsyncTask<String, Void, String> {
-
-    private Context context;
+    public static final String VALUES = "values";
+    private Context context=null;
+    SharedPreferences values_sharedPreferences;
     MyProfile_Fragment pr = new MyProfile_Fragment();
     VerifyScreen p = new VerifyScreen();
-    public ArrayList<String> values;
+    public ArrayList<String> values1;
+    public ArrayList<String> arrValues=new ArrayList<String>();
+    public  JSONObject jsonObj;
+    public String  jsonValues;
+    public String firstname,lastname,email ,industry ,company ,address_line_1 ,address_line_2,city ,pin_code;
+
 
     @Override
         protected String doInBackground(String... urls) {
@@ -43,35 +52,20 @@ public class Get_Profile_AsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected void onPostExecute(String result) {
 //            Toast.makeText(this, "Received!", Toast.LENGTH_LONG).show();
-            Log.e("response of profile details...", "" + result);
+            Log.e(" GET response of profile details...", "" + result);
             try {
+                     jsonObj = new JSONObject(result);
 
-                JSONObject jsonObj = new JSONObject(result);
 
-
-                    String firstname = jsonObj.getString("firstname");
-                String lastname = jsonObj.getString("lastname");
-                    String email = jsonObj.getString("email");
-                String industry = jsonObj.getString("industry");
-                String company = jsonObj.getString("company");
-                String address_line_1 = jsonObj.getString("address_line_1");
-                String address_line_2 = jsonObj.getString("address_line_2");
-                String city = jsonObj.getString("city");
-                String pin_code = jsonObj.getString("pin_code");
-
-                Log.e("firstname  =", "" + firstname);
-                values = new ArrayList<String>();
-                values.add(firstname);
-                values.add(lastname);
-                values.add(email);
-                values.add(p.phone_sharedPreference);
-                values.add(industry);
-                values.add(company);
-                values.add(address_line_1);
-                values.add(address_line_2);
-               values.add(city);
-                values.add(pin_code);
-
+                     firstname = jsonObj.getString("firstname");
+                 lastname = jsonObj.getString("lastname");
+                 email = jsonObj.getString("email");
+                industry = jsonObj.getString("industry");
+                 company = jsonObj.getString("company");
+                 address_line_1 = jsonObj.getString("address_line_1");
+                address_line_2 = jsonObj.getString("address_line_2");
+                 city = jsonObj.getString("city");
+                 pin_code = jsonObj.getString("pin_code");
 
 
             } catch (JSONException e) {
@@ -120,4 +114,5 @@ public class Get_Profile_AsyncTask extends AsyncTask<String, Void, String> {
             }
             return sb.toString();
         }
+
     }
