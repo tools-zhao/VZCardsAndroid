@@ -26,15 +26,14 @@ import java.util.ArrayList;
  */
 public class Get_Profile_AsyncTask extends AsyncTask<String, Void, String> {
     public static final String VALUES = "values";
-    private Context context=null;
-    SharedPreferences values_sharedPreferences;
+
     MyProfile_Fragment pr = new MyProfile_Fragment();
     VerifyScreen p = new VerifyScreen();
     public ArrayList<String> values1;
     public ArrayList<String> arrValues=new ArrayList<String>();
     public  JSONObject jsonObj;
     public String  jsonValues;
-    public String firstname,lastname,email ,industry ,company ,address_line_1 ,address_line_2,city ,pin_code;
+    public String firstname,lastname,email ,industry ,company ,address_line_1 ,address_line_2,city ,pin_code,photo;
 
 
     @Override
@@ -52,7 +51,7 @@ public class Get_Profile_AsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected void onPostExecute(String result) {
 //            Toast.makeText(this, "Received!", Toast.LENGTH_LONG).show();
-            Log.e(" GET response of profile details...", "" + result);
+            Log.e(" response of profile...","" + result);
             try {
                      jsonObj = new JSONObject(result);
 
@@ -66,6 +65,7 @@ public class Get_Profile_AsyncTask extends AsyncTask<String, Void, String> {
                 address_line_2 = jsonObj.getString("address_line_2");
                  city = jsonObj.getString("city");
                  pin_code = jsonObj.getString("pin_code");
+                photo = jsonObj.getString("photo");
 
 
             } catch (JSONException e) {

@@ -49,7 +49,7 @@ public class VerifyScreen extends Activity {
     String URL_REGISTER = "http://vzcards-api.herokuapp.com/user_register/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
     String URL_VERIFY = "http://vzcards-api.herokuapp.com/verify/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
     String URL_RESEND="http://vzcards-api.herokuapp.com/send_again/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-    String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
+    public static String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
 
     public static final String VZCARD_PREFS = "MySharedPref";
     public SharedPreferences sharedPreferences;
@@ -194,7 +194,7 @@ public class VerifyScreen extends Activity {
 
                 }
                 StringBuilder sb = new StringBuilder();
-                try {
+                try {if(response!=null) {
                     BufferedReader reader =
                             new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
                     String line = null;
@@ -202,6 +202,7 @@ public class VerifyScreen extends Activity {
                     while ((line = reader.readLine()) != null) {
                         sb.append(line);
                     }
+                }
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (Exception e) {

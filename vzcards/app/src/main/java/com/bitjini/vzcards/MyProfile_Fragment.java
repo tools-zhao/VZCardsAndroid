@@ -8,7 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
+        import android.database.Cursor;
+        import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -59,40 +60,44 @@ import java.util.List;
  * Created by VEENA on 12/7/2015.
  */
 public class MyProfile_Fragment extends Fragment implements View.OnClickListener {
+
     public static final String URL_PROFILE_UPDATE = "http://vzcards-api.herokuapp.com/my_profile/update/?access_token=";
     public static final String URL_GET_PROFILE = "http://vzcards-api.herokuapp.com/my_profile/?access_token=";
     public static final String URL_UPLOAD_IMAGE = "http://vzcards-api.herokuapp.com/upload_image/?access_token=";
     public static final String MY_PROFILE_PREFERENCES = "mypref.txt";
-    public static final String VALUES = "values";
-    public static final String TASKS = "key";
-    public static final String UPLOAD_IMAGE = "image";
-    private static final String SAVED_STATE_KEY = "saved_state_key";
-    SharedPreferences values_sharedPreferences;
 
-    Context _c = getActivity();
+    public static final String TASKS = "key";
+
     private final int SELECT_PHOTO = 1;
+
     public ImageView imageProfile, imageCompany;
     private Uri outputFileUri;
     public ImageView currentImageView = null;
     View profile;
     SharedPreferences data;
-    public String datavalues;
-    public JSONObject jsonObj;
+
     ArrayList<String> label;
     ArrayList<String> values;
+
     int clickCount = 0;
+    //Declaring widgets
     Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
     TextView textViewName;
     public ProgressDialog progress;
     ListView listView;
     EditTextAdapter editTextAdapter;
+
     ArrayList<ListItem> arrayList = new ArrayList<ListItem>();
     ArrayList<ListItem> adapterArrayList = new ArrayList<ListItem>();
-    VerifyScreen p = new VerifyScreen();
     public ArrayList<ListItem> groupItem = new ArrayList<ListItem>();
+
+    VerifyScreen p = new VerifyScreen();
+
     String json, json2;
-    public String firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "", city, pin_code = "";
+    public String firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "", city, pin_code = "",photo="";
     public Bitmap bitmap=null;
+    public static String profile_picturePath,company_picturePath;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -118,12 +123,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         imageCompany.setOnClickListener(this);
         imageProfile.setOnClickListener(this);
 
+           imageCompany.setClickable(false);
+        imageProfile.setClickable(false);
 
         profilebtn = (Button) profile.findViewById(R.id.profilebtn);
         referralbtn = (Button) profile.findViewById(R.id.referralbtn);
         vzfrndsbtn = (Button) profile.findViewById(R.id.vzfrnds);
 
-        new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference);
+//        new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference);
 
 
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
@@ -159,7 +166,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             address_line_2 = jsonObj.getString("address_line_2");
             city = jsonObj.getString("city");
             pin_code = jsonObj.getString("pin_code");
-
+            photo = jsonObj.getString("photo");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -196,6 +203,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                     editbtn.setText("Save");
 
+                    imageCompany.setClickable(true);
+                    imageProfile.setClickable(true);
+
                     editTextAdapter.actv(true);
                     editTextAdapter.notifyDataSetChanged();
 
@@ -206,11 +216,16 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                     editbtn.setText("Edit");
 
+                    imageCompany.setClickable(false);
+                    imageProfile.setClickable(false);
+
                     editTextAdapter.actv(false);
                     json2 = new Gson().toJson(groupItem);// updated array
 
                     SavePreferences(TASKS, json2);
                     new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE + p.token_sharedPreference);
+                    // Upload image to server
+                    new UploadImageTask().execute();
 
                     editTextAdapter.notifyDataSetChanged();
 
@@ -266,7 +281,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
         Gson gson = new Gson();
         String json = data.getString(TASKS, null);
-        Log.e("Load json from shared prefs ", "" + json);
+        Log.e("Load json shared prefs ", "" + json);
 
         Type type = new TypeToken<ArrayList<ListItem>>() {
         }.getType();
@@ -313,81 +328,132 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         // Add the camera options.
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
         startActivityForResult(chooserIntent, SELECT_PHOTO);
-
     }
 
-    public String getStringImage(Bitmap bmp){
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] imageBytes = baos.toByteArray();
-        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        return encodedImage;
-    }
+
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == getActivity().RESULT_OK) {
-            if (requestCode == SELECT_PHOTO) {
-                final boolean isCamera;
-                if (data == null) {
-                    isCamera = true;
-                } else {
-                    final String action = data.getAction();
-                    if (action == null) {
-                        isCamera = false;
+
+            if (resultCode == getActivity().RESULT_OK) {
+                if (requestCode == SELECT_PHOTO) {
+                    final boolean isCamera;
+
+                    if (data == null) {
+                        isCamera = true;
                     } else {
-                        isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+                        final String action = data.getAction();
+                        if (action == null) {
+                            isCamera = false;
+                        } else {
+                            isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+                        }
                     }
-                }
 
-                Uri selectedImageUri;
-                if (isCamera) {
-                    selectedImageUri = outputFileUri;
-                    //Bitmap factory
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    // downsizing image as it throws OutOfMemory Exception for larger
-                    // images
-                    options.inSampleSize = 8;
-                    Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
+                    Uri selectedImageUri;
+                    if (isCamera) {
 
-//            v.imageView.setImageDrawable(roundedImage);
-                    currentImageView.setImageBitmap(bitmap);
-                    new UploadImageTask().execute();
-//                    imageProfile.setImageBitmap(bitmap);
-//                    imageCompany.setImageBitmap(bitmap);
+                        selectedImageUri = outputFileUri;
+                        //Bitmap factory
+//                        BitmapFactory.Options options = new BitmapFactory.Options();
+//                        // downsizing image as it throws OutOfMemory Exception for larger
+//                        // images
+//                        options.inSampleSize = 8;
+//                        final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
+                        if(currentImageView==imageProfile)
+                        {
+                        profile_picturePath = selectedImageUri.getPath();
+                        Log.e("path :", "" + profile_picturePath);
+                        decodeFile(profile_picturePath);
+////            v.imageView.setImageDrawable(roundedImage);
+//                        currentImageView.setImageBitmap(bitmap);
+
+                        imageProfile.setImageBitmap(bitmap);}
+                        if(currentImageView==imageCompany)
+                        {
+                            profile_picturePath = selectedImageUri.getPath();
+                            Log.e("path :", "" + profile_picturePath);
+                            decodeFile(profile_picturePath);
+////            v.imageView.setImageDrawable(roundedImage);
+//                        currentImageView.setImageBitmap(bitmap);
+
+                            imageProfile.setImageBitmap(bitmap);}
+
+
+                    } else {
+                        Uri selectedImage = data.getData();
+                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                        Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                                filePathColumn, null, null, null);
+                        cursor.moveToFirst();
+
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+
+//                        BitmapFactory.Options options = new BitmapFactory.Options();
+//                        // downsizing image as it throws OutOfMemory Exception for larger
+//                        // images
+//                        options.inSampleSize = 8;
+//                        bitmap = BitmapFactory.decodeFile(picturePath, options);
+//
+//
+                        if(currentImageView==imageProfile)
+                        {  profile_picturePath = cursor.getString(columnIndex);
+                            cursor.close();
+                            Log.e("path :", "" + profile_picturePath);
+                        decodeFile(profile_picturePath);
+                        imageProfile.setImageBitmap(bitmap);}
+                        if(currentImageView==imageCompany)
+                        {  company_picturePath = cursor.getString(columnIndex);
+                            cursor.close();
+                            Log.e("path :", "" + company_picturePath);
+                            decodeFile(company_picturePath);
+                            imageCompany.setImageBitmap(bitmap);}
+
+                    }
+
+                } else if (resultCode == getActivity().RESULT_CANCELED) {
+                    // user cancelled Image capture
+                    Toast.makeText(getActivity(),
+                            "User cancelled image capture", Toast.LENGTH_SHORT)
+                            .show();
                 } else {
-                    selectedImageUri = data == null ? null : data.getData();
-                    Log.d("ImageURI", selectedImageUri.getLastPathSegment());
-                    // /Bitmap factory
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    // downsizing image as it throws OutOfMemory Exception for larger
-                    // images
-                    options.inSampleSize = 8;
-                    try {//Using Input Stream to get uri
-                        InputStream input = getActivity().getContentResolver().openInputStream(selectedImageUri);
-                        final Bitmap bitmap = BitmapFactory.decodeStream(input);
-//                        imageProfile.setImageBitmap(bitmap);
-
-                        currentImageView.setImageBitmap(bitmap);
-                        new UploadImageTask().execute();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    // failed to capture image
+                    Toast.makeText(getActivity(),
+                            "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
+                            .show();
                 }
             }
-        } else if (resultCode == getActivity().RESULT_CANCELED) {
-            // user cancelled Image capture
-            Toast.makeText(getActivity(),
-                    "User cancelled image capture", Toast.LENGTH_SHORT)
-                    .show();
-        } else {
-            // failed to capture image
-            Toast.makeText(getActivity(),
-                    "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
-                    .show();
+
+    }
+    public void decodeFile(String filePath) {
+        // Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, o);
+
+        // The new size we want to scale to
+        final int REQUIRED_SIZE = 1024;
+
+        // Find the correct scale value. It should be the power of 2.
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
+        int scale = 1;
+        while (true) {
+            if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
+                break;
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
         }
+
+        // Decode with inSampleSize
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        bitmap = BitmapFactory.decodeFile(filePath, o2);
+
+
     }
 
     public void onClick(View v) {
@@ -396,13 +462,15 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             //setting profile picture
             case R.id.profilePic:
                 currentImageView = (ImageView) v;
-                openImageIntent();
+               openImageIntent();
+
                 break;
 
             //setting company picture
             case R.id.btn_pick:
                 currentImageView = (ImageView) v;
                 openImageIntent();
+
                 break;
 
             //redirecting to VZFriends_Fragment
@@ -437,7 +505,6 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         }
     }
-
 
 
 

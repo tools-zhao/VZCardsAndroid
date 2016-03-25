@@ -1,12 +1,43 @@
 package com.bitjini.vzcards;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -14,6 +45,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,117 +54,85 @@ import javax.net.ssl.HttpsURLConnection;
 
 import java.util.HashMap;
 
-class UploadImageTask extends AsyncTask<Bitmap,Void,String> {
-
+public class UploadImageTask extends AsyncTask<Void, Void, String> {
     MyProfile_Fragment pr=new MyProfile_Fragment();
     VerifyScreen p=new VerifyScreen();
-    Context context;
-    ProgressDialog loading;
-    RequestHandler rh = new RequestHandler();
+    Context context=null;
+
+    private String webAddressToPost = pr.URL_UPLOAD_IMAGE+p.token_sharedPreference;
+    private ProgressDialog dialog;
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        loading = ProgressDialog.show(context, "Uploading Image", "Please wait...",true,true);
-    }
-
-    @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-        loading.dismiss();
-        Toast.makeText(context, s, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    protected String doInBackground(Bitmap... params) {
-        Bitmap bitmap = params[0];
-        String uploadImage = pr.getStringImage(bitmap);
-
-        HashMap<String,String> data = new HashMap<String,String >();
-        data.put(pr.UPLOAD_IMAGE, uploadImage);
-
-        String result = rh.sendPostRequest(pr.URL_PROFILE_UPDATE+p.token_sharedPreference,data);
-
-        return result;
-    }
-}
-
-
-class RequestHandler {
-
-    public String sendGetRequest(String uri) {
+    protected String doInBackground(Void... params) {
         try {
-            URL url = new URL(uri);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
-            String result;
+           Log.e(" web url :",""+webAddressToPost);
+            File sourceFile_profile = new File(pr.profile_picturePath );
+            Log.e("profile_picturePath :", "" +pr.profile_picturePath);
 
-            StringBuilder sb = new StringBuilder();
+            File sourceFile_company = new File(pr.company_picturePath );
+            Log.e("company_picturePath :", "" +pr.company_picturePath);
 
-            while((result = bufferedReader.readLine())!=null){
-                sb.append(result);
-            }
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(webAddressToPost);
 
-            return sb.toString();
-        } catch (Exception e) {
-            return null;
+            String boundary = "-------------" + System.currentTimeMillis();
+
+            httpPost.setHeader("Content-Type", "multipart/form-data; boundary="+boundary);
+
+            HttpEntity entity = MultipartEntityBuilder.create()
+                    .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+                    .setBoundary(boundary)
+                    .addPart("photo", new FileBody(sourceFile_profile))
+                    .build();
+
+            httpPost.setEntity(entity);
+
+
+            HttpResponse response = httpclient.execute(httpPost);
+
+            String responseBody = EntityUtils.toString(response.getEntity());
+            Log.v(" HTTP Response", responseBody);
+            return responseBody;
+
         }
-    }
-
-    public String sendPostRequest(String requestURL,
-                                  HashMap<String, String> postDataParams) {
-
-        URL url;
-        String response = "";
-        try {
-            url = new URL(requestURL);
-
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-
-
-            OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getPostDataString(postDataParams));
-
-            writer.flush();
-            writer.close();
-            os.close();
-            int responseCode = conn.getResponseCode();
-
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                response = br.readLine();
-            } else {
-                response = "Error Registering";
-            }
-        } catch (Exception e) {
+        catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            // something went wrong. connection with the server error
+            e.printStackTrace();
+        }catch (Throwable t) {
+            t.printStackTrace(); }
 
-        return response;
+        return null;
     }
 
-    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            if (first)
-                first = false;
-            else
-                result.append("&");
+    @Override
+    protected void onPostExecute(String result) {
 
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+        if(result!=null)
+        {  Log.e("File uploaded ..","");
+
+            try {
+                JSONObject json = new JSONObject(result);
+                String photo=json.getString("photo");
+                String link=json.getString("link");
+                Log.e("photo :",""+photo);
+                Log.e("link :",""+link);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
         }
-
-        return result.toString();
     }
+
 }
+
+

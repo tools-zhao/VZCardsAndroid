@@ -44,6 +44,7 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
         pr.progress = new ProgressDialog(this.context);
         pr.progress.setMessage("Loading");
+        pr.progress.setCancelable(false);
         pr.progress.show();
     }
 
