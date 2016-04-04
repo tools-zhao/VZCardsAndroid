@@ -340,10 +340,10 @@ FrameLayout layout_MainMenu;
             holder.item.setText(String.valueOf(data.getItem()));
 
             holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
-            new DownloadImagesTask().execute(holder.item_photo);
+            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
 
             holder.photo.setTag(String.valueOf(data.getPhoto()));
-            new DownloadImagesTask().execute(holder.photo);
+            new DownloadImagesTask(getActivity()).execute(holder.photo);
 
 
 
@@ -492,10 +492,10 @@ FrameLayout layout_MainMenu;
             item.setText(dataFeeds1.getItem());
 
             item_photo.setTag(dataFeeds1.getItem_photo());
-            new DownloadImagesTask().execute(item_photo); // Download item_photo from AsynTask
+            new DownloadImagesTask(getActivity()).execute(item_photo); // Download item_photo from AsynTask
 
             photo.setTag(dataFeeds1.getPhoto());
-            new DownloadImagesTask().execute(photo);// Download photo from AsynTask
+            new DownloadImagesTask(getActivity()).execute(photo);// Download photo from AsynTask
 
             // check if it is needs change the color to red
             if (Integer.parseInt(dataFeeds1.getIsNeeds()) == 1) {
@@ -516,10 +516,10 @@ FrameLayout layout_MainMenu;
             item2.setText(dataFeeds2.getItem());
 
             item_photo2.setTag(dataFeeds2.getItem_photo());
-            new DownloadImagesTask().execute(item_photo2);// Download item_photo from AsynTask
+            new DownloadImagesTask(getActivity()).execute(item_photo2);// Download item_photo from AsynTask
 
             photo2.setTag(dataFeeds2.getPhoto());
-            new DownloadImagesTask().execute(photo2);// Download photo from AsynTask
+            new DownloadImagesTask(getActivity()).execute(photo2);// Download photo from AsynTask
 
             // check if it is has change the color to green
             if (Integer.parseInt(dataFeeds2.getIsHas()) == 0) {

@@ -38,10 +38,12 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
+        import org.apache.http.util.ByteArrayBuffer;
+        import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
+        import java.io.BufferedInputStream;
+        import java.io.BufferedReader;
         import java.io.ByteArrayOutputStream;
         import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,7 +54,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
+        import java.net.URLConnection;
+        import java.util.ArrayList;
 import java.util.List;
         import java.util.concurrent.ExecutionException;
 
@@ -94,10 +97,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     VerifyScreen p = new VerifyScreen();
 
     String json, json2;
-    public String firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "", city, pin_code = "",photo="";
+    public   String  firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "",
+            city, pin_code = "";
+    public static String photo="",company_photo="";
     public Bitmap bitmap=null;
-    public static String profile_picturePath,company_picturePath;
-
+    public static String picturePath;
+    String  photoReceived="",company_photoReceived="";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -111,7 +116,6 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         p.phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
         p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
-        System.out.println(" getting token from sharedpreference " + p.token_sharedPreference);
 
 
         textViewName = (TextView) profile.findViewById(R.id.name);
@@ -150,23 +154,34 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         label.add("Address_line_2");
         label.add("City");
         label.add("Pin_code");
-        // Makinh http get request to load profile details
+        // Making http get request to load profile details
+
+
         try {
 
-            String receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference).get();
+            String receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference).get();//cal to get profile data
 
-            JSONObject jsonObj = new JSONObject(receivedData);
 
-            firstname = jsonObj.getString("firstname");
-            lastname = jsonObj.getString("lastname");
-            email = jsonObj.getString("email");
-            industry = jsonObj.getString("industry");
-            company = jsonObj.getString("company");
-            address_line_1 = jsonObj.getString("address_line_1");
-            address_line_2 = jsonObj.getString("address_line_2");
-            city = jsonObj.getString("city");
-            pin_code = jsonObj.getString("pin_code");
-            photo = jsonObj.getString("photo");
+            //Profile details
+            if(receivedData!=null) {
+                JSONObject jsonObj = new JSONObject(receivedData);
+
+                firstname = jsonObj.getString("firstname");
+                lastname = jsonObj.getString("lastname");
+                email = jsonObj.getString("email");
+                industry = jsonObj.getString("industry");
+                company = jsonObj.getString("company");
+                address_line_1 = jsonObj.getString("address_line_1");
+                address_line_2 = jsonObj.getString("address_line_2");
+                city = jsonObj.getString("city");
+                pin_code = jsonObj.getString("pin_code");
+                 photoReceived= jsonObj.getString("photo");
+                Log.e(" Photo Received ",""+photoReceived);
+
+              company_photoReceived=jsonObj.getString("company_photo");
+
+            }
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -175,6 +190,18 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
+//
+                    //         Download profile image
+                    imageProfile.setTag(photoReceived);
+                    new DownloadImagesTask(getActivity()).execute(imageProfile);
+
+                    // Download company image
+                    imageCompany.setTag(company_photoReceived);
+                    new DownloadImagesTask(getActivity()).execute(imageCompany);
+
+
+        Log.e("photo contents :",""+photo);
         textViewName.setText(firstname+ " "+lastname);
         values = new ArrayList<String>();
         values.add(firstname);
@@ -224,8 +251,6 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                     SavePreferences(TASKS, json2);
                     new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE + p.token_sharedPreference);
-                    // Upload image to server
-                    new UploadImageTask().execute();
 
                     editTextAdapter.notifyDataSetChanged();
 
@@ -273,7 +298,25 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     }
 
-
+    public Bitmap DownloadFullFromUrl(String imageFullURL) {
+        Bitmap bm = null;
+        try {
+            URL url = new URL(imageFullURL);
+            URLConnection ucon = url.openConnection();
+            InputStream is = ucon.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+            ByteArrayBuffer baf = new ByteArrayBuffer(50);
+            int current = 0;
+            while ((current = bis.read()) != -1) {
+                baf.append((byte) current);
+            }
+            bm = BitmapFactory.decodeByteArray(baf.toByteArray(), 0,
+                    baf.toByteArray().length);
+        } catch (IOException e) {
+            Log.d("ImageManager", "Error: " + e);
+        }
+        return bm;
+    }
     // To retrive saved values in shared preference Now convert the JSON string back to your java object
 
     protected void LoadPreferences() {
@@ -364,22 +407,69 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //                        final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
                         if(currentImageView==imageProfile)
                         {
-                        profile_picturePath = selectedImageUri.getPath();
-                        Log.e("path :", "" + profile_picturePath);
-                        decodeFile(profile_picturePath);
+                        picturePath = selectedImageUri.getPath();
+                        Log.e("path :", "" + picturePath);
+                        decodeFile(picturePath);
 ////            v.imageView.setImageDrawable(roundedImage);
 //                        currentImageView.setImageBitmap(bitmap);
+                            // Upload image to server
+                            try {
+                                String receivedImage = new UploadImageTask(getActivity()).execute().get();// call to get profile images
+                                if(receivedImage==null)
+                                {
+                                    Log.e(" Failed... ","");
+                                }
+                                if (receivedImage != null) {
+
+                                    JSONObject json = new JSONObject(receivedImage);
+
+                                     photo = json.getString("photo");
+                                    String link = json.getString("link");
+                                    Log.e("photo :", "" + photo);
+                                    Log.e("link :", "" + link);
+                                }
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            } catch (ExecutionException e1) {
+                                e1.printStackTrace();
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                            }
+//
 
                         imageProfile.setImageBitmap(bitmap);}
                         if(currentImageView==imageCompany)
                         {
-                            profile_picturePath = selectedImageUri.getPath();
-                            Log.e("path :", "" + profile_picturePath);
-                            decodeFile(profile_picturePath);
+                            picturePath = selectedImageUri.getPath();
+                            Log.e("path :", "" + picturePath);
+                            decodeFile(picturePath);
 ////            v.imageView.setImageDrawable(roundedImage);
 //                        currentImageView.setImageBitmap(bitmap);
+                            // Upload image to server
+                            try {
+                                String receivedImage = new UploadImageTask(getActivity()).execute().get();// call to get profile images
+                                if(receivedImage==null)
+                                {
+                                    Log.e(" Failed... ","");
+                                }
+                                if (receivedImage != null) {
 
-                            imageProfile.setImageBitmap(bitmap);}
+                                    JSONObject json = new JSONObject(receivedImage);
+
+                                     company_photo = json.getString("photo");
+                                    String link = json.getString("link");
+                                    Log.e("company photo:", "" + company_photo);
+                                    Log.e("link :", "" + link);
+                                }
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            } catch (ExecutionException e1) {
+                                e1.printStackTrace();
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                            }
+
+                            imageCompany.setImageBitmap(bitmap);}
 
 
                     } else {
@@ -400,17 +490,66 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //
 //
                         if(currentImageView==imageProfile)
-                        {  profile_picturePath = cursor.getString(columnIndex);
+                        {  picturePath = cursor.getString(columnIndex);
                             cursor.close();
-                            Log.e("path :", "" + profile_picturePath);
-                        decodeFile(profile_picturePath);
-                        imageProfile.setImageBitmap(bitmap);}
+                            Log.e("path :", "" +picturePath);
+                        decodeFile(picturePath);
+                        imageProfile.setImageBitmap(bitmap);  // Upload image to server
+                            try {
+                                String receivedImage = new UploadImageTask(getActivity()).execute().get();// call to get profile images
+                                if(receivedImage==null)
+                                {
+                                    Log.e(" Failed... ","");
+                                }
+                                if (receivedImage != null) {
+
+                                    JSONObject json = new JSONObject(receivedImage);
+
+                                     photo = json.getString("photo");
+                                    String link = json.getString("link");
+                                    Log.e("profile photo:", "" + photo);
+                                    Log.e("link :", "" + link);
+                                }
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            } catch (ExecutionException e1) {
+                                e1.printStackTrace();
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                            }
+                            Log.e(" profilephoto not null:",""+photo);
+                        }
                         if(currentImageView==imageCompany)
-                        {  company_picturePath = cursor.getString(columnIndex);
+                        {  picturePath = cursor.getString(columnIndex);
                             cursor.close();
-                            Log.e("path :", "" + company_picturePath);
-                            decodeFile(company_picturePath);
-                            imageCompany.setImageBitmap(bitmap);}
+                            Log.e("path :", "" + picturePath);
+                            decodeFile(picturePath);
+                            // Upload image to server
+                            try {
+                                String receivedImage = new UploadImageTask(getActivity()).execute().get();// call to get profile images
+                                if(receivedImage==null)
+                                {
+                                    Log.e(" Failed... ","");
+                                }
+                                if (receivedImage != null) {
+
+                                    JSONObject json = new JSONObject(receivedImage);
+
+                                     company_photo = json.getString("photo");
+                                    String link = json.getString("link");
+                                    Log.e("company photo  :", "" + company_photo);
+                                    Log.e("link :", "" + link);
+                                }
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            } catch (ExecutionException e1) {
+                                e1.printStackTrace();
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                            }
+                            imageCompany.setImageBitmap(bitmap);
+
+                        }
 
                     }
 

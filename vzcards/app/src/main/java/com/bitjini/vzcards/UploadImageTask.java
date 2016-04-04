@@ -57,21 +57,36 @@ import java.util.HashMap;
 public class UploadImageTask extends AsyncTask<Void, Void, String> {
     MyProfile_Fragment pr=new MyProfile_Fragment();
     VerifyScreen p=new VerifyScreen();
-    Context context=null;
-
-    private String webAddressToPost = pr.URL_UPLOAD_IMAGE+p.token_sharedPreference;
+    Context context;
     private ProgressDialog dialog;
+    Activity activity;
+    private String webAddressToPost = pr.URL_UPLOAD_IMAGE+p.token_sharedPreference;
 
+    public UploadImageTask(Context c) {
+        this.context = c;
+       dialog=new ProgressDialog(c);
+    }
+
+
+
+    protected void onPreExecute()
+    {
+//        dialog = new ProgressDialog(this.context);
+        if(dialog!=null){
+        dialog.setMessage("Loading");
+        dialog.setCancelable(false);
+        dialog.show();}
+
+
+    }
     @Override
     protected String doInBackground(Void... params) {
         try {
 
            Log.e(" web url :",""+webAddressToPost);
-            File sourceFile_profile = new File(pr.profile_picturePath );
-            Log.e("profile_picturePath :", "" +pr.profile_picturePath);
+            File sourceFile_profile = new File(pr.picturePath );
+            Log.e("picturePath :", "" +pr.picturePath);
 
-            File sourceFile_company = new File(pr.company_picturePath );
-            Log.e("company_picturePath :", "" +pr.company_picturePath);
 
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost(webAddressToPost);
@@ -114,19 +129,23 @@ public class UploadImageTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
 
+        if(dialog.isShowing())
+        {
+            dialog.dismiss();
+        }
         if(result!=null)
         {  Log.e("File uploaded ..","");
 
-            try {
-                JSONObject json = new JSONObject(result);
-                String photo=json.getString("photo");
-                String link=json.getString("link");
-                Log.e("photo :",""+photo);
-                Log.e("link :",""+link);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            try {
+////                JSONObject json = new JSONObject(result);
+////                String photo=json.getString("photo");
+////                String link=json.getString("link");
+////                Log.e("photo :",""+photo);
+////                Log.e("link :",""+link);
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
 
 
 

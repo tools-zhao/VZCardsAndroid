@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
 * Created by VEENA on 12/7/2015.
@@ -73,8 +74,10 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             HttpClient client = new DefaultHttpClient();
             postURL = pr.URL_PROFILE_UPDATE + p.token_sharedPreference;
             HttpPost post = new HttpPost(postURL);
-            String company_photo = "";
-            String photo = "";
+
+            Log.e("photo in profile",""+pr.photo);
+            String company_photo = pr.company_photo;
+            String photo = pr.photo;
             String firstname = "";
             String lastname = "";
             String email = "";
@@ -86,6 +89,8 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             String city = "";
             String pin_code = "";
             String vz_id = p.vz_id_sharedPreference;
+
+
 
             pr.data = context.getSharedPreferences(pr.MY_PROFILE_PREFERENCES, 0);
             String json = pr.data.getString(pr.TASKS, null);
@@ -101,10 +106,7 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             pin_code = jsonArray.getJSONObject(9).getString("value");
 
             List<NameValuePair> params1 = new ArrayList<NameValuePair>();
-//                for (int i = 0; i < pr.groupItem.size(); i++) {
-//                    params1.add(new BasicNameValuePair(pr.label.get(i), pr.values.get(i)));
-//
-//                }
+
 
             params1.add(new BasicNameValuePair("company_photo", company_photo));
             params1.add(new BasicNameValuePair("photo", photo));
@@ -183,139 +185,6 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
     }
 }
 
-    /* *
-         * HttpAsyncTask for getting data
-         */
-//    public class HttpAsyncTask extends AsyncTask<String, Void, String> {
-//        @Override
-//        protected String doInBackground(String... urls) {
-//
-//            // params comes from the execute() call: params[0] is the url.
-//            try {
-//                return downloadUrl(urls[0]);
-//            } catch (IOException e) {
-//                return "Unable to download the requested page.";
-//            }
-//        }
-//
-//        // onPostExecute displays the results of the AsyncTask.
-//        @Override
-//        protected void onPostExecute(String result) {
-//            Toast.makeText(getActivity(), "Received!", Toast.LENGTH_LONG).show();
-//            Log.e("response of profile...", "" + result);
-//            try {
-//
-//                JSONObject user_detail = new JSONObject(result.toString());
-//
-//
-//                    String phone = user_detail.getString("phone");
-//                    String company_photo = user_detail.getString("company_photo");
-//                    String vz_id = user_detail.getString("vz_id");
-//                    String photo = user_detail.getString("photo");
-//                    String firstname = user_detail.getString("firstname");
-//                    String lastname = user_detail.getString("lastname");
-//                    String email = user_detail.getString("email");
-//                    String industry = user_detail.getString("industry");
-//                    String company = user_detail.getString("company");
-//                    String address_line_1 = user_detail.getString("address_line_1");
-//                    String address_line_2 = user_detail.getString("address_line_2");
-//                    String city = user_detail.getString("city");
-//                    String pin_code = user_detail.getString("pin_code");
-//
-//                  ListItem profileValues = new ListItem();
-//
-//                    profileValues.setPhone(phone);
-////                    profileValues.setCompany_photo(company_photo);
-////                    profileValues.setVz_id(vz_id);
-////                    profileValues.setPhoto(photo);
-//                    profileValues.setFname(firstname);
-//                    profileValues.setLastname(lastname);
-//                    profileValues.setEmail(email);
-//                    profileValues.setIndustry(industry);
-//                    profileValues.setCompany(company);
-//                    profileValues.setAddress_line_1(address_line_1);
-//                    profileValues.setAddress_line_2(address_line_2);
-//                    profileValues.setCity(city);
-//                    profileValues.setPin_code(pin_code);
-//                    values.add(profileValues.toString());
-//
-//                    label = new ArrayList<String>();
-//                    label.add("phone");
-//                    label.add("firstname");
-//                    label.add("lastname");
-//                    label.add("email");
-//                    label.add("industry");
-//                    label.add("company");
-//                    label.add("address_line_1");
-//                    label.add("address_line_2");
-//                    label.add("city");
-//                    label.add("pin_code");
-//
-//
-//
-//                    for (int i1 = 0; i1 < label.size(); i1++) {
-//                        ListItem item = new ListItem();
-//                        item.setLabel(label.get(i1));
-//                        item.setValue(values.get(i1));
-//                        arrayList.add(item);
-//                    }
-//
-//
-//
-//
-//                // send the adapterArraylist to the adapter and set it to listview
-//                editTextAdapter = new EditTextAdapter(getActivity(), arrayList, R.layout.profile_layout);
-//                listView.setAdapter(editTextAdapter);
-//
-//
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        private String downloadUrl(String urlString) throws IOException {
-//            InputStream is = null;
-//            try {
-//                URL url = new URL(urlString);
-//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//                conn.setReadTimeout(10000 /* milliseconds */);
-//                conn.setConnectTimeout(15000 /* milliseconds */);
-//                conn.setRequestMethod("GET");
-//                conn.setDoInput(true);
-//                // Starts the query
-//                conn.connect();
-//                int responseCode = conn.getResponseCode();
-//                is = conn.getInputStream();
-//                String contentAsString = convertStreamToString(is);
-//                return contentAsString;
-//            } finally {
-//                if (is != null) {
-//                    is.close();
-//                }
-//            }
-//        }
-//
-//        private String convertStreamToString(InputStream is) throws UnsupportedEncodingException {
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 8);
-//            StringBuilder sb = new StringBuilder();
-//            String line = null;
-//            try {
-//                while ((line = reader.readLine()) != null) {
-//                    sb.append(line + "\n");
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } finally {
-//                try {
-//                    is.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            return sb.toString();
-//        }
-//    }
-//}
 
 class ListItem {
     public String value;
