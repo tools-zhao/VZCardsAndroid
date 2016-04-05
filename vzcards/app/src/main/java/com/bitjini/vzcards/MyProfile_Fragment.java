@@ -11,7 +11,13 @@ import android.content.pm.ResolveInfo;
         import android.database.Cursor;
         import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+        import android.graphics.Canvas;
+        import android.graphics.Paint;
+        import android.graphics.PorterDuff;
+        import android.graphics.PorterDuffXfermode;
+        import android.graphics.Rect;
+        import android.graphics.RectF;
+        import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -81,7 +87,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     ArrayList<String> label;
     ArrayList<String> values;
-
+    public Bitmap output;
     int clickCount = 0;
     //Declaring widgets
     Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
@@ -95,12 +101,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public ArrayList<ListItem> groupItem = new ArrayList<ListItem>();
 
     VerifyScreen p = new VerifyScreen();
-
+    Bitmap bm = null;
     String json, json2;
     public   String  firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "",
             city, pin_code = "";
     public static String photo="",company_photo="";
-    public Bitmap bitmap=null;
+    public Bitmap bitmap;
     public static String picturePath;
     String  photoReceived="",company_photoReceived="";
     @Override
@@ -175,10 +181,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 address_line_2 = jsonObj.getString("address_line_2");
                 city = jsonObj.getString("city");
                 pin_code = jsonObj.getString("pin_code");
-                 photoReceived= jsonObj.getString("photo");
-                Log.e(" Photo Received ",""+photoReceived);
-
-              company_photoReceived=jsonObj.getString("company_photo");
+                photoReceived= jsonObj.getString("photo");
+                company_photoReceived=jsonObj.getString("company_photo");
 
             }
 
@@ -190,15 +194,20 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        Log.e(" Photo Received ",""+photoReceived);
+        Log.e(" company_photoReceived",""+company_photoReceived);
 
-//
-                    //         Download profile image
-                    imageProfile.setTag(photoReceived);
-                    new DownloadImagesTask(getActivity()).execute(imageProfile);
-
-                    // Download company image
-                    imageCompany.setTag(company_photoReceived);
-                    new DownloadImagesTask(getActivity()).execute(imageCompany);
+        if(photoReceived!=null) {
+            bm=null; output=null;
+            DownloadFullFromUrl(photoReceived);
+            getRoundedCornerBitmap(bm, 200);
+            imageProfile.setImageBitmap(output);
+        }
+        if(company_photoReceived!=null){
+            bm=null; output=null;
+        DownloadFullFromUrl(company_photoReceived);
+        getRoundedCornerBitmap(bm,200);
+        imageCompany.setImageBitmap(output);}
 
 
         Log.e("photo contents :",""+photo);
@@ -299,7 +308,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     }
 
     public Bitmap DownloadFullFromUrl(String imageFullURL) {
-        Bitmap bm = null;
+
         try {
             URL url = new URL(imageFullURL);
             URLConnection ucon = url.openConnection();
@@ -316,6 +325,27 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             Log.d("ImageManager", "Error: " + e);
         }
         return bm;
+    }
+    public  Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+         output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+                .getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = pixels;
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
     }
     // To retrive saved values in shared preference Now convert the JSON string back to your java object
 
@@ -648,7 +678,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
     /**
-     * The object we have a list of, probably more complex in your app
+     * The object we have a list of
      */
     static class ListItem {
         public String value;
@@ -664,11 +694,6 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         public void setValue(String value) {
             this.value = value;
-        }
-
-        ListItem(String label, String value) {
-            this.value = value;
-            this.label = label;
         }
 
         public String getLabel() {
@@ -689,6 +714,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         public TextWatcher textWatcher;
     }
 
+    // custom adapter class
     class EditTextAdapter extends BaseAdapter {
         ViewHolder holder = new ViewHolder();
         Context _c;
@@ -722,10 +748,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Not recycled, inflate a new view
                 LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 rowView = li.inflate(R.layout.profile_listitems, null);
-//                rowView = getLayoutInflater().inflate(R.layout.profile_listitems, null);
 
-
-                rowView.setTag(holder);
+           rowView.setTag(holder);
             }
             holder.textView = (TextView) rowView.findViewById(R.id.labels);
             holder.editText = (EditText) rowView.findViewById(R.id.values1);

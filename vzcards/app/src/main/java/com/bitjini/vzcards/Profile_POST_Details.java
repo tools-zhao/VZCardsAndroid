@@ -171,9 +171,11 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
                 JSONObject res = new JSONObject(result.toString());
 
                 String firstname = res.getString("firstname");
-                String vz_id = res.getString("vz_id");
-                String phone = res.getString("phone");
+                String photo = res.getString("photo");
+                String companyphoto = res.getString("company_photo");
                 Log.e("firstname generated =", "" + firstname);
+                Log.e("photo generated =", "" + photo);
+                Log.e("company pic generated =", "" + companyphoto);
 
 
             } catch (JSONException e) {
@@ -185,141 +187,3 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
     }
 }
 
-
-class ListItem {
-    public String value;
-    public String label;
-    //Required fields for profile
-    String company_photo, lastname, email, industry, company, address_line_1, address_line_2, city, pin_code;
-    String phone, fname, vz_id, photo;
-
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getVz_id() {
-        return vz_id;
-    }
-
-    public void setVz_id(String vz_id) {
-        this.vz_id = vz_id;
-    }
-
-    public String getFname() {
-        return fname;
-    }
-
-    public void setFname(String fname) {
-        this.fname = fname;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getCompany_photo() {
-        return company_photo;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
-    public void setCompany_photo(String company_photo) {
-        this.company_photo = company_photo;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getIndustry() {
-        return industry;
-    }
-
-    public void setIndustry(String industry) {
-        this.industry = industry;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public void setCompany(String company) {
-        this.company = company;
-    }
-
-    public String getAddress_line_1() {
-        return address_line_1;
-    }
-
-    public void setAddress_line_1(String address_line_1) {
-        this.address_line_1 = address_line_1;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getAddress_line_2() {
-        return address_line_2;
-    }
-
-    public void setAddress_line_2(String address_line_2) {
-        this.address_line_2 = address_line_2;
-    }
-
-    public String getPin_code() {
-        return pin_code;
-    }
-
-    public void setPin_code(String pin_code) {
-        this.pin_code = pin_code;
-    }
-
-
-    ListItem() {
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    ListItem(String label, String value) {
-        this.value = value;
-        this.label = label;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-}
