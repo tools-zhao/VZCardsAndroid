@@ -415,6 +415,7 @@ public class VerifyScreen extends Activity {
 
                     if(valid==1)
                     {
+
                         Intent positveActivity = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(positveActivity);
                         finish();

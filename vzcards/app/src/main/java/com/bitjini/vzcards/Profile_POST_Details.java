@@ -75,9 +75,11 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             postURL = pr.URL_PROFILE_UPDATE + p.token_sharedPreference;
             HttpPost post = new HttpPost(postURL);
 
+            pr.data = context.getSharedPreferences(pr.MY_PROFILE_PREFERENCES, 0);
+
             Log.e("photo in profile",""+pr.photo);
-            String company_photo = pr.company_photo;
-            String photo = pr.photo;
+            String company_photo = pr.data.getString(pr.COMPANY_IMAGE, null);
+            String photo =pr.data.getString(pr.PROFILE_IMAGE, null);;
             String firstname = "";
             String lastname = "";
             String email = "";
@@ -92,9 +94,11 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
 
 
-            pr.data = context.getSharedPreferences(pr.MY_PROFILE_PREFERENCES, 0);
+
             String json = pr.data.getString(pr.TASKS, null);
+
             JSONArray jsonArray = new JSONArray(json);
+
             firstname = jsonArray.getJSONObject(0).getString("value");
             lastname = jsonArray.getJSONObject(1).getString("value");
             email = jsonArray.getJSONObject(2).getString("value");

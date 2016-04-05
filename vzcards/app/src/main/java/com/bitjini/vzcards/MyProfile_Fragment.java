@@ -4,7 +4,8 @@ package com.bitjini.vzcards;
         import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
+        import android.content.DialogInterface;
+        import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -25,7 +26,8 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.text.Editable;
+        import android.support.v7.app.AlertDialog;
+        import android.text.Editable;
 import android.text.TextWatcher;
         import android.util.Base64;
         import android.util.Log;
@@ -74,6 +76,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public static final String URL_GET_PROFILE = "http://vzcards-api.herokuapp.com/my_profile/?access_token=";
     public static final String URL_UPLOAD_IMAGE = "http://vzcards-api.herokuapp.com/upload_image/?access_token=";
     public static final String MY_PROFILE_PREFERENCES = "mypref.txt";
+    public static final String PROFILE_IMAGE="profile";
+    public static final String COMPANY_IMAGE="company";
+
 
     public static final String TASKS = "key";
 
@@ -142,6 +147,10 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 //        new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference);
 
+//        // remove image if stored in shared preferences
+//        SharedPreferences preferences = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
+//        preferences.edit().remove(PROFILE_IMAGE).commit();
+//        preferences.edit().remove(COMPANY_IMAGE).commit();
 
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
         String details = data.getString(TASKS, null);
@@ -167,7 +176,6 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
             String receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference).get();//cal to get profile data
 
-
             //Profile details
             if(receivedData!=null) {
                 JSONObject jsonObj = new JSONObject(receivedData);
@@ -181,8 +189,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 address_line_2 = jsonObj.getString("address_line_2");
                 city = jsonObj.getString("city");
                 pin_code = jsonObj.getString("pin_code");
-                photoReceived= jsonObj.getString("photo");
-                company_photoReceived=jsonObj.getString("company_photo");
+                photo= jsonObj.getString("photo");
+                company_photo=jsonObj.getString("company_photo");
 
             }
 
@@ -194,23 +202,29 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        Log.e(" Photo Received ",""+photoReceived);
-        Log.e(" company_photoReceived",""+company_photoReceived);
+        Log.e(" Photo Received ",""+photo);
+        Log.e(" company_photoReceived",""+company_photo);
 
-        if(photoReceived!=null) {
+//
+
+
+        if(!photo.isEmpty()) {
             bm=null; output=null;
-            DownloadFullFromUrl(photoReceived);
+            DownloadFullFromUrl(photo);
             getRoundedCornerBitmap(bm, 200);
             imageProfile.setImageBitmap(output);
+
         }
-        if(company_photoReceived!=null){
+
+
+        if(!company_photo.isEmpty()) {
             bm=null; output=null;
-        DownloadFullFromUrl(company_photoReceived);
-        getRoundedCornerBitmap(bm,200);
-        imageCompany.setImageBitmap(output);}
+            DownloadFullFromUrl(company_photo);
+            getRoundedCornerBitmap(bm, 200);
+            imageCompany.setImageBitmap(output);
+        }
 
 
-        Log.e("photo contents :",""+photo);
         textViewName.setText(firstname+ " "+lastname);
         values = new ArrayList<String>();
         values.add(firstname);
@@ -300,10 +314,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
         SharedPreferences.Editor editor = data.edit();
         editor.putString(key, value);
-//        SavePreferences(IMAGE, currentImageView.toString());
 
         editor.commit();
-//        System.out.println(value);
+
 
     }
 
@@ -435,155 +448,273 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //                        // images
 //                        options.inSampleSize = 8;
 //                        final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
-                        if(currentImageView==imageProfile)
-                        {
-                        picturePath = selectedImageUri.getPath();
-                        Log.e("path :", "" + picturePath);
-                        decodeFile(picturePath);
-////            v.imageView.setImageDrawable(roundedImage);
-//                        currentImageView.setImageBitmap(bitmap);
-                            // Upload image to server
-                            try {
-                                String receivedImage = new UploadImageTask(getActivity()).execute().get();// call to get profile images
-                                if(receivedImage==null)
-                                {
-                                    Log.e(" Failed... ","");
-                                }
-                                if (receivedImage != null) {
-
-                                    JSONObject json = new JSONObject(receivedImage);
-
-                                     photo = json.getString("photo");
-                                    String link = json.getString("link");
-                                    Log.e("photo :", "" + photo);
-                                    Log.e("link :", "" + link);
-                                }
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            } catch (ExecutionException e1) {
-                                e1.printStackTrace();
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                            }
-//
-
-                        imageProfile.setImageBitmap(bitmap);}
-                        if(currentImageView==imageCompany)
-                        {
+                        if (currentImageView == imageProfile) {
                             picturePath = selectedImageUri.getPath();
                             Log.e("path :", "" + picturePath);
                             decodeFile(picturePath);
 ////            v.imageView.setImageDrawable(roundedImage);
 //                        currentImageView.setImageBitmap(bitmap);
-                            // Upload image to server
-                            try {
-                                String receivedImage = new UploadImageTask(getActivity()).execute().get();// call to get profile images
-                                if(receivedImage==null)
-                                {
-                                    Log.e(" Failed... ","");
-                                }
-                                if (receivedImage != null) {
+                            // create an alert dialog box
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                            alertDialogBuilder.setMessage("Do you want to upload the image");
+                            alertDialogBuilder.setPositiveButton("Ok",
+                                    new DialogInterface.OnClickListener() {
 
-                                    JSONObject json = new JSONObject(receivedImage);
+                                        @Override
+                                        public void onClick(DialogInterface arg0, int arg1) {
 
-                                     company_photo = json.getString("photo");
-                                    String link = json.getString("link");
-                                    Log.e("company photo:", "" + company_photo);
-                                    Log.e("link :", "" + link);
-                                }
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            } catch (ExecutionException e1) {
-                                e1.printStackTrace();
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                            }
+                                            // Upload image to server
+                                            progress = new ProgressDialog(getActivity());
+                                            if (progress != null) {
+                                                progress.setMessage("Uploading image ..Please Wait...");
+                                                progress.setCancelable(false);
+                                                progress.show();
+                                            }
+                                            new UploadImageTask(getActivity()) {
+                                                @Override
+                                                public void onPostExecute(String result) {
+                                                    if (progress.isShowing()) {
+                                                        progress.dismiss();
+                                                        progress=null;
+                                                    }
 
-                            imageCompany.setImageBitmap(bitmap);}
+                                                    imageProfile.setImageBitmap(output);
+                                                    if (result != null) {
+
+                                                        JSONObject json = null;
+                                                        try {
+                                                            json = new JSONObject(result);
+                                                            photo = json.getString("photo");
+                                                            SavePreferences(PROFILE_IMAGE, photo);
+                                                            String link = json.getString("link");
+                                                            Log.e("photo :", "" + photo);
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                }
+                                            }.execute();
+                                            Log.e("profile photo outside:", "" + photo);
+
+                                        }
+
+                                    });
+
+                            alertDialogBuilder.setNegativeButton("cancel",
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface arg0, int arg1) {
+
+                                        }
+                                    });
+                            AlertDialog alertDialog = alertDialogBuilder.create();
+                            alertDialog.show();
+
+                        }
+
+
+                        if (currentImageView == imageCompany) {
+                            picturePath = selectedImageUri.getPath();
+                            Log.e("path :", "" + picturePath);
+                            decodeFile(picturePath);
+////            v.imageView.setImageDrawable(roundedImage);
+//                        currentImageView.setImageBitmap(bitmap);
+                            // create an alert dialog box
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                            alertDialogBuilder.setMessage("Do you want to upload the image");
+                            alertDialogBuilder.setPositiveButton("Ok",
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface arg0, int arg1) {
+
+
+                                            // Upload image to server
+                                            progress = new ProgressDialog(getActivity());
+                                            if (progress != null) {
+                                                progress.setMessage("Uploading Company image ..Please Wait...");
+                                                progress.setCancelable(false);
+                                                progress.show();
+                                            }
+                                            new UploadImageTask(getActivity()) {
+                                                @Override
+                                                public void onPostExecute(String result) {
+                                                    if (progress.isShowing()) {
+                                                        progress.dismiss();
+                                                        progress=null;
+                                                    }
+                                                    imageCompany.setImageBitmap(output);
+
+                                                    if (result != null) {
+
+                                                        JSONObject json = null;
+                                                        try {
+                                                            json = new JSONObject(result);
+                                                            company_photo = json.getString("photo");
+                                                            SavePreferences(COMPANY_IMAGE, company_photo);
+                                                            String link = json.getString("link");
+                                                            Log.e("company photo:", "" + company_photo);
+                                                            Log.e("link :", "" + link);
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                }
+                                            }.execute();
+
+
+                                        }
+                                    });
+
+                            alertDialogBuilder.setNegativeButton("cancel",
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface arg0, int arg1) {
+
+                                        }
+                                    });
+                            AlertDialog alertDialog = alertDialogBuilder.create();
+                            alertDialog.show();
+
+                        }
 
 
                     } else {
                         Uri selectedImage = data.getData();
                         String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
                         Cursor cursor = getActivity().getContentResolver().query(selectedImage,
                                 filePathColumn, null, null, null);
                         cursor.moveToFirst();
 
                         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
 
-//                        BitmapFactory.Options options = new BitmapFactory.Options();
-//                        // downsizing image as it throws OutOfMemory Exception for larger
-//                        // images
-//                        options.inSampleSize = 8;
-//                        bitmap = BitmapFactory.decodeFile(picturePath, options);
-//
-//
-                        if(currentImageView==imageProfile)
-                        {  picturePath = cursor.getString(columnIndex);
-                            cursor.close();
-                            Log.e("path :", "" +picturePath);
-                        decodeFile(picturePath);
-                        imageProfile.setImageBitmap(bitmap);  // Upload image to server
-                            try {
-                                String receivedImage = new UploadImageTask(getActivity()).execute().get();// call to get profile images
-                                if(receivedImage==null)
-                                {
-                                    Log.e(" Failed... ","");
-                                }
-                                if (receivedImage != null) {
-
-                                    JSONObject json = new JSONObject(receivedImage);
-
-                                     photo = json.getString("photo");
-                                    String link = json.getString("link");
-                                    Log.e("profile photo:", "" + photo);
-                                    Log.e("link :", "" + link);
-                                }
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            } catch (ExecutionException e1) {
-                                e1.printStackTrace();
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                            }
-                            Log.e(" profilephoto not null:",""+photo);
-                        }
-                        if(currentImageView==imageCompany)
-                        {  picturePath = cursor.getString(columnIndex);
+                        if (currentImageView == imageProfile) {
+                            picturePath = cursor.getString(columnIndex);
                             cursor.close();
                             Log.e("path :", "" + picturePath);
                             decodeFile(picturePath);
-                            // Upload image to server
-                            try {
-                                String receivedImage = new UploadImageTask(getActivity()).execute().get();// call to get profile images
-                                if(receivedImage==null)
-                                {
-                                    Log.e(" Failed... ","");
-                                }
-                                if (receivedImage != null) {
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                            alertDialogBuilder.setMessage("Do you want to upload the image");
+                            alertDialogBuilder.setPositiveButton("Ok",
+                                    new DialogInterface.OnClickListener() {
 
-                                    JSONObject json = new JSONObject(receivedImage);
+                                        @Override
+                                        public void onClick(DialogInterface arg0, int arg1) {
 
-                                     company_photo = json.getString("photo");
-                                    String link = json.getString("link");
-                                    Log.e("company photo  :", "" + company_photo);
-                                    Log.e("link :", "" + link);
-                                }
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            } catch (ExecutionException e1) {
-                                e1.printStackTrace();
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                            }
-                            imageCompany.setImageBitmap(bitmap);
+
+                                            // Upload image to server
+                                            progress = new ProgressDialog(getActivity());
+                                            if (progress != null) {
+                                                progress.setMessage("Uploading profile image ..Please Wait...");
+                                                progress.setCancelable(false);
+                                                progress.show();
+                                            }
+                                            new UploadImageTask(getActivity()) {
+                                                @Override
+                                                public void onPostExecute(String result) {
+                                                    if (progress.isShowing()) {
+                                                        progress.dismiss();
+                                                        progress=null;
+                                                    }
+                                                    imageProfile.setImageBitmap(output);
+
+                                                    if (result != null) {
+
+                                                        JSONObject json = null;
+                                                        try {
+                                                            json = new JSONObject(result);
+                                                            photo = json.getString("photo");
+                                                            SavePreferences(PROFILE_IMAGE, photo);
+                                                            String link = json.getString("link");
+                                                            Log.e("photo :", "" + photo);
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                }
+                                            }.execute();
+                                            Log.e("profile photo outside:", "" + photo);
+                                        }
+                                    });
+
+                            alertDialogBuilder.setNegativeButton("cancel",
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface arg0, int arg1) {
+
+                                        }
+                                    });
+                            AlertDialog alertDialog = alertDialogBuilder.create();
+                            alertDialog.show();
 
                         }
 
-                    }
+                        if (currentImageView == imageCompany) {
+                            picturePath = cursor.getString(columnIndex);
+                            cursor.close();
+                            Log.e("path :", "" + picturePath);
+                            decodeFile(picturePath);
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                            alertDialogBuilder.setMessage("Do you want to upload the image");
+                            alertDialogBuilder.setPositiveButton("Ok",
+                                    new DialogInterface.OnClickListener() {
 
-                } else if (resultCode == getActivity().RESULT_CANCELED) {
+                                        @Override
+                                        public void onClick(DialogInterface arg0, int arg1) {
+
+
+                                            // Upload image to server
+                                            progress = new ProgressDialog(getActivity());
+                                            if (progress != null) {
+                                                progress.setMessage("Uploading company image ..Please Wait...");
+                                                progress.setCancelable(false);
+                                                progress.show();
+                                            }
+                                            new UploadImageTask(getActivity()) {
+                                                @Override
+                                                public void onPostExecute(String result) {
+                                                    if (progress.isShowing()) {
+                                                        progress.dismiss();
+                                                        progress=null;
+                                                    }
+                                                    imageCompany.setImageBitmap(output);
+
+                                                    if (result != null) {
+
+                                                        JSONObject json = null;
+                                                        try {
+                                                            json = new JSONObject(result);
+                                                            company_photo = json.getString("photo");
+                                                            SavePreferences(COMPANY_IMAGE, company_photo);
+                                                            String link = json.getString("link");
+                                                            Log.e("photo :", "" + photo);
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                }
+                                            }.execute();
+
+                                        }
+                                    });
+
+                            alertDialogBuilder.setNegativeButton("cancel",
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface arg0, int arg1) {
+
+                                        }
+                                    });
+                            AlertDialog alertDialog = alertDialogBuilder.create();
+                            alertDialog.show();
+
+                        }
+                    }
+                }else if (resultCode == getActivity().RESULT_CANCELED) {
                     // user cancelled Image capture
                     Toast.makeText(getActivity(),
                             "User cancelled image capture", Toast.LENGTH_SHORT)
@@ -616,12 +747,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             height_tmp /= 2;
             scale *= 2;
         }
-
+output=null;
         // Decode with inSampleSize
         BitmapFactory.Options o2 = new BitmapFactory.Options();
         o2.inSampleSize = scale;
         bitmap = BitmapFactory.decodeFile(filePath, o2);
-
+        getRoundedCornerBitmap(bitmap, 200);
 
     }
 

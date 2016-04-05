@@ -68,17 +68,6 @@ public class UploadImageTask extends AsyncTask<Void, Void, String> {
     }
 
 
-
-    protected void onPreExecute()
-    {
-//        dialog = new ProgressDialog(this.context);
-        if(dialog!=null){
-        dialog.setMessage("Loading");
-        dialog.setCancelable(false);
-        dialog.show();}
-
-
-    }
     @Override
     protected String doInBackground(Void... params) {
         try {
@@ -126,31 +115,6 @@ public class UploadImageTask extends AsyncTask<Void, Void, String> {
         return null;
     }
 
-    @Override
-    protected void onPostExecute(String result) {
-
-        if(dialog.isShowing())
-        {
-            dialog.dismiss();
-        }
-        if(result!=null)
-        {  Log.e("File uploaded ..","");
-
-//            try {
-////                JSONObject json = new JSONObject(result);
-////                String photo=json.getString("photo");
-////                String link=json.getString("link");
-////                Log.e("photo :",""+photo);
-////                Log.e("link :",""+link);
-//
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-
-
-
-        }
-    }
 
 }
 
