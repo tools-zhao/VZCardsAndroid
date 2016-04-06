@@ -54,6 +54,8 @@ import java.util.ArrayList;
  */
 public class FeedActivity extends Fragment {
 
+    String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=";
+
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
     ArrayList<DataFeeds> feeds = new ArrayList<DataFeeds>();
     ListView listView;
@@ -91,6 +93,8 @@ FrameLayout layout_MainMenu;
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         String token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         System.out.println(" getting token from sharedpreference " + token_sharedPreference);
+
+        new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+token_sharedPreference);
         // call AsynTask to perform network operation on separate thread
         new HttpAsyncTask().execute("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference);
 

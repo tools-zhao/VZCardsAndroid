@@ -49,7 +49,7 @@
         android:id="@+id/l1"
         android:gravity="center_horizontal">
         <ImageView
-            android:id="@+id/img1"
+            android:id="@+id/item_img"
              android:layout_width="80dp"
              android:layout_height="60dp"
              android:layout_gravity="center_horizontal"
@@ -120,14 +120,21 @@
         android:id="@+id/l4"
         android:layout_below="@+id/l3"
         android:layout_gravity="center_horizontal">
-
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/text_drawable"
-        android:text="Validity"
-        android:id="@+id/validity"
-        android:layout_gravity="center"></Spinner>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Validity"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:id="@+id/validity"
+            android:layout_gravity="center"/>
+    <!--<Spinner-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@drawable/text_drawable"-->
+        <!--android:text="Validity"-->
+        <!--android:id="@+id/validity"-->
+        <!--android:layout_gravity="center"></Spinner>-->
         </LinearLayout>
     <ImageButton
         android:layout_width="100dp"

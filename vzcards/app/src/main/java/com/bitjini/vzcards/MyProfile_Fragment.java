@@ -113,7 +113,6 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public static String photo="",company_photo="";
     public Bitmap bitmap;
     public static String picturePath;
-    String  photoReceived="",company_photoReceived="";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

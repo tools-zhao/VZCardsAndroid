@@ -65,9 +65,8 @@
         <com.bitjini.vzcards.RoundedImageView
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:src="@drawable/no_pic_placeholder_white"
+            android:src="@drawable/com_logo"
             android:layout_gravity="center"
-            android:background="@drawable/drawable2"
             android:layout_marginLeft="20dp"
             android:id="@+id/btn_pick"
             android:layout_marginBottom="20dp"
