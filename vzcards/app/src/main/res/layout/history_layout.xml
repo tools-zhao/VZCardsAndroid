@@ -36,7 +36,7 @@
                 android:layout_width="120dp"
                 android:layout_height="25dp"
                 android:text=" House "
-                android:id="@+id/historyName"
+                android:id="@+id/itemName"
                 android:layout_toRightOf="@+id/image1"
                android:layout_gravity="top"
                 android:layout_marginTop="10dp"
@@ -56,11 +56,10 @@
             <TextView
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/desc"
                 android:textSize="12sp"
                 android:text="Decription"
                 android:layout_marginLeft="5dp"
-                android:id="@+id/feedProfile"
+                android:id="@+id/desc"
                 android:layout_marginTop="5dp"
                 />
              <Button

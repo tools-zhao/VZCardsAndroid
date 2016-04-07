@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/historyList"
+        android:layout_below="@+id/Layout1"
+        android:divider="#97e6ecf2"
+        android:descendantFocusability="afterDescendants"
+        android:dividerHeight="5.0sp"
+        android:layout_above="@+id/l8"></ListView>
+</LinearLayout>

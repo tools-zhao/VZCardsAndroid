@@ -9,6 +9,7 @@ public class SelectUser {
     String phone;
     Bitmap thumb;
 
+    String itemName,item_photo,date_validity,item_description;
     String fName,lName,photo;
 
     public String getfName() {
@@ -29,6 +30,38 @@ public class SelectUser {
 
     public String getPhoto() {
         return photo;
+    }
+
+    public String getItem_description() {
+        return item_description;
+    }
+
+    public void setItem_description(String item_description) {
+        this.item_description = item_description;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public String getItem_photo() {
+        return item_photo;
+    }
+
+    public void setItem_photo(String item_photo) {
+        this.item_photo = item_photo;
+    }
+
+    public String getDate_validity() {
+        return date_validity;
+    }
+
+    public void setDate_validity(String date_validity) {
+        this.date_validity = date_validity;
     }
 
     public void setPhoto(String photo) {

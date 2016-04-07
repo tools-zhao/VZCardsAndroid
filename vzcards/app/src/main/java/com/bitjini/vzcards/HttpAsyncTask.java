@@ -35,9 +35,6 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
     // onPostExecute displays the results of the AsyncTask.
     @Override
     protected void onPostExecute(String result) {
-        Toast.makeText(context, "Received!", Toast.LENGTH_LONG).show();
-        Log.e("response frnds list...", "" + result);
-
 
     }
 
