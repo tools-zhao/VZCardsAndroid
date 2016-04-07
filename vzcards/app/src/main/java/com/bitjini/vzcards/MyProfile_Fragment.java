@@ -144,12 +144,6 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         referralbtn = (Button) profile.findViewById(R.id.referralbtn);
         vzfrndsbtn = (Button) profile.findViewById(R.id.vzfrnds);
 
-//        new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference);
-
-//        // remove image if stored in shared preferences
-//        SharedPreferences preferences = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
-//        preferences.edit().remove(PROFILE_IMAGE).commit();
-//        preferences.edit().remove(COMPANY_IMAGE).commit();
 
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
         String details = data.getString(TASKS, null);
@@ -338,6 +332,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         }
         return bm;
     }
+
     public  Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
          output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
                 .getHeight(), Bitmap.Config.ARGB_8888);
@@ -420,8 +415,6 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-
             if (resultCode == getActivity().RESULT_OK) {
                 if (requestCode == SELECT_PHOTO) {
                     final boolean isCamera;
@@ -441,19 +434,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     if (isCamera) {
 
                         selectedImageUri = outputFileUri;
-                        //Bitmap factory
-//                        BitmapFactory.Options options = new BitmapFactory.Options();
-//                        // downsizing image as it throws OutOfMemory Exception for larger
-//                        // images
-//                        options.inSampleSize = 8;
-//                        final Bitmap bitmap = BitmapFactory.decodeFile(selectedImageUri.getPath(), options);
+
                         if (currentImageView == imageProfile) {
                             picturePath = selectedImageUri.getPath();
                             Log.e("path :", "" + picturePath);
                             decodeFile(picturePath);
-////            v.imageView.setImageDrawable(roundedImage);
-//                        currentImageView.setImageBitmap(bitmap);
-                            // create an alert dialog box
+
                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                             alertDialogBuilder.setMessage("Do you want to upload the image");
                             alertDialogBuilder.setPositiveButton("Ok",

@@ -92,12 +92,6 @@ public class AddActivity extends Fragment{
         item_image=(ImageView) iHave.findViewById(R.id.item_img);
         submit=(ImageButton) iHave.findViewById(R.id.imgbtn);
 
-
-
-        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
-        p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
-
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
