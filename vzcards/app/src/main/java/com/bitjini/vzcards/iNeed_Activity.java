@@ -1,8 +1,8 @@
 package com.bitjini.vzcards;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,7 +19,6 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,26 +29,30 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,12 +69,16 @@ public class iNeed_Activity extends Fragment {
     Button havebtn;
     public ImageView item_image;
     Button addImage;
-    TextView txtItem,txtDescription,txtDate_validity;
+    EditText txtItem,txtDescription,txtDate_validity;
     ImageButton submit;
     public static String Item_picturePath;
     public String item_photo = "", item = "", description = "", date_validity="",question="";
-    public ProgressDialog progress;
-    public Bitmap output,bitmap;
+    public ProgressDialog progress=null;
+    public Bitmap bitmap=null;
+
+    VerifyScreen p = new VerifyScreen();
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,6 +93,9 @@ public class iNeed_Activity extends Fragment {
 
          havebtn = (Button) iNeed.findViewById(R.id.ihave);
 
+        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
+        p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+        p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,7 +107,7 @@ public class iNeed_Activity extends Fragment {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET);
+                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET+p.token_sharedPreference);
             }
         });
 
@@ -120,7 +130,7 @@ public class iNeed_Activity extends Fragment {
 
         return iNeed;
     }
-    private void openImageIntent() {
+    public void openImageIntent() {
 
         // Determine Uri of camera image to save.
         final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
@@ -211,7 +221,7 @@ public class iNeed_Activity extends Fragment {
                                                     progress.dismiss();
                                                     progress=null;
                                                 }
-                                                item_image.setImageBitmap(output);
+                                                item_image.setImageBitmap(bitmap);
 
                                                 if (result != null) {
 
@@ -286,7 +296,7 @@ public class iNeed_Activity extends Fragment {
                                                     progress.dismiss();
                                                     progress=null;
                                                 }
-                                                item_image.setImageBitmap(output);
+                                                item_image.setImageBitmap(bitmap);
 
                                                 if (result != null) {
 
@@ -353,7 +363,7 @@ public class iNeed_Activity extends Fragment {
             height_tmp /= 2;
             scale *= 2;
         }
-        output=null;
+
         // Decode with inSampleSize
         BitmapFactory.Options o2 = new BitmapFactory.Options();
         o2.inSampleSize = scale;
@@ -366,12 +376,18 @@ public class iNeed_Activity extends Fragment {
 
         Context context;
 
-        VerifyScreen p = new VerifyScreen();
+
         StringBuffer response = new StringBuffer();
         public INeed_Task(Context context) {
             this.context = context;
         }
+        protected void onPreExecute() {
 
+            progress = new ProgressDialog(this.context);
+            progress.setMessage("Sending...");
+            progress.setCancelable(false);
+            progress.show();
+        }
         @Override
         protected String doInBackground(String... urls) {
             // params comes from the execute() call: params[0] is the url.
@@ -384,22 +400,23 @@ public class iNeed_Activity extends Fragment {
 
         private String downloadUrl(String postURL) throws IOException {
 
-            p.sharedPreferences = context.getSharedPreferences(p.VZCARD_PREFS, 0);
-            p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
-            p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
+            String response = null;
+            Log.e(" web url",""+postURL);
+            HttpClient client = new DefaultHttpClient();
 
-            URL url = new URL(postURL+  p.token_sharedPreference);
-            final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
+            HttpPost post = new HttpPost(postURL);
 
-            item_photo=txtItem.getText().toString();
-            description=txtDescription.getText().toString();
+            item= txtItem.getText().toString();
+            description= txtDescription.getText().toString();
             date_validity=txtDate_validity.getText().toString();
             question="1";
+
+            Log.e(" question test:",""+question);
+            Log.e(" item_photo test:",""+item_photo);
+            Log.e(" item test:",""+item);
+            Log.e(" description test:",""+description);
+            Log.e(" date_validity test:",""+date_validity);
+            Log.e(" vz_id test:",""+p.vz_id_sharedPreference);
 
             try {
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -410,73 +427,129 @@ public class iNeed_Activity extends Fragment {
                 params.add(new BasicNameValuePair("description", description));
                 params.add(new BasicNameValuePair("date_validity", date_validity));
 
-                OutputStream os = null;
+                // encode post data in url format
+                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params, HTTP.UTF_8);
+                post.setEntity(ent);
+                HttpResponse responsePOST = client.execute(post);
+                HttpEntity resEntity = responsePOST.getEntity();
+                if (resEntity != null) {
+                    // storing the response
+                    response=EntityUtils.toString(resEntity);
+                    Log.i("RESPONSE", response);
 
-                os = conn.getOutputStream();
-
-                BufferedWriter writer = null;
-
-                writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getQuery(params));
-                //Get Response
-                InputStream is = conn.getInputStream();
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-                String line;
-
-                while ((line = rd.readLine()) != null) {
-                    response.append(line);
-                    response.append('"');
                 }
-                rd.close();
+                StringBuilder sb = new StringBuilder();
+                try {
+                    BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
+                    String line = null;
 
-                Log.e(" INeed Response", "" + response.toString());
-                writer.flush();
-                writer.close();
-                os.close();
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
 
-            } catch (IOException e) {
+                System.out.println("finalResult " + sb.toString());
+                // return response
+                return response;
+
+            } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-
-                if (conn != null) {
-                    conn.disconnect();
-                }
             }
 
-
-            conn.connect();
-
-            return response.toString();
+            return null;
         }
 
         @Override
         public void onPostExecute(String result) {
+            if (progress.isShowing()) {
+                progress.dismiss();
+                progress=null;
+            }
+            txtItem.setText("");
+            txtDate_validity.setText("");
+            txtDescription.setText("");
+            item_image.setImageResource(R.drawable.no_pic_placeholder);
+            bitmap=null;
+            Toast.makeText(getActivity(),"Your Data is posted ",Toast.LENGTH_LONG).show();
 
             if (result != null) {
                 Log.e(" result :", "" + result);
             }
         }
 
-
-        private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
-            StringBuilder result = new StringBuilder();
-            boolean first = true;
-
-            for (NameValuePair pair : params) {
-                if (first)
-                    first = false;
-                else
-                    result.append("&");
-
-                result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
-                result.append("=");
-
-                result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
-            }
-
-            return result.toString();
-        }
     }
+
+
+    class UploadImageTask extends AsyncTask<Void, Void, String> {
+        VerifyScreen p=new VerifyScreen();
+        Context context;
+
+        MyProfile_Fragment pr=new MyProfile_Fragment();
+
+        Activity activity;
+
+        public UploadImageTask(Context c) {
+            this.context = c;
+
+        }
+
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+
+                Log.e(" web url :",""+pr.URL_UPLOAD_IMAGE+p.token_sharedPreference);
+                File sourceFile_profile = new File(Item_picturePath );
+                Log.e("picturePath :", "" +Item_picturePath);
+
+
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost(pr.URL_UPLOAD_IMAGE+p.token_sharedPreference);
+
+                String boundary = "-------------" + System.currentTimeMillis();
+
+                httpPost.setHeader("Content-Type", "multipart/form-data; boundary="+boundary);
+
+                HttpEntity entity = MultipartEntityBuilder.create()
+                        .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+                        .setBoundary(boundary)
+                        .addPart("photo", new FileBody(sourceFile_profile))
+                        .build();
+
+                httpPost.setEntity(entity);
+
+
+                HttpResponse response = httpclient.execute(httpPost);
+
+                String responseBody = EntityUtils.toString(response.getEntity());
+                Log.v(" HTTP Response", responseBody);
+                return responseBody;
+
+            }
+            catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                // something went wrong. connection with the server error
+                e.printStackTrace();
+            }catch (Throwable t) {
+                t.printStackTrace(); }
+
+            return null;
+        }
+
+
+    }
+
+
+
 }

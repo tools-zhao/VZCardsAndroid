@@ -100,7 +100,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
                         for(String s: phoneArray) {
                             params.add(new BasicNameValuePair("contact_list", s));
-                            Log.e("s", "" + s);
+//                            Log.e("s", "" + s);
                         }
                         OutputStream os = null;
 
@@ -122,7 +122,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                         }
                         rd.close();
 
-                        Log.e(" contact list Response", "" + response.toString());
+//                        Log.e(" contact list Response", "" + response.toString());
                         writer.flush();
                         writer.close();
                         os.close();
@@ -146,14 +146,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         }
         return null;
     }
-    @Override
-    public void onPostExecute(String result) {
 
-        if(result!=null)
-        {
-            Log.e(" result :",""+result);
-        }
-    }
 
 
     private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
@@ -213,7 +206,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                     if(phoneNumber.length()== 10)
                     {
                         phoneNumber=countryCode+phoneNumber;
-                        Log.e(" phone No.countrycode:",""+phoneNumber);
+//                        Log.e(" phone No.countrycode:",""+phoneNumber);
 
                     }
 

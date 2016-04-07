@@ -19,23 +19,27 @@
         android:id="@+id/l1"
         android:gravity="center_horizontal">
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="60dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:src="@drawable/no_pic_placeholder"/>
-        <Button
-            android:layout_width="85dp"
-            android:layout_height="25dp"
-            android:id="@+id/addImage"
-            android:layout_gravity="right"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="10dp"
-            android:text="+AddImage"
-            android:textAllCaps="false"
-            android:textColor="#ffffff"
-            android:background="@drawable/addimage_red"/>
+            android:id="@+id/item_img"
+            android:src="@drawable/no_pic_placeholder"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"/>
+
     </LinearLayout>
+    <Button
+        android:layout_width="85dp"
+        android:layout_height="25dp"
+        android:id="@+id/addImage"
+        android:layout_gravity="right"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="100dp"
+        android:text="+AddImage"
+        android:layout_alignParentRight="true"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        android:background="@drawable/addimage_red"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -47,10 +51,10 @@
         android:id="@+id/l2"
         android:layout_below="@id/l1"
         android:layout_gravity="center_horizontal">
-        <TextView
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="What is it?"
+            android:hint="What is it?"
             android:gravity="center"
             android:id="@+id/ask"
             android:layout_gravity="center"
@@ -67,10 +71,10 @@
         android:id="@+id/l3"
         android:layout_below="@+id/l2"
         android:layout_gravity="center_horizontal">
-        <TextView
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Description"
+            android:hint="Description"
             android:gravity="center"
             android:id="@+id/desc"
             android:layout_gravity="center"
@@ -91,12 +95,14 @@
         android:layout_gravity="center_horizontal">
 
 
-        <Spinner
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/text_drawable"
-            android:text="Validity"
-            android:layout_gravity="center"></Spinner>
+            android:hint="Validity"
+            android:gravity="center"
+            android:id="@+id/validity"
+            android:layout_gravity="center"></EditText>
     </LinearLayout>
     <ImageButton
         android:layout_width="100dp"
@@ -161,15 +167,7 @@
         </RadioGroup>
 
 
-
-
     </LinearLayout>
 
-
-
-
-
-
-
 </RelativeLayout>
-    </FrameLayout>
+</FrameLayout>
