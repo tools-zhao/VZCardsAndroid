@@ -134,6 +134,7 @@
                 android:gravity="center"
                 android:weightSum="2"
                 android:orientation="horizontal" >
+
                 <RadioButton
                     android:layout_width="0dp"
                     android:layout_height="30dp"
@@ -146,13 +147,13 @@
                     android:textAllCaps="false"
                     android:layout_weight="1"
                     android:layout_margin="0dp"
+                    android:checked="true"
                     android:gravity="center" />
 
                 <RadioButton
                     android:layout_width="0dp"
                     android:layout_height="30dp"
                     android:id="@+id/ineed"
-                    android:checked="true"
                     android:text="i Need"
                     android:background="@drawable/button_color3"
                     android:textColor="@drawable/text_color"
@@ -165,7 +166,6 @@
                     android:layout_margin="0dp"
                     android:gravity="center"/>
             </RadioGroup>
-
 
         </LinearLayout>
 

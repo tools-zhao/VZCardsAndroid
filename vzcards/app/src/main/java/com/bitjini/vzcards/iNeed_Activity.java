@@ -420,7 +420,7 @@ public class iNeed_Activity extends Fragment {
 
             try {
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("vz_id", p.vz_id_sharedPreference));
+                params.add(new BasicNameValuePair("vz_id", "VZ1448533171"));
                 params.add(new BasicNameValuePair("item_photo", item_photo));
                 params.add(new BasicNameValuePair("question", question));
                 params.add(new BasicNameValuePair("item", item));
