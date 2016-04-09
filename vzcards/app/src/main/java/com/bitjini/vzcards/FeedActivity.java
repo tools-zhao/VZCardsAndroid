@@ -2,6 +2,7 @@ package com.bitjini.vzcards;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -62,6 +63,7 @@ public class FeedActivity extends Fragment {
     public FeedsAdapter adapter;
     ViewHolder holder;
 FrameLayout layout_MainMenu;
+    ProgressDialog progress;
 
     DataFeeds dataFeeds2 = new DataFeeds();
     DataFeeds dataFeeds1 = new DataFeeds();
@@ -90,10 +92,13 @@ FrameLayout layout_MainMenu;
 
         // get the access token from shared prefernces
         VerifyScreen p = new VerifyScreen();
+        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
+        String token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+        System.out.println(" getting token from sharedpreference " + token_sharedPreference);
 
-        new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+p.token_sharedPreference);
+        new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+token_sharedPreference);
         // call AsynTask to perform network operation on separate thread
-        new HttpAsyncTask().execute("http://vzcards-api.herokuapp.com/get_list/?access_token=" + p.token_sharedPreference);
+        new HttpAsyncTask().execute("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference);
 
         // set on onList item click
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -341,6 +346,8 @@ FrameLayout layout_MainMenu;
             holder.item.setText(String.valueOf(data.getItem()));
 
             holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
+
+
             new DownloadImagesTask(getActivity()).execute(holder.item_photo);
 
             holder.photo.setTag(String.valueOf(data.getPhoto()));

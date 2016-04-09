@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -52,6 +53,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class SyncContacts extends AsyncTask<String, Void, String> {
     ArrayList<String > phoneArray=new ArrayList<>();
 
+    public ProgressDialog progress;
 
     // Cursor to load contacts list
     Cursor phones;
@@ -67,6 +69,13 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         this.context = context;
     }
 
+    protected void onPreExecute() {
+
+        progress = new ProgressDialog(this.context);
+       progress.setMessage("Synchronizing your contacts please wait...");
+       progress.setCancelable(false);
+        progress.show();
+    }
     @Override
     protected String doInBackground(String... urls) {
         // params comes from the execute() call: params[0] is the url.
@@ -166,6 +175,14 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         }
 
         return result.toString();
+    }
+    public void onPostExecute(String result)
+    {
+        if(progress.isShowing())
+        {
+            progress.dismiss();
+            progress=null;
+        }
     }
 
     // Load data on background

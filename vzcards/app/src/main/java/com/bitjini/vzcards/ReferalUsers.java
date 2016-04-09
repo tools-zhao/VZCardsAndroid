@@ -9,7 +9,15 @@ public class ReferalUsers {
     String fname,lname;
     String referredfName,referredlName;
     String photo,referedPhoto;
-    String desc;
+    String desc,itemName;
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
 
     public String getFname() {
         return fname;

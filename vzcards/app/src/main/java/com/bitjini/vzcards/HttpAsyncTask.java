@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -16,11 +17,20 @@ import java.net.URL;
 public class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
     Context context;
+    public ProgressDialog progress;
 
     public HttpAsyncTask(Context context) {
         this.context = context;
     }
 
+    // onPostExecute displays the results of the AsyncTask.
+//    @Override
+//    protected void onPreExecute() {
+//        progress = new ProgressDialog(this.context);
+//        progress.setMessage("Loading...");
+//        progress.setCancelable(false);
+//        progress.show();
+//    }
     @Override
     protected String doInBackground(String... urls) {
 
@@ -32,11 +42,6 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
         }
     }
 
-    // onPostExecute displays the results of the AsyncTask.
-    @Override
-    protected void onPostExecute(String result) {
-
-    }
 
     private String downloadUrl(String urlString) throws IOException {
         InputStream is = null;
@@ -56,6 +61,7 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
         } finally {
             if (is != null) {
                 is.close();
+
             }
         }
     }
@@ -78,5 +84,13 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
             }
         }
         return sb.toString();
+    }
+    public void onPostExecute(String result)
+    {
+//        if(progress.isShowing())
+//        {
+//            progress.dismiss();
+//            progress=null;
+//        }
     }
 }

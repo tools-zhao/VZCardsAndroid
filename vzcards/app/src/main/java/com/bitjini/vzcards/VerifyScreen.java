@@ -149,11 +149,7 @@ public class VerifyScreen extends Activity {
         private String downloadUrl(String urlString) throws IOException {
             String response=null;
             try {
-//                final TextView outputView = (TextView) findViewById(R.id.content);
-                URL url = new URL(urlString);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-                HttpClient client = new DefaultHttpClient();
+                     HttpClient client = new DefaultHttpClient();
                 String postURL = URL_REGISTER;
                 HttpPost post = new HttpPost(postURL);
                 company_photo = "";

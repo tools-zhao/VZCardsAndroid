@@ -31,6 +31,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
     String HISTORY_URL = "http://vzcards-api.herokuapp.com/history/?access_token=";
     VerifyScreen p = new VerifyScreen();
 
+    MyProfile_Fragment pr=new MyProfile_Fragment();
     ArrayList<ReferalUsers> groupItem=new ArrayList<ReferalUsers>();
     Button vzfrnds,profilebtn,referralbtn;
     ListView list;
@@ -88,7 +89,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
 
                     String fname=connecter_details.getString("firstname");
                     String lastname=connecter_details.getString("lastname");
-                    String photo=reffered_phone_details.getString("photo");
+                    String photo=connecter_details.getString("photo");
                     referalUsers.setFname(fname);
                     referalUsers.setLname(lastname);
                     referalUsers.setPhoto(photo);
@@ -109,6 +110,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
                 Log.e(" description :", "" + description);
 
                 referalUsers.setDesc(description);
+                referalUsers.setItemName(itemName);
                 groupItem.add(referalUsers);
 
 
@@ -192,6 +194,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
             }
             TextView name = (TextView) v.findViewById(R.id.referralName);
             TextView referredName = (TextView) v.findViewById(R.id.referred);
+            TextView itemName = (TextView) v.findViewById(R.id.itemName);
              ImageView referredPhoto = (ImageView) v.findViewById(R.id.referdPhoto);
             ImageView photo = (ImageView) v.findViewById(R.id.photo);
 
@@ -199,15 +202,24 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
 
             name.setText(cat.getFname()+" "+cat.getLname());
             referredName.setText(cat.getReferredfName()+" "+cat.getReferredlName());
+            itemName.setText("for " +cat.getItemName());
             try {
                 if (cat.getPhoto() != null) {
                     photo.setTag(cat.getPhoto());
                     new DownloadImagesTask(_c).execute(photo);// Download item_photo from AsynTask
+//                    pr.bm=null; pr.output=null;
+//                    pr.DownloadFullFromUrl(cat.getPhoto());
+//                    pr.getRoundedCornerBitmap(pr.bm, 100);
+//                    photo.setImageBitmap(pr.output);
 
                 } else {
                    photo.setImageResource(R.drawable.profile_pic_placeholder);
                 }
                 if (cat.getReferedPhoto() != null) {
+//                    pr.bm=null; pr.output=null;
+//                    pr.DownloadFullFromUrl(cat.getReferedPhoto());
+//                    pr.getRoundedCornerBitmap(pr.bm, 100);
+//                    referredPhoto.setImageBitmap(pr.output);
                     referredPhoto.setTag(cat.getReferedPhoto());
                     new DownloadImagesTask(_c).execute(referredPhoto);// Download item_photo from AsynTask
 

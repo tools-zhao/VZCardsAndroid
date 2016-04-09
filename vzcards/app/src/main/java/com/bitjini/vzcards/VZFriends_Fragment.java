@@ -47,7 +47,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class VZFriends_Fragment extends Fragment implements View.OnClickListener,SearchView.OnQueryTextListener, AdapterView.OnItemClickListener {
 
-    String HISTORY_URL = "http://vzcards-api.herokuapp.com/get_my_friends/?access_token=";
+    String VZFRIENDS_URL = "http://vzcards-api.herokuapp.com/get_my_friends/?access_token=";
     VerifyScreen p = new VerifyScreen();
 
     Context c;
@@ -76,7 +76,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         selectUsers = new ArrayList<SelectUser>();
 
         try {
-            String received = new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
+            String received = new HttpAsyncTask(getActivity()).execute(VZFRIENDS_URL + p.token_sharedPreference).get();
 
             JSONObject jsonObject = new JSONObject(received);
             String response = jsonObject.getString("response");

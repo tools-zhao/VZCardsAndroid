@@ -97,7 +97,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     //Declaring widgets
     Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
     TextView textViewName;
+
     public ProgressDialog progress;
+
     ListView listView;
     EditTextAdapter editTextAdapter;
 
@@ -202,19 +204,24 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
         if(!photo.isEmpty()) {
-            bm=null; output=null;
-            DownloadFullFromUrl(photo);
-            getRoundedCornerBitmap(bm, 200);
-            imageProfile.setImageBitmap(output);
+//            bm=null; output=null;
+//            DownloadFullFromUrl(photo);
+//            getRoundedCornerBitmap(bm, 100);
+//            imageProfile.setImageBitmap(output);
+            imageProfile.setTag(photo);
+                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
 
         }
 
 
         if(!company_photo.isEmpty()) {
             bm=null; output=null;
-            DownloadFullFromUrl(company_photo);
-            getRoundedCornerBitmap(bm, 200);
-            imageCompany.setImageBitmap(output);
+//            DownloadFullFromUrl(company_photo);
+//            getRoundedCornerBitmap(bm, 100);
+//            imageCompany.setImageBitmap(output);
+            imageCompany.setTag(company_photo);
+            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
+
         }
 
 
@@ -313,47 +320,47 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     }
 
-    public Bitmap DownloadFullFromUrl(String imageFullURL) {
+//    public Bitmap DownloadFullFromUrl(String imageFullURL) {
+//
+//        try {
+//            URL url = new URL(imageFullURL);
+//            URLConnection ucon = url.openConnection();
+//            InputStream is = ucon.getInputStream();
+//            BufferedInputStream bis = new BufferedInputStream(is);
+//            ByteArrayBuffer baf = new ByteArrayBuffer(50);
+//            int current = 0;
+//            while ((current = bis.read()) != -1) {
+//                baf.append((byte) current);
+//            }
+//            bm = BitmapFactory.decodeByteArray(baf.toByteArray(), 0,
+//                    baf.toByteArray().length);
+//        } catch (IOException e) {
+//            Log.d("ImageManager", "Error: " + e);
+//        }
+//        return bm;
+//    }
 
-        try {
-            URL url = new URL(imageFullURL);
-            URLConnection ucon = url.openConnection();
-            InputStream is = ucon.getInputStream();
-            BufferedInputStream bis = new BufferedInputStream(is);
-            ByteArrayBuffer baf = new ByteArrayBuffer(50);
-            int current = 0;
-            while ((current = bis.read()) != -1) {
-                baf.append((byte) current);
-            }
-            bm = BitmapFactory.decodeByteArray(baf.toByteArray(), 0,
-                    baf.toByteArray().length);
-        } catch (IOException e) {
-            Log.d("ImageManager", "Error: " + e);
-        }
-        return bm;
-    }
-
-    public  Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
-         output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
-                .getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = pixels;
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        return output;
-    }
+//    public  Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+//         output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+//                .getHeight(), Bitmap.Config.ARGB_8888);
+//        Canvas canvas = new Canvas(output);
+//
+//        final int color = 0xff424242;
+//        final Paint paint = new Paint();
+//        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+//        final RectF rectF = new RectF(rect);
+//        final float roundPx = pixels;
+//
+//        paint.setAntiAlias(true);
+//        canvas.drawARGB(0, 0, 0, 0);
+//        paint.setColor(color);
+//        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+//
+//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+//        canvas.drawBitmap(bitmap, rect, rect, paint);
+//
+//        return output;
+//    }
     // To retrive saved values in shared preference Now convert the JSON string back to your java object
 
     protected void LoadPreferences() {
@@ -714,14 +721,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     }
     public void decodeFile(String filePath) {
-        // Decode image size
+        // First decode with inJustDecodeBounds=true to check dimensions
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, o);
 
         // The new size we want to scale to
         final int REQUIRED_SIZE = 1024;
-
+        // Calculate inSampleSize
         // Find the correct scale value. It should be the power of 2.
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
         int scale = 1;
@@ -733,11 +740,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             scale *= 2;
         }
 output=null;
-        // Decode with inSampleSize
+        // Decode bitmap with inSampleSize set
         BitmapFactory.Options o2 = new BitmapFactory.Options();
         o2.inSampleSize = scale;
         bitmap = BitmapFactory.decodeFile(filePath, o2);
-        getRoundedCornerBitmap(bitmap, 200);
+//        getRoundedCornerBitmap(bitmap, 100);
 
     }
 

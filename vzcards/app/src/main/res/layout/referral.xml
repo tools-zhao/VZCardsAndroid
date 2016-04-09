@@ -34,7 +34,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:layout_marginRight="5dp">
-                <ImageView
+                <com.bitjini.vzcards.RoundedImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:id="@+id/photo"
@@ -81,7 +81,7 @@
                         android:layout_width="70dp"
                         android:layout_height="25dp"
                         android:text="for"
-                        android:id="@+id/desc"
+                        android:id="@+id/itemName"
                         android:textSize="12sp"
                         android:clickable="false"
                         android:focusable="false"
@@ -107,7 +107,7 @@
                         android:focusableInTouchMode="false"
                         android:layout_marginTop="35dp"
                         />
-                    <ImageView
+                    <com.bitjini.vzcards.RoundedImageView
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:id="@+id/referdPhoto"
