@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_frame"
+    android:layout_width="match_parent"
+    android:clickable="true"
+    android:background="?android:attr/colorBackground"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="#43c1d9f2"
+        android:layout_height="match_parent">
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:layout_above="@+id/l8"
+            android:fillViewport="true">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:background="#434951"
+                    android:id="@+id/l1"
+                    android:gravity="center_horizontal">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:id="@+id/name"
+                        android:layout_marginTop="5dp"
+                        android:textColor="#ffffff"
+                        android:layout_gravity="center"
+                        android:text="Name"
+                        android:textSize="20sp"
+                        android:gravity="center"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="210dp"
+                    android:background="#434951"
+                    android:id="@+id/l2"
+                    android:weightSum="3"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:layout_below="@+id/l1"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true">
+
+                    <com.bitjini.vzcards.RoundedImageView
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/phone"
+                        android:background="@drawable/drawable2"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:id="@+id/btn_call"
+                        android:layout_marginBottom="20dp"
+                        android:layout_weight="0.6"/>
+
+                    <com.bitjini.vzcards.RoundedImageView
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="1.8"
+                        android:id="@+id/profilePic"
+                        android:src="@drawable/profile_pic_placeholder"/>
+
+                    <com.bitjini.vzcards.RoundedImageView
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/com_logo"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:id="@+id/btn_pick"
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_weight="0.6"/>
+
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_below="@+id/l2"
+
+                    >
+
+                    <ListView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/profileList"
+                        android:layout_below="@+id/Layout1"
+                        android:divider="#97e6ecf2"
+                        android:descendantFocusability="afterDescendants"
+                        android:dividerHeight="5.0sp"
+                        android:layout_above="@+id/l8"></ListView>
+
+                </LinearLayout>
+            </RelativeLayout>
+        </ScrollView>
+
+    </RelativeLayout>
+
+
+</FrameLayout>

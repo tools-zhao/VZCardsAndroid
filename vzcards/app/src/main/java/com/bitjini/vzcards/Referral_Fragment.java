@@ -78,9 +78,28 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
                     String referedFname=reffered_phone_details.getString("firstname");
                     String referedLname=reffered_phone_details.getString("lastname");
                     String referedphoto=reffered_phone_details.getString("photo");
+                    String phone=reffered_phone_details.getString("phone");
+                    String company=reffered_phone_details.getString("company");
+                    String pin_code=reffered_phone_details.getString("pin_code");
+                    String industry=reffered_phone_details.getString("industry");
+                    String address1=reffered_phone_details.getString("address_line_1");
+                    String address2=reffered_phone_details.getString("address_line_2");
+                    String city=reffered_phone_details.getString("city");
+                    String company_photo=reffered_phone_details.getString("company_photo");
+                    String email=reffered_phone_details.getString("email");
+
                     referalUsers.setReferredfName(referedFname);
                     referalUsers.setReferredlName(referedLname);
                     referalUsers.setReferedPhoto(referedphoto);
+                    referalUsers.setPhone(phone);
+                    referalUsers.setEmail(email);
+                    referalUsers.setCompany(company);
+                    referalUsers.setPin_code(pin_code);
+                    referalUsers.setIndustry(industry);
+                    referalUsers.setAddress1(address1);
+                    referalUsers.setAddress2(address2);
+                    referalUsers.setCity(city);
+                    referalUsers.setComany_photo(company_photo);
 
                     JSONObject reffered_ticket_details = c2.getJSONObject("reffered_ticket_details");
                     Log.w("reffered_ticket_details", "" + reffered_ticket_details);
@@ -111,6 +130,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
 
                 referalUsers.setDesc(description);
                 referalUsers.setItemName(itemName);
+                referalUsers.setItem_photo(item_photo);
                 groupItem.add(referalUsers);
 
 
@@ -155,7 +175,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
      */
 
    public class CustomListAdapter extends BaseAdapter implements View.OnClickListener {
-
+        ReferalUsers cat;
         Context _c;
         public ArrayList<ReferalUsers> groupItem;
         int textViewResourceId;
@@ -198,7 +218,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
              ImageView referredPhoto = (ImageView) v.findViewById(R.id.referdPhoto);
             ImageView photo = (ImageView) v.findViewById(R.id.photo);
 
-            ReferalUsers cat = groupItem.get(position);
+            cat = groupItem.get(position);
 
             name.setText(cat.getFname()+" "+cat.getLname());
             referredName.setText(cat.getReferredfName()+" "+cat.getReferredlName());
@@ -242,7 +262,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
             Button callBtn = (Button) v.findViewById(R.id.btnCall);
             Button vzCardBtn = (Button) v.findViewById(R.id.btnVzCard);
 
-            callBtn.setOnClickListener(this);
+           callBtn.setOnClickListener(this);
             vzCardBtn.setOnClickListener(this);
 
             toolbar.setVisibility(View.GONE);
@@ -254,7 +274,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
               case R.id.btnCall:
                   try{
                       Intent callIntent = new Intent(Intent.ACTION_CALL);
-                      callIntent.setData(Uri.parse("tel:"+"8904826233"));
+                      callIntent.setData(Uri.parse("tel:"+cat.getPhone()));
                       startActivity(callIntent);
                   }
                   catch (android.content.ActivityNotFoundException ex)
@@ -264,15 +284,38 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
                   break;
 
               case R.id.btnVzCard:
-                      Fragment add1 = new Add1_Activity();
-                        // get the id of fragment
-                       FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.referral_frame);
 
-                      // Insert the fragment by replacing any existing fragment
-                      FragmentManager fragmentManager = getFragmentManager();
-                      fragmentManager.beginTransaction()
-                        .add(contentView.getId(), add1).addToBackStack(contentView.toString())
-                        .commit();
+                  Friends_Profile ldf = new Friends_Profile();
+
+                  Bundle args = new Bundle();
+
+                  args.putString("fname", cat.getReferredfName());
+                  args.putString("lname", cat.getReferredlName());
+                  args.putString("lname", cat.getReferredlName());
+                  args.putString("photo", cat.getReferedPhoto());
+                  args.putString("phone", cat.getPhone());
+                  args.putString("company", cat.getCompany());
+                  args.putString("pin_code", cat.getPin_code());
+                  args.putString("industry", cat.getIndustry());
+                  args.putString("address1", cat.getAddress1());
+                  args.putString("address2",cat.getAddress2());
+                  args.putString("city", cat.getCity());
+                  args.putString("company_photo",cat.getComany_photo());
+                  ldf.setArguments(args);
+                  //Inflate the fragment
+                  getFragmentManager().beginTransaction().add(R.id.referral_frame, ldf).addToBackStack(ldf.toString())
+                          .commit();
+
+
+//                      Fragment add1 = new Add1_Activity();
+//                        // get the id of fragment
+//                       FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.referral_frame);
+//
+//                      // Insert the fragment by replacing any existing fragment
+//                      FragmentManager fragmentManager = getFragmentManager();
+//                      fragmentManager.beginTransaction()
+//                        .add(contentView.getId(), add1).addToBackStack(contentView.toString())
+//                        .commit();
 
                        break;
               default:

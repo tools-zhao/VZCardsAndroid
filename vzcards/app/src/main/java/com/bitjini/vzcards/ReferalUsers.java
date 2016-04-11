@@ -7,12 +7,92 @@ import java.util.List;
 
 public class ReferalUsers {
     String fname,lname;
-    String referredfName,referredlName;
-    String photo,referedPhoto;
+    String referredfName,referredlName,phone,company,industry,city,address1,address2,pin_code,email;
+    String photo,referedPhoto,comany_photo,item_photo;
     String desc,itemName;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getItem_photo() {
+        return item_photo;
+    }
+
+    public void setItem_photo(String item_photo) {
+        this.item_photo = item_photo;
+    }
+
+    public String getComany_photo() {
+        return comany_photo;
+    }
+
+    public void setComany_photo(String comany_photo) {
+        this.comany_photo = comany_photo;
+    }
 
     public String getItemName() {
         return itemName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getAddress1() {
+        return address1;
+    }
+
+    public void setAddress1(String address1) {
+        this.address1 = address1;
+    }
+
+    public String getAddress2() {
+        return address2;
+    }
+
+    public void setAddress2(String address2) {
+        this.address2 = address2;
+    }
+
+    public String getPin_code() {
+        return pin_code;
+    }
+
+    public void setPin_code(String pin_code) {
+        this.pin_code = pin_code;
     }
 
     public void setItemName(String itemName) {
