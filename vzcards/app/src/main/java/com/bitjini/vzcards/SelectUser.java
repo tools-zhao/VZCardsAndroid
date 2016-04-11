@@ -10,7 +10,39 @@ public class SelectUser {
     Bitmap thumb;
 
     String itemName,item_photo,date_validity,item_description;
-    String fName,lName,photo;
+    String fName,lname,photo,referredFname,referredLname,referredPhoto;
+
+    public String getReferredLname() {
+        return referredLname;
+    }
+
+    public String getLname() {
+        return lname;
+    }
+
+    public void setLname(String lname) {
+        this.lname = lname;
+    }
+
+    public void setReferredLname(String referredLname) {
+        this.referredLname = referredLname;
+    }
+
+    public String getReferredPhoto() {
+        return referredPhoto;
+    }
+
+    public void setReferredPhoto(String referredPhoto) {
+        this.referredPhoto = referredPhoto;
+    }
+
+    public String getReferredFname() {
+        return referredFname;
+    }
+
+    public void setReferredFname(String referredFname) {
+        this.referredFname = referredFname;
+    }
 
     public String getfName() {
         return fName;
@@ -18,14 +50,6 @@ public class SelectUser {
 
     public void setfName(String fName) {
         this.fName = fName;
-    }
-
-    public String getlName() {
-        return lName;
-    }
-
-    public void setlName(String lName) {
-        this.lName = lName;
     }
 
     public String getPhoto() {

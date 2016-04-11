@@ -9,12 +9,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bitjini.vzcards.SelectUser;
+import com.bitjini.vzcards.VerifyScreen;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,59 +50,80 @@ public class HistoryActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View history = inflater.inflate(R.layout.history_listview, container, false);
+
+        listView = (ListView) history.findViewById(R.id.historyList);
+
         try {
-       String result= new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
-                Log.e("received History", "" + result);
+            String result= new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
+            Log.e("received History", "" + result);
+            SelectUser selectUser = new SelectUser();
+
+            JSONObject jsonObject = new JSONObject(result);
+
+            String response = jsonObject.getString("response");
+            // Getting JSON Array node
+            JSONArray arr = jsonObject.getJSONArray("response");
+
+            // looping through All Contacts
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject c = arr.getJSONObject(i);
+                // Connection Node in an array
+                JSONArray arr2 = c.getJSONArray("connections");
+                Log.e(" connections :", "" + arr2);
+                String fname = "",lastname="",photo="",referedFname="",referedLname="",referedphoto="";
+                for (int i2 = 0; i2 < arr2.length(); i2++) {
+                    JSONObject c2 = arr2.getJSONObject(i2);
+                    JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
+                   referedFname=reffered_phone_details.getString("firstname");
+                     referedLname=reffered_phone_details.getString("lastname");
+                     referedphoto=reffered_phone_details.getString("photo");
+                    selectUser.setReferredFname(referedFname);
+
+                    Log.w("reffered_phone_", "" + reffered_phone_details);
+                    JSONObject connecter_details = c2.getJSONObject("reffered_ticket_details");
+                     fname=connecter_details.getString("firstname");
+                     lastname=connecter_details.getString("lastname");
+                     photo=connecter_details.getString("photo");
+
+                    Log.w("reffered_ticket_details", "" + connecter_details);
 
 
-                    JSONObject jsonObject = new JSONObject(result);
+                }
+                // ticket_details Node in an json object
+                JSONObject ticket_details = c.getJSONObject("ticket_details");
 
-                    String response = jsonObject.getString("response");
-                    // Getting JSON Array node
-                    JSONArray arr = jsonObject.getJSONArray("response");
-
-                    // looping through All Contacts
-                    for (int i = 0; i < arr.length(); i++) {
-                        JSONObject c = arr.getJSONObject(i);
-                        // Connection Node in an array
-                        JSONArray arr2 = c.getJSONArray("connections");
-                        Log.e(" connections :", "" + arr2);
-
-                        for (int i2 = 0; i2 < arr2.length(); i2++) {
-                            JSONObject c2 = arr2.getJSONObject(i2);
-                            JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
-                            Log.w("reffered_phone_", "" + reffered_phone_details);
-                            JSONObject reffered_ticket_details = c2.getJSONObject("reffered_ticket_details");
-                            Log.w("reffered_ticket_details", "" + reffered_ticket_details);
+                Log.e(" ticket_details :", "" + ticket_details);
+                String question = ticket_details.getString("question");
+                String description = ticket_details.getString("description");
+                String ticket_id = ticket_details.getString("ticket_id");
+                String itemName = ticket_details.getString("item");
+                String date_validity = ticket_details.getString("date_validity");
+                String vz_id = ticket_details.getString("vz_id");
+                String item_photo = ticket_details.getString("item_photo");
+                String date_created = ticket_details.getString("date_created");
+                Log.e(" description :", "" + description);
 
 
-                        }
-                        // ticket_details Node in an json object
-                        JSONObject ticket_details = c.getJSONObject("ticket_details");
+                selectUser.setItemName(itemName);
+                selectUser.setItem_description(description);
+                selectUser.setDate_validity(date_validity);
+                selectUser.setItem_photo(item_photo);
 
-                        Log.e(" ticket_details :", "" + ticket_details);
-                        String question = ticket_details.getString("question");
-                        String description = ticket_details.getString("description");
-                        String ticket_id = ticket_details.getString("ticket_id");
-                        String itemName = ticket_details.getString("item");
-                        String date_validity = ticket_details.getString("date_validity");
-                        String vz_id = ticket_details.getString("vz_id");
-                        String item_photo = ticket_details.getString("item_photo");
-                        String date_created = ticket_details.getString("date_created");
-                        Log.e(" description :", "" + description);
+                selectUser.setfName(fname);
+                selectUser.setLname(lastname);
+                selectUser.setPhoto(photo);
 
-                        SelectUser selectUser = new SelectUser();
-                        selectUser.setItemName(itemName);
-                        selectUser.setItem_description(description);
-                        selectUser.setDate_validity(date_validity);
-                        selectUser.setItem_photo(item_photo);
-                        selectUsers.add(selectUser);
-                        Log.e("arraylist :",""+selectUsers);
+//                selectUser.setReferredFname(referedFname);
+                selectUser.setReferredLname(referedLname);
+                selectUser.setReferredPhoto(referedphoto);
 
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
+                selectUsers.add(selectUser);
+                Log.e("arraylist :",""+selectUsers);
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -105,27 +131,50 @@ public class HistoryActivity extends Fragment {
 
 
 
-        listView = (ListView) history.findViewById(R.id.historyList);
+
         Log.e("arraylist :",""+selectUsers);
-        adapter = new History_Adapter(selectUsers, getActivity());
+        adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Toast.makeText(getActivity(),"you clicked :"+position,Toast.LENGTH_LONG).show();
+
+                int height = 0;
+                View toolbar=(View) view.findViewById(R.id.toolbar);
+                if (toolbar.getVisibility() == View.VISIBLE) {
+                    MyCustomAnimation a = new MyCustomAnimation(toolbar, 500, MyCustomAnimation.COLLAPSE);
+
+                    toolbar.startAnimation(a);
+                    toolbar.setClickable(true);
+                } else {
+                    MyCustomAnimation a = new MyCustomAnimation(toolbar, 500, MyCustomAnimation.EXPAND);
+                    a.setHeight(height);
+                    toolbar.startAnimation(a);
+                    toolbar.setClickable(true);
+                }
+            }
+        });
 
 
 
         return history;
     }
-private class History_Adapter extends BaseAdapter {
+    private class History_Adapter extends BaseAdapter {
 
         private ArrayList<SelectUser> arrayList = new ArrayList<>();
         private ArrayList<SelectUser> arrayListFilter = null;
         Context _c;
         ViewHolder v;
+        int   textViewResourceId;
 
-        public History_Adapter(ArrayList<SelectUser> arrayList, Context context) {
+        public History_Adapter(ArrayList<SelectUser> arrayList, Context context,int textViewResourceId1) {
             super();
 
             this._c = context;
-
+            textViewResourceId = textViewResourceId1;
             this.arrayList = arrayList;
         }
 
@@ -192,6 +241,15 @@ private class History_Adapter extends BaseAdapter {
             }
             Log.e("Image Thumb", "---------" + data.getThumb());
             view.setTag(data);
+            // Resets the toolbar to be closed
+            View toolbar = (View) view.findViewById(R.id.toolbar);
+//            ListView list = (ListView) view.findViewById(R.id.referralList);
+
+            TextView textName = (TextView) view.findViewById(R.id.textView1);
+            textName.setText("hello");
+//            textName.setText(data.getReferredFname());
+            Log.e("refered name",""+ data.getReferredFname());
+            toolbar.setVisibility(View.GONE);
 
 
             return view;

@@ -97,7 +97,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                 SelectUser selectUser = new SelectUser();
                 selectUser.setfName(firstname);
-                selectUser.setlName(lastname);
+                selectUser.setLname(lastname);
                 selectUser.setPhone(phone);
                 selectUser.setPhoto(photo);
                 selectUsers.add(selectUser);
@@ -307,7 +307,7 @@ class VZFriends_Adapter extends BaseAdapter implements Filterable {
         v.imageView = (ImageView) view.findViewById(R.id.contactImage);
 
         final SelectUser data = (SelectUser) arrayList.get(i);
-        v.fname.setText(data.getfName() + " " + data.getlName());
+        v.fname.setText(data.getfName() + " " + data.getLname());
 
         v.phone.setText(data.getPhone());
 

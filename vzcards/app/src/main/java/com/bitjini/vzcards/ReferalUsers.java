@@ -9,7 +9,15 @@ public class ReferalUsers {
     String fname,lname;
     String referredfName,referredlName,phone,company,industry,city,address1,address2,pin_code,email;
     String photo,referedPhoto,comany_photo,item_photo;
-    String desc,itemName;
+    String desc,itemName,dateValidity;
+
+    public String getDateValidity() {
+        return dateValidity;
+    }
+
+    public void setDateValidity(String dateValidity) {
+        this.dateValidity = dateValidity;
+    }
 
     public String getEmail() {
         return email;

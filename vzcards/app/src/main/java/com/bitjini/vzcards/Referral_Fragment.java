@@ -26,14 +26,14 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by bitjini on 28/12/15.
  */
-public class Referral_Fragment extends Fragment implements View.OnClickListener{
+public class Referral_Fragment extends Fragment implements View.OnClickListener {
 
     String HISTORY_URL = "http://vzcards-api.herokuapp.com/history/?access_token=";
     VerifyScreen p = new VerifyScreen();
 
-    MyProfile_Fragment pr=new MyProfile_Fragment();
-    ArrayList<ReferalUsers> groupItem=new ArrayList<ReferalUsers>();
-    Button vzfrnds,profilebtn,referralbtn;
+    MyProfile_Fragment pr = new MyProfile_Fragment();
+    ArrayList<ReferalUsers> groupItem = new ArrayList<ReferalUsers>();
+    Button vzfrnds, profilebtn, referralbtn;
     ListView list;
 
     @Override
@@ -43,7 +43,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
         RelativeLayout linearLayout = (RelativeLayout) referral.findViewById(R.id.parent);
         linearLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
-        referralbtn=(Button)referral.findViewById(R.id.referralbtn);
+        referralbtn = (Button) referral.findViewById(R.id.referralbtn);
         referral.setSelected(true);
         referral.setPressed(true);
         list = (ListView) referral.findViewById(R.id.referralList);
@@ -54,7 +54,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
         vzfrnds.setOnClickListener(this);
 
         try {
-            String result= new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
+            String result = new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
             Log.e("received History", "" + result);
             ReferalUsers referalUsers = new ReferalUsers();
 
@@ -75,18 +75,18 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
                     JSONObject c2 = arr2.getJSONObject(i2);
                     JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
                     Log.w("reffered_phone_", "" + reffered_phone_details);
-                    String referedFname=reffered_phone_details.getString("firstname");
-                    String referedLname=reffered_phone_details.getString("lastname");
-                    String referedphoto=reffered_phone_details.getString("photo");
-                    String phone=reffered_phone_details.getString("phone");
-                    String company=reffered_phone_details.getString("company");
-                    String pin_code=reffered_phone_details.getString("pin_code");
-                    String industry=reffered_phone_details.getString("industry");
-                    String address1=reffered_phone_details.getString("address_line_1");
-                    String address2=reffered_phone_details.getString("address_line_2");
-                    String city=reffered_phone_details.getString("city");
-                    String company_photo=reffered_phone_details.getString("company_photo");
-                    String email=reffered_phone_details.getString("email");
+                    String referedFname = reffered_phone_details.getString("firstname");
+                    String referedLname = reffered_phone_details.getString("lastname");
+                    String referedphoto = reffered_phone_details.getString("photo");
+                    String phone = reffered_phone_details.getString("phone");
+                    String company = reffered_phone_details.getString("company");
+                    String pin_code = reffered_phone_details.getString("pin_code");
+                    String industry = reffered_phone_details.getString("industry");
+                    String address1 = reffered_phone_details.getString("address_line_1");
+                    String address2 = reffered_phone_details.getString("address_line_2");
+                    String city = reffered_phone_details.getString("city");
+                    String company_photo = reffered_phone_details.getString("company_photo");
+                    String email = reffered_phone_details.getString("email");
 
                     referalUsers.setReferredfName(referedFname);
                     referalUsers.setReferredlName(referedLname);
@@ -106,9 +106,9 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
                     JSONObject connecter_details = c2.getJSONObject("connecter_details");
                     Log.w("connecter_details", "" + connecter_details);
 
-                    String fname=connecter_details.getString("firstname");
-                    String lastname=connecter_details.getString("lastname");
-                    String photo=connecter_details.getString("photo");
+                    String fname = connecter_details.getString("firstname");
+                    String lastname = connecter_details.getString("lastname");
+                    String photo = connecter_details.getString("photo");
                     referalUsers.setFname(fname);
                     referalUsers.setLname(lastname);
                     referalUsers.setPhoto(photo);
@@ -143,7 +143,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
             e.printStackTrace();
         }
         // Populate our list with groups and it's children
-      // Creating the list adapter and populating the list
+        // Creating the list adapter and populating the list
         CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
         list.setAdapter(listAdapter);
 
@@ -153,7 +153,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 int height = 0;
-                View toolbar=(View) view.findViewById(R.id.toolbar);
+                View toolbar = (View) view.findViewById(R.id.toolbar);
                 if (toolbar.getVisibility() == View.VISIBLE) {
                     MyCustomAnimation a = new MyCustomAnimation(toolbar, 500, MyCustomAnimation.COLLAPSE);
 
@@ -170,34 +170,35 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
         return referral;
 
     }
+
     /**
      * A simple implementation of list adapter.
      */
 
-   public class CustomListAdapter extends BaseAdapter implements View.OnClickListener {
+    public class CustomListAdapter extends BaseAdapter implements View.OnClickListener {
         ReferalUsers cat;
         Context _c;
         public ArrayList<ReferalUsers> groupItem;
         int textViewResourceId;
-        public CustomListAdapter(Context context, ArrayList<ReferalUsers> group,int textViewResourceId1) {
-            groupItem=group;
-               textViewResourceId=textViewResourceId1;
-            _c=context;
+
+        public CustomListAdapter(Context context, ArrayList<ReferalUsers> group, int textViewResourceId1) {
+            groupItem = group;
+            textViewResourceId = textViewResourceId1;
+            _c = context;
         }
 
         @Override
-        public int getCount()
-        {
+        public int getCount() {
             return groupItem.size();
         }
+
         @Override
-        public Object getItem(int i)
-        {
+        public Object getItem(int i) {
             return groupItem.get(i);
         }
+
         @Override
-        public long getItemId(int i)
-        {
+        public long getItemId(int i) {
             return i;
 
         }
@@ -215,14 +216,14 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
             TextView name = (TextView) v.findViewById(R.id.referralName);
             TextView referredName = (TextView) v.findViewById(R.id.referred);
             TextView itemName = (TextView) v.findViewById(R.id.itemName);
-             ImageView referredPhoto = (ImageView) v.findViewById(R.id.referdPhoto);
+            ImageView referredPhoto = (ImageView) v.findViewById(R.id.referdPhoto);
             ImageView photo = (ImageView) v.findViewById(R.id.photo);
 
             cat = groupItem.get(position);
 
-            name.setText(cat.getFname()+" "+cat.getLname());
-            referredName.setText(cat.getReferredfName()+" "+cat.getReferredlName());
-            itemName.setText("for " +cat.getItemName());
+            name.setText(cat.getFname() + " " + cat.getLname());
+            referredName.setText(cat.getReferredfName() + " " + cat.getReferredlName());
+            itemName.setText("for " + cat.getItemName());
             try {
                 if (cat.getPhoto() != null) {
                     photo.setTag(cat.getPhoto());
@@ -233,7 +234,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
 //                    photo.setImageBitmap(pr.output);
 
                 } else {
-                   photo.setImageResource(R.drawable.profile_pic_placeholder);
+                    photo.setImageResource(R.drawable.profile_pic_placeholder);
                 }
                 if (cat.getReferedPhoto() != null) {
 //                    pr.bm=null; pr.output=null;
@@ -250,7 +251,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
             } catch (ArrayIndexOutOfBoundsException ae) {
                 ae.printStackTrace();
 
-            } catch(OutOfMemoryError e) {
+            } catch (OutOfMemoryError e) {
                 //  v.imageView.setImageDrawable(this._c.getDrawable(R.drawable.contact));
                 e.printStackTrace();
             }
@@ -262,7 +263,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
             Button callBtn = (Button) v.findViewById(R.id.btnCall);
             Button vzCardBtn = (Button) v.findViewById(R.id.btnVzCard);
 
-           callBtn.setOnClickListener(this);
+            callBtn.setOnClickListener(this);
             vzCardBtn.setOnClickListener(this);
 
             toolbar.setVisibility(View.GONE);
@@ -270,41 +271,39 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
         }
 
         public void onClick(View view) {
-          switch (view.getId()) {
-              case R.id.btnCall:
-                  try{
-                      Intent callIntent = new Intent(Intent.ACTION_CALL);
-                      callIntent.setData(Uri.parse("tel:"+cat.getPhone()));
-                      startActivity(callIntent);
-                  }
-                  catch (android.content.ActivityNotFoundException ex)
-              {
-                  Toast.makeText(_c,"your Activity is not found",Toast.LENGTH_LONG).show();
-              }
-                  break;
+            switch (view.getId()) {
+                case R.id.btnCall:
+                    try {
+                        Intent callIntent = new Intent(Intent.ACTION_CALL);
+                        callIntent.setData(Uri.parse("tel:" + cat.getPhone()));
+                        startActivity(callIntent);
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(_c, "your Activity is not found", Toast.LENGTH_LONG).show();
+                    }
+                    break;
 
-              case R.id.btnVzCard:
+                case R.id.btnVzCard:
 
-                  Friends_Profile ldf = new Friends_Profile();
+                    Friends_Profile ldf = new Friends_Profile();
 
-                  Bundle args = new Bundle();
+                    Bundle args = new Bundle();
 
-                  args.putString("fname", cat.getReferredfName());
-                  args.putString("lname", cat.getReferredlName());
-                  args.putString("lname", cat.getReferredlName());
-                  args.putString("photo", cat.getReferedPhoto());
-                  args.putString("phone", cat.getPhone());
-                  args.putString("company", cat.getCompany());
-                  args.putString("pin_code", cat.getPin_code());
-                  args.putString("industry", cat.getIndustry());
-                  args.putString("address1", cat.getAddress1());
-                  args.putString("address2",cat.getAddress2());
-                  args.putString("city", cat.getCity());
-                  args.putString("company_photo",cat.getComany_photo());
-                  ldf.setArguments(args);
-                  //Inflate the fragment
-                  getFragmentManager().beginTransaction().add(R.id.referral_frame, ldf).addToBackStack(ldf.toString())
-                          .commit();
+                    args.putString("fname", cat.getReferredfName());
+                    args.putString("lname", cat.getReferredlName());
+                    args.putString("lname", cat.getReferredlName());
+                    args.putString("photo", cat.getReferedPhoto());
+                    args.putString("phone", cat.getPhone());
+                    args.putString("company", cat.getCompany());
+                    args.putString("pin_code", cat.getPin_code());
+                    args.putString("industry", cat.getIndustry());
+                    args.putString("address1", cat.getAddress1());
+                    args.putString("address2", cat.getAddress2());
+                    args.putString("city", cat.getCity());
+                    args.putString("company_photo", cat.getComany_photo());
+                    ldf.setArguments(args);
+                    //Inflate the fragment
+                    getFragmentManager().beginTransaction().add(R.id.referral_frame, ldf).addToBackStack(ldf.toString())
+                            .commit();
 
 
 //                      Fragment add1 = new Add1_Activity();
@@ -317,16 +316,16 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
 //                        .add(contentView.getId(), add1).addToBackStack(contentView.toString())
 //                        .commit();
 
-                       break;
-              default:
-                  break;
-           }
+                    break;
+                default:
+                    break;
+            }
 
 
         }
+
         @Override
-        public boolean isEnabled(int position)
-        {
+        public boolean isEnabled(int position) {
             return true;
         }
 
@@ -334,60 +333,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener{
     }
 
 
-    public class MyCustomAnimation extends Animation {
 
-        public final static int COLLAPSE = 1;
-        public final static int EXPAND = 0;
-
-        private View mView;
-        private int mEndHeight;
-        private int mType;
-        private LinearLayout.LayoutParams mLayoutParams;
-
-        public MyCustomAnimation(View view, int duration, int type) {
-
-            setDuration(duration);
-            mView = view;
-            mEndHeight = mView.getHeight();
-            mLayoutParams = ((LinearLayout.LayoutParams) view.getLayoutParams());
-            mType = type;
-            if(mType == EXPAND) {
-                mLayoutParams.height = 0;
-            } else {
-                mLayoutParams.height = LayoutParams.WRAP_CONTENT;
-            }
-            view.setVisibility(View.VISIBLE);
-        }
-
-        public int getHeight(){
-            return mView.getHeight();
-        }
-
-        public void setHeight(int height){
-            mEndHeight = height;
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-
-            super.applyTransformation(interpolatedTime, t);
-            if (interpolatedTime < 1.0f) {
-                if(mType == EXPAND) {
-                    mLayoutParams.height =  (int)(mEndHeight * interpolatedTime);
-                } else {
-                    mLayoutParams.height = (int) (mEndHeight * (1 - interpolatedTime));
-                }
-                mView.requestLayout();
-            } else {
-                if(mType == EXPAND) {
-                    mLayoutParams.height = LayoutParams.WRAP_CONTENT;
-                    mView.requestLayout();
-                }else{
-                    mView.setVisibility(View.GONE);
-                }
-            }
-        }
-    }
 
     @Override
     public void onClick(View v) {

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#43c1d9f2">
+    android:background="#43c1d9f2"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -81,11 +84,41 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
+        android:id="@+id/viewLine"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:layout_below="@+id/linearLayout1"
         android:background="#f27166"></View>
 
+    <!--***********************-->
+    <!--*** Hidden LAYOUT ****-->
+    <!--***********************-->
 
+    <LinearLayout android:id="@+id/toolbar"
+        android:visibility="visible"
+        android:layout_below="@+id/viewLine"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:id="@+id/textView1"
+            android:layout_marginLeft="20dp"
+            android:background="#7829"
+            android:text="@string/hello_world"
+            android:textColor="#f8050505"
+            android:layout_marginTop="10dp"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+        <!--<ListView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/referralList"-->
+            <!--android:layout_below="@+id/Layout1"-->
+            <!--android:divider="#97e6ecf2"-->
+            <!--android:focusable="false"-->
+            <!--android:dividerHeight="5.0sp"></ListView>-->
+    </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

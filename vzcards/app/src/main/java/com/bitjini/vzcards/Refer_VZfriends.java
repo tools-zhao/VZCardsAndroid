@@ -104,7 +104,7 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
 
                 SelectUser selectUser = new SelectUser();
                 selectUser.setfName(firstname);
-                selectUser.setlName(lastname);
+                selectUser.setLname(lastname);
                 selectUser.setPhone(phone);
                 selectUser.setPhoto(photo);
                 selectUsers.add(selectUser);
@@ -276,7 +276,7 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
             v.imageView = (ImageView) view.findViewById(R.id.contactImage);
 
             final SelectUser data = (SelectUser) arrayList.get(i);
-            v.fname.setText(data.getfName() + " " + data.getlName());
+            v.fname.setText(data.getfName() + " " + data.getLname());
 
             v.phone.setText(data.getPhone());
 
