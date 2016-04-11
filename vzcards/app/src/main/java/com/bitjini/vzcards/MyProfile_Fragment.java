@@ -739,7 +739,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             height_tmp /= 2;
             scale *= 2;
         }
-output=null;
+
         // Decode bitmap with inSampleSize set
         BitmapFactory.Options o2 = new BitmapFactory.Options();
         o2.inSampleSize = scale;
