@@ -100,25 +100,25 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:id="@+id/textView1"
-            android:layout_marginLeft="20dp"
-            android:background="#7829"
-            android:text="@string/hello_world"
-            android:textColor="#f8050505"
-            android:layout_marginTop="10dp"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-        <!--<ListView-->
+        <!--<TextView-->
             <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/referralList"-->
-            <!--android:layout_below="@+id/Layout1"-->
-            <!--android:divider="#97e6ecf2"-->
-            <!--android:focusable="false"-->
-            <!--android:dividerHeight="5.0sp"></ListView>-->
+            <!--android:layout_height="100dp"-->
+            <!--android:id="@+id/textView1"-->
+            <!--android:layout_marginLeft="20dp"-->
+            <!--android:background="#7829"-->
+            <!--android:text="@string/hello_world"-->
+            <!--android:textColor="#f8050505"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:textSize="14sp"-->
+            <!--android:textStyle="bold" />-->
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/referralList"
+            android:layout_below="@+id/Layout1"
+            android:divider="#97e6ecf2"
+            android:focusable="false"
+            android:dividerHeight="5.0sp"></ListView>
     </LinearLayout>
 
 </LinearLayout>

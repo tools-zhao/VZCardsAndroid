@@ -2,12 +2,26 @@ package com.bitjini.vzcards;
 
 import android.graphics.Bitmap;
 
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+
 public class SelectUser {
 
     //for contact details
     String name;
     String phone;
     Bitmap thumb;
+
+    JSONArray connections;
+
+    public JSONArray getConnections() {
+        return connections;
+    }
+
+    public void setConnections(JSONArray connections) {
+        this.connections = connections;
+    }
 
     String itemName,item_photo,date_validity,item_description;
     String fName,lname,photo,referredFname,referredLname,referredPhoto;
