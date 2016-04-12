@@ -44,19 +44,17 @@ public class HistoryActivity extends Fragment {
     VerifyScreen p = new VerifyScreen();
     // ArrayList
     ArrayList<SelectUser> selectUsers=new ArrayList<>();
+    ArrayList<SelectUser> connectorDetails=new ArrayList<>();
     History_Adapter adapter;
     ListView listView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View history = inflater.inflate(R.layout.history_listview, container, false);
-
-        listView = (ListView) history.findViewById(R.id.historyList);
-
         try {
             String result= new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
             Log.e("received History", "" + result);
-            SelectUser selectUser = new SelectUser();
+
 
             JSONObject jsonObject = new JSONObject(result);
 
@@ -70,22 +68,13 @@ public class HistoryActivity extends Fragment {
                 // Connection Node in an array
                 JSONArray arr2 = c.getJSONArray("connections");
                 Log.e(" connections :", "" + arr2);
-                String fname = "",lastname="",photo="",referedFname="",referedLname="",referedphoto="";
+
                 for (int i2 = 0; i2 < arr2.length(); i2++) {
                     JSONObject c2 = arr2.getJSONObject(i2);
                     JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
-                   referedFname=reffered_phone_details.getString("firstname");
-                     referedLname=reffered_phone_details.getString("lastname");
-                     referedphoto=reffered_phone_details.getString("photo");
-                    selectUser.setReferredFname(referedFname);
-
                     Log.w("reffered_phone_", "" + reffered_phone_details);
-                    JSONObject connecter_details = c2.getJSONObject("reffered_ticket_details");
-                     fname=connecter_details.getString("firstname");
-                     lastname=connecter_details.getString("lastname");
-                     photo=connecter_details.getString("photo");
-
-                    Log.w("reffered_ticket_details", "" + connecter_details);
+                    JSONObject reffered_ticket_details = c2.getJSONObject("reffered_ticket_details");
+                    Log.w("reffered_ticket_details", "" + reffered_ticket_details);
 
 
                 }
@@ -103,20 +92,11 @@ public class HistoryActivity extends Fragment {
                 String date_created = ticket_details.getString("date_created");
                 Log.e(" description :", "" + description);
 
-
+                SelectUser selectUser = new SelectUser();
                 selectUser.setItemName(itemName);
                 selectUser.setItem_description(description);
                 selectUser.setDate_validity(date_validity);
                 selectUser.setItem_photo(item_photo);
-
-                selectUser.setfName(fname);
-                selectUser.setLname(lastname);
-                selectUser.setPhoto(photo);
-
-//                selectUser.setReferredFname(referedFname);
-                selectUser.setReferredLname(referedLname);
-                selectUser.setReferredPhoto(referedphoto);
-
                 selectUsers.add(selectUser);
                 Log.e("arraylist :",""+selectUsers);
 
@@ -131,10 +111,11 @@ public class HistoryActivity extends Fragment {
 
 
 
-
+        listView = (ListView) history.findViewById(R.id.historyList);
         Log.e("arraylist :",""+selectUsers);
-        adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
+        adapter = new History_Adapter(selectUsers, getActivity(),R.layout.history_layout);
         listView.setAdapter(adapter);
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
