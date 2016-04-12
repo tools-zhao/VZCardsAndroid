@@ -3,6 +3,7 @@ package com.bitjini.vzcards;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -75,52 +81,12 @@ public class HistoryActivity extends Fragment {
 
                 SelectUser selectUser = new SelectUser();
                 selectUser.setItemName(itemName);
+                selectUser.setDate_created(date_created);
                 selectUser.setItem_description(description);
                 selectUser.setDate_validity(date_validity);
                 selectUser.setItem_photo(item_photo);
                 selectUser.setConnections(arr2);
                 selectUsers.add(selectUser);
-//                Log.e("arraylist :", "" + selectUsers);
-//                Log.e(" connections :", "" + arr2);
-
-//                try {
-//                    if (arr2.length() > 0) {
-//                        for (int i2 = 0; i2 < arr2.length(); i2++) {
-//                            JSONObject c2 = arr2.getJSONObject(i2);
-//                            if (arr2.get(i2) == 0) {
-//                                connectorDetails.add(null);
-//                                Log.w("connectorDetails null", "" + connectorDetails);
-//
-//                            }
-//                            JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
-//                            String referedFname = reffered_phone_details.getString("firstname");
-//                            String referedLname = reffered_phone_details.getString("lastname");
-//                            String referedphoto = reffered_phone_details.getString("photo");
-//
-//                            SelectUser userConnectorDetails = new SelectUser();
-//                            userConnectorDetails.setReferredFname(referedFname);
-//                            userConnectorDetails.setReferredLname(referedLname);
-//                            userConnectorDetails.setReferredPhoto(referedphoto);
-//
-//
-//                            JSONObject connecter_details = c2.getJSONObject("connecter_details");
-//
-//
-//                            String fname = connecter_details.getString("firstname");
-//                            String lastname = connecter_details.getString("lastname");
-//                            String photo = connecter_details.getString("photo");
-//                            userConnectorDetails.setfName(fname);
-//                            userConnectorDetails.setLname(lastname);
-//                            userConnectorDetails.setPhoto(photo);
-//
-//                            connectorDetails.add(userConnectorDetails);
-//                            Log.e("connectorDetails has", "" + connectorDetails);
-//                        }
-//                    }
-//                }catch (IndexOutOfBoundsException e)
-//                {
-//                    e.printStackTrace();
-//                }
 
             }
 
@@ -217,14 +183,14 @@ public class HistoryActivity extends Fragment {
             v.txtItem = (TextView) view.findViewById(R.id.itemName);
             v.txtDescription = (TextView) view.findViewById(R.id.desc);
             v.txtDate = (TextView) view.findViewById(R.id.days);
-
+            v.txtcount=(TextView) view.findViewById(R.id.refCount);
 
             v.item_photo = (ImageView) view.findViewById(R.id.feedImage);
 
             final SelectUser data = (SelectUser) arrayList.get(i);
             v.txtItem.setText(data.getItemName());
             v.txtDescription.setText(data.getItem_description());
-            v.txtDate.setText(data.getDate_validity());
+            v.txtDate.setText(data.getDate_created());
 
             //set Image if exxists
             try {
@@ -243,7 +209,7 @@ public class HistoryActivity extends Fragment {
                 //  v.imageView.setImageDrawable(this._c.getDrawable(R.drawable.contact));
                 e.printStackTrace();
             }
-
+getDateDifference(data.getDate_created());
             Log.e("get connect details", "" + data.getConnections());
             view.setTag(data);
             if (data.getConnections().length()==0) {
@@ -255,6 +221,16 @@ public class HistoryActivity extends Fragment {
                     JSONObject c2 = array.getJSONObject(i2);
 
                     Log.e("count :",""+array.length());
+
+
+                    if(array.length()>1)
+                    {
+                        v.txtcount.setText(String.valueOf(array.length())+" referrals");
+
+                    }else
+                    {
+                        v.txtcount.setText(String.valueOf(array.length())+" referral");
+                    }
                     JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
                     String referedFname = reffered_phone_details.getString("firstname");
                     String referedLname = reffered_phone_details.getString("lastname");
@@ -305,7 +281,7 @@ public class HistoryActivity extends Fragment {
 
         class ViewHolder {
             ImageView item_photo;
-            TextView txtItem, txtDescription, txtDate;
+            TextView txtItem, txtDescription, txtDate ,txtcount;
         }
 
         public class MyClassAdapter extends ArrayAdapter<SelectUser> {
@@ -374,4 +350,58 @@ public class HistoryActivity extends Fragment {
             }
         }
 
+    public void getDateDifference(String date_created)  {
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd");
+        Calendar c = Calendar.getInstance();
+        System.out.println("Current time => " + c.getTime());
+
+        date_created.replaceAll("[\\D]", " ");
+        Log.e(" date_created rep  :", "" + date_created);
+   // Create Calendar instance
+        Calendar calendar1 = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
+         calendar1.getTime();
+        calendar2.getTime();
+//        DateFormat formatter ;
+//        Date date ;
+//        try {
+//            date = sdf.parse(date_created);
+//            Log.e(" date_created  :", "" + date);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+        Log.e(" todays date :",""+sdf.format(calendar1.getTime()));
+        // Set the values for the calendar fields YEAR, MONTH, and DAY_OF_MONTH.
+//        calendar1.set(2012, 2, 12);
+//        calendar1.set(2011, 3, 12);
+
+		/*
+		 * Use getTimeInMillis() method to get the Calendar's time value in
+		 * milliseconds. This method returns the current time as UTC
+		 * milliseconds from the epoch
+		 */
+        long miliSecondForDate1 = calendar1.getTimeInMillis();
+        long miliSecondForDate2 = calendar2.getTimeInMillis();
+
+        // Calculate the difference in millisecond between two dates
+        long diffInMilis = miliSecondForDate2 - miliSecondForDate1;
+
+		/*
+		 * Now we have difference between two date in form of millsecond we can
+		 * easily convert it Minute / Hour / Days by dividing the difference
+		 * with appropriate value. 1 Second : 1000 milisecond 1 Hour : 60 * 1000
+		 * millisecond 1 Day : 24 * 60 * 1000 milisecond
+		 */
+
+        long diffInSecond = diffInMilis / 1000;
+        long diffInMinute = diffInMilis / (60 * 1000);
+        long diffInHour = diffInMilis / (60 * 60 * 1000);
+        long diffInDays = diffInMilis / (24 * 60 * 60 * 1000);
+
+        System.out.println("Difference in Seconds : " + diffInSecond);
+        System.out.println("Difference in Minute : " + diffInMinute);
+        System.out.println("Difference in Hours : " + diffInHour);
+        System.out.println("Difference in Days : " + diffInDays);
+    }
     }

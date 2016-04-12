@@ -23,8 +23,16 @@ public class SelectUser {
         this.connections = connections;
     }
 
-    String itemName,item_photo,date_validity,item_description;
+    String itemName,item_photo,date_validity,item_description,date_created;
     String fName,lname,photo,referredFname,referredLname,referredPhoto;
+
+    public String getDate_created() {
+        return date_created;
+    }
+
+    public void setDate_created(String date_created) {
+        this.date_created = date_created;
+    }
 
     public String getReferredLname() {
         return referredLname;

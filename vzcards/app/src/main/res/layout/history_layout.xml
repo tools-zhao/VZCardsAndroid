@@ -46,8 +46,8 @@
                 android:layout_marginLeft="5dp"
                 android:textSize="17sp" />
             <TextView
-                android:layout_width="50dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/days"
                 android:text="days"
                 android:layout_marginLeft="5dp"
@@ -65,6 +65,14 @@
                 android:id="@+id/desc"
                 android:layout_marginTop="5dp"
                 />
+          <TextView
+              android:layout_width="120dp"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/desc"
+              android:layout_marginLeft="5dp"
+              android:layout_marginTop="2dp"
+              android:id="@+id/refCount"
+              />
              <Button
                 android:layout_width="80dp"
                 android:layout_height="30dp"
@@ -95,7 +103,7 @@
     <!--***********************-->
 
     <LinearLayout android:id="@+id/toolbar"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_below="@+id/viewLine"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
