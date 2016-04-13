@@ -36,6 +36,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -347,11 +349,12 @@ FrameLayout layout_MainMenu;
 
             holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
 
-
-            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
+            Picasso.with(context).load(data.getItem_photo()).into(holder.item_photo);
+//            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
 
             holder.photo.setTag(String.valueOf(data.getPhoto()));
-            new DownloadImagesTask(getActivity()).execute(holder.photo);
+            Picasso.with(context).load(data.getPhoto()).into(holder.photo);
+//            new DownloadImagesTask(getActivity()).execute(holder.photo);
 
 
 
@@ -500,10 +503,12 @@ FrameLayout layout_MainMenu;
             item.setText(dataFeeds1.getItem());
 
             item_photo.setTag(dataFeeds1.getItem_photo());
-            new DownloadImagesTask(getActivity()).execute(item_photo); // Download item_photo from AsynTask
+            Picasso.with(getActivity()).load(dataFeeds1.getItem_photo()).into(item_photo);
+//            new DownloadImagesTask(getActivity()).execute(item_photo); // Download item_photo from AsynTask
 
             photo.setTag(dataFeeds1.getPhoto());
-            new DownloadImagesTask(getActivity()).execute(photo);// Download photo from AsynTask
+            Picasso.with(getActivity()).load(dataFeeds1.getPhoto()).into(photo);
+//            new DownloadImagesTask(getActivity()).execute(photo);// Download photo from AsynTask
 
             // check if it is needs change the color to red
             if (Integer.parseInt(dataFeeds1.getIsNeeds()) == 1) {
@@ -524,10 +529,12 @@ FrameLayout layout_MainMenu;
             item2.setText(dataFeeds2.getItem());
 
             item_photo2.setTag(dataFeeds2.getItem_photo());
+            Picasso.with(getActivity()).load(dataFeeds2.getItem_photo()).into(item_photo2);
             new DownloadImagesTask(getActivity()).execute(item_photo2);// Download item_photo from AsynTask
 
             photo2.setTag(dataFeeds2.getPhoto());
-            new DownloadImagesTask(getActivity()).execute(photo2);// Download photo from AsynTask
+            Picasso.with(getActivity()).load(dataFeeds2.getPhoto()).into(photo2);
+//            new DownloadImagesTask(getActivity()).execute(photo2);// Download photo from AsynTask
 
             // check if it is has change the color to green
             if (Integer.parseInt(dataFeeds2.getIsHas()) == 0) {

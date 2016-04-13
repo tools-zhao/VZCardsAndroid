@@ -23,16 +23,6 @@
             android:layout_height="35dp"
             android:src="@drawable/navbarlogo2x"
             android:layout_gravity="center"/>
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:max="500"
-            android:progress="0"
-            android:progressDrawable="@drawable/progress" />
     </LinearLayout>
 
     <android.support.design.widget.TabLayout

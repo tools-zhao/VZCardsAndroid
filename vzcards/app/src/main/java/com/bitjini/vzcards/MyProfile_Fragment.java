@@ -45,6 +45,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+        import com.squareup.picasso.Picasso;
 
         import org.apache.http.util.ByteArrayBuffer;
         import org.json.JSONException;
@@ -208,8 +209,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //            DownloadFullFromUrl(photo);
 //            getRoundedCornerBitmap(bm, 100);
 //            imageProfile.setImageBitmap(output);
-            imageProfile.setTag(photo);
-                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
+            Picasso.with(getActivity()).load(photo).resize(250, 250).into(imageProfile);
+//            imageProfile.setTag(photo);
+//                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
 
         }
 
@@ -219,8 +221,10 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //            DownloadFullFromUrl(company_photo);
 //            getRoundedCornerBitmap(bm, 100);
 //            imageCompany.setImageBitmap(output);
-            imageCompany.setTag(company_photo);
-            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
+
+            Picasso.with(getActivity()).load(company_photo).resize(250, 250).into(imageCompany);
+//            imageCompany.setTag(company_photo);
+//            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
 
         }
 
@@ -470,7 +474,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                                         progress=null;
                                                     }
 
-                                                    imageProfile.setImageBitmap(output);
+                                                    imageProfile.setImageBitmap(bitmap);
                                                     if (result != null) {
 
                                                         JSONObject json = null;
@@ -536,7 +540,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                                         progress.dismiss();
                                                         progress=null;
                                                     }
-                                                    imageCompany.setImageBitmap(output);
+                                                    imageCompany.setImageBitmap(bitmap);
 
                                                     if (result != null) {
 
@@ -610,7 +614,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                                         progress.dismiss();
                                                         progress=null;
                                                     }
-                                                    imageProfile.setImageBitmap(output);
+                                                    imageProfile.setImageBitmap(bitmap);
 
                                                     if (result != null) {
 
@@ -672,7 +676,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                                         progress.dismiss();
                                                         progress=null;
                                                     }
-                                                    imageCompany.setImageBitmap(output);
+                                                    imageCompany.setImageBitmap(bitmap);
 
                                                     if (result != null) {
 

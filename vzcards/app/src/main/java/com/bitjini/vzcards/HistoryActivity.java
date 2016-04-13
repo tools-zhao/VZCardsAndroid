@@ -13,9 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -197,8 +198,9 @@ public class HistoryActivity extends Fragment {
             //set Image if exxists
             try {
                 if (data.getItem_photo() != null) {
-                    v.item_photo.setTag(data.getItem_photo());
-                    new DownloadImagesTask(_c).execute(v.item_photo);// Download item_photo from AsynTask
+//                    v.item_photo.setTag(data.getItem_photo());
+//                    new DownloadImageProgress(_c).execute(String.valueOf(v.item_photo));// Download item_photo from AsynTask
+                    Picasso.with(_c).load(data.getItem_photo()).resize(250, 250).into( v.item_photo);
 
                 } else {
                     v.item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
@@ -287,7 +289,7 @@ public class HistoryActivity extends Fragment {
         }
 
         public class MyClassAdapter extends ArrayAdapter<SelectUser> {
-
+            Context _c;
             private TextView itemView;
             private ImageView imageView;
 
@@ -318,8 +320,9 @@ public class HistoryActivity extends Fragment {
                 referredName.setText(cat.getReferredFname() + " " + cat.getReferredLname());
                 try {
                     if (cat.getPhoto() != null) {
-                        photo.setTag(cat.getPhoto());
-                        new DownloadImagesTask(getActivity()).execute(photo);// Download item_photo from AsynTask
+//                        photo.setTag(cat.getPhoto());
+//                        new DownloadImagesTask(getActivity()).execute(photo);// Download item_photo from AsynTask
+                        Picasso.with(_c).load(cat.getPhoto()).into( photo);
 //                    pr.bm=null; pr.output=null;
 //                    pr.DownloadFullFromUrl(cat.getPhoto());
 //                    pr.getRoundedCornerBitmap(pr.bm, 100);
@@ -333,8 +336,9 @@ public class HistoryActivity extends Fragment {
 //                    pr.DownloadFullFromUrl(cat.getReferedPhoto());
 //                    pr.getRoundedCornerBitmap(pr.bm, 100);
 //                    referredPhoto.setImageBitmap(pr.output);
-                        referredPhoto.setTag(cat.getReferredPhoto());
-                        new DownloadImagesTask(getActivity()).execute(referredPhoto);// Download item_photo from AsynTask
+                        Picasso.with(_c).load(cat.getReferredPhoto()).into(referredPhoto);
+//                        referredPhoto.setTag(cat.getReferredPhoto());
+//                        new DownloadImagesTask(getActivity()).execute(referredPhoto);// Download item_photo from AsynTask
 
                     } else {
                         photo.setImageResource(R.drawable.profile_pic_placeholder);
