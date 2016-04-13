@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -79,9 +81,10 @@ public class HistoryActivity extends Fragment {
                 String date_created = ticket_details.getString("date_created");
 //                Log.e(" description :", "" + description);
 
+                String days= String.valueOf(getDateDifference(date_created));
                 SelectUser selectUser = new SelectUser();
                 selectUser.setItemName(itemName);
-                selectUser.setDate_created(date_created);
+                selectUser.setDate_created(days);
                 selectUser.setItem_description(description);
                 selectUser.setDate_validity(date_validity);
                 selectUser.setItem_photo(item_photo);
@@ -97,7 +100,6 @@ public class HistoryActivity extends Fragment {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
 
 
         listView = (ListView) history.findViewById(R.id.historyList);
@@ -209,7 +211,7 @@ public class HistoryActivity extends Fragment {
                 //  v.imageView.setImageDrawable(this._c.getDrawable(R.drawable.contact));
                 e.printStackTrace();
             }
-getDateDifference(data.getDate_created());
+
             Log.e("get connect details", "" + data.getConnections());
             view.setTag(data);
             if (data.getConnections().length()==0) {
@@ -350,32 +352,38 @@ getDateDifference(data.getDate_created());
             }
         }
 
-    public void getDateDifference(String date_created)  {
+    public String getDateDifference(String date_created)  {
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd");
-        Calendar c = Calendar.getInstance();
-        System.out.println("Current time => " + c.getTime());
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-        date_created.replaceAll("[\\D]", " ");
-        Log.e(" date_created rep  :", "" + date_created);
-   // Create Calendar instance
+        String time = null;
+        String created_date=date_created.replaceAll("[^0-9-:]", " ");
+        String output = created_date.substring(0, 19);
+        Log.e(" date_created rep  :", "" + output);
+         // Create Calendar instance
         Calendar calendar1 = Calendar.getInstance();
-        Calendar calendar2 = Calendar.getInstance();
-         calendar1.getTime();
-        calendar2.getTime();
-//        DateFormat formatter ;
-//        Date date ;
-//        try {
-//            date = sdf.parse(date_created);
-//            Log.e(" date_created  :", "" + date);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-        Log.e(" todays date :",""+sdf.format(calendar1.getTime()));
-        // Set the values for the calendar fields YEAR, MONTH, and DAY_OF_MONTH.
-//        calendar1.set(2012, 2, 12);
-//        calendar1.set(2011, 3, 12);
+        Calendar calendar2= Calendar.getInstance();
 
+        String result = sdf.format(calendar2.getTime());
+        System.out.println(result);
+
+
+        try {
+            // set the created date to calender1 object
+            String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+             Date date = new SimpleDateFormat(pattern).parse(date_created);
+             calendar1.setTime(date);
+
+            // set the current date to calender2 object
+             Date date2 = new SimpleDateFormat(pattern).parse(result);
+             calendar2.setTime(date2);
+
+            Log.e("date1 =",""+date);
+            Log.e("date2 =",""+date2);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 		/*
 		 * Use getTimeInMillis() method to get the Calendar's time value in
 		 * milliseconds. This method returns the current time as UTC
@@ -385,7 +393,7 @@ getDateDifference(data.getDate_created());
         long miliSecondForDate2 = calendar2.getTimeInMillis();
 
         // Calculate the difference in millisecond between two dates
-        long diffInMilis = miliSecondForDate2 - miliSecondForDate1;
+        long diffInMilis = miliSecondForDate2-miliSecondForDate1;
 
 		/*
 		 * Now we have difference between two date in form of millsecond we can
@@ -393,15 +401,48 @@ getDateDifference(data.getDate_created());
 		 * with appropriate value. 1 Second : 1000 milisecond 1 Hour : 60 * 1000
 		 * millisecond 1 Day : 24 * 60 * 1000 milisecond
 		 */
+        long elapsed = 0;
 
         long diffInSecond = diffInMilis / 1000;
         long diffInMinute = diffInMilis / (60 * 1000);
         long diffInHour = diffInMilis / (60 * 60 * 1000);
         long diffInDays = diffInMilis / (24 * 60 * 60 * 1000);
 
-        System.out.println("Difference in Seconds : " + diffInSecond);
-        System.out.println("Difference in Minute : " + diffInMinute);
-        System.out.println("Difference in Hours : " + diffInHour);
-        System.out.println("Difference in Days : " + diffInDays);
+
+        if(diffInSecond<=60)
+        {
+            elapsed=diffInSecond;
+            time="seconds";
+            System.out.println("Difference in Seconds : " + elapsed);
+        }
+        if(diffInSecond>60 && diffInMinute<60){
+
+            elapsed=diffInMinute;
+            time="mins";
+            System.out.println("Difference in Minute : " + elapsed);
+        }
+        if(diffInMinute>60 && diffInHour<24)
+        {
+            elapsed=diffInHour;
+            time="hrs";
+            System.out.println("Difference in Hours : " + elapsed);
+        }
+        if(diffInHour>24 && diffInDays<30) {
+
+            elapsed=diffInDays;
+            time="days";
+            System.out.println("Difference in Days : " + elapsed);
+        }
+        if(diffInDays>30) {
+
+            elapsed= Long.parseLong(output);
+            System.out.println("Difference in Days : " + elapsed);
+        }
+
+
+   return elapsed +" "+time;
+
+
+
     }
     }

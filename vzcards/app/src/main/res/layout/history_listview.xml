@@ -4,8 +4,10 @@
     android:layout_width="match_parent"
         android:id="@+id/parent"
         android:background="@android:color/transparent"
+    android:orientation="vertical"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true">
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
