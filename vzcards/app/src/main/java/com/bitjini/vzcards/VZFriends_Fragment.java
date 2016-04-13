@@ -27,6 +27,8 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -314,8 +316,9 @@ class VZFriends_Adapter extends BaseAdapter implements Filterable {
         //set Image if exxists
         try {
             if (data.getPhoto() != null) {
-                v.imageView.setTag(data.getPhoto());
-                new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
+                Picasso.with(_c).load(data.getPhoto()).into(v.imageView);
+//                v.imageView.setTag(data.getPhoto());
+//                new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
 
             } else {
                 v.imageView.setImageResource(R.drawable.simple_profile_placeholder1);

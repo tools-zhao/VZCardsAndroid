@@ -64,11 +64,8 @@ public class HistoryActivity extends Fragment {
                 // Connection Node in an array
                 JSONArray   arr2 = c.getJSONArray("connections");
                 JSONArray connection = arr.getJSONObject(i).getJSONArray("connections");
-//                JSONObject details=connection.getJSONObject(0).getJSONObject("connecter_details");
-                Log.e(" connec json arr:",""+connection);
-//                Log.e(" details json obj:",""+details);
 
-//                Log.e(" connectorDetails in:", ""+i+ " "+arr2+" "+ connectorDetails);
+
                 // ticket_details Node in an json object
                 JSONObject ticket_details = c.getJSONObject("ticket_details");
 
@@ -104,7 +101,7 @@ public class HistoryActivity extends Fragment {
 
 
         listView = (ListView) history.findViewById(R.id.historyList);
-        Log.e("arraylist :",""+selectUsers);
+
         adapter = new History_Adapter(selectUsers, getActivity(),R.layout.history_layout);
         listView.setAdapter(adapter);
 
@@ -175,13 +172,11 @@ public class HistoryActivity extends Fragment {
             if (view == null) {
                 LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = li.inflate(R.layout.history_layout, null);
-                Log.e("inside", "here---------------In View1");
 
 
             } else {
                 view = convertView;
-                Log.e("Inside", "here------------------In View2");
-            }
+               }
             v = new ViewHolder();
             v.txtItem = (TextView) view.findViewById(R.id.itemName);
             v.txtDescription = (TextView) view.findViewById(R.id.desc);
@@ -323,19 +318,13 @@ public class HistoryActivity extends Fragment {
 //                        photo.setTag(cat.getPhoto());
 //                        new DownloadImagesTask(getActivity()).execute(photo);// Download item_photo from AsynTask
                         Picasso.with(_c).load(cat.getPhoto()).into( photo);
-//                    pr.bm=null; pr.output=null;
-//                    pr.DownloadFullFromUrl(cat.getPhoto());
-//                    pr.getRoundedCornerBitmap(pr.bm, 100);
-//                    photo.setImageBitmap(pr.output);
+
 
                     } else {
                         photo.setImageResource(R.drawable.profile_pic_placeholder);
                     }
                     if (cat.getReferredPhoto() != null) {
-//                    pr.bm=null; pr.output=null;
-//                    pr.DownloadFullFromUrl(cat.getReferedPhoto());
-//                    pr.getRoundedCornerBitmap(pr.bm, 100);
-//                    referredPhoto.setImageBitmap(pr.output);
+
                         Picasso.with(_c).load(cat.getReferredPhoto()).into(referredPhoto);
 //                        referredPhoto.setTag(cat.getReferredPhoto());
 //                        new DownloadImagesTask(getActivity()).execute(referredPhoto);// Download item_photo from AsynTask
@@ -348,7 +337,6 @@ public class HistoryActivity extends Fragment {
                     ae.printStackTrace();
 
                 } catch (OutOfMemoryError e) {
-                    //  v.imageView.setImageDrawable(this._c.getDrawable(R.drawable.contact));
                     e.printStackTrace();
                 }
 

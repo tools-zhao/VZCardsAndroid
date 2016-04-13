@@ -25,9 +25,21 @@
             <!--android:elevation="3dp"-->
             <!--android:gravity="center_vertical"></SearchView>-->
     <!--</LinearLayout>-->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:max="500"
+        android:progress="0"
+        android:progressDrawable="@drawable/progress" />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         android:id="@+id/feedList"
         android:layout_below="@+id/Layout1"
         android:divider="#97e6ecf2"
