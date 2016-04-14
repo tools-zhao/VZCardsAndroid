@@ -68,6 +68,7 @@ public class FeedActivity extends Fragment {
     public FeedsAdapter adapter;
     ViewHolder holder;
 FrameLayout layout_MainMenu;
+
     ProgressDialog progress;
 
     DataFeeds dataFeeds2 = new DataFeeds();
@@ -107,10 +108,6 @@ FrameLayout layout_MainMenu;
         new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+token_sharedPreference);
         // call AsynTask to perform network operation on separate thread
 
-//        ObjectAnimator animation = ObjectAnimator.ofInt (progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-//        animation.setDuration (5000); //in milliseconds
-//        animation.setInterpolator (new DecelerateInterpolator());
-//        animation.start ();
         new HttpAsyncTask().execute("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference);
 
         // set on onList item click
@@ -188,6 +185,13 @@ FrameLayout layout_MainMenu;
     }
 
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+        protected void onPreExecute() {
+
+            ObjectAnimator animation = ObjectAnimator.ofInt (progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration (5000); //in milliseconds
+            animation.setInterpolator (new DecelerateInterpolator());
+            animation.start ();
+        }
         @Override
         protected String doInBackground(String... urls) {
 
@@ -202,6 +206,8 @@ FrameLayout layout_MainMenu;
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
+            progressBar.clearAnimation();
+            progressBar.setVisibility(View.GONE);
             Toast.makeText(getActivity(), "Received!", Toast.LENGTH_LONG).show();
             Log.e("response of feeds...", "" + result);
             try {
@@ -255,6 +261,7 @@ FrameLayout layout_MainMenu;
                     feedsArrayList.add(dataFeeds);
 
                 }
+                listView.setVisibility(View.VISIBLE);
                 adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
                 listView.setAdapter(adapter);
 

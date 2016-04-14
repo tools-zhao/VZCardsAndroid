@@ -28,10 +28,19 @@ public class SelectUser {
     String date_validity;
     String item_description;
     String date_created;
+    String ticket_id;
     String fName,lname,photo,referredFname,referredLname,referredPhoto;
 
     public String getDate_created() {
         return date_created;
+    }
+
+    public String getTicket_id() {
+        return ticket_id;
+    }
+
+    public void setTicket_id(String ticket_id) {
+        this.ticket_id = ticket_id;
     }
 
     public void setDate_created(String date_created) {

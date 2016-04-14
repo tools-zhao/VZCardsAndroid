@@ -81,6 +81,7 @@
                  android:layout_alignParentRight="true"
                  android:layout_marginTop="20dp"
                 android:textAllCaps="false"
+                 android:id="@+id/remove"
                  android:layout_marginRight="10dp"
                  android:layout_marginBottom="5dp"
                 android:shadowColor="#771d1e10"

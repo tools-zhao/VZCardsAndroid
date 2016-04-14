@@ -1,8 +1,10 @@
 package com.bitjini.vzcards;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -83,6 +86,7 @@ public class HistoryActivity extends Fragment {
                 SelectUser selectUser = new SelectUser();
                 selectUser.setItemName(itemName);
                 selectUser.setDate_created(days);
+                selectUser.setTicket_id(ticket_id);
                 selectUser.setItem_description(description);
                 selectUser.setDate_validity(date_validity);
                 selectUser.setItem_photo(item_photo);
@@ -103,6 +107,7 @@ public class HistoryActivity extends Fragment {
         listView = (ListView) history.findViewById(R.id.historyList);
 
         adapter = new History_Adapter(selectUsers, getActivity(),R.layout.history_layout);
+
         listView.setAdapter(adapter);
 
 
@@ -182,6 +187,7 @@ public class HistoryActivity extends Fragment {
             v.txtDescription = (TextView) view.findViewById(R.id.desc);
             v.txtDate = (TextView) view.findViewById(R.id.days);
             v.txtcount=(TextView) view.findViewById(R.id.refCount);
+            v.btnRemove=(Button) view.findViewById(R.id.remove);
 
             v.item_photo = (ImageView) view.findViewById(R.id.feedImage);
 
@@ -209,8 +215,57 @@ public class HistoryActivity extends Fragment {
                 e.printStackTrace();
             }
 
+
             Log.e("get connect details", "" + data.getConnections());
             view.setTag(data);
+            v.btnRemove.setTag(i);
+
+            v.btnRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                    alertDialogBuilder.setTitle("Delete");
+                    alertDialogBuilder.setMessage("Do you want to Delete this item");
+                    alertDialogBuilder.setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface arg0, int arg1) {
+
+                                   String ticketId=data.getTicket_id();
+                                    // remove ticket details
+                                    new HttpAsyncTask(getActivity()){
+                                       @Override
+                                        public void onPostExecute(String result)
+                                       {
+
+                                            if(responseCode==200){
+                                                Integer index = (Integer) v.getTag();
+                                                arrayList.remove(index.intValue());
+                                                notifyDataSetChanged();
+                                                Toast.makeText(getActivity(),"Deleted Successfully",Toast.LENGTH_LONG).show();
+
+                                            }
+                                           else {
+                                                Toast.makeText(getActivity(),"Delete Failure",Toast.LENGTH_LONG).show();
+                                            }
+                                       }
+                                    }.execute("https://vzcards-api.herokuapp.com/remove_ticket/ticket_id="+ticketId+"?access_token="+ p.token_sharedPreference);
+
+                                }
+                            });
+                    alertDialogBuilder.setNegativeButton("No",
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface arg0, int arg1) {
+
+                                }
+                            });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                }
+            });
             if (data.getConnections().length()==0) {
                 Log.e("data.getConnection :",""+data.getConnections().length());
             }else{
@@ -281,6 +336,7 @@ public class HistoryActivity extends Fragment {
         class ViewHolder {
             ImageView item_photo;
             TextView txtItem, txtDescription, txtDate ,txtcount;
+            Button btnRemove;
         }
 
         public class MyClassAdapter extends ArrayAdapter<SelectUser> {

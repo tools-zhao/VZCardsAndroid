@@ -16,6 +16,8 @@ import android.widget.LinearLayout.LayoutParams;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -226,23 +228,18 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
             itemName.setText("for " + cat.getItemName());
             try {
                 if (cat.getPhoto() != null) {
-                    photo.setTag(cat.getPhoto());
-                    new DownloadImagesTask(_c).execute(photo);// Download item_photo from AsynTask
-//                    pr.bm=null; pr.output=null;
-//                    pr.DownloadFullFromUrl(cat.getPhoto());
-//                    pr.getRoundedCornerBitmap(pr.bm, 100);
-//                    photo.setImageBitmap(pr.output);
+//                    photo.setTag(cat.getPhoto());
+//                    new DownloadImagesTask(_c).execute(photo);// Download item_photo from AsynTask
+                    Picasso.with(_c).load(cat.getPhoto()).resize(250, 250).into(photo);
+
 
                 } else {
                     photo.setImageResource(R.drawable.profile_pic_placeholder);
                 }
                 if (cat.getReferedPhoto() != null) {
-//                    pr.bm=null; pr.output=null;
-//                    pr.DownloadFullFromUrl(cat.getReferedPhoto());
-//                    pr.getRoundedCornerBitmap(pr.bm, 100);
-//                    referredPhoto.setImageBitmap(pr.output);
-                    referredPhoto.setTag(cat.getReferedPhoto());
-                    new DownloadImagesTask(_c).execute(referredPhoto);// Download item_photo from AsynTask
+                    Picasso.with(_c).load(cat.getReferedPhoto()).resize(250, 250).into(referredPhoto);
+//                    referredPhoto.setTag(cat.getReferedPhoto());
+//                    new DownloadImagesTask(_c).execute(referredPhoto);// Download item_photo from AsynTask
 
                 } else {
                     photo.setImageResource(R.drawable.profile_pic_placeholder);
