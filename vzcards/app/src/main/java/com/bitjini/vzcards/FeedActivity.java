@@ -1,7 +1,9 @@
 package com.bitjini.vzcards;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,6 +25,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -30,10 +33,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +60,8 @@ import java.util.ArrayList;
  */
 public class FeedActivity extends Fragment {
 
+    String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=";
+    ProgressBar progressBar;
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
     ArrayList<DataFeeds> feeds = new ArrayList<DataFeeds>();
     ListView listView;
@@ -61,12 +69,17 @@ public class FeedActivity extends Fragment {
     ViewHolder holder;
 FrameLayout layout_MainMenu;
 
+    ProgressDialog progress;
+
     DataFeeds dataFeeds2 = new DataFeeds();
     DataFeeds dataFeeds1 = new DataFeeds();
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
+
+        progressBar = (ProgressBar) feed.findViewById(R.id.progressBar);
+
         layout_MainMenu = (FrameLayout) feed.findViewById(R.id.feed_detail);
         layout_MainMenu.getForeground().setAlpha( 0);
 
@@ -91,7 +104,10 @@ FrameLayout layout_MainMenu;
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         String token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         System.out.println(" getting token from sharedpreference " + token_sharedPreference);
+
+        new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+token_sharedPreference);
         // call AsynTask to perform network operation on separate thread
+
         new HttpAsyncTask().execute("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference);
 
         // set on onList item click
@@ -169,6 +185,13 @@ FrameLayout layout_MainMenu;
     }
 
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+        protected void onPreExecute() {
+
+            ObjectAnimator animation = ObjectAnimator.ofInt (progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration (5000); //in milliseconds
+            animation.setInterpolator (new DecelerateInterpolator());
+            animation.start ();
+        }
         @Override
         protected String doInBackground(String... urls) {
 
@@ -183,6 +206,8 @@ FrameLayout layout_MainMenu;
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
+            progressBar.clearAnimation();
+            progressBar.setVisibility(View.GONE);
             Toast.makeText(getActivity(), "Received!", Toast.LENGTH_LONG).show();
             Log.e("response of feeds...", "" + result);
             try {
@@ -236,6 +261,7 @@ FrameLayout layout_MainMenu;
                     feedsArrayList.add(dataFeeds);
 
                 }
+                listView.setVisibility(View.VISIBLE);
                 adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
                 listView.setAdapter(adapter);
 
@@ -340,10 +366,13 @@ FrameLayout layout_MainMenu;
             holder.item.setText(String.valueOf(data.getItem()));
 
             holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
-            new DownloadImagesTask().execute(holder.item_photo);
+
+            Picasso.with(context).load(data.getItem_photo()).into(holder.item_photo);
+//            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
 
             holder.photo.setTag(String.valueOf(data.getPhoto()));
-            new DownloadImagesTask().execute(holder.photo);
+            Picasso.with(context).load(data.getPhoto()).into(holder.photo);
+//            new DownloadImagesTask(getActivity()).execute(holder.photo);
 
 
 
@@ -492,10 +521,12 @@ FrameLayout layout_MainMenu;
             item.setText(dataFeeds1.getItem());
 
             item_photo.setTag(dataFeeds1.getItem_photo());
-            new DownloadImagesTask().execute(item_photo); // Download item_photo from AsynTask
+            Picasso.with(getActivity()).load(dataFeeds1.getItem_photo()).into(item_photo);
+//            new DownloadImagesTask(getActivity()).execute(item_photo); // Download item_photo from AsynTask
 
             photo.setTag(dataFeeds1.getPhoto());
-            new DownloadImagesTask().execute(photo);// Download photo from AsynTask
+            Picasso.with(getActivity()).load(dataFeeds1.getPhoto()).into(photo);
+//            new DownloadImagesTask(getActivity()).execute(photo);// Download photo from AsynTask
 
             // check if it is needs change the color to red
             if (Integer.parseInt(dataFeeds1.getIsNeeds()) == 1) {
@@ -516,10 +547,12 @@ FrameLayout layout_MainMenu;
             item2.setText(dataFeeds2.getItem());
 
             item_photo2.setTag(dataFeeds2.getItem_photo());
-            new DownloadImagesTask().execute(item_photo2);// Download item_photo from AsynTask
+            Picasso.with(getActivity()).load(dataFeeds2.getItem_photo()).into(item_photo2);
+            new DownloadImagesTask(getActivity()).execute(item_photo2);// Download item_photo from AsynTask
 
             photo2.setTag(dataFeeds2.getPhoto());
-            new DownloadImagesTask().execute(photo2);// Download photo from AsynTask
+            Picasso.with(getActivity()).load(dataFeeds2.getPhoto()).into(photo2);
+//            new DownloadImagesTask(getActivity()).execute(photo2);// Download photo from AsynTask
 
             // check if it is has change the color to green
             if (Integer.parseInt(dataFeeds2.getIsHas()) == 0) {

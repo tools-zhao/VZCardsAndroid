@@ -63,9 +63,9 @@ public class Feed_detail_has extends Fragment implements View.OnClickListener {
         description.setText(desc);
         name.setText(profileName);
         profilePhoto.setTag(photo);
-        new DownloadImagesTask().execute(profilePhoto);
+        new DownloadImagesTask(getActivity()).execute(profilePhoto);
         item_photo.setTag(itemPic);
-        new DownloadImagesTask().execute(item_photo);
+        new DownloadImagesTask(getActivity()).execute(item_photo);
 
         return feed_has;
     }

@@ -41,7 +41,7 @@ import java.util.List;
 public class ContactsMainActivity extends Activity implements SearchView.OnQueryTextListener {
 
     // ArrayList
-    ArrayList<SelectUser> selectUsers=null;
+   public  ArrayList<SelectUser> selectUsers=null;
 
     // Contact List
     ListView listView;

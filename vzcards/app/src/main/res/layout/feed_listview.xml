@@ -5,8 +5,9 @@
     android:layout_height="match_parent"
     android:foreground="@drawable/shape_window_dim"
     android:background="?android:attr/colorBackground">
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_gravity="center_vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!--<LinearLayout-->
         <!--android:layout_width="match_parent"-->
@@ -28,6 +29,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         android:id="@+id/feedList"
         android:layout_below="@+id/Layout1"
         android:divider="#97e6ecf2"
@@ -36,5 +38,18 @@
         android:layout_marginTop="5dp"
         android:choiceMode="multipleChoice"
         android:listSelector="@drawable/list_item_selector"></ListView>
-</LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/Layout1"
+        android:max="500"
+        android:progress="0"
+        android:layout_centerInParent="true"
+        android:progressDrawable="@drawable/progress"
+        android:layout_gravity="center" />
+</RelativeLayout>
     </FrameLayout>
