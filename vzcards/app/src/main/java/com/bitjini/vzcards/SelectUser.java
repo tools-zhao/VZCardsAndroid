@@ -2,6 +2,10 @@ package com.bitjini.vzcards;
 
 import android.graphics.Bitmap;
 
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+
 public class SelectUser {
 
     //for contact details
@@ -9,8 +13,71 @@ public class SelectUser {
     String phone;
     Bitmap thumb;
 
-    String itemName,item_photo,date_validity,item_description;
-    String fName,lName,photo;
+    JSONArray connections;
+
+    public JSONArray getConnections() {
+        return connections;
+    }
+
+    public void setConnections(JSONArray connections) {
+        this.connections = connections;
+    }
+
+    String itemName;
+    String item_photo;
+    String date_validity;
+    String item_description;
+    String date_created;
+    String ticket_id;
+    String fName,lname,photo,referredFname,referredLname,referredPhoto;
+
+    public String getDate_created() {
+        return date_created;
+    }
+
+    public String getTicket_id() {
+        return ticket_id;
+    }
+
+    public void setTicket_id(String ticket_id) {
+        this.ticket_id = ticket_id;
+    }
+
+    public void setDate_created(String date_created) {
+        this.date_created = date_created;
+    }
+
+    public String getReferredLname() {
+        return referredLname;
+    }
+
+    public String getLname() {
+        return lname;
+    }
+
+    public void setLname(String lname) {
+        this.lname = lname;
+    }
+
+    public void setReferredLname(String referredLname) {
+        this.referredLname = referredLname;
+    }
+
+    public String getReferredPhoto() {
+        return referredPhoto;
+    }
+
+    public void setReferredPhoto(String referredPhoto) {
+        this.referredPhoto = referredPhoto;
+    }
+
+    public String getReferredFname() {
+        return referredFname;
+    }
+
+    public void setReferredFname(String referredFname) {
+        this.referredFname = referredFname;
+    }
 
     public String getfName() {
         return fName;
@@ -18,14 +85,6 @@ public class SelectUser {
 
     public void setfName(String fName) {
         this.fName = fName;
-    }
-
-    public String getlName() {
-        return lName;
-    }
-
-    public void setlName(String lName) {
-        this.lName = lName;
     }
 
     public String getPhoto() {

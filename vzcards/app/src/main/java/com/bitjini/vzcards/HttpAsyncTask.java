@@ -19,6 +19,7 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
     Context context;
     public ProgressDialog progress;
 
+    public static int responseCode;
     public HttpAsyncTask(Context context) {
         this.context = context;
     }
@@ -54,7 +55,8 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
             conn.setDoInput(true);
             // Starts the query
             conn.connect();
-            int responseCode = conn.getResponseCode();
+           responseCode = conn.getResponseCode();
+            Log.e("status :",""+responseCode);
             is = conn.getInputStream();
             String contentAsString = convertStreamToString(is);
             return contentAsString;
