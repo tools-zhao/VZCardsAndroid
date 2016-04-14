@@ -115,13 +115,13 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             e.printStackTrace();
         }
 //            resolver = c.getContentResolver();
-        listView = (ListView) vzfrnds.findViewById(R.id.contactList);
+        listView = (ListView)vzfrnds.findViewById(R.id.contactList);
         mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
 //        displayText = (TextView) findViewById(R.id.resultText);
 
         listView.setTextFilterEnabled(true);
         setupSearchView();
-        adapter = new VZFriends_Adapter(selectUsers, getActivity());
+        adapter = new VZFriends_Adapter(selectUsers,getActivity());
         listView.setAdapter(adapter);
         filter = adapter.getFilter();
         listView.setFastScrollEnabled(true);
@@ -136,8 +136,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
     }
 
-
-    private void setupSearchView() {
+    private void setupSearchView()
+    {
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setOnQueryTextListener(this);
         mSearchView.setSubmitButtonEnabled(true);
@@ -145,21 +145,20 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public boolean onQueryTextChange(String newText) {
+    public boolean onQueryTextChange(String newText)
+    {
 
         if (TextUtils.isEmpty(newText)) {
             listView.clearTextFilter();
         } else {
-            // following line was causes the popup window.
             listView.setFilterText(newText);
-
-
         }
         return true;
     }
 
     @Override
-    public boolean onQueryTextSubmit(String query) {
+    public boolean onQueryTextSubmit(String query)
+    {
         return false;
     }
 
@@ -225,12 +224,12 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             case R.id.profilebtn:
                 Fragment profilefragment = new MyProfile_Fragment();
                 // get the id of fragment
-                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.vzfrnds_frame);
+                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.vzfrnds_list_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), profilefragment).addToBackStack(contentView.toString())
+                        .add(contentView.getId(), profilefragment).addToBackStack(null)
                         .commit();
 
 
@@ -239,12 +238,12 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                 Fragment fragment = new Referral_Fragment();
                 // get the id of fragment
-                FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.vzfrnds_frame);
+                FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.vzfrnds_list_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager1 = getFragmentManager();
                 fragmentManager1.beginTransaction()
-                        .replace(contentView2.getId(), fragment).addToBackStack(contentView2.toString())
+                        .replace(contentView2.getId(), fragment).addToBackStack(null)
                         .commit();
 
 
@@ -258,7 +257,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
 class VZFriends_Adapter extends BaseAdapter implements Filterable {
 
-    private ArrayList<SelectUser> arrayList = null;
+    private ArrayList<SelectUser> arrayList = new ArrayList<>();
     private ArrayList<SelectUser> arrayListFilter = null;
     Context _c;
     ViewHolder v;
@@ -315,19 +314,14 @@ class VZFriends_Adapter extends BaseAdapter implements Filterable {
 
         //set Image if exxists
         try {
-            if (data.getPhoto() != null) {
-                Picasso.with(_c).load(data.getPhoto()).into(v.imageView);
-//                v.imageView.setTag(data.getPhoto());
-//                new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
+            if (data.getPhoto()!= null) {
+//                Picasso.with(_c).load(data.getPhoto()).into(v.imageView);
+                v.imageView.setTag(data.getPhoto());
+                new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
 
             } else {
                 v.imageView.setImageResource(R.drawable.simple_profile_placeholder1);
             }
-            //setting round image
-//            Bitmap bm = BitmapFactory.decodeResource(view.getResources(), R.drawable.contact);
-            //Load default image
-//            roundImage = new RoundImage(bm);
-//            v.imageView.setImageDrawable(roundedImage);
         } catch (ArrayIndexOutOfBoundsException ae) {
             ae.printStackTrace();
 
@@ -370,7 +364,7 @@ class VZFriends_Adapter extends BaseAdapter implements Filterable {
 
                     if (arrayListFilter != null && arrayListFilter.size() > 0) {
                         for (final SelectUser g : arrayListFilter) {
-                            if (g.getName().toLowerCase()
+                            if (g.getfName().toLowerCase()
                                     .contains(constraint.toString()))
                                 results.add(g);
                         }

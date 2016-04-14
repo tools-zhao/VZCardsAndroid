@@ -102,7 +102,7 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
                 String lastname = c.getString("lastname");
                 String photo = c.getString("photo");
 
-                Log.e("phone ", "" + phone);
+                Log.e("photo ", "" + photo);
 
                 SelectUser selectUser = new SelectUser();
                 selectUser.setfName(firstname);
@@ -228,7 +228,7 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
     class VZFriends_Adapter extends BaseAdapter implements Filterable {
 
         private ArrayList<SelectUser> arrayList = new ArrayList<>();
-        private ArrayList<SelectUser> arrayListFilter = new ArrayList<>();
+        private ArrayList<SelectUser> arrayListFilter=null;
         Context _c;
         ViewHolder v;
 
@@ -277,27 +277,22 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
             v.phone = (TextView) view.findViewById(R.id.number);
             v.imageView = (ImageView) view.findViewById(R.id.contactImage);
 
-            final SelectUser data = (SelectUser) arrayList.get(i);
+            final SelectUser data =  arrayList.get(i);
+
             v.fname.setText(data.getfName() + " " + data.getLname());
 
             v.phone.setText(data.getPhone());
 
             //set Image if exxists
             try {
-                if (data.getPhoto() != null) {
-
-                    Picasso.with(_c).load(data.getPhoto()).into(v.imageView);
-//                    v.imageView.setTag(data.getPhoto());
-//                    new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
-
+                if (data.getPhoto()!= null) {
+//                    Picasso.with(_c).load(data.getPhoto()).into(v.imageView);
+                    v.imageView.setTag(data.getPhoto());
+                    new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
                 } else {
                     v.imageView.setImageResource(R.drawable.simple_profile_placeholder1);
                 }
-                //setting round image
-//            Bitmap bm = BitmapFactory.decodeResource(view.getResources(), R.drawable.contact);
-                //Load default image
-//            roundImage = new RoundImage(bm);
-//            v.imageView.setImageDrawable(roundedImage);
+
             } catch (ArrayIndexOutOfBoundsException ae) {
                 ae.printStackTrace();
 
@@ -327,6 +322,7 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
 
                     if (arrayListFilter == null)
                         arrayListFilter = arrayList;
+                    Log.e("filter list:",""+arrayListFilter);
 
                     /**
                      *
@@ -340,7 +336,7 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
 
                         if (arrayListFilter != null && arrayListFilter.size() > 0) {
                             for (final SelectUser g : arrayListFilter) {
-                                if (g.getName().toLowerCase()
+                                if (g.getfName().toLowerCase()
                                         .contains(constraint.toString()))
                                     results.add(g);
                             }
