@@ -144,6 +144,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_marginTop="5dp"
+                        android:id="@+id/item_photo"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
                         android:src="@drawable/no_pic_placeholder_with_border_800x800"/>

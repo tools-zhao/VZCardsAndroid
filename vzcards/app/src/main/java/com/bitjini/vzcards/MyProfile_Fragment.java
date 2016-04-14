@@ -214,7 +214,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
         if(!company_photo.isEmpty()) {
-          Picasso.with(getActivity()).load(company_photo).resize(250, 250).into(imageCompany);
+          Picasso.with(getActivity()).load(company_photo).resize(100, 100).into(imageCompany);
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
 
@@ -730,7 +730,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager1 = getFragmentManager();
                 fragmentManager1.beginTransaction()
-                        .replace(contentView2.getId(), newfragment).addToBackStack(contentView2.toString())
+                        .replace(contentView2.getId(), newfragment).addToBackStack(null)
                         .commit();
                 break;
 
@@ -743,7 +743,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
                 fragmentManager2.beginTransaction()
-                        .replace(contentView3.getId(), fragment).addToBackStack(contentView3.toString())
+                        .replace(contentView3.getId(), fragment).addToBackStack(null)
                         .commit();
 
 

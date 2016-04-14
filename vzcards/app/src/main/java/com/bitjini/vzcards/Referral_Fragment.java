@@ -72,7 +72,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
                 // Connection Node in an array
                 JSONArray arr2 = c.getJSONArray("connections");
                 Log.e(" connections :", "" + arr2);
-
+                JSONObject ticket_details = c.getJSONObject("ticket_details");
                 for (int i2 = 0; i2 < arr2.length(); i2++) {
                     JSONObject c2 = arr2.getJSONObject(i2);
                     JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
@@ -115,25 +115,27 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
                     referalUsers.setLname(lastname);
                     referalUsers.setPhoto(photo);
 
+                    Log.e(" ticket_details :", "" + ticket_details);
+                    String question = ticket_details.getString("question");
+                    String description = ticket_details.getString("description");
+                    String ticket_id = ticket_details.getString("ticket_id");
+                    String itemName = ticket_details.getString("item");
+                    String date_validity = ticket_details.getString("date_validity");
+                    String vz_id = ticket_details.getString("vz_id");
+                    String item_photo = ticket_details.getString("item_photo");
+                    String date_created = ticket_details.getString("date_created");
+                    Log.e(" description :", "" + description);
+
+                    referalUsers.setDesc(description);
+                    referalUsers.setItemName(itemName);
+                    referalUsers.setItem_photo(item_photo);
+                    groupItem.add(referalUsers);
+
                 }
                 // ticket_details Node in an json object
-                JSONObject ticket_details = c.getJSONObject("ticket_details");
 
-                Log.e(" ticket_details :", "" + ticket_details);
-                String question = ticket_details.getString("question");
-                String description = ticket_details.getString("description");
-                String ticket_id = ticket_details.getString("ticket_id");
-                String itemName = ticket_details.getString("item");
-                String date_validity = ticket_details.getString("date_validity");
-                String vz_id = ticket_details.getString("vz_id");
-                String item_photo = ticket_details.getString("item_photo");
-                String date_created = ticket_details.getString("date_created");
-                Log.e(" description :", "" + description);
 
-                referalUsers.setDesc(description);
-                referalUsers.setItemName(itemName);
-                referalUsers.setItem_photo(item_photo);
-                groupItem.add(referalUsers);
+
 
 
             }
@@ -256,7 +258,16 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
             // Resets the toolbar to be closed
             View toolbar = (View) v.findViewById(R.id.toolbar);
             TextView desc = (TextView) v.findViewById(R.id.textView1);
+            ImageView item_photo = (ImageView) v.findViewById(R.id.item_photo);
             desc.setText(cat.getDesc());
+            if (cat.getItem_photo() != null) {
+                Picasso.with(_c).load(cat.getItem_photo()).resize(250, 250).into(item_photo);
+//                    referredPhoto.setTag(cat.getReferedPhoto());
+//                    new DownloadImagesTask(_c).execute(referredPhoto);// Download item_photo from AsynTask
+
+            } else {
+                item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+            }
             Button callBtn = (Button) v.findViewById(R.id.btnCall);
             Button vzCardBtn = (Button) v.findViewById(R.id.btnVzCard);
 
@@ -344,7 +355,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), profilefragment).addToBackStack(contentView.toString())
+                        .add(contentView.getId(), profilefragment).addToBackStack(null)
                         .commit();
 
                 break;
@@ -357,7 +368,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
                 fragmentManager2.beginTransaction()
-                        .replace(contentView2.getId(), newfragment).addToBackStack(contentView2.toString())
+                        .replace(contentView2.getId(), newfragment).addToBackStack(null)
                         .commit();
 
                 break;

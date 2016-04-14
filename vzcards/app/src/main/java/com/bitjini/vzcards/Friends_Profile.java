@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -133,23 +134,20 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
 
 
         if(!photo.isEmpty()) {
-//            bm=null; output=null;
-//            DownloadFullFromUrl(photo);
-//            getRoundedCornerBitmap(bm, 100);
-//            imageProfile.setImageBitmap(output);
-            imageProfile.setTag(photo);
-            new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
+
+                Picasso.with(getActivity()).load(photo).resize(250, 250).into(imageProfile);
+
+//            imageProfile.setTag(photo);
+//            new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
 
         }
 
 
+
         if(!company_photo.isEmpty()) {
-            bm=null; output=null;
-//            DownloadFullFromUrl(company_photo);
-//            getRoundedCornerBitmap(bm, 100);
-//            imageCompany.setImageBitmap(output);
-            imageCompany.setTag(company_photo);
-            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
+            Picasso.with(getActivity()).load(company_photo).resize(100, 100).into(imageCompany);
+//            imageCompany.setTag(company_photo);
+//            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
 
         }
 
