@@ -229,7 +229,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
             referredName.setText(cat.getReferredfName() + " " + cat.getReferredlName());
             itemName.setText("for " + cat.getItemName());
             try {
-                if (cat.getPhoto() != null) {
+                if (!cat.getPhoto().isEmpty()) {
 //                    photo.setTag(cat.getPhoto());
 //                    new DownloadImagesTask(_c).execute(photo);// Download item_photo from AsynTask
                     Picasso.with(_c).load(cat.getPhoto()).resize(250, 250).into(photo);
@@ -238,20 +238,19 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
                 } else {
                     photo.setImageResource(R.drawable.profile_pic_placeholder);
                 }
-                if (cat.getReferedPhoto() != null) {
+                if (!cat.getReferedPhoto().isEmpty()) {
                     Picasso.with(_c).load(cat.getReferedPhoto()).resize(250, 250).into(referredPhoto);
 //                    referredPhoto.setTag(cat.getReferedPhoto());
 //                    new DownloadImagesTask(_c).execute(referredPhoto);// Download item_photo from AsynTask
 
                 } else {
-                    photo.setImageResource(R.drawable.profile_pic_placeholder);
+                    referredPhoto.setImageResource(R.drawable.profile_pic_placeholder);
                 }
 
             } catch (ArrayIndexOutOfBoundsException ae) {
                 ae.printStackTrace();
 
             } catch (OutOfMemoryError e) {
-                //  v.imageView.setImageDrawable(this._c.getDrawable(R.drawable.contact));
                 e.printStackTrace();
             }
 
@@ -260,7 +259,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
             TextView desc = (TextView) v.findViewById(R.id.textView1);
             ImageView item_photo = (ImageView) v.findViewById(R.id.item_photo);
             desc.setText(cat.getDesc());
-            if (cat.getItem_photo() != null) {
+            if (!cat.getItem_photo().isEmpty()) {
                 Picasso.with(_c).load(cat.getItem_photo()).resize(250, 250).into(item_photo);
 //                    referredPhoto.setTag(cat.getReferedPhoto());
 //                    new DownloadImagesTask(_c).execute(referredPhoto);// Download item_photo from AsynTask

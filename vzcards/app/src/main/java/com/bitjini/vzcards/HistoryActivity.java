@@ -2,14 +2,17 @@ package com.bitjini.vzcards;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -37,9 +40,11 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by VEENA on 12/7/2015.
  */
-public class HistoryActivity extends Fragment {
+public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     String HISTORY_URL = "http://vzcards-api.herokuapp.com/history/?access_token=";
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     VerifyScreen p = new VerifyScreen();
     // ArrayList
     ArrayList<SelectUser> selectUsers=new ArrayList<>();
@@ -50,63 +55,22 @@ public class HistoryActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View history = inflater.inflate(R.layout.history_listview, container, false);
-        try {
-            String result= new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
-            Log.e("received History", "" + result);
 
 
-            JSONObject jsonObject = new JSONObject(result);
-
-            String response = jsonObject.getString("response");
-            // Getting JSON Array node
-            JSONArray arr = jsonObject.getJSONArray("response");
-
-            // looping through All Contacts
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject c = arr.getJSONObject(i);
-                // Connection Node in an array
-                JSONArray   arr2 = c.getJSONArray("connections");
-                JSONArray connection = arr.getJSONObject(i).getJSONArray("connections");
 
 
-                // ticket_details Node in an json object
-                JSONObject ticket_details = c.getJSONObject("ticket_details");
-
-                String question = ticket_details.getString("question");
-                String description = ticket_details.getString("description");
-                String ticket_id = ticket_details.getString("ticket_id");
-                String itemName = ticket_details.getString("item");
-                String date_validity = ticket_details.getString("date_validity");
-                String vz_id = ticket_details.getString("vz_id");
-                String item_photo = ticket_details.getString("item_photo");
-                String date_created = ticket_details.getString("date_created");
-//                Log.e(" description :", "" + description);
-
-                String days= String.valueOf(getDateDifference(date_created));
-                SelectUser selectUser = new SelectUser();
-                selectUser.setItemName(itemName);
-                selectUser.setDate_created(days);
-                selectUser.setTicket_id(ticket_id);
-                selectUser.setItem_description(description);
-                selectUser.setDate_validity(date_validity);
-                selectUser.setItem_photo(item_photo);
-                selectUser.setConnections(arr2);
-                selectUsers.add(selectUser);
-
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
+        swipeRefreshLayout = (SwipeRefreshLayout) history.findViewById(R.id.pullToRefresh);
+        // the refresh listner. this would be called when the layout is pulled down
+        swipeRefreshLayout.setOnRefreshListener(this);
+        // sets the colors used in the refresh animation
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
+                R.color.colorPrimary
+                ,R.color.red);
 
         listView = (ListView) history.findViewById(R.id.historyList);
 
-        adapter = new History_Adapter(selectUsers, getActivity(),R.layout.history_layout);
+        getHistoryContents();
+        adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
         listView.setAdapter(adapter);
 
@@ -133,10 +97,121 @@ public class HistoryActivity extends Fragment {
             }
         });
 
+       // to avoid triggering of swipe to refresh on scrolling of listview
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                boolean enable = false;
+                if(listView != null && listView.getChildCount() > 0){
+                    // check if the first item of the list is visible
+                    boolean firstItemVisible = listView.getFirstVisiblePosition() == 0;
+                    // check if the top of the first item is visible
+                    boolean topOfFirstItemVisible = listView.getChildAt(0).getTop() == 0;
+                    // enabling or disabling the refresh layout
+                    enable = firstItemVisible && topOfFirstItemVisible;
+                }
+                swipeRefreshLayout.setEnabled(enable);
+            }
+        });
+
 
 
         return history;
     }
+    public void getHistoryContents()
+    {
+        try {
+            String result = new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
+            Log.e("received History", "" + result);
+
+
+            JSONObject jsonObject = new JSONObject(result);
+
+            String response = jsonObject.getString("response");
+            // Getting JSON Array node
+            JSONArray arr = jsonObject.getJSONArray("response");
+
+            // looping through All Contacts
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject c = arr.getJSONObject(i);
+                // Connection Node in an array
+                JSONArray arr2 = c.getJSONArray("connections");
+                JSONArray connection = arr.getJSONObject(i).getJSONArray("connections");
+                String question="",description="",ticket_id="",itemName="",date_validity="",vz_id="",item_photo="",date_created="";
+
+                // ticket_details Node in an json object
+                JSONObject ticket_details = c.getJSONObject("ticket_details");
+
+                 question = ticket_details.getString("question");
+                 description = ticket_details.getString("description");
+                 ticket_id = ticket_details.getString("ticket_id");
+                 itemName = ticket_details.getString("item");
+                 date_validity = ticket_details.getString("date_validity");
+                 vz_id = ticket_details.getString("vz_id");
+                 item_photo = ticket_details.getString("item_photo");
+                 date_created = ticket_details.getString("date_created");
+//                Log.e(" description :", "" + description);
+
+                String days = String.valueOf(getDateDifference(date_created));
+                SelectUser selectUser = new SelectUser();
+                selectUser.setItemName(itemName);
+                selectUser.setDate_created(days);
+                selectUser.setTicket_id(ticket_id);
+                selectUser.setItem_description(description);
+                selectUser.setDate_validity(date_validity);
+                selectUser.setItem_photo(item_photo);
+                selectUser.setConnections(arr2);
+                selectUsers.add(selectUser);
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
+
+    @Override
+    public void onRefresh() {
+        // TODO Auto-generated method stub
+
+        refreshContent();
+
+    }
+    private void refreshContent(){
+
+        new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
+
+                selectUsers.clear();
+                getHistoryContents();
+
+                adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
+
+                listView.setAdapter(adapter);
+                //do processing to get new data and set your listview's adapter, maybe  reinitialise the loaders you may be using or so
+                //when your data has finished loading, set the refresh state of the view to false
+                swipeRefreshLayout.setRefreshing(false);
+
+            }
+        }, 5000);
+
+    }
+
     private class History_Adapter extends BaseAdapter {
 
         private ArrayList<SelectUser> arrayList = new ArrayList<>();
@@ -195,16 +270,17 @@ public class HistoryActivity extends Fragment {
             v.txtItem.setText(data.getItemName());
             v.txtDescription.setText(data.getItem_description());
             v.txtDate.setText(data.getDate_created());
-
+            Log.e("pic image :",""+data.getItem_photo());
             //set Image if exxists
             try {
-                if (data.getItem_photo() != null) {
-//                    v.item_photo.setTag(data.getItem_photo());
+                if (data.getItem_photo().isEmpty()) {
+//
+                    v.item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+                } else {
+
+                    v.item_photo.setTag(data.getItem_photo());
 //                    new DownloadImageProgress(_c).execute(String.valueOf(v.item_photo));// Download item_photo from AsynTask
                     Picasso.with(_c).load(data.getItem_photo()).resize(250, 250).into( v.item_photo);
-
-                } else {
-                    v.item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
                 }
 
             } catch (ArrayIndexOutOfBoundsException ae) {

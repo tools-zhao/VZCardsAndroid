@@ -5,6 +5,11 @@
     android:layout_height="match_parent"
     android:foreground="@drawable/shape_window_dim"
     android:background="?android:attr/colorBackground">
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pullToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_gravity="center_vertical" android:layout_width="match_parent"
@@ -52,4 +57,5 @@
         android:progressDrawable="@drawable/progress"
         android:layout_gravity="center" />
 </RelativeLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
     </FrameLayout>

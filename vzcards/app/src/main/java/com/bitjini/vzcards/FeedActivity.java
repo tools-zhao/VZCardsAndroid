@@ -15,9 +15,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Layout;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -26,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -58,12 +61,16 @@ import java.util.ArrayList;
 /**
  * Created by bitjini on 28/12/15.
  */
-public class FeedActivity extends Fragment {
+public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=";
     ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
     ArrayList<DataFeeds> feeds = new ArrayList<DataFeeds>();
+    String token_sharedPreference;
+
     ListView listView;
     public FeedsAdapter adapter;
     ViewHolder holder;
@@ -79,6 +86,13 @@ FrameLayout layout_MainMenu;
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
 
         progressBar = (ProgressBar) feed.findViewById(R.id.progressBar);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) feed.findViewById(R.id.pullToRefresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
+                R.color.colorPrimary
+                ,R.color.red);
 
         layout_MainMenu = (FrameLayout) feed.findViewById(R.id.feed_detail);
         layout_MainMenu.getForeground().setAlpha( 0);
@@ -102,14 +116,12 @@ FrameLayout layout_MainMenu;
         // get the access token from shared prefernces
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        String token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+       token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         System.out.println(" getting token from sharedpreference " + token_sharedPreference);
 
         new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+token_sharedPreference);
         // call AsynTask to perform network operation on separate thread
-
-        new HttpAsyncTask().execute("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference);
-
+        getFeedsContents();
         // set on onList item click
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -170,18 +182,62 @@ FrameLayout layout_MainMenu;
                 }
             }
         });
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                boolean enable = false;
+                if(listView != null && listView.getChildCount() > 0){
+                    // check if the first item of the list is visible
+                    boolean firstItemVisible = listView.getFirstVisiblePosition() == 0;
+                    // check if the top of the first item is visible
+                    boolean topOfFirstItemVisible = listView.getChildAt(0).getTop() == 0;
+                    // enabling or disabling the refresh layout
+                    enable = firstItemVisible && topOfFirstItemVisible;
+                }
+                swipeRefreshLayout.setEnabled(enable);
+            }
+        });
 
         return feed;
     }
+    public void getFeedsContents() {
 
-    public boolean isConnected() {
+        new HttpAsyncTask().execute("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference);
+
+    }
+            public boolean isConnected() {
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected())
             return true;
         else
             return false;
+    }
+
+    @Override
+    public void onRefresh() {
+        // TODO Auto-generated method stub
+
+        refreshContent();
+
+    }
+    private void refreshContent(){
+
+        new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
+
+                feedsArrayList.clear();
+                getFeedsContents();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }, 5000);
+
     }
 
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {

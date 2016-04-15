@@ -6,4 +6,6 @@
 
     <color name="pressed_color">#4d90fe</color>
     <color name="default_color">#ffffff</color>
+    <color name="pink">#f5a70b66</color>
+    <color name="red">#c4cc0e27</color>
 </resources>
