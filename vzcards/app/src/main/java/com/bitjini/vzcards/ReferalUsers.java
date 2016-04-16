@@ -10,6 +10,15 @@ public class ReferalUsers {
     String referredfName,referredlName,phone,company,industry,city,address1,address2,pin_code,email;
     String photo,referedPhoto,comany_photo,item_photo;
     String desc,itemName,dateValidity;
+    String ticketReferedName;
+
+    public String getTicketReferedName() {
+        return ticketReferedName;
+    }
+
+    public void setTicketReferedName(String ticketReferedName) {
+        this.ticketReferedName = ticketReferedName;
+    }
 
     public String getDateValidity() {
         return dateValidity;

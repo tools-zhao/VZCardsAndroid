@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +18,14 @@ import android.widget.LinearLayout.LayoutParams;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -28,10 +33,11 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by bitjini on 28/12/15.
  */
-public class Referral_Fragment extends Fragment implements View.OnClickListener {
+public class Referral_Fragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     String HISTORY_URL = "http://vzcards-api.herokuapp.com/history/?access_token=";
     VerifyScreen p = new VerifyScreen();
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     MyProfile_Fragment pr = new MyProfile_Fragment();
     ArrayList<ReferalUsers> groupItem = new ArrayList<ReferalUsers>();
@@ -45,6 +51,14 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
         RelativeLayout linearLayout = (RelativeLayout) referral.findViewById(R.id.parent);
         linearLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) referral.findViewById(R.id.pullToRefresh);
+        // the refresh listner. this would be called when the layout is pulled down
+        swipeRefreshLayout.setOnRefreshListener(this);
+        // sets the colors used in the refresh animation
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
+                R.color.colorPrimary
+                ,R.color.red);
+
         referralbtn = (Button) referral.findViewById(R.id.referralbtn);
         referral.setSelected(true);
         referral.setPressed(true);
@@ -55,99 +69,9 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
         profilebtn.setOnClickListener(this);
         vzfrnds.setOnClickListener(this);
 
-        try {
-            String result = new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
-            Log.e("received History", "" + result);
-            ReferalUsers referalUsers = new ReferalUsers();
-
-            JSONObject jsonObject = new JSONObject(result);
-
-            String response = jsonObject.getString("response");
-            // Getting JSON Array node
-            JSONArray arr = jsonObject.getJSONArray("response");
-
-            // looping through All Contacts
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject c = arr.getJSONObject(i);
-                // Connection Node in an array
-                JSONArray arr2 = c.getJSONArray("connections");
-                Log.e(" connections :", "" + arr2);
-                JSONObject ticket_details = c.getJSONObject("ticket_details");
-                for (int i2 = 0; i2 < arr2.length(); i2++) {
-                    JSONObject c2 = arr2.getJSONObject(i2);
-                    JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
-                    Log.w("reffered_phone_", "" + reffered_phone_details);
-                    String referedFname = reffered_phone_details.getString("firstname");
-                    String referedLname = reffered_phone_details.getString("lastname");
-                    String referedphoto = reffered_phone_details.getString("photo");
-                    String phone = reffered_phone_details.getString("phone");
-                    String company = reffered_phone_details.getString("company");
-                    String pin_code = reffered_phone_details.getString("pin_code");
-                    String industry = reffered_phone_details.getString("industry");
-                    String address1 = reffered_phone_details.getString("address_line_1");
-                    String address2 = reffered_phone_details.getString("address_line_2");
-                    String city = reffered_phone_details.getString("city");
-                    String company_photo = reffered_phone_details.getString("company_photo");
-                    String email = reffered_phone_details.getString("email");
-
-                    referalUsers.setReferredfName(referedFname);
-                    referalUsers.setReferredlName(referedLname);
-                    referalUsers.setReferedPhoto(referedphoto);
-                    referalUsers.setPhone(phone);
-                    referalUsers.setEmail(email);
-                    referalUsers.setCompany(company);
-                    referalUsers.setPin_code(pin_code);
-                    referalUsers.setIndustry(industry);
-                    referalUsers.setAddress1(address1);
-                    referalUsers.setAddress2(address2);
-                    referalUsers.setCity(city);
-                    referalUsers.setComany_photo(company_photo);
-
-                    JSONObject reffered_ticket_details = c2.getJSONObject("reffered_ticket_details");
-                    Log.w("reffered_ticket_details", "" + reffered_ticket_details);
-                    JSONObject connecter_details = c2.getJSONObject("connecter_details");
-                    Log.w("connecter_details", "" + connecter_details);
-
-                    String fname = connecter_details.getString("firstname");
-                    String lastname = connecter_details.getString("lastname");
-                    String photo = connecter_details.getString("photo");
-                    referalUsers.setFname(fname);
-                    referalUsers.setLname(lastname);
-                    referalUsers.setPhoto(photo);
-
-                    Log.e(" ticket_details :", "" + ticket_details);
-                    String question = ticket_details.getString("question");
-                    String description = ticket_details.getString("description");
-                    String ticket_id = ticket_details.getString("ticket_id");
-                    String itemName = ticket_details.getString("item");
-                    String date_validity = ticket_details.getString("date_validity");
-                    String vz_id = ticket_details.getString("vz_id");
-                    String item_photo = ticket_details.getString("item_photo");
-                    String date_created = ticket_details.getString("date_created");
-                    Log.e(" description :", "" + description);
-
-                    referalUsers.setDesc(description);
-                    referalUsers.setItemName(itemName);
-                    referalUsers.setItem_photo(item_photo);
-                    groupItem.add(referalUsers);
-
-                }
-                // ticket_details Node in an json object
-
-
-
-
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
         // Populate our list with groups and it's children
         // Creating the list adapter and populating the list
+        getReferalContents();
         CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
         list.setAdapter(listAdapter);
 
@@ -171,10 +95,190 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener 
                 }
             }
         });
+        // to avoid triggering of swipe to refresh on scrolling of listview
+        list.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                boolean enable = false;
+                if(list != null && list.getChildCount() > 0){
+                    // check if the first item of the list is visible
+                    boolean firstItemVisible = list.getFirstVisiblePosition() == 0;
+                    // check if the top of the first item is visible
+                    boolean topOfFirstItemVisible = list.getChildAt(0).getTop() == 0;
+                    // enabling or disabling the refresh layout
+                    enable = firstItemVisible && topOfFirstItemVisible;
+                }
+                swipeRefreshLayout.setEnabled(enable);
+            }
+        });
+
         return referral;
 
     }
+    public void getReferalContents() {
+        try {
+            String result = new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
+            Log.e("received History", "" + result);
+            ReferalUsers referalUsers = new ReferalUsers();
 
+            JSONObject jsonObject = new JSONObject(result);
+
+            String response = jsonObject.getString("response");
+            // Getting JSON Array node
+            JSONArray arr = jsonObject.getJSONArray("response");
+
+            // looping through All Contacts
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject c = arr.getJSONObject(i);
+                // Connection Node in an array
+                JSONArray arr2 = c.getJSONArray("connections");
+                Log.e(" connections :", "" + arr2);
+                JSONObject reffered_phone_details = null;
+
+                for (int i2 = 0; i2 < arr2.length(); i2++) {
+                    JSONObject c2 = arr2.getJSONObject(i2);
+
+                    String refPhoneDetails = c2.getString("reffered_phone_details");
+
+                    Object json = new JSONTokener(refPhoneDetails).nextValue();
+                    if (json instanceof JSONObject)
+                    {
+                        reffered_phone_details = c2.getJSONObject("reffered_phone_details");
+                        Log.w("reffered_phone_", "" + reffered_phone_details);
+                        String referedFname = reffered_phone_details.getString("firstname");
+                        String referedLname = reffered_phone_details.getString("lastname");
+                        String referedphoto = reffered_phone_details.getString("photo");
+                        String phone = reffered_phone_details.getString("phone");
+                        String company = reffered_phone_details.getString("company");
+                        String pin_code = reffered_phone_details.getString("pin_code");
+                        String industry = reffered_phone_details.getString("industry");
+                        String address1 = reffered_phone_details.getString("address_line_1");
+                        String address2 = reffered_phone_details.getString("address_line_2");
+                        String city = reffered_phone_details.getString("city");
+                        String company_photo = reffered_phone_details.getString("company_photo");
+                        String email = reffered_phone_details.getString("email");
+
+                        referalUsers.setReferredfName(referedFname);
+                        referalUsers.setReferredlName(referedLname);
+                        referalUsers.setReferedPhoto(referedphoto);
+                        referalUsers.setPhone(phone);
+                        referalUsers.setEmail(email);
+                        referalUsers.setCompany(company);
+                        referalUsers.setPin_code(pin_code);
+                        referalUsers.setIndustry(industry);
+                        referalUsers.setAddress1(address1);
+                        referalUsers.setAddress2(address2);
+                        referalUsers.setCity(city);
+                        referalUsers.setComany_photo(company_photo);
+
+                    }
+                    //you have a string
+                    else if (json instanceof String)
+                    {
+                        refPhoneDetails = c2.getString("reffered_phone_details");
+
+                        referalUsers.setPhone(refPhoneDetails);
+                    }
+
+
+                    String refTicketDetailsStr = c2.getString("reffered_ticket_details");
+
+                    Object json2 = new JSONTokener(refTicketDetailsStr).nextValue();
+                    //you have an object
+                    if (json2 instanceof JSONObject)
+                    {
+                        JSONObject reffered_ticket_details = c2.getJSONObject("reffered_ticket_details");
+                        String question = reffered_ticket_details.getString("question");
+                        String description = reffered_ticket_details.getString("description");
+                        String ticket_id = reffered_ticket_details.getString("ticket_id");
+                        String itemName = reffered_ticket_details.getString("item");
+                        String date_validity = reffered_ticket_details.getString("date_validity");
+                        String vz_id = reffered_ticket_details.getString("vz_id");
+                        String item_photo = reffered_ticket_details.getString("item_photo");
+                        String date_created = reffered_ticket_details.getString("date_created");
+                        Log.e(" description :", "" + description);
+
+                    }
+
+                //you have string
+                       else if (json2 instanceof String) {
+                        refTicketDetailsStr = c2.getString("reffered_ticket_details");
+                        referalUsers.setReferredfName(refTicketDetailsStr);
+
+                }
+
+
+                    JSONObject ticket_details = c.getJSONObject("ticket_details");
+                    Log.e(" ticket_details :", "" + ticket_details);
+                    String question = ticket_details.getString("question");
+                    String description = ticket_details.getString("description");
+                    String ticket_id = ticket_details.getString("ticket_id");
+                    String itemName = ticket_details.getString("item");
+                    String date_validity = ticket_details.getString("date_validity");
+                    String vz_id = ticket_details.getString("vz_id");
+                    String item_photo = ticket_details.getString("item_photo");
+                    String date_created = ticket_details.getString("date_created");
+                    Log.e(" description :", "" + description);
+
+                    referalUsers.setDesc(description);
+                    referalUsers.setItemName(itemName);
+                    referalUsers.setItem_photo(item_photo);
+
+                    JSONObject connecter_details = c2.getJSONObject("connecter_details");
+                    String fname = connecter_details.getString("firstname");
+                    String lastname = connecter_details.getString("lastname");
+                    String photo = connecter_details.getString("photo");
+                    referalUsers.setFname(fname);
+                    referalUsers.setLname(lastname);
+                    referalUsers.setPhoto(photo);
+
+
+                    groupItem.add(referalUsers);
+
+                }
+                // ticket_details Node in an json object
+
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onRefresh() {
+        // TODO Auto-generated method stub
+
+        refreshContent();
+
+    }
+    private void refreshContent(){
+
+        new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
+
+                groupItem.clear();
+                getReferalContents();
+                CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+                list.setAdapter(listAdapter);
+
+                //do processing to get new data and set your listview's adapter, maybe  reinitialise the loaders you may be using or so
+                //when your data has finished loading, set the refresh state of the view to false
+                swipeRefreshLayout.setRefreshing(false);
+
+            }
+        }, 5000);
+
+    }
     /**
      * A simple implementation of list adapter.
      */

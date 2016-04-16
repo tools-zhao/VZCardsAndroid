@@ -2,6 +2,7 @@ package com.bitjini.vzcards;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,8 +57,6 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View history = inflater.inflate(R.layout.history_listview, container, false);
-
-
 
 
         swipeRefreshLayout = (SwipeRefreshLayout) history.findViewById(R.id.pullToRefresh);
@@ -166,6 +166,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 selectUser.setItem_description(description);
                 selectUser.setDate_validity(date_validity);
                 selectUser.setItem_photo(item_photo);
+                selectUser.setQuestion(question);
                 selectUser.setConnections(arr2);
                 selectUsers.add(selectUser);
 
@@ -264,12 +265,25 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             v.txtcount=(TextView) view.findViewById(R.id.refCount);
             v.btnRemove=(Button) view.findViewById(R.id.remove);
 
+            v.viewLine=(View)view.findViewById(R.id.viewLine);
             v.item_photo = (ImageView) view.findViewById(R.id.feedImage);
 
             final SelectUser data = (SelectUser) arrayList.get(i);
             v.txtItem.setText(data.getItemName());
             v.txtDescription.setText(data.getItem_description());
             v.txtDate.setText(data.getDate_created());
+
+            Log.e("question :",""+Integer.parseInt(data.getQuestion()));
+            // check if it is has change the color to green=0
+            if (Integer.parseInt(data.getQuestion()) == 0) {
+                v.viewLine.setBackgroundColor(Color.parseColor("#add58a")); //Green
+
+            }
+            // check if it is has change the color to red=1
+            if (Integer.parseInt(data.getQuestion()) == 1) {
+                v.viewLine.setBackgroundColor(Color.parseColor("#f27166"));// Red
+
+            }
             Log.e("pic image :",""+data.getItem_photo());
             //set Image if exxists
             try {
@@ -361,17 +375,28 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     {
                         v.txtcount.setText(String.valueOf(array.length())+" referral");
                     }
-                    JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
-                    String referedFname = reffered_phone_details.getString("firstname");
-                    String referedLname = reffered_phone_details.getString("lastname");
-                    String referedphoto = reffered_phone_details.getString("photo");
-
+                    String refPhoneDetails = c2.getString("reffered_phone_details");
                     SelectUser userConnectorDetails = new SelectUser();
-                    userConnectorDetails.setReferredFname(referedFname);
-                    userConnectorDetails.setReferredLname(referedLname);
-                    userConnectorDetails.setReferredPhoto(referedphoto);
+                    Object json = new JSONTokener(refPhoneDetails).nextValue();
+                    if (json instanceof JSONObject) {
+                        JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
+                        String referedFname = reffered_phone_details.getString("firstname");
+                        String referedLname = reffered_phone_details.getString("lastname");
+                        String referedphoto = reffered_phone_details.getString("photo");
 
 
+                        userConnectorDetails.setReferredFname(referedFname);
+                        userConnectorDetails.setReferredLname(referedLname);
+                        userConnectorDetails.setReferredPhoto(referedphoto);
+
+                    }
+                    //you have a string
+                    else if (json instanceof String)
+                    {
+                        refPhoneDetails = c2.getString("reffered_phone_details");
+
+                        userConnectorDetails.setPhone(refPhoneDetails);
+                    }
                     JSONObject connecter_details = c2.getJSONObject("connecter_details");
 
 
@@ -413,6 +438,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             ImageView item_photo;
             TextView txtItem, txtDescription, txtDate ,txtcount;
             Button btnRemove;
+            View viewLine;
         }
 
         public class MyClassAdapter extends ArrayAdapter<SelectUser> {

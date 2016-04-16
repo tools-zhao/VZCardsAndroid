@@ -29,7 +29,17 @@ public class SelectUser {
     String item_description;
     String date_created;
     String ticket_id;
+    String question;
     String fName,lname,photo,referredFname,referredLname,referredPhoto;
+
+    public String getQuestion() {
+
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
 
     public String getDate_created() {
         return date_created;

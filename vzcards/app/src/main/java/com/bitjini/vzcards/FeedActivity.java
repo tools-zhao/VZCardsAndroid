@@ -421,14 +421,25 @@ FrameLayout layout_MainMenu;
             holder.name.setText(String.valueOf(data.getFname()));
             holder.item.setText(String.valueOf(data.getItem()));
 
-            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
+//            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
+          if(!data.getItem_photo().isEmpty())
+            {
+                Picasso.with(context).load(data.getItem_photo()).into(holder.item_photo);
+                //            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
+            } else
+          {
+              holder.item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+            }
 
-            Picasso.with(context).load(data.getItem_photo()).into(holder.item_photo);
-//            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
+            if(!data.getPhoto().isEmpty())
+            {
 
-            holder.photo.setTag(String.valueOf(data.getPhoto()));
-            Picasso.with(context).load(data.getPhoto()).into(holder.photo);
-//            new DownloadImagesTask(getActivity()).execute(holder.photo);
+            Picasso.with(context).load(data.getPhoto()).into(holder.photo);}
+            else  {
+                holder.photo.setImageResource(R.drawable.profile_pic_placeholder);
+                //            new DownloadImagesTask(getActivity()).execute(holder.photo);
+
+            }
 
 
 
@@ -576,13 +587,22 @@ FrameLayout layout_MainMenu;
             name.setText(dataFeeds1.getFname());
             item.setText(dataFeeds1.getItem());
 
-            item_photo.setTag(dataFeeds1.getItem_photo());
-            Picasso.with(getActivity()).load(dataFeeds1.getItem_photo()).into(item_photo);
+            if(!dataFeeds1.getItem_photo().isEmpty()) {
+//            item_photo.setTag(dataFeeds1.getItem_photo());
+                Picasso.with(getActivity()).load(dataFeeds1.getItem_photo()).into(item_photo);
 //            new DownloadImagesTask(getActivity()).execute(item_photo); // Download item_photo from AsynTask
-
-            photo.setTag(dataFeeds1.getPhoto());
-            Picasso.with(getActivity()).load(dataFeeds1.getPhoto()).into(photo);
+            }else
+            {
+                item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+            }
+            if(!dataFeeds1.getPhoto().isEmpty()) {
+//            photo.setTag(dataFeeds1.getPhoto());
+                Picasso.with(getActivity()).load(dataFeeds1.getPhoto()).into(photo);
 //            new DownloadImagesTask(getActivity()).execute(photo);// Download photo from AsynTask
+            }  else
+                {
+                    photo.setImageResource(R.drawable.profile_pic_placeholder);
+                }
 
             // check if it is needs change the color to red
             if (Integer.parseInt(dataFeeds1.getIsNeeds()) == 1) {
@@ -602,14 +622,26 @@ FrameLayout layout_MainMenu;
             name2.setText(dataFeeds2.getFname());
             item2.setText(dataFeeds2.getItem());
 
-            item_photo2.setTag(dataFeeds2.getItem_photo());
+            if(!dataFeeds2.getItem_photo().isEmpty()){
+//            item_photo2.setTag(dataFeeds2.getItem_photo());
             Picasso.with(getActivity()).load(dataFeeds2.getItem_photo()).into(item_photo2);
-            new DownloadImagesTask(getActivity()).execute(item_photo2);// Download item_photo from AsynTask
 
-            photo2.setTag(dataFeeds2.getPhoto());
-            Picasso.with(getActivity()).load(dataFeeds2.getPhoto()).into(photo2);
+//            new DownloadImagesTask(getActivity()).execute(item_photo2);// Download item_photo from AsynTask
+            }else
+            {
+                item_photo2.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+            }
+
+                if(!dataFeeds2.getPhoto().isEmpty()) {
+//                    photo2.setTag(dataFeeds2.getPhoto());
+                    Picasso.with(getActivity()).load(dataFeeds2.getPhoto()).into(photo2);
+
 //            new DownloadImagesTask(getActivity()).execute(photo2);// Download photo from AsynTask
-
+                }
+               else
+                {
+                    photo2.setImageResource(R.drawable.profile_pic_placeholder);
+                }
             // check if it is has change the color to green
             if (Integer.parseInt(dataFeeds2.getIsHas()) == 0) {
                 viewLine2.setBackgroundColor(Color.parseColor("#add58a"));

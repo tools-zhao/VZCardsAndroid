@@ -1,6 +1,9 @@
 package com.bitjini.vzcards;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,10 +29,12 @@ import android.view.ViewGroup;
 
 import android.support.v4.app.Fragment;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -55,12 +60,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by VEENA on 12/7/2015.
  */
-public class AddActivity extends Fragment{
+public class AddActivity extends Fragment implements View.OnClickListener {
 
     public static final String URL_CREATE_TICKET = "http://vzcards-api.herokuapp.com/ticket_create/?access_token=";
 
@@ -70,66 +76,44 @@ public class AddActivity extends Fragment{
     Button havebtn;
     public ImageView item_image;
     Button addImage;
-    EditText txtItem,txtDescription,txtDate_validity;
+    EditText txtItem, txtDescription;
+    EditText txtDate_validity;
     ImageButton submit;
     public static String Item_picturePath;
-    public String item_photo = "", item = "", description = "", date_validity="",question="";
-    public ProgressDialog progress=null;
-    public Bitmap output,bitmap;
-
+    public String item_photo = "", item = "", description = "", date_validity = "", question = "";
+    public ProgressDialog progress = null;
+    public Bitmap output, bitmap;
+    Button btnClick;
     VerifyScreen p = new VerifyScreen();
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater,ViewGroup container,
-                             Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View iHave = inflater.inflate(R.layout.add_layout, container, false);
-        addImage=(Button) iHave.findViewById(R.id.addImage);
-        txtItem=(EditText) iHave.findViewById(R.id.ask);
-        txtDescription=(EditText) iHave.findViewById(R.id.desc);
-        txtDate_validity=(EditText) iHave.findViewById(R.id.validity);
-        item_image=(ImageView) iHave.findViewById(R.id.item_img);
-        submit=(ImageButton) iHave.findViewById(R.id.imgbtn);
+        addImage = (Button) iHave.findViewById(R.id.addImage);
+        txtItem = (EditText) iHave.findViewById(R.id.ask);
+        txtDescription = (EditText) iHave.findViewById(R.id.desc);
+        txtDate_validity = (EditText) iHave.findViewById(R.id.validity);
+        item_image = (ImageView) iHave.findViewById(R.id.item_img);
 
-        addImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnClick = (Button) iHave.findViewById(R.id.click);
 
-                openImageIntent();
-            }
-        });
+        submit = (ImageButton) iHave.findViewById(R.id.imgbtn);
 
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET+p.token_sharedPreference);
-            }
-        });
+        btnClick.setOnClickListener(this);
+        addImage.setOnClickListener(this);
 
-        Button iNeed=(Button) iHave.findViewById(R.id.ineed);
+        submit.setOnClickListener(this);
+
+        Button iNeed = (Button) iHave.findViewById(R.id.ineed);
 
 
-        iNeed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-
-                Fragment needFragment = new iNeed_Activity();
-                // get the id of fragment
-                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ihave_frame);
-
-                // Insert the fragment by replacing any existing fragment
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction()
-                        .add(contentView.getId(), needFragment).addToBackStack(contentView.toString())
-                        .commit();
-
-            }
-        });
+        iNeed.setOnClickListener(this);
 
         return iHave;
     }
+
     public void openImageIntent() {
 
         // Determine Uri of camera image to save.
@@ -164,8 +148,6 @@ public class AddActivity extends Fragment{
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
         startActivityForResult(chooserIntent, SELECT_PHOTO);
     }
-
-
 
 
     @Override
@@ -219,7 +201,7 @@ public class AddActivity extends Fragment{
                                         public void onPostExecute(String result) {
                                             if (progress.isShowing()) {
                                                 progress.dismiss();
-                                                progress=null;
+                                                progress = null;
                                             }
                                             item_image.setImageBitmap(bitmap);
 
@@ -254,8 +236,6 @@ public class AddActivity extends Fragment{
                             });
                     AlertDialog alertDialog = alertDialogBuilder.create();
                     alertDialog.show();
-
-
 
 
                 } else {
@@ -294,7 +274,7 @@ public class AddActivity extends Fragment{
                                         public void onPostExecute(String result) {
                                             if (progress.isShowing()) {
                                                 progress.dismiss();
-                                                progress=null;
+                                                progress = null;
                                             }
                                             item_image.setImageBitmap(bitmap);
 
@@ -330,7 +310,7 @@ public class AddActivity extends Fragment{
 
 
                 }
-            }else if (resultCode == getActivity().RESULT_CANCELED) {
+            } else if (resultCode == getActivity().RESULT_CANCELED) {
                 // user cancelled Image capture
                 Toast.makeText(getActivity(),
                         "User cancelled image capture", Toast.LENGTH_SHORT)
@@ -344,6 +324,7 @@ public class AddActivity extends Fragment{
         }
 
     }
+
     public void decodeFile(String filePath) {
         // Decode image size
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -378,9 +359,11 @@ public class AddActivity extends Fragment{
 
 
         StringBuffer response = new StringBuffer();
+
         public INeed_Task(Context context) {
             this.context = context;
         }
+
         protected void onPreExecute() {
 
             progress = new ProgressDialog(this.context);
@@ -388,6 +371,7 @@ public class AddActivity extends Fragment{
             progress.setCancelable(false);
             progress.show();
         }
+
         @Override
         protected String doInBackground(String... urls) {
             // params comes from the execute() call: params[0] is the url.
@@ -401,22 +385,22 @@ public class AddActivity extends Fragment{
         private String downloadUrl(String postURL) throws IOException {
 
             String response = null;
-            Log.e(" web url",""+postURL);
+            Log.e(" web url", "" + postURL);
             HttpClient client = new DefaultHttpClient();
 
             HttpPost post = new HttpPost(postURL);
 
-            item= txtItem.getText().toString();
-            description= txtDescription.getText().toString();
-            date_validity=txtDate_validity.getText().toString();
-            question="1";
+            item = txtItem.getText().toString();
+            description = txtDescription.getText().toString();
+            date_validity = txtDate_validity.getText().toString();
+            question = "0";
 
-            Log.e(" question test:",""+question);
-            Log.e(" item_photo test:",""+item_photo);
-            Log.e(" item test:",""+item);
-            Log.e(" description test:",""+description);
-            Log.e(" date_validity test:",""+date_validity);
-            Log.e(" vz_id test:",""+p.vz_id_sharedPreference);
+            Log.e(" question test:", "" + question);
+            Log.e(" item_photo test:", "" + item_photo);
+            Log.e(" item test:", "" + item);
+            Log.e(" description test:", "" + description);
+            Log.e(" date_validity test:", "" + date_validity);
+            Log.e(" vz_id test:", "" + p.vz_id_sharedPreference);
 
             try {
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -434,7 +418,7 @@ public class AddActivity extends Fragment{
                 HttpEntity resEntity = responsePOST.getEntity();
                 if (resEntity != null) {
                     // storing the response
-                    response= EntityUtils.toString(resEntity);
+                    response = EntityUtils.toString(resEntity);
                     Log.i("RESPONSE", response);
 
                 }
@@ -469,14 +453,14 @@ public class AddActivity extends Fragment{
         public void onPostExecute(String result) {
             if (progress.isShowing()) {
                 progress.dismiss();
-                progress=null;
+                progress = null;
             }
             txtItem.setText("");
             txtDate_validity.setText("");
             txtDescription.setText("");
             item_image.setImageResource(R.drawable.no_pic_placeholder);
-            bitmap=null;
-            Toast.makeText(getActivity(),"Your Data is posted ",Toast.LENGTH_LONG).show();
+            bitmap = null;
+            Toast.makeText(getActivity(), "Your Data is posted ", Toast.LENGTH_LONG).show();
 
             if (result != null) {
                 Log.e(" result :", "" + result);
@@ -487,10 +471,10 @@ public class AddActivity extends Fragment{
 
 
     class UploadImageTask extends AsyncTask<Void, Void, String> {
-        VerifyScreen p=new VerifyScreen();
+        VerifyScreen p = new VerifyScreen();
         Context context;
 
-        MyProfile_Fragment pr=new MyProfile_Fragment();
+        MyProfile_Fragment pr = new MyProfile_Fragment();
 
         Activity activity;
 
@@ -504,17 +488,17 @@ public class AddActivity extends Fragment{
         protected String doInBackground(Void... params) {
             try {
 
-                Log.e(" web url :",""+pr.URL_UPLOAD_IMAGE+p.token_sharedPreference);
-                File sourceFile_profile = new File(Item_picturePath );
-                Log.e("picturePath :", "" +Item_picturePath);
+                Log.e(" web url :", "" + pr.URL_UPLOAD_IMAGE + p.token_sharedPreference);
+                File sourceFile_profile = new File(Item_picturePath);
+                Log.e("picturePath :", "" + Item_picturePath);
 
 
                 HttpClient httpclient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(pr.URL_UPLOAD_IMAGE+p.token_sharedPreference);
+                HttpPost httpPost = new HttpPost(pr.URL_UPLOAD_IMAGE + p.token_sharedPreference);
 
                 String boundary = "-------------" + System.currentTimeMillis();
 
-                httpPost.setHeader("Content-Type", "multipart/form-data; boundary="+boundary);
+                httpPost.setHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
 
                 HttpEntity entity = MultipartEntityBuilder.create()
                         .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
@@ -531,8 +515,7 @@ public class AddActivity extends Fragment{
                 Log.v(" HTTP Response", responseBody);
                 return responseBody;
 
-            }
-            catch (UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (ClientProtocolException e) {
                 e.printStackTrace();
@@ -541,17 +524,86 @@ public class AddActivity extends Fragment{
             } catch (Exception e) {
                 // something went wrong. connection with the server error
                 e.printStackTrace();
-            }catch (Throwable t) {
-                t.printStackTrace(); }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
 
             return null;
         }
 
 
     }
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            //setting profile picture
+            case R.id.addImage:
+                openImageIntent();
+                break;
+
+            //setting company picture
+            case R.id.imgbtn:
+                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + p.token_sharedPreference);
+                break;
+            case  R.id.click:
+                showDatePickerDialog(v);
+                break;
+            case R.id.ineed:
+                Fragment needFragment = new iNeed_Activity();
+                // get the id of fragment
+                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ihave_frame);
+
+                // Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .add(contentView.getId(), needFragment).addToBackStack(contentView.toString())
+                        .commit();
+                break;
+
+        }
+    }
 
 
 
+        public void showDatePickerDialog(View v) {
+        DialogFragment newFragent = new DatePickerDialog1();
+        newFragent.show(getActivity().getFragmentManager(), "datePicker");
+    }
+
+
+    public class DatePickerDialog1 extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
+
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            int month = monthOfYear + 1;
+            String formattedMonth = "" + month;
+            String formattedDayOfMonth = "" + dayOfMonth;
+
+            if (month < 10) {
+
+                formattedMonth = "0" + month;
+            }
+            if (dayOfMonth < 10) {
+
+                formattedDayOfMonth = "0" + dayOfMonth;
+            }
+
+            txtDate_validity.setText(year + "-" + formattedMonth + "-" + formattedDayOfMonth);
+        }
+    }
 }
-
 

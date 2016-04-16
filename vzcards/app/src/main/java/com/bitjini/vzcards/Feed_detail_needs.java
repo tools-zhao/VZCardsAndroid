@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -56,11 +58,29 @@ public class Feed_detail_needs extends Fragment implements View.OnClickListener 
         title.setText(item);
         description.setText(desc);
         name.setText(profileName);
-        profilePhoto.setTag(photo);
-        new DownloadImagesTask(getActivity()).execute(profilePhoto);
 
-        item_photo.setTag(itemPic);
-        new DownloadImagesTask(getActivity()).execute(item_photo);
+
+        if(itemPic.isEmpty())
+        {
+            Picasso.with(getActivity()).load(itemPic).into(item_photo);
+//            item_photo.setTag(itemPic);
+//            new DownloadImagesTask(getActivity()).execute(item_photo);
+        } else
+        {
+            item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+        }
+
+        if(!photo.isEmpty())
+        {
+
+            Picasso.with(getActivity()).load(photo).into(profilePhoto);}
+        else  {
+            profilePhoto.setImageResource(R.drawable.profile_pic_placeholder);
+//            profilePhoto.setTag(photo);
+//            new DownloadImagesTask(getActivity()).execute(profilePhoto);
+
+
+        }
 
 
         return feed_needs;

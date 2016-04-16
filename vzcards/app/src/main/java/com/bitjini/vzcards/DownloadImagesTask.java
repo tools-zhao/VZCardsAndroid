@@ -62,6 +62,10 @@ public class DownloadImagesTask extends AsyncTask<ImageView, Void, Bitmap> {
             progress.dismiss();
             progress=null;
         }
+
+//        BlurBuilder b=new BlurBuilder();
+//        Bitmap blurredBitmap = b.blur(context,result);
+//        imageView.setImageBitmap(blurredBitmap);
         imageView.setImageBitmap(result);
     }
 

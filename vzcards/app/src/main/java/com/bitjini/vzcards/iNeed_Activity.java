@@ -1,6 +1,9 @@
 package com.bitjini.vzcards;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -25,10 +28,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -54,19 +59,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by bitjini on 18/12/15.
  */
-public class iNeed_Activity extends Fragment {
+public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
     public static final String URL_CREATE_TICKET = "http://vzcards-api.herokuapp.com/ticket_create/?access_token=";
 
     private final int SELECT_PHOTO = 1;
     private Uri outputFileUri;
 
-    Button havebtn;
+    Button havebtn,btnClick;
     public ImageView item_image;
     Button addImage;
     EditText txtItem,txtDescription,txtDate_validity;
@@ -97,36 +103,12 @@ public class iNeed_Activity extends Fragment {
         p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
-        addImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openImageIntent();
-            }
-        });
+        addImage.setOnClickListener(this);
+        btnClick = (Button) iNeed.findViewById(R.id.click);
+        btnClick.setOnClickListener(this);
+        submit.setOnClickListener(this);
 
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET+p.token_sharedPreference);
-            }
-        });
-
-        havebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Fragment haveFragment = new AddActivity();
-                // get the id of fragment
-                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ineed_frame);
-
-                // Insert the fragment by replacing any existing fragment
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction()
-                        .add(contentView.getId(), haveFragment).addToBackStack(contentView.toString())
-                        .commit();
-
-            }
-        });
+        havebtn.setOnClickListener(this);
 
         return iNeed;
     }
@@ -420,7 +402,7 @@ public class iNeed_Activity extends Fragment {
 
             try {
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("vz_id", "VZ1448533171"));
+                params.add(new BasicNameValuePair("vz_id",p.vz_id_sharedPreference));
                 params.add(new BasicNameValuePair("item_photo", item_photo));
                 params.add(new BasicNameValuePair("question", question));
                 params.add(new BasicNameValuePair("item", item));
@@ -435,7 +417,7 @@ public class iNeed_Activity extends Fragment {
                 if (resEntity != null) {
                     // storing the response
                     response=EntityUtils.toString(resEntity);
-                    Log.i("RESPONSE", response);
+                    Log.i("RESPONSE Ineed", response);
 
                 }
                 StringBuilder sb = new StringBuilder();
@@ -550,6 +532,77 @@ public class iNeed_Activity extends Fragment {
 
     }
 
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            //setting profile picture
+            case R.id.addImage:
+                openImageIntent();
+                break;
+
+            //setting company picture
+            case R.id.imgbtn:
+                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET+p.token_sharedPreference);
+                break;
+            case  R.id.click:
+                showDatePickerDialog(v);
+                break;
+            case R.id.ihave:
+
+                Fragment haveFragment = new AddActivity();
+                // get the id of fragment
+                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ineed_frame);
+
+                // Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .add(contentView.getId(), haveFragment).addToBackStack(contentView.toString())
+                        .commit();
+                break;
+
+        }
+    }
 
 
+
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragent = new DatePickerDialog1();
+        newFragent.show(getActivity().getFragmentManager(), "datePicker");
+    }
+
+
+    public class DatePickerDialog1 extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
+
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            int month = monthOfYear + 1;
+            String formattedMonth = "" + month;
+            String formattedDayOfMonth = "" + dayOfMonth;
+
+            if (month < 10) {
+
+                formattedMonth = "0" + month;
+            }
+            if (dayOfMonth < 10) {
+
+                formattedDayOfMonth = "0" + dayOfMonth;
+            }
+
+            txtDate_validity.setText(year + "-" + formattedMonth + "-" + formattedDayOfMonth);
+        }
+    }
 }
