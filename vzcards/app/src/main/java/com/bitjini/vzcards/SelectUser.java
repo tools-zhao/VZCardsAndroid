@@ -30,7 +30,7 @@ public class SelectUser {
     String date_created;
     String ticket_id;
     String question;
-    String fName,lname,photo,referredFname,referredLname,referredPhoto;
+    String fName,lname,photo="",referredFname="",referredLname="",referredPhoto="";
 
     public String getQuestion() {
 

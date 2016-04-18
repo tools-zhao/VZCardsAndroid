@@ -18,6 +18,8 @@ import android.widget.LinearLayout.LayoutParams;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.squareup.picasso.Picasso;
@@ -125,7 +127,6 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
         try {
             String result = new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
             Log.e("received History", "" + result);
-            ReferalUsers referalUsers = new ReferalUsers();
 
             JSONObject jsonObject = new JSONObject(result);
 
@@ -139,79 +140,52 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 // Connection Node in an array
                 JSONArray arr2 = c.getJSONArray("connections");
                 Log.e(" connections :", "" + arr2);
-                JSONObject reffered_phone_details = null;
 
                 for (int i2 = 0; i2 < arr2.length(); i2++) {
                     JSONObject c2 = arr2.getJSONObject(i2);
 
+                    String referedFname = "", referedLname = "", refphoto = "", phone = "", company = "", pin_code = "", industry = "",
+                            address1 = "", address2 = "", city = "", company_photo = "", email = "";
+
+
                     String refPhoneDetails = c2.getString("reffered_phone_details");
 
-                    Object json = new JSONTokener(refPhoneDetails).nextValue();
-                    if (json instanceof JSONObject)
-                    {
-                        reffered_phone_details = c2.getJSONObject("reffered_phone_details");
-                        Log.w("reffered_phone_", "" + reffered_phone_details);
-                        String referedFname = reffered_phone_details.getString("firstname");
-                        String referedLname = reffered_phone_details.getString("lastname");
-                        String referedphoto = reffered_phone_details.getString("photo");
-                        String phone = reffered_phone_details.getString("phone");
-                        String company = reffered_phone_details.getString("company");
-                        String pin_code = reffered_phone_details.getString("pin_code");
-                        String industry = reffered_phone_details.getString("industry");
-                        String address1 = reffered_phone_details.getString("address_line_1");
-                        String address2 = reffered_phone_details.getString("address_line_2");
-                        String city = reffered_phone_details.getString("city");
-                        String company_photo = reffered_phone_details.getString("company_photo");
-                        String email = reffered_phone_details.getString("email");
+                    JsonParser parser1 = new JsonParser();
+                    JsonElement jsonObject1 = parser1.parse(refPhoneDetails);
+//                        Log.e("json object1 1=",""+jsonObject1);
+                    if (jsonObject1.isJsonObject()) {
+                        JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
+//                        Log.w("reffered_phone_", "" + reffered_phone_details);
+                        referedFname = reffered_phone_details.getString("firstname");
+                        referedLname = reffered_phone_details.getString("lastname");
+                        refphoto = reffered_phone_details.getString("photo");
+                        phone = reffered_phone_details.getString("phone");
+                        company = reffered_phone_details.getString("company");
+                        pin_code = reffered_phone_details.getString("pin_code");
+                        industry = reffered_phone_details.getString("industry");
+                        address1 = reffered_phone_details.getString("address_line_1");
+                        address2 = reffered_phone_details.getString("address_line_2");
+                        city = reffered_phone_details.getString("city");
+                        company_photo = reffered_phone_details.getString("company_photo");
+                        email = reffered_phone_details.getString("email");
 
-                        referalUsers.setReferredfName(referedFname);
-                        referalUsers.setReferredlName(referedLname);
-                        referalUsers.setReferedPhoto(referedphoto);
-                        referalUsers.setPhone(phone);
-                        referalUsers.setEmail(email);
-                        referalUsers.setCompany(company);
-                        referalUsers.setPin_code(pin_code);
-                        referalUsers.setIndustry(industry);
-                        referalUsers.setAddress1(address1);
-                        referalUsers.setAddress2(address2);
-                        referalUsers.setCity(city);
-                        referalUsers.setComany_photo(company_photo);
-
-                    }
-                    //you have a string
-                    else if (json instanceof String)
-                    {
-                        refPhoneDetails = c2.getString("reffered_phone_details");
-
-                        referalUsers.setPhone(refPhoneDetails);
+                        Log.e("json reffered_phone_ 2=", "" + jsonObject1);
+                    } else {
+                        phone = c2.getString("reffered_phone_details");
+                        referedFname = c2.getString("reffered_ticket_details");
+                        Log.e("json reffered_ticket 3=", "" + referedFname);
+                        Log.e("json reffered_phone_ 3=", "" + phone);
                     }
 
 
-                    String refTicketDetailsStr = c2.getString("reffered_ticket_details");
+                    JSONObject connecter_details = c2.getJSONObject("connecter_details");
+//                    Log.w("connecter_details", "" + connecter_details);
 
-                    Object json2 = new JSONTokener(refTicketDetailsStr).nextValue();
-                    //you have an object
-                    if (json2 instanceof JSONObject)
-                    {
-                        JSONObject reffered_ticket_details = c2.getJSONObject("reffered_ticket_details");
-                        String question = reffered_ticket_details.getString("question");
-                        String description = reffered_ticket_details.getString("description");
-                        String ticket_id = reffered_ticket_details.getString("ticket_id");
-                        String itemName = reffered_ticket_details.getString("item");
-                        String date_validity = reffered_ticket_details.getString("date_validity");
-                        String vz_id = reffered_ticket_details.getString("vz_id");
-                        String item_photo = reffered_ticket_details.getString("item_photo");
-                        String date_created = reffered_ticket_details.getString("date_created");
-                        Log.e(" description :", "" + description);
+                    String fname = connecter_details.getString("firstname");
+                    String lastname = connecter_details.getString("lastname");
+                    String photo = connecter_details.getString("photo");
 
-                    }
-
-                //you have string
-                       else if (json2 instanceof String) {
-                        refTicketDetailsStr = c2.getString("reffered_ticket_details");
-                        referalUsers.setReferredfName(refTicketDetailsStr);
-
-                }
+                    ReferalUsers referalUsers = new ReferalUsers();
 
 
                     JSONObject ticket_details = c.getJSONObject("ticket_details");
@@ -224,28 +198,48 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                     String vz_id = ticket_details.getString("vz_id");
                     String item_photo = ticket_details.getString("item_photo");
                     String date_created = ticket_details.getString("date_created");
-                    Log.e(" description :", "" + description);
-
+//                    Log.e(" description :", "" + description);
                     referalUsers.setDesc(description);
                     referalUsers.setItemName(itemName);
                     referalUsers.setItem_photo(item_photo);
 
-                    JSONObject connecter_details = c2.getJSONObject("connecter_details");
-                    String fname = connecter_details.getString("firstname");
-                    String lastname = connecter_details.getString("lastname");
-                    String photo = connecter_details.getString("photo");
+                    // Connector details
                     referalUsers.setFname(fname);
                     referalUsers.setLname(lastname);
                     referalUsers.setPhoto(photo);
 
+                    // Referral
+                    referalUsers.setReferredfName(referedFname);
+                    referalUsers.setReferredlName(referedLname);
+                    referalUsers.setReferedPhoto(refphoto);
+                    referalUsers.setPhone(phone);
+                    referalUsers.setEmail(email);
+                    referalUsers.setCompany(company);
+                    referalUsers.setPin_code(pin_code);
+                    referalUsers.setIndustry(industry);
+                    referalUsers.setAddress1(address1);
+                    referalUsers.setAddress2(address2);
+                    referalUsers.setCity(city);
+                    referalUsers.setComany_photo(company_photo);
 
+                    Log.e("referedFname 1=", "" + referedFname);
                     groupItem.add(referalUsers);
+                    String json2 = new Gson().toJson(groupItem);// updated array
+                    Log.e("groupItem array", "" + json2);
 
                 }
-                // ticket_details Node in an json object
+
 
 
             }
+                for(ReferalUsers u:groupItem)
+                {
+                    Log.w("list ",""+u.getReferredfName());
+                }
+
+
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -286,23 +280,23 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
     public class CustomListAdapter extends BaseAdapter implements View.OnClickListener {
         ReferalUsers cat;
         Context _c;
-        public ArrayList<ReferalUsers> groupItem;
+        public ArrayList<ReferalUsers> itemList;
         int textViewResourceId;
 
         public CustomListAdapter(Context context, ArrayList<ReferalUsers> group, int textViewResourceId1) {
-            groupItem = group;
+            itemList = group;
             textViewResourceId = textViewResourceId1;
             _c = context;
         }
 
         @Override
         public int getCount() {
-            return groupItem.size();
+            return itemList.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return groupItem.get(i);
+            return itemList.get(i);
         }
 
         @Override
@@ -327,10 +321,13 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             ImageView referredPhoto = (ImageView) v.findViewById(R.id.referdPhoto);
             ImageView photo = (ImageView) v.findViewById(R.id.photo);
 
-            cat = groupItem.get(position);
+            cat = itemList.get(position);
 
             name.setText(cat.getFname() + " " + cat.getLname());
+
             referredName.setText(cat.getReferredfName() + " " + cat.getReferredlName());
+            Log.e("referred fname in item=",""+cat.getReferredfName());
+
             itemName.setText("for " + cat.getItemName());
             try {
                 if (!cat.getPhoto().isEmpty()) {

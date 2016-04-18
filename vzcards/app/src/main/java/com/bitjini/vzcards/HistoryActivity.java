@@ -23,6 +23,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -357,7 +360,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 }
             });
             if (data.getConnections().length()==0) {
-                Log.e("data.getConnection :",""+data.getConnections().length());
+//                Log.e("data.getConnection :",""+data.getConnections().length());
             }else{
                 try {
                 JSONArray array = data.getConnections();
@@ -375,40 +378,54 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     {
                         v.txtcount.setText(String.valueOf(array.length())+" referral");
                     }
-                    String refPhoneDetails = c2.getString("reffered_phone_details");
-                    SelectUser userConnectorDetails = new SelectUser();
-                    Object json = new JSONTokener(refPhoneDetails).nextValue();
-                    if (json instanceof JSONObject) {
+
+                    String referedFname="",referedLname="",referedphoto="";
+
+                    String refPhoneDetails  = c2.getString("reffered_phone_details");
+
+                    JsonParser parser1 = new JsonParser();
+                    JsonElement jsonObject1 =  parser1.parse(refPhoneDetails);
+//                        Log.e("json object1 1=",""+jsonObject1);
+                    if(jsonObject1.isJsonObject())
+                    {
+
                         JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
-                        String referedFname = reffered_phone_details.getString("firstname");
-                        String referedLname = reffered_phone_details.getString("lastname");
-                        String referedphoto = reffered_phone_details.getString("photo");
+                        referedFname = reffered_phone_details.getString("firstname");
+                         referedLname = reffered_phone_details.getString("lastname");
+                         referedphoto = reffered_phone_details.getString("photo");
 
 
-                        userConnectorDetails.setReferredFname(referedFname);
-                        userConnectorDetails.setReferredLname(referedLname);
-                        userConnectorDetails.setReferredPhoto(referedphoto);
+
 
                     }
                     //you have a string
-                    else if (json instanceof String)
+                    else
                     {
                         refPhoneDetails = c2.getString("reffered_phone_details");
+                        referedFname = c2.getString("reffered_ticket_details");
 
-                        userConnectorDetails.setPhone(refPhoneDetails);
+
+                        Log.e("ref fname ",""+referedFname);
                     }
+
                     JSONObject connecter_details = c2.getJSONObject("connecter_details");
 
 
                     String fname = connecter_details.getString("firstname");
                     String lastname = connecter_details.getString("lastname");
                     String photo = connecter_details.getString("photo");
+
+                    SelectUser userConnectorDetails = new SelectUser();
                     userConnectorDetails.setfName(fname);
                     userConnectorDetails.setLname(lastname);
                     userConnectorDetails.setPhoto(photo);
 
+                    userConnectorDetails.setReferredFname(referedFname);
+                    userConnectorDetails.setReferredLname(referedLname);
+                    userConnectorDetails.setReferredPhoto(referedphoto);
                     connectorDetails.add(userConnectorDetails);
-                    Log.e("connectorDetails has", "" + connectorDetails);
+
+//                    Log.e("connectorDetails has", "" + connectorDetails);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -416,9 +433,11 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 // Resets the toolbar to be closed
                 View toolbar = (View) view.findViewById(R.id.toolbar);
                 ListView list = (ListView) view.findViewById(R.id.referralList);
-                Log.e("arraylist :", "" + connectorDetails);
+//                Log.e("arraylist :", "" + connectorDetails);
 
-                MyClassAdapter adapter = new MyClassAdapter(getActivity(), R.layout.referral, connectorDetails);
+                MyClassAdapter adapter = new MyClassAdapter(getActivity(), connectorDetails,R.layout.referral);
+                String json2 = new Gson().toJson(connectorDetails);// updated array
+                Log.e("updated array", "" + json2);
                 list.setAdapter(adapter);
 
                 toolbar.setVisibility(View.GONE);
@@ -441,16 +460,33 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             View viewLine;
         }
 
-        public class MyClassAdapter extends ArrayAdapter<SelectUser> {
+        public class MyClassAdapter extends BaseAdapter {
             Context _c;
-            private TextView itemView;
-            private ImageView imageView;
 
+            int textViewResourceId;
+            ArrayList<SelectUser> itemList=new ArrayList<>();
 
-            public MyClassAdapter(Context context, int textViewResourceId, ArrayList<SelectUser> items) {
-                super(context, textViewResourceId, items);
+            public MyClassAdapter(Context context, ArrayList<SelectUser> group, int textViewResourceId1) {
+                itemList = group;
+                textViewResourceId = textViewResourceId1;
+                _c = context;
             }
 
+            @Override
+            public int getCount() {
+                return itemList.size();
+            }
+
+            @Override
+            public Object getItem(int i) {
+                return itemList.get(i);
+            }
+
+            @Override
+            public long getItemId(int i) {
+                return i;
+
+            }
             public View getView(int position, View convertView, ViewGroup parent) {
 
                 View v = convertView;
@@ -467,12 +503,15 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 ImageView photo = (ImageView) v.findViewById(R.id.photo);
 
 
-                SelectUser cat = connectorDetails.get(position);
+                SelectUser cat = itemList.get(position);
+                Log.e("size connectorDetails", "" + itemList.size());
 
                 name.setText(cat.getfName() + " " + cat.getLname());
                 referredName.setText(cat.getReferredFname() + " " + cat.getReferredLname());
+                Log.e("js connectorDetails", "" + cat.getfName() +" "+ itemList.get(position));
+                Log.e("js connectorDetails", "" + cat.getReferredFname()+" "+ itemList.get(position));
                 try {
-                    if (cat.getPhoto() != null) {
+                    if (!cat.getPhoto().isEmpty()) {
 //                        photo.setTag(cat.getPhoto());
 //                        new DownloadImagesTask(getActivity()).execute(photo);// Download item_photo from AsynTask
                         Picasso.with(_c).load(cat.getPhoto()).into( photo);
@@ -481,14 +520,14 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     } else {
                         photo.setImageResource(R.drawable.profile_pic_placeholder);
                     }
-                    if (cat.getReferredPhoto() != null) {
+                    if (!cat.getReferredPhoto().isEmpty()) {
 
                         Picasso.with(_c).load(cat.getReferredPhoto()).into(referredPhoto);
 //                        referredPhoto.setTag(cat.getReferredPhoto());
 //                        new DownloadImagesTask(getActivity()).execute(referredPhoto);// Download item_photo from AsynTask
 
                     } else {
-                        photo.setImageResource(R.drawable.profile_pic_placeholder);
+                        referredPhoto.setImageResource(R.drawable.profile_pic_placeholder);
                     }
 
                 } catch (ArrayIndexOutOfBoundsException ae) {
