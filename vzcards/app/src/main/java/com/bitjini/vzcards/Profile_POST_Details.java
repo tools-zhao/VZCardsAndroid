@@ -22,11 +22,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
 * Created by VEENA on 12/7/2015.
@@ -60,9 +70,10 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
     }
 
     private JSONObject downloadUrl(String postURL) throws IOException {
-
+        InputStream is = null;
 //              private String downloadUrl(String urlString) throws IOException {
         String response = null;
+        Log.e("check :",""+postURL);
         try {
 //                final TextView outputView = (TextView) findViewById(R.id.content);
 
@@ -71,9 +82,17 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             p.phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
             p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
-            HttpClient client = new DefaultHttpClient();
-            postURL = pr.URL_PROFILE_UPDATE + p.token_sharedPreference;
-            HttpPost post = new HttpPost(postURL);
+//            HttpClient client = new DefaultHttpClient();
+//            postURL = pr.URL_PROFILE_UPDATE + p.token_sharedPreference;
+//            HttpPost post = new HttpPost(postURL);
+
+            URL url = new URL(postURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
 
             pr.data = context.getSharedPreferences(pr.MY_PROFILE_PREFERENCES, 0);
 
@@ -126,35 +145,33 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             params1.add(new BasicNameValuePair("pin_code", pin_code));
             params1.add(new BasicNameValuePair("vz_id", vz_id));
 
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(getQuery(params1));
+            writer.flush();
+            writer.close();
+            os.close();
 
-            // encode post data in url format
-            UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
-            post.setEntity(ent);
-            HttpResponse responsePOST = client.execute(post);
-            HttpEntity resEntity = responsePOST.getEntity();
-            if (resEntity != null) {
-                // storing the response
-                response=EntityUtils.toString(resEntity);
-                Log.i("RESPONSE", response);
+            conn.connect();
 
-            }
-            StringBuilder sb = new StringBuilder();
-            try {
-                BufferedReader reader =
-                        new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
-                String line = null;
 
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
+            int responseCode=conn.getResponseCode();
+
+            Log.e("res code" ,""+responseCode);
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+                String line;
+                BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                while ((line=br.readLine()) != null) {
+                    response+=line;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+            else {
+                response="";
 
+            }
+            System.out.println("finalResult " + response);
 
-            System.out.println("finalResult " + sb.toString());
             // return response
             return new JSONObject(response);
 
@@ -164,15 +181,34 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
         return null;
     }
+    private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
+    {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+
+        for (NameValuePair pair : params)
+        {
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+        }
+
+        return result.toString();
+    }
 
 
     protected void onPostExecute(String result) {
         pr.progress.dismiss();
         Toast.makeText(context, "Profile is updated ", Toast.LENGTH_LONG).show();
         if (result != null) {
-            Log.e("Post response =", "" + result.toString());
+            Log.e("Post response =", "" + result);
             try {
-                JSONObject res = new JSONObject(result.toString());
+                JSONObject res = new JSONObject(result);
 
                 String firstname = res.getString("firstname");
                 String photo = res.getString("photo");
