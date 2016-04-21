@@ -17,6 +17,7 @@
         android:layout_width="200dp"
         android:layout_height="35dp"
         android:id="@+id/otp"
+        android:inputType="number"
         android:layout_gravity="center"
         android:background="@drawable/drawable_text"
         android:layout_marginTop="2dp"
@@ -35,7 +36,7 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="btnOk"
+        android:text="Ok"
         android:id="@+id/btnOK"
         android:background="@drawable/drawable_btn"
         android:layout_gravity="center"
@@ -47,7 +48,7 @@
         <Button
             android:layout_width="100dp"
             android:layout_height="50dp"
-            android:text="btnResend"
+            android:text="Resend"
             android:id="@+id/btnResend"
             android:background="@drawable/drawable_btn"
             android:layout_gravity="center"/>
@@ -58,7 +59,7 @@
         <Button
             android:layout_width="100dp"
             android:layout_height="50dp"
-            android:text="btnCancel"
+            android:text="Cancel"
             android:id="@+id/btnCancel"
             android:background="@drawable/drawable_btn"
             android:layout_gravity="center"/>

@@ -1,0 +1,57 @@
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vzfrnds_list_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@android:color/transparent"
+        android:layout_height="match_parent">
+
+
+        <!--<SearchView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:id="@+id/searchView">-->
+        <!--</SearchView>-->
+
+        <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:layout_below="@+id/searchView"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:id="@+id/resultText"/>-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#5f8ac7"
+            android:orientation="vertical"
+            android:id="@+id/Layout1">
+            <SearchView
+                android:layout_width="300dp"
+                android:layout_height="30dp"
+                android:background="@drawable/drawable_text"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="9dp"
+                android:id="@+id/searchview"
+                android:gravity="center_vertical"></SearchView>
+            <TextView
+                android:layout_width="300dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/searchview"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:id="@+id/resultText"/></LinearLayout>
+
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/contactList"
+            android:layout_below="@+id/Layout1"
+            android:divider="#97e6ecf2"
+            android:dividerHeight="5.0sp"></ListView>
+
+    </RelativeLayout>
+</FrameLayout>

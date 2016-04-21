@@ -3,6 +3,7 @@ package com.bitjini.vzcards;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 /**
  * Created by VEENA on 12/7/2015.
@@ -17,7 +18,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int arg0) {
         switch (arg0){
             case 0:
-                return new MyProfileActivity();
+                return new MyProfile_Fragment();
             case 1:
                 return new FeedActivity();
             case 2:
@@ -29,7 +30,10 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
         }
         return null;
     }
-
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
     @Override
     public int getCount() {
         return 4;

@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ineed_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="#97c1d9f2"
+    android:background="#43c1d9f2"
     android:layout_height="match_parent">
 
 
@@ -95,59 +100,68 @@
     </LinearLayout>
     <ImageButton
         android:layout_width="100dp"
-        android:layout_height="40dp"
+        android:layout_height="25dp"
         android:src="@drawable/vzc_need_post_btn"
         android:layout_gravity="center"
-        android:background="#97c1d9f2"
         android:id="@+id/imgbtn"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/l4"
         android:layout_centerHorizontal="true" />
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:background="#5f8ac7"
         android:layout_marginBottom="0dp"
         android:id="@+id/l8"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        android:gravity="center_horizontal">
-        <LinearLayout
-            android:layout_width="290dp"
-            android:layout_marginTop="1dp"
-            android:background="@drawable/drawable1"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
-            android:layout_height="33dp"
-            android:layout_gravity="center">
-            <Button
-                android:layout_width="145dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:gravity="center">
+
+        <RadioGroup
+            android:id="@+id/rdogrp"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:weightSum="2"
+            android:orientation="horizontal" >
+            <RadioButton
+                android:layout_width="0dp"
                 android:layout_height="30dp"
-                android:id="@+id/iHave"
-                android:layout_marginTop="0.2dp"
+                android:id="@+id/ihave"
                 android:background="@drawable/button_color"
                 android:textColor="@drawable/text_color"
                 android:text="i Have"
+                android:button="@null"
                 android:textSize="15sp"
                 android:textAllCaps="false"
-                android:layout_marginLeft="-2dp"
-                android:layout_gravity="center_vertical"/>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="33dp"
-                android:background="#ffffff"/>
-            <Button
-                android:layout_width="fill_parent"
-                android:layout_height="30dp"
-                android:id="@+id/iNeed"
-                android:textSize="15sp"
-                android:text="i Need"
-                android:background="@drawable/button_color2"
-                android:textColor="@drawable/text_color"
-                android:textAllCaps="false"
-                android:layout_gravity="center_vertical"/>
+                android:layout_weight="1"
+                android:layout_margin="0dp"
+                android:gravity="center" />
 
-        </LinearLayout>
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:id="@+id/ineed"
+                android:checked="true"
+                android:text="i Need"
+                android:background="@drawable/button_color3"
+                android:textColor="@drawable/text_color"
+                android:layout_marginRight="30dp"
+                android:layout_marginLeft="-1dp"
+                android:layout_weight="1"
+                android:button="@null"
+                android:textSize="15sp"
+                android:textAllCaps="false"
+                android:layout_margin="0dp"
+                android:gravity="center"/>
+        </RadioGroup>
+
+
+
 
     </LinearLayout>
 
@@ -156,4 +170,6 @@
 
 
 
+
 </RelativeLayout>
+    </FrameLayout>

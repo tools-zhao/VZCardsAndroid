@@ -1,3 +1,4 @@
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,7 +17,7 @@
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="fill_parent"
-            android:layout_height="120px"
+            android:layout_height="140px"
             android:background="#fcf9f9">
 
 
@@ -39,9 +40,8 @@
                 android:layout_width="140dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-            <com.bitjini.vzcards.MyTextView
+            <TextView
                 android:id="@+id/name"
-                android:textStyle="bold"
                 android:gravity="left"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
@@ -87,7 +87,6 @@
             android:layout_width="match_parent"
             android:layout_height="1.1dp"
             android:background="#5f8ac7"
-            android:layout_marginTop="2dp"
             android:layout_below="@+id/linearLayout"></View>
 
 

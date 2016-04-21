@@ -3,9 +3,25 @@ package com.bitjini.vzcards;
 import android.graphics.Bitmap;
 
 public class SelectUser {
+
+    //for contact details
     String name;
     String phone;
     Bitmap thumb;
+
+    //for profile details
+    String label,values;
+
+
+    SelectUser(String name, String phone,Bitmap thumb) {
+        this.name = name;
+        this.phone = phone;
+        this.thumb = thumb;
+    }
+
+    public SelectUser() {
+
+    }
 
     public String getName()
 
@@ -37,6 +53,24 @@ public class SelectUser {
         this.phone=phone;
     }
 
+
+
+    //for profile details
+       public String getLabel() {
+        return label;
+
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+    public String getValues() {
+        return values;
+    }
+
+    public void setValues(String values) {
+        this.values = values;
+    }
 
 }
 

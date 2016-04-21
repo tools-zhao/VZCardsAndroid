@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -11,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.view.View;
 
 /**
  * Created by VEENA on 12/7/2015.
@@ -24,21 +26,34 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         super.onCreate(savedInsatnceState);
         setContentView(R.layout.viewpager_activty);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        // to have the customized tab icon size
+        View view = getLayoutInflater().inflate(R.layout.custom_tab, null);
+        view.findViewById(R.id.icon).setBackgroundResource(R.drawable.my_vz_profile);
+        tabLayout.addTab(tabLayout.newTab().setCustomView(view));
 
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my1));
 
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.feed_s));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.add_ds1));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.history_ds));
+        View view1 = getLayoutInflater().inflate(R.layout.custom_tab, null);
+        view1.findViewById(R.id.icon).setBackgroundResource(R.drawable.feeds_drawable);
+        tabLayout.addTab(tabLayout.newTab().setCustomView(view1));
+
+        View view2 = getLayoutInflater().inflate(R.layout.custom_tab, null);
+        view2.findViewById(R.id.icon).setBackgroundResource(R.drawable.add_drawable);
+        tabLayout.addTab(tabLayout.newTab().setCustomView(view2));
+
+        View view3 = getLayoutInflater().inflate(R.layout.custom_tab, null);
+        view3.findViewById(R.id.icon).setBackgroundResource(R.drawable.history_drawable);
+        tabLayout.addTab(tabLayout.newTab().setCustomView(view3));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         final TabPagerAdapter adapter = new TabPagerAdapter
                 (getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setOffscreenPageLimit(3); // the number of "off screen" pages to keep loaded each side of the current page
+
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -46,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
+//                ... anything you may need to do to handle pager state ...
+//                adapter.notifyDataSetChanged(); //this line will force all pages to be loaded fresh when changing between fragments
+
             }
 
             @Override
@@ -57,7 +75,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-        });    }
+        });
+        viewPager.setCurrentItem(1);}
+
 //    @Override
 //    public CharSequence getPageTitle(int position) {
 //        // Generate title based on item position
@@ -89,6 +109,10 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
+
+    }
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
     }
 }
