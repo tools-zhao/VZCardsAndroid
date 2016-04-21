@@ -33,6 +33,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -143,7 +144,7 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
 
         if(!photo.isEmpty()) {
 
-                Picasso.with(getActivity()).load(photo).resize(200, 200).into(imageProfile);
+                Picasso.with(getActivity()).load(photo).resize(180, 180).into(imageProfile);
 
 
 //            imageProfile.setTag(photo);
@@ -154,7 +155,7 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
 
 
         if(!company_photo.isEmpty()) {
-            Picasso.with(getActivity()).load(company_photo).resize(80, 80).into(imageCompany);
+            Picasso.with(getActivity()).load(company_photo).resize(70, 70).into(imageCompany);
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
 
@@ -166,7 +167,7 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
         values.add(firstname);
         values.add(lastname);
         values.add(email);
-        values.add(p.phone_sharedPreference);
+        values.add(phone);
         values.add(industry);
         values.add(company);
         values.add(address_line_1);
@@ -185,7 +186,10 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
         // send the adapterArraylist to the adapter and set it to listview
         editTextAdapter = new EditTextAdapter(getActivity(), arrayList, R.layout.profile_layout);
         listView.setAdapter(editTextAdapter);
-
+        InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (getActivity().getCurrentFocus() != null){
+            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);}
+//
 
         return profile;
     }

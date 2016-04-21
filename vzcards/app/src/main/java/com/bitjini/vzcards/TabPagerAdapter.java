@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -15,9 +16,10 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
         this.mNumOfTabs = NumOfTabs;
     }
     @Override
-    public Fragment getItem(int arg0) {
-        switch (arg0){
+    public Fragment getItem(int position) {
+        switch (position){
             case 0:
+
                 return new MyProfile_Fragment();
             case 1:
                 return new FeedActivity();

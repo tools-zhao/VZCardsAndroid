@@ -446,7 +446,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), profilefragment).addToBackStack(null)
+                        .add(contentView.getId(), profilefragment)
                         .commit();
 
                 break;
@@ -459,7 +459,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
                 fragmentManager2.beginTransaction()
-                        .replace(contentView2.getId(), newfragment).addToBackStack(null)
+                        .replace(contentView2.getId(), newfragment)
                         .commit();
 
                 break;

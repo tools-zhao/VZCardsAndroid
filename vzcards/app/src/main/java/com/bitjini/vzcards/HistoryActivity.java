@@ -74,6 +74,8 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
         listView = (ListView) history.findViewById(R.id.historyList);
 
+//        View header = inflater.inflate(R.layout.header, listView, false);
+//        listView.addHeaderView(header, null, false);
         getHistoryContents();
         adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 

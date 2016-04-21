@@ -721,7 +721,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
                 fragmentManager2.beginTransaction()
-                        .replace(contentView3.getId(), fragment)
+                        .replace(contentView3.getId(), fragment).addToBackStack(null)
                         .commit();
 
 

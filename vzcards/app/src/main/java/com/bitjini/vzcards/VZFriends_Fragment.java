@@ -103,7 +103,6 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 String city = c.getString("city");
                 String company_photo = c.getString("company_photo");
                 String email = c.getString("email");
-                Log.e("phone ", "" + phone);
 
                 SelectUser selectUser = new SelectUser();
                 selectUser.setfName(firstname);
@@ -189,10 +188,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        LayoutInflater li = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = li.inflate(R.layout.vz_frnds, null);
 
-        Bitmap image = null;
         SelectUser data = (SelectUser) parent.getItemAtPosition(position);
         Friends_Profile ldf = new Friends_Profile();
 
@@ -211,8 +207,9 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         args.putString("company_photo", data.getComany_photo());
         ldf.setArguments(args);
         //Inflate the fragment
-        getFragmentManager().beginTransaction().add(R.id.vzfrnds_list_frame, ldf).addToBackStack(ldf.toString())
-                .commit();           }
+        getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in,R.anim.slide_out).add(R.id.vzfrnds_list_frame, ldf).addToBackStack(ldf.toString())
+                .commit();
+        }
 
         //dynamically increase the size of the imageview
 //                int width = image.getWidth();
