@@ -95,6 +95,14 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 String lastname = c.getString("lastname");
                 String photo = c.getString("photo");
 
+                String company = c.getString("company");
+                String  pin_code = c.getString("pin_code");
+                String industry = c.getString("industry");
+                String address1 = c.getString("address_line_1");
+                String  address2 = c.getString("address_line_2");
+                String city = c.getString("city");
+                String company_photo = c.getString("company_photo");
+                String email = c.getString("email");
                 Log.e("phone ", "" + phone);
 
                 SelectUser selectUser = new SelectUser();
@@ -102,6 +110,14 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 selectUser.setLname(lastname);
                 selectUser.setPhone(phone);
                 selectUser.setPhoto(photo);
+                selectUser.setEmail(email);
+                selectUser.setCompany(company);
+                selectUser.setPin_code(pin_code);
+                selectUser.setIndustry(industry);
+                selectUser.setAddress1(address1);
+                selectUser.setAddress2(address2);
+                selectUser.setCity(city);
+                selectUser.setComany_photo(company_photo);
                 selectUsers.add(selectUser);
             }
 
@@ -125,6 +141,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         listView.setAdapter(adapter);
         filter = adapter.getFilter();
         listView.setFastScrollEnabled(true);
+        listView.setOnItemClickListener(this);
 
         Button profilebtn = (Button) vzfrnds.findViewById(R.id.profilebtn);
         Button referral = (Button) vzfrnds.findViewById(R.id.referralbtn);
@@ -177,20 +194,25 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
         Bitmap image = null;
         SelectUser data = (SelectUser) parent.getItemAtPosition(position);
+        Friends_Profile ldf = new Friends_Profile();
 
-        String name = data.getName();
-        String phoneNo = data.getPhone();
-//                image = data.getThumb();
-//
-//
-//                if (image== null) {
+        Bundle args = new Bundle();
 
-        Drawable d = getResources().getDrawable(R.drawable.simple_profile_placeholder1);
-        ImageView contactimage = (ImageView) view.findViewById(R.id.contactImage);
-        contactimage.setImageDrawable(d);
-        contactimage.buildDrawingCache();
-        image = contactimage.getDrawingCache();
-//                }
+        args.putString("fname", data.getfName());
+        args.putString("lname", data.getLname());
+        args.putString("photo", data.getPhoto());
+        args.putString("phone", data.getPhone());
+        args.putString("company", data.getCompany());
+        args.putString("pin_code", data.getPin_code());
+        args.putString("industry", data.getIndustry());
+        args.putString("address1", data.getAddress1());
+        args.putString("address2", data.getAddress2());
+        args.putString("city", data.getCity());
+        args.putString("company_photo", data.getComany_photo());
+        ldf.setArguments(args);
+        //Inflate the fragment
+        getFragmentManager().beginTransaction().add(R.id.vzfrnds_list_frame, ldf).addToBackStack(ldf.toString())
+                .commit();           }
 
         //dynamically increase the size of the imageview
 //                int width = image.getWidth();
@@ -204,19 +226,19 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 //                Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix,true);
 
         //Passing data to nextscreen
-        Intent nextScreenIntent = new Intent(c, DisplayContact.class);
-        nextScreenIntent.putExtra("name", name);
-        nextScreenIntent.putExtra("phoneNo", phoneNo);
+//        Intent nextScreenIntent = new Intent(c, DisplayContact.class);
+//        nextScreenIntent.putExtra("name", name);
+//        nextScreenIntent.putExtra("phoneNo", phoneNo);
+//
+//        Bundle extras = new Bundle();
+//        extras.putParcelable("photo", image);
+//
+//        nextScreenIntent.putExtras(extras);
+//
+//
+//        Log.e("n", name + "." + phoneNo);
+//        startActivity(nextScreenIntent);
 
-        Bundle extras = new Bundle();
-        extras.putParcelable("photo", image);
-
-        nextScreenIntent.putExtras(extras);
-
-
-        Log.e("n", name + "." + phoneNo);
-        startActivity(nextScreenIntent);
-    }
 
     public void onClick(View v) {
         switch (v.getId()) {
@@ -229,7 +251,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), profilefragment).addToBackStack(null)
+                        .add(contentView.getId(), profilefragment)
                         .commit();
 
 
@@ -243,7 +265,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager1 = getFragmentManager();
                 fragmentManager1.beginTransaction()
-                        .replace(contentView2.getId(), fragment).addToBackStack(null)
+                        .replace(contentView2.getId(), fragment)
                         .commit();
 
 

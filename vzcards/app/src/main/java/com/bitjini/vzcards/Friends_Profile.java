@@ -143,7 +143,7 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
 
         if(!photo.isEmpty()) {
 
-                Picasso.with(getActivity()).load(photo).resize(250, 250).into(imageProfile);
+                Picasso.with(getActivity()).load(photo).resize(200, 200).into(imageProfile);
 
 
 //            imageProfile.setTag(photo);
@@ -154,7 +154,7 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
 
 
         if(!company_photo.isEmpty()) {
-            Picasso.with(getActivity()).load(company_photo).resize(100, 100).into(imageCompany);
+            Picasso.with(getActivity()).load(company_photo).resize(80, 80).into(imageCompany);
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
 

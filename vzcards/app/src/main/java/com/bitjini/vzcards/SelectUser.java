@@ -24,13 +24,86 @@ public class SelectUser {
     }
 
     String itemName;
-    String item_photo;
     String date_validity;
     String item_description;
     String date_created;
     String ticket_id;
     String question;
+    String company,industry,city,address1,address2,pin_code,email;
+    String referedPhoto="",comany_photo="",item_photo="";
     String fName,lname,photo="",referredFname="",referredLname="",referredPhoto="";
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getAddress1() {
+        return address1;
+    }
+
+    public void setAddress1(String address1) {
+        this.address1 = address1;
+    }
+
+    public String getAddress2() {
+        return address2;
+    }
+
+    public void setAddress2(String address2) {
+        this.address2 = address2;
+    }
+
+    public String getPin_code() {
+        return pin_code;
+    }
+
+    public void setPin_code(String pin_code) {
+        this.pin_code = pin_code;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getReferedPhoto() {
+        return referedPhoto;
+    }
+
+    public void setReferedPhoto(String referedPhoto) {
+        this.referedPhoto = referedPhoto;
+    }
+
+    public String getComany_photo() {
+        return comany_photo;
+    }
+
+    public void setComany_photo(String comany_photo) {
+        this.comany_photo = comany_photo;
+    }
 
     public String getQuestion() {
 

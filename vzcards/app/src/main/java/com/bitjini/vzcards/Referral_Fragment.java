@@ -414,15 +414,6 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                             .commit();
 
 
-//                      Fragment add1 = new Add1_Activity();
-//                        // get the id of fragment
-//                       FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.referral_frame);
-//
-//                      // Insert the fragment by replacing any existing fragment
-//                      FragmentManager fragmentManager = getFragmentManager();
-//                      fragmentManager.beginTransaction()
-//                        .add(contentView.getId(), add1).addToBackStack(contentView.toString())
-//                        .commit();
 
                     break;
                 default:

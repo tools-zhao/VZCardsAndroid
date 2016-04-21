@@ -185,7 +185,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         if(!photo.isEmpty()) {
 
-            Picasso.with(getActivity()).load(photo).resize(250, 250).into(imageProfile);
+            Picasso.with(getActivity()).load(photo).resize(250, 250).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
 //            imageProfile.setTag(photo);
 //                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
 
@@ -193,10 +193,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
         if(!company_photo.isEmpty()) {
-          Picasso.with(getActivity()).load(company_photo).resize(100, 100).into(imageCompany);
+          Picasso.with(getActivity()).load(company_photo).resize(100, 100).placeholder(R.drawable.com_logo).into(imageCompany);
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
-
         }
 
 
@@ -709,7 +708,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager1 = getFragmentManager();
                 fragmentManager1.beginTransaction()
-                        .replace(contentView2.getId(), newfragment).addToBackStack(null)
+                        .replace(contentView2.getId(), newfragment)
                         .commit();
                 break;
 
@@ -722,7 +721,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
                 fragmentManager2.beginTransaction()
-                        .replace(contentView3.getId(), fragment).addToBackStack(null)
+                        .replace(contentView3.getId(), fragment)
                         .commit();
 
 
