@@ -179,6 +179,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
                 Uri selectedImageUri;
                 if (isCamera) {
+
                     selectedImageUri = outputFileUri;
 
 

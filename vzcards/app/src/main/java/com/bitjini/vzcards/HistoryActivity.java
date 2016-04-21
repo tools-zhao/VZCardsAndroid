@@ -256,8 +256,9 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         // @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
         public View getView(int i, View convertView, ViewGroup viewGroup) {
-            View view = convertView;
-            if (view == null) {
+            View view= null;
+            convertView = null;
+            if (convertView == null) {
                 LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = li.inflate(R.layout.history_layout, null);
 
@@ -365,6 +366,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 }
             });
             connectorDetails=new ArrayList<>();
+
             if (data.getConnections().length()==0) {
 //                Log.e("data.getConnection :",""+data.getConnections().length());
             }else{
@@ -444,7 +446,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 //                Log.e("arraylist :", "" + connectorDetails);
 
-              childAdapter = new MyClassAdapter(getActivity(), connectorDetails,R.layout.referral);
+              childAdapter = new MyClassAdapter(getActivity(), connectorDetails,R.layout.history_referrals);
                 list.setAdapter(childAdapter);
                 Utility.setListViewHeightBasedOnChildren(list);
                 toolbar.setVisibility(View.GONE);
@@ -497,12 +499,13 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             }
             public View getView(int position, View convertView, ViewGroup parent) {
 
-                View v = convertView;
+                View v = null;
+                convertView = null;
+                if (convertView == null) {
 
-                if (v == null) {
                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService
                             (Context.LAYOUT_INFLATER_SERVICE);
-                    v = inflater.inflate(R.layout.referral,parent, false);
+                    v = inflater.inflate(R.layout.history_referrals,parent, false);
                 }
                 TextView name = (TextView) v.findViewById(R.id.referralName);
                 TextView referredName = (TextView) v.findViewById(R.id.referred);
@@ -513,7 +516,6 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
                 SelectUser cat = itemList.get(position);
                 Log.e("position",""+position);
-                String json2 = new Gson().toJson(itemList);// updated array
 
                 Log.e("js connectorDetails", "" + cat.getfName()+" " + position);
                 Log.e("js connectorDetails", "" + cat.getReferredFname() +" "+position);
@@ -646,28 +648,3 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
     }
     }
- class Utility {
-
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null) {
-            // pre-condition
-            return;
-        }
-
-        int totalHeight = 0;
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            View listItem = listAdapter.getView(i, null, listView);
-            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += listItem.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
-        listView.requestLayout();
-    }
-
-
-}
