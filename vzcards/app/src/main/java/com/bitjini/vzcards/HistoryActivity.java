@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,11 +50,12 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
     String HISTORY_URL = "http://vzcards-api.herokuapp.com/history/?access_token=";
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private ArrayList<SelectUser> arrayList = new ArrayList<>();
+    MyClassAdapter childAdapter;
     VerifyScreen p = new VerifyScreen();
     // ArrayList
     ArrayList<SelectUser> selectUsers=new ArrayList<>();
-    ArrayList<SelectUser> connectorDetails=new ArrayList<>();
+    ArrayList<SelectUser> connectorDetails;
     History_Adapter adapter;
     ListView listView;
     @Override
@@ -82,7 +84,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Toast.makeText(getActivity(),"you clicked :"+position,Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(),"you clicked :"+position,Toast.LENGTH_LONG).show();
 
                 int height = 0;
                 View toolbar=(View) view.findViewById(R.id.toolbar);
@@ -162,7 +164,9 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 //                Log.e(" description :", "" + description);
 
                 String days = String.valueOf(getDateDifference(date_created));
+
                 SelectUser selectUser = new SelectUser();
+
                 selectUser.setItemName(itemName);
                 selectUser.setDate_created(days);
                 selectUser.setTicket_id(ticket_id);
@@ -202,6 +206,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             @Override public void run() {
 
                 selectUsers.clear();
+                connectorDetails.clear();
                 getHistoryContents();
 
                 adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
@@ -218,18 +223,17 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
     private class History_Adapter extends BaseAdapter {
 
-        private ArrayList<SelectUser> arrayList = new ArrayList<>();
         private ArrayList<SelectUser> arrayListFilter = null;
         Context _c;
         ViewHolder v;
         int textViewResourceId;
 
-        public History_Adapter(ArrayList<SelectUser> arrayList, Context context, int textViewResourceId1) {
+        public History_Adapter(ArrayList<SelectUser> arrayList1, Context context, int textViewResourceId1) {
             super();
 
             this._c = context;
             textViewResourceId = textViewResourceId1;
-            this.arrayList = arrayList;
+           arrayList= arrayList1;
         }
 
 
@@ -262,6 +266,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 view = convertView;
                }
             v = new ViewHolder();
+
             v.txtItem = (TextView) view.findViewById(R.id.itemName);
             v.txtDescription = (TextView) view.findViewById(R.id.desc);
             v.txtDate = (TextView) view.findViewById(R.id.days);
@@ -276,7 +281,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             v.txtDescription.setText(data.getItem_description());
             v.txtDate.setText(data.getDate_created());
 
-            Log.e("question :",""+Integer.parseInt(data.getQuestion()));
+//            Log.e("question :",""+Integer.parseInt(data.getQuestion()));
             // check if it is has change the color to green=0
             if (Integer.parseInt(data.getQuestion()) == 0) {
                 v.viewLine.setBackgroundColor(Color.parseColor("#add58a")); //Green
@@ -287,7 +292,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 v.viewLine.setBackgroundColor(Color.parseColor("#f27166"));// Red
 
             }
-            Log.e("pic image :",""+data.getItem_photo());
+//            Log.e("pic image :",""+data.getItem_photo());
             //set Image if exxists
             try {
                 if (data.getItem_photo().isEmpty()) {
@@ -295,7 +300,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     v.item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
                 } else {
 
-                    v.item_photo.setTag(data.getItem_photo());
+//                    v.item_photo.setTag(data.getItem_photo());
 //                    new DownloadImageProgress(_c).execute(String.valueOf(v.item_photo));// Download item_photo from AsynTask
                     Picasso.with(_c).load(data.getItem_photo()).resize(250, 250).into( v.item_photo);
                 }
@@ -309,7 +314,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             }
 
 
-            Log.e("get connect details", "" + data.getConnections());
+//            Log.e("get connect details", "" + data.getConnections());
             view.setTag(data);
             v.btnRemove.setTag(i);
 
@@ -359,6 +364,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     alertDialog.show();
                 }
             });
+            connectorDetails=new ArrayList<>();
             if (data.getConnections().length()==0) {
 //                Log.e("data.getConnection :",""+data.getConnections().length());
             }else{
@@ -368,7 +374,6 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     JSONObject c2 = array.getJSONObject(i2);
 
                     Log.e("count :",""+array.length());
-
 
                     if(array.length()>1)
                     {
@@ -383,6 +388,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
                     String refPhoneDetails  = c2.getString("reffered_phone_details");
 
+                    // check if response in valid json object or string
                     JsonParser parser1 = new JsonParser();
                     JsonElement jsonObject1 =  parser1.parse(refPhoneDetails);
 //                        Log.e("json object1 1=",""+jsonObject1);
@@ -393,23 +399,18 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                         referedFname = reffered_phone_details.getString("firstname");
                          referedLname = reffered_phone_details.getString("lastname");
                          referedphoto = reffered_phone_details.getString("photo");
-
-
-
-
                     }
                     //you have a string
                     else
                     {
-                        refPhoneDetails = c2.getString("reffered_phone_details");
+                        String phone = c2.getString("reffered_phone_details");
                         referedFname = c2.getString("reffered_ticket_details");
 
-
+                        Log.e("ref phone ",""+phone);
                         Log.e("ref fname ",""+referedFname);
                     }
 
                     JSONObject connecter_details = c2.getJSONObject("connecter_details");
-
 
                     String fname = connecter_details.getString("firstname");
                     String lastname = connecter_details.getString("lastname");
@@ -425,27 +426,33 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     userConnectorDetails.setReferredPhoto(referedphoto);
                     connectorDetails.add(userConnectorDetails);
 
-//                    Log.e("connectorDetails has", "" + connectorDetails);
+                    Log.e("connectorDetails has", "" + userConnectorDetails.getReferredFname());
+
                 }
-            } catch (JSONException e) {
+                    Log.e("conectDetails.length()",""+connectorDetails.size());
+
+                    for(SelectUser u:connectorDetails)
+                    {
+                        Log.e("number of ref's ",""+u.getReferredFname());
+                    }
+                } catch (JSONException e) {
                 e.printStackTrace();
             }
                 // Resets the toolbar to be closed
                 View toolbar = (View) view.findViewById(R.id.toolbar);
                 ListView list = (ListView) view.findViewById(R.id.referralList);
+
 //                Log.e("arraylist :", "" + connectorDetails);
 
-                MyClassAdapter adapter = new MyClassAdapter(getActivity(), connectorDetails,R.layout.referral);
-                String json2 = new Gson().toJson(connectorDetails);// updated array
-                Log.e("updated array", "" + json2);
-                list.setAdapter(adapter);
-
+              childAdapter = new MyClassAdapter(getActivity(), connectorDetails,R.layout.referral);
+                list.setAdapter(childAdapter);
+                Utility.setListViewHeightBasedOnChildren(list);
                 toolbar.setVisibility(View.GONE);
 
             }
 
-
-
+//            connectorDetails.clear();
+//
 
             return view;
 
@@ -461,10 +468,11 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         }
 
         public class MyClassAdapter extends BaseAdapter {
-            Context _c;
 
+            Context _c;
+            public ArrayList<SelectUser> itemList=new ArrayList<>();
             int textViewResourceId;
-            ArrayList<SelectUser> itemList=new ArrayList<>();
+
 
             public MyClassAdapter(Context context, ArrayList<SelectUser> group, int textViewResourceId1) {
                 itemList = group;
@@ -494,7 +502,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 if (v == null) {
                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService
                             (Context.LAYOUT_INFLATER_SERVICE);
-                    v = inflater.inflate(R.layout.referral, null);
+                    v = inflater.inflate(R.layout.referral,parent, false);
                 }
                 TextView name = (TextView) v.findViewById(R.id.referralName);
                 TextView referredName = (TextView) v.findViewById(R.id.referred);
@@ -504,12 +512,15 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 
                 SelectUser cat = itemList.get(position);
-                Log.e("size connectorDetails", "" + itemList.size());
+                Log.e("position",""+position);
+                String json2 = new Gson().toJson(itemList);// updated array
+
+                Log.e("js connectorDetails", "" + cat.getfName()+" " + position);
+                Log.e("js connectorDetails", "" + cat.getReferredFname() +" "+position);
 
                 name.setText(cat.getfName() + " " + cat.getLname());
                 referredName.setText(cat.getReferredFname() + " " + cat.getReferredLname());
-                Log.e("js connectorDetails", "" + cat.getfName() +" "+ itemList.get(position));
-                Log.e("js connectorDetails", "" + cat.getReferredFname()+" "+ itemList.get(position));
+
                 try {
                     if (!cat.getPhoto().isEmpty()) {
 //                        photo.setTag(cat.getPhoto());
@@ -635,3 +646,28 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
     }
     }
+ class Utility {
+
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
+
+}

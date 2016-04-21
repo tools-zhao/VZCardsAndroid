@@ -72,7 +72,8 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     private final int SELECT_PHOTO = 1;
     private Uri outputFileUri;
 
-    Button havebtn,btnClick;
+    Button havebtn;
+    ImageButton btnCander;
     public ImageView item_image;
     Button addImage;
     EditText txtItem,txtDescription,txtDate_validity;
@@ -104,8 +105,8 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
         addImage.setOnClickListener(this);
-        btnClick = (Button) iNeed.findViewById(R.id.click);
-        btnClick.setOnClickListener(this);
+        btnCander = (ImageButton) iNeed.findViewById(R.id.click);
+        btnCander.setOnClickListener(this);
         submit.setOnClickListener(this);
 
         havebtn.setOnClickListener(this);

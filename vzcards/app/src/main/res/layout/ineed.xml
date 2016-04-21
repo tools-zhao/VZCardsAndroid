@@ -89,7 +89,7 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/text_drawable"
         android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="70dp"
         android:id="@+id/l4"
         android:layout_below="@+id/l3"
         android:layout_gravity="center_horizontal">
@@ -103,14 +103,17 @@
             android:gravity="center"
             android:id="@+id/validity"
             android:layout_gravity="center"></EditText>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pick Date"
-            android:layout_alignParentTop="true"
-            android:id="@+id/click"
-            android:layout_alignParentEnd="true" />
+
     </RelativeLayout>
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="5dp"
+        android:text="Pick Date"
+        android:src="@drawable/calender"
+        android:id="@+id/click"
+        android:layout_above="@+id/imgbtn"
+        android:layout_alignEnd="@+id/l3" />
     <ImageButton
         android:layout_width="100dp"
         android:layout_height="25dp"

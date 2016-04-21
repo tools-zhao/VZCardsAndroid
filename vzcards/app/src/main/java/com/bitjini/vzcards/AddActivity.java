@@ -91,7 +91,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     public String item_photo = "", item = "", description = "", date_validity = "", question = "";
     public ProgressDialog progress = null;
     public Bitmap output, bitmap;
-    Button btnClick;
+    ImageButton btnCander;
     VerifyScreen p = new VerifyScreen();
 
 
@@ -105,11 +105,11 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         txtDate_validity = (EditText) iHave.findViewById(R.id.validity);
         item_image = (ImageView) iHave.findViewById(R.id.item_img);
 
-        btnClick = (Button) iHave.findViewById(R.id.click);
+        btnCander = (ImageButton) iHave.findViewById(R.id.click);
 
         submit = (ImageButton) iHave.findViewById(R.id.imgbtn);
 
-        btnClick.setOnClickListener(this);
+        btnCander.setOnClickListener(this);
         addImage.setOnClickListener(this);
 
         submit.setOnClickListener(this);
@@ -132,7 +132,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         outputFileUri = Uri.fromFile(sdImageMainDirectory);
 
         // Camera.
-        final List<Intent> cameraIntents = new ArrayList<Intent>();
+        final List<Intent> cameraIntents = new ArrayList<>();
         final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         final PackageManager packageManager = getActivity().getPackageManager();
         final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
@@ -153,7 +153,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         // Chooser of filesystem options.
         final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
         // Add the camera options.
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
         startActivityForResult(chooserIntent, SELECT_PHOTO);
     }
 
@@ -179,7 +179,6 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
                 Uri selectedImageUri;
                 if (isCamera) {
-
                     selectedImageUri = outputFileUri;
 
 
@@ -211,6 +210,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                                 progress.dismiss();
                                                 progress = null;
                                             }
+                                            Log.e("debug=",""+result);
                                             item_image.setImageBitmap(bitmap);
 
                                             if (result != null) {
@@ -416,11 +416,11 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             Log.e(" item test:", "" + item);
             Log.e(" description test:", "" + description);
             Log.e(" date_validity test:", "" + date_validity);
-            Log.e(" vz_id test:", "" + p.vz_id_sharedPreference);
+            Log.e(" vz_id test:", "" + VerifyScreen.vz_id_sharedPreference);
 
             try {
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("vz_id", p.vz_id_sharedPreference));
+                params.add(new BasicNameValuePair("vz_id", VerifyScreen.vz_id_sharedPreference));
                 params.add(new BasicNameValuePair("item_photo", item_photo));
                 params.add(new BasicNameValuePair("question", question));
                 params.add(new BasicNameValuePair("item", item));
@@ -523,13 +523,13 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         protected String doInBackground(Void... params) {
             try {
 
-                Log.e(" web url :", "" + pr.URL_UPLOAD_IMAGE + p.token_sharedPreference);
+                Log.e(" web url :", "" + MyProfile_Fragment.URL_UPLOAD_IMAGE + VerifyScreen.token_sharedPreference);
                 File sourceFile_profile = new File(Item_picturePath);
                 Log.e("picturePath :", "" + Item_picturePath);
 
 
                 HttpClient httpclient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(pr.URL_UPLOAD_IMAGE + p.token_sharedPreference);
+                HttpPost httpPost = new HttpPost(MyProfile_Fragment.URL_UPLOAD_IMAGE + VerifyScreen.token_sharedPreference);
 
                 String boundary = "-------------" + System.currentTimeMillis();
 
@@ -578,7 +578,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
             //setting company picture
             case R.id.imgbtn:
-                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + p.token_sharedPreference);
+                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
                 break;
             case  R.id.click:
                 showDatePickerDialog(v);
