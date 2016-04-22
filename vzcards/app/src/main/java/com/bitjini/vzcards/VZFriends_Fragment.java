@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.animation.ObjectAnimator;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -23,6 +25,7 @@ import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,72 +70,84 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     Filter filter;
     // Pop up
     ContentResolver resolver;
-
+    ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
-
+        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progressBar);
         c = vzfrnds.getContext();
         selectUsers = new ArrayList<SelectUser>();
 
-        try {
-            String received = new HttpAsyncTask(getActivity()).execute(VZFRIENDS_URL + p.token_sharedPreference).get();
-
-            JSONObject jsonObject = new JSONObject(received);
-            String response = jsonObject.getString("response");
-
-            // Getting JSON Array node
-            JSONArray arr = jsonObject.getJSONArray("response");
-
-            // looping through All Contacts
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject c = arr.getJSONObject(i);
-                // Feed node is JSON Object
-                String phone = c.getString("phone");
-                String firstname = c.getString("firstname");
-                String lastname = c.getString("lastname");
-                String photo = c.getString("photo");
-
-                String company = c.getString("company");
-                String  pin_code = c.getString("pin_code");
-                String industry = c.getString("industry");
-                String address1 = c.getString("address_line_1");
-                String  address2 = c.getString("address_line_2");
-                String city = c.getString("city");
-                String company_photo = c.getString("company_photo");
-                String email = c.getString("email");
-
-                SelectUser selectUser = new SelectUser();
-                selectUser.setfName(firstname);
-                selectUser.setLname(lastname);
-                selectUser.setPhone(phone);
-                selectUser.setPhoto(photo);
-                selectUser.setEmail(email);
-                selectUser.setCompany(company);
-                selectUser.setPin_code(pin_code);
-                selectUser.setIndustry(industry);
-                selectUser.setAddress1(address1);
-                selectUser.setAddress2(address2);
-                selectUser.setCity(city);
-                selectUser.setComany_photo(company_photo);
-                selectUsers.add(selectUser);
-            }
-
-            Log.e(" received :", "" + response);
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 //            resolver = c.getContentResolver();
         listView = (ListView)vzfrnds.findViewById(R.id.contactList);
         mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
 //        displayText = (TextView) findViewById(R.id.resultText);
+
+
+            ObjectAnimator animation = ObjectAnimator.ofInt (progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration (1000); //in milliseconds
+        animation.setRepeatCount(5);
+            animation.setInterpolator (new DecelerateInterpolator());
+            animation.start ();
+             new HttpAsyncTask(getActivity()){
+                @Override
+                 public void onPostExecute(String received) {
+                    try {
+                        progressBar.clearAnimation();
+                        progressBar.setVisibility(View.GONE);
+                        listView.setVisibility(View.VISIBLE);
+                        JSONObject jsonObject = new JSONObject(received);
+                        String response = jsonObject.getString("response");
+
+                        // Getting JSON Array node
+                        JSONArray arr = jsonObject.getJSONArray("response");
+
+                        // looping through All Contacts
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject c = arr.getJSONObject(i);
+                            // Feed node is JSON Object
+                            String phone = c.getString("phone");
+                            String firstname = c.getString("firstname");
+                            String lastname = c.getString("lastname");
+                            String photo = c.getString("photo");
+
+                            String company = c.getString("company");
+                            String pin_code = c.getString("pin_code");
+                            String industry = c.getString("industry");
+                            String address1 = c.getString("address_line_1");
+                            String address2 = c.getString("address_line_2");
+                            String city = c.getString("city");
+                            String company_photo = c.getString("company_photo");
+                            String email = c.getString("email");
+
+                            SelectUser selectUser = new SelectUser();
+                            selectUser.setfName(firstname);
+                            selectUser.setLname(lastname);
+                            selectUser.setPhone(phone);
+                            selectUser.setPhoto(photo);
+                            selectUser.setEmail(email);
+                            selectUser.setCompany(company);
+                            selectUser.setPin_code(pin_code);
+                            selectUser.setIndustry(industry);
+                            selectUser.setAddress1(address1);
+                            selectUser.setAddress2(address2);
+                            selectUser.setCity(city);
+                            selectUser.setComany_photo(company_photo);
+                            selectUsers.add(selectUser);
+                        }
+
+
+                        Log.e(" received :", "" + response);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.execute(VZFRIENDS_URL + p.token_sharedPreference);
+
 
         listView.setTextFilterEnabled(true);
         setupSearchView();

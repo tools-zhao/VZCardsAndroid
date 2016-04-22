@@ -381,7 +381,7 @@ FrameLayout layout_MainMenu;
     public class FeedsAdapter extends ArrayAdapter<DataFeeds> {
 
         Context context;
-        private RadioButton mSelectedRB, mSelectedRB2;
+        private RadioButton mSelectedRB=null, mSelectedRB2=null;
         private int mSelectedPosition = -1, mSelectedPosition2 = -1;
         boolean red = false, green = false;
 
@@ -442,7 +442,16 @@ FrameLayout layout_MainMenu;
             }
 
 
-
+//            if(Integer.parseInt(data.getQuestion()) == 1)
+//            {
+//                holder.referButtonRed.setChecked(true);
+//                holder.referButtonGreen.setChecked(false);
+//            }
+//            else
+//            {
+//                holder.r.setChecked(false);
+//                female.setChecked(true);
+//            }
             if (Integer.parseInt(data.getQuestion()) == 1) {
                 holder.question.setBackgroundColor(Color.parseColor("#f27166"));
                 holder.question.setText("needs");
@@ -463,8 +472,10 @@ FrameLayout layout_MainMenu;
                         }
 
                         mSelectedPosition = position;
+                        Log.e("mselected pos",""+mSelectedPosition);
                         mSelectedRB = (RadioButton) v;
                         notifyDataSetChanged();
+
                     }
                 });
 
@@ -475,6 +486,7 @@ FrameLayout layout_MainMenu;
                 } else {
 
                     holder.referButtonRed.setChecked(true);
+                    holder.referButtonRed.setText("Selected");
                     // send data to popup
 
                     dataFeeds1.setFname(data.getFname());
@@ -513,6 +525,7 @@ FrameLayout layout_MainMenu;
                         mSelectedPosition2 = position;
                         mSelectedRB2 = (RadioButton) v;
                         notifyDataSetChanged();
+
                     }
                 });
 
@@ -523,6 +536,7 @@ FrameLayout layout_MainMenu;
                 } else {
 
                     holder.referButtonGreen.setChecked(true);
+                    holder.referButtonGreen.setText("Selected");
                     // send data to popup after the button is checked
 
                     dataFeeds2.setFname(data.getFname());
@@ -544,9 +558,10 @@ FrameLayout layout_MainMenu;
             if (red == true && green == true) {
                 initiatePopupWindow();
 
-
                 red = false;
                 green = false;
+
+
             }
             return v;
         }
@@ -657,6 +672,10 @@ FrameLayout layout_MainMenu;
                 @Override
                 public void onClick(View view) {
                     pwindo.dismiss();
+
+                    adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+                    listView.setAdapter(adapter);
+
                     layout_MainMenu.getForeground().setAlpha( 0); // restore
 
                 }
@@ -688,6 +707,9 @@ FrameLayout layout_MainMenu;
                     getFragmentManager().beginTransaction().add(R.id.feed_detail, connect).addToBackStack(connect.toString())
                             .commit();
                     pwindo.dismiss();
+                    adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+                    listView.setAdapter(adapter);
+
                     layout_MainMenu.getForeground().setAlpha( 0); // restore
 
                 }
@@ -699,6 +721,8 @@ FrameLayout layout_MainMenu;
         }
 
     }
+
+
 }
 
 

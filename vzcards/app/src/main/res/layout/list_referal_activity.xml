@@ -17,7 +17,21 @@
         android:id="@+id/parent"
         android:animateLayoutChanges="true">
 
-
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="300dp"
+            android:layout_centerHorizontal="true"
+            android:max="500"
+            android:progress="0"
+            android:layout_below="@+id/Layout1"
+            android:layout_above="@+id/l8"
+            android:progressDrawable="@drawable/progress" />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,6 +39,7 @@
         android:layout_below="@+id/Layout1"
         android:divider="#97e6ecf2"
         android:focusable="false"
+        android:visibility="gone"
         android:dividerHeight="5.0sp"></ListView>
 
 

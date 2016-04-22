@@ -65,7 +65,7 @@ public class Feed_detail_has extends Fragment implements View.OnClickListener {
         description.setText(desc);
         name.setText(profileName);
 
-        if(itemPic.isEmpty())
+        if(!itemPic.isEmpty())
         {
             Picasso.with(getActivity()).load(itemPic).into(item_photo);
 //            item_photo.setTag(itemPic);
