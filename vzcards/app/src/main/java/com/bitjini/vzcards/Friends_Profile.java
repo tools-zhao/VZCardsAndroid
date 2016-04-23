@@ -20,6 +20,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -29,11 +33,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,6 +93,7 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
     public static String photo="",company_photo="";
     public Bitmap bitmap;
     public static String picturePath;
+    LinearLayout linearLayout;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -94,7 +101,7 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
         profile = inflater.inflate(R.layout.frnds_profile, container, false);
 
        listView = (ListView) profile.findViewById(R.id.profileList);
-
+       linearLayout=(LinearLayout) profile.findViewById(R.id.l2);
 
         textViewName = (TextView) profile.findViewById(R.id.name);
         //Picking Profile picture
@@ -133,9 +140,12 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
                 company_photo= getArguments().getString("company_photo");
 
 
+
+
         if(!photo.isEmpty()) {
 
-                Picasso.with(getActivity()).load(photo).resize(250, 250).into(imageProfile);
+                Picasso.with(getActivity()).load(photo).resize(180, 180).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+
 
 //            imageProfile.setTag(photo);
 //            new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
@@ -145,7 +155,7 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
 
 
         if(!company_photo.isEmpty()) {
-            Picasso.with(getActivity()).load(company_photo).resize(100, 100).into(imageCompany);
+            Picasso.with(getActivity()).load(company_photo).resize(70, 70).placeholder(R.drawable.com_logo).into(imageCompany);
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
 
@@ -157,7 +167,7 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
         values.add(firstname);
         values.add(lastname);
         values.add(email);
-        values.add(p.phone_sharedPreference);
+        values.add(phone);
         values.add(industry);
         values.add(company);
         values.add(address_line_1);
@@ -176,14 +186,13 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
         // send the adapterArraylist to the adapter and set it to listview
         editTextAdapter = new EditTextAdapter(getActivity(), arrayList, R.layout.profile_layout);
         listView.setAdapter(editTextAdapter);
-
+        InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (getActivity().getCurrentFocus() != null){
+            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);}
+//
 
         return profile;
     }
-
-
-
-
 
 
 

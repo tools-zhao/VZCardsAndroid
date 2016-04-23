@@ -15,9 +15,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Layout;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -26,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -58,12 +61,16 @@ import java.util.ArrayList;
 /**
  * Created by bitjini on 28/12/15.
  */
-public class FeedActivity extends Fragment {
+public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=";
     ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
     ArrayList<DataFeeds> feeds = new ArrayList<DataFeeds>();
+    String token_sharedPreference;
+
     ListView listView;
     public FeedsAdapter adapter;
     ViewHolder holder;
@@ -79,6 +86,13 @@ FrameLayout layout_MainMenu;
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
 
         progressBar = (ProgressBar) feed.findViewById(R.id.progressBar);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) feed.findViewById(R.id.pullToRefresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
+                R.color.colorPrimary
+                ,R.color.red);
 
         layout_MainMenu = (FrameLayout) feed.findViewById(R.id.feed_detail);
         layout_MainMenu.getForeground().setAlpha( 0);
@@ -102,14 +116,12 @@ FrameLayout layout_MainMenu;
         // get the access token from shared prefernces
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        String token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+       token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         System.out.println(" getting token from sharedpreference " + token_sharedPreference);
 
         new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+token_sharedPreference);
         // call AsynTask to perform network operation on separate thread
-
-        new HttpAsyncTask().execute("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference);
-
+        getFeedsContents();
         // set on onList item click
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -170,18 +182,62 @@ FrameLayout layout_MainMenu;
                 }
             }
         });
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                boolean enable = false;
+                if(listView != null && listView.getChildCount() > 0){
+                    // check if the first item of the list is visible
+                    boolean firstItemVisible = listView.getFirstVisiblePosition() == 0;
+                    // check if the top of the first item is visible
+                    boolean topOfFirstItemVisible = listView.getChildAt(0).getTop() == 0;
+                    // enabling or disabling the refresh layout
+                    enable = firstItemVisible && topOfFirstItemVisible;
+                }
+                swipeRefreshLayout.setEnabled(enable);
+            }
+        });
 
         return feed;
     }
+    public void getFeedsContents() {
 
-    public boolean isConnected() {
+        new HttpAsyncTask().execute("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference);
+
+    }
+            public boolean isConnected() {
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected())
             return true;
         else
             return false;
+    }
+
+    @Override
+    public void onRefresh() {
+        // TODO Auto-generated method stub
+
+        refreshContent();
+
+    }
+    private void refreshContent(){
+
+        new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
+
+                feedsArrayList.clear();
+                getFeedsContents();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }, 5000);
+
     }
 
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
@@ -325,7 +381,7 @@ FrameLayout layout_MainMenu;
     public class FeedsAdapter extends ArrayAdapter<DataFeeds> {
 
         Context context;
-        private RadioButton mSelectedRB, mSelectedRB2;
+        private RadioButton mSelectedRB=null, mSelectedRB2=null;
         private int mSelectedPosition = -1, mSelectedPosition2 = -1;
         boolean red = false, green = false;
 
@@ -365,17 +421,37 @@ FrameLayout layout_MainMenu;
             holder.name.setText(String.valueOf(data.getFname()));
             holder.item.setText(String.valueOf(data.getItem()));
 
-            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
+//            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
+          if(!data.getItem_photo().isEmpty())
+            {
+                Picasso.with(context).load(data.getItem_photo()).into(holder.item_photo);
+                //            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
+            } else
+          {
+              holder.item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+            }
 
-            Picasso.with(context).load(data.getItem_photo()).into(holder.item_photo);
-//            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
+            if(!data.getPhoto().isEmpty())
+            {
 
-            holder.photo.setTag(String.valueOf(data.getPhoto()));
-            Picasso.with(context).load(data.getPhoto()).into(holder.photo);
-//            new DownloadImagesTask(getActivity()).execute(holder.photo);
+            Picasso.with(context).load(data.getPhoto()).into(holder.photo);}
+            else  {
+                holder.photo.setImageResource(R.drawable.profile_pic_placeholder);
+                //            new DownloadImagesTask(getActivity()).execute(holder.photo);
+
+            }
 
 
-
+//            if(Integer.parseInt(data.getQuestion()) == 1)
+//            {
+//                holder.referButtonRed.setChecked(true);
+//                holder.referButtonGreen.setChecked(false);
+//            }
+//            else
+//            {
+//                holder.r.setChecked(false);
+//                female.setChecked(true);
+//            }
             if (Integer.parseInt(data.getQuestion()) == 1) {
                 holder.question.setBackgroundColor(Color.parseColor("#f27166"));
                 holder.question.setText("needs");
@@ -396,8 +472,10 @@ FrameLayout layout_MainMenu;
                         }
 
                         mSelectedPosition = position;
+                        Log.e("mselected pos",""+mSelectedPosition);
                         mSelectedRB = (RadioButton) v;
                         notifyDataSetChanged();
+
                     }
                 });
 
@@ -408,6 +486,7 @@ FrameLayout layout_MainMenu;
                 } else {
 
                     holder.referButtonRed.setChecked(true);
+                    holder.referButtonRed.setText("Selected");
                     // send data to popup
 
                     dataFeeds1.setFname(data.getFname());
@@ -446,6 +525,7 @@ FrameLayout layout_MainMenu;
                         mSelectedPosition2 = position;
                         mSelectedRB2 = (RadioButton) v;
                         notifyDataSetChanged();
+
                     }
                 });
 
@@ -456,6 +536,7 @@ FrameLayout layout_MainMenu;
                 } else {
 
                     holder.referButtonGreen.setChecked(true);
+                    holder.referButtonGreen.setText("Selected");
                     // send data to popup after the button is checked
 
                     dataFeeds2.setFname(data.getFname());
@@ -477,9 +558,10 @@ FrameLayout layout_MainMenu;
             if (red == true && green == true) {
                 initiatePopupWindow();
 
-
                 red = false;
                 green = false;
+
+
             }
             return v;
         }
@@ -520,13 +602,22 @@ FrameLayout layout_MainMenu;
             name.setText(dataFeeds1.getFname());
             item.setText(dataFeeds1.getItem());
 
-            item_photo.setTag(dataFeeds1.getItem_photo());
-            Picasso.with(getActivity()).load(dataFeeds1.getItem_photo()).into(item_photo);
+            if(!dataFeeds1.getItem_photo().isEmpty()) {
+//            item_photo.setTag(dataFeeds1.getItem_photo());
+                Picasso.with(getActivity()).load(dataFeeds1.getItem_photo()).into(item_photo);
 //            new DownloadImagesTask(getActivity()).execute(item_photo); // Download item_photo from AsynTask
-
-            photo.setTag(dataFeeds1.getPhoto());
-            Picasso.with(getActivity()).load(dataFeeds1.getPhoto()).into(photo);
+            }else
+            {
+                item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+            }
+            if(!dataFeeds1.getPhoto().isEmpty()) {
+//            photo.setTag(dataFeeds1.getPhoto());
+                Picasso.with(getActivity()).load(dataFeeds1.getPhoto()).into(photo);
 //            new DownloadImagesTask(getActivity()).execute(photo);// Download photo from AsynTask
+            }  else
+                {
+                    photo.setImageResource(R.drawable.profile_pic_placeholder);
+                }
 
             // check if it is needs change the color to red
             if (Integer.parseInt(dataFeeds1.getIsNeeds()) == 1) {
@@ -546,14 +637,26 @@ FrameLayout layout_MainMenu;
             name2.setText(dataFeeds2.getFname());
             item2.setText(dataFeeds2.getItem());
 
-            item_photo2.setTag(dataFeeds2.getItem_photo());
+            if(!dataFeeds2.getItem_photo().isEmpty()){
+//            item_photo2.setTag(dataFeeds2.getItem_photo());
             Picasso.with(getActivity()).load(dataFeeds2.getItem_photo()).into(item_photo2);
-            new DownloadImagesTask(getActivity()).execute(item_photo2);// Download item_photo from AsynTask
 
-            photo2.setTag(dataFeeds2.getPhoto());
-            Picasso.with(getActivity()).load(dataFeeds2.getPhoto()).into(photo2);
+//            new DownloadImagesTask(getActivity()).execute(item_photo2);// Download item_photo from AsynTask
+            }else
+            {
+                item_photo2.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+            }
+
+                if(!dataFeeds2.getPhoto().isEmpty()) {
+//                    photo2.setTag(dataFeeds2.getPhoto());
+                    Picasso.with(getActivity()).load(dataFeeds2.getPhoto()).into(photo2);
+
 //            new DownloadImagesTask(getActivity()).execute(photo2);// Download photo from AsynTask
-
+                }
+               else
+                {
+                    photo2.setImageResource(R.drawable.profile_pic_placeholder);
+                }
             // check if it is has change the color to green
             if (Integer.parseInt(dataFeeds2.getIsHas()) == 0) {
                 viewLine2.setBackgroundColor(Color.parseColor("#add58a"));
@@ -569,6 +672,10 @@ FrameLayout layout_MainMenu;
                 @Override
                 public void onClick(View view) {
                     pwindo.dismiss();
+
+                    adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+                    listView.setAdapter(adapter);
+
                     layout_MainMenu.getForeground().setAlpha( 0); // restore
 
                 }
@@ -600,6 +707,9 @@ FrameLayout layout_MainMenu;
                     getFragmentManager().beginTransaction().add(R.id.feed_detail, connect).addToBackStack(connect.toString())
                             .commit();
                     pwindo.dismiss();
+                    adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+                    listView.setAdapter(adapter);
+
                     layout_MainMenu.getForeground().setAlpha( 0); // restore
 
                 }
@@ -611,6 +721,8 @@ FrameLayout layout_MainMenu;
         }
 
     }
+
+
 }
 
 

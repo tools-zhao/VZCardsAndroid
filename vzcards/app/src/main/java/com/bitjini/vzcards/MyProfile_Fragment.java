@@ -1,36 +1,27 @@
 package com.bitjini.vzcards;
 
-
-        import android.app.ProgressDialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
-        import android.content.DialogInterface;
-        import android.content.Intent;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-        import android.database.Cursor;
-        import android.graphics.Bitmap;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-        import android.graphics.Canvas;
-        import android.graphics.Paint;
-        import android.graphics.PorterDuff;
-        import android.graphics.PorterDuffXfermode;
-        import android.graphics.Rect;
-        import android.graphics.RectF;
-        import android.net.Uri;
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-        import android.support.v7.app.AlertDialog;
-        import android.text.Editable;
+import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.text.TextWatcher;
-        import android.util.Base64;
-        import android.util.Log;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,28 +36,16 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-        import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Picasso;
 
-        import org.apache.http.util.ByteArrayBuffer;
-        import org.json.JSONException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-        import java.io.BufferedInputStream;
-        import java.io.BufferedReader;
-        import java.io.ByteArrayOutputStream;
-        import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.File;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
-        import java.net.URLConnection;
-        import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
-        import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by VEENA on 12/7/2015.
@@ -206,7 +185,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         if(!photo.isEmpty()) {
 
-            Picasso.with(getActivity()).load(photo).resize(250, 250).into(imageProfile);
+            Picasso.with(getActivity()).load(photo).resize(250, 250).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
 //            imageProfile.setTag(photo);
 //                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
 
@@ -214,10 +193,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
         if(!company_photo.isEmpty()) {
-          Picasso.with(getActivity()).load(company_photo).resize(100, 100).into(imageCompany);
+          Picasso.with(getActivity()).load(company_photo).resize(100, 100).placeholder(R.drawable.com_logo).into(imageCompany);
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
-
         }
 
 
@@ -730,7 +708,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager1 = getFragmentManager();
                 fragmentManager1.beginTransaction()
-                        .replace(contentView2.getId(), newfragment).addToBackStack(null)
+                        .replace(contentView2.getId(), newfragment)
                         .commit();
                 break;
 
@@ -743,7 +721,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
                 fragmentManager2.beginTransaction()
-                        .replace(contentView3.getId(), fragment).addToBackStack(null)
+                        .replace(contentView3.getId(), fragment)
                         .commit();
 
 
