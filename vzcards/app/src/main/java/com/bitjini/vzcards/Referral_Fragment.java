@@ -414,29 +414,21 @@ try{
 
                 case R.id.btnVzCard:
 
-                    Friends_Profile ldf = new Friends_Profile();
-
-                    Bundle args = new Bundle();
-
-                    Log.e("fname", data.getReferredfName());
-                    args.putString("fname", data.getReferredfName());
-                    args.putString("lname", data.getReferredlName());
-                    args.putString("lname", data.getReferredlName());
-                    args.putString("photo", data.getReferedPhoto());
-                    args.putString("phone", data.getPhone());
-                    args.putString("company", data.getCompany());
-                    args.putString("pin_code", data.getPin_code());
-                    args.putString("industry", data.getIndustry());
-                    args.putString("address1", data.getAddress1());
-                    args.putString("address2", data.getAddress2());
-                    args.putString("city", data.getCity());
-                    args.putString("company_photo", data.getComany_photo());
-                    ldf.setArguments(args);
-                    //Inflate the fragment
-                    getFragmentManager().beginTransaction().add(R.id.referral_frame, ldf).addToBackStack(ldf.toString())
-                            .commit();
+                    Intent nextScreenIntent = new Intent(_c, Friends_Profile.class);
 
 
+                    nextScreenIntent.putExtra("fname", data.getFname());
+                    nextScreenIntent.putExtra("lname", data.getLname());
+                    nextScreenIntent.putExtra("photo", data.getPhoto());
+                    nextScreenIntent.putExtra("phone", data.getPhone());
+                    nextScreenIntent.putExtra("company", data.getCompany());
+                    nextScreenIntent.putExtra("pin_code", data.getPin_code());
+                    nextScreenIntent.putExtra("industry", data.getIndustry());
+                    nextScreenIntent.putExtra("address1", data.getAddress1());
+                    nextScreenIntent.putExtra("address2", data.getAddress2());
+                    nextScreenIntent.putExtra("city", data.getCity());
+                    nextScreenIntent.putExtra("company_photo", data.getComany_photo());
+                    startActivity(nextScreenIntent);
 
                     break;
                 default:
