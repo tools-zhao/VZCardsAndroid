@@ -24,6 +24,7 @@
             android:layout_height="90dp"
             android:id="@+id/feedImage"
             android:layout_marginTop="4dp"
+
             android:layout_marginLeft="5dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
@@ -95,6 +96,7 @@
         android:layout_height="1dp"
         android:id="@+id/viewLine"
         android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_below="@+id/linearLayout1"
         android:background="#f27166"></View>
@@ -108,6 +110,7 @@
         android:layout_below="@+id/viewLine"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
+        android:layout_marginBottom="5dp"
         android:orientation="vertical">
         <!--<TextView-->
             <!--android:layout_width="match_parent"-->
@@ -125,9 +128,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/referralList"
             android:layout_below="@+id/Layout1"
-            android:divider="#97e6ecf2"
-            android:focusable="false"
-            android:dividerHeight="5.0sp"></ListView>
+            android:focusable="false"></ListView>
     </LinearLayout>
 
 </LinearLayout>

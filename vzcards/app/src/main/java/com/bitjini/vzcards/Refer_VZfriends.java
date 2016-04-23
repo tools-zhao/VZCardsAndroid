@@ -285,10 +285,10 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
 
             //set Image if exxists
             try {
-                if (data.getPhoto()!= null) {
-//                    Picasso.with(_c).load(data.getPhoto()).into(v.imageView);
-                    v.imageView.setTag(data.getPhoto());
-                    new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
+                if (!data.getPhoto().isEmpty()) {
+                    Picasso.with(_c).load(data.getPhoto()).into(v.imageView);
+//                    v.imageView.setTag(data.getPhoto());
+//                    new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
                 } else {
                     v.imageView.setImageResource(R.drawable.simple_profile_placeholder1);
                 }
@@ -301,7 +301,6 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
                 //  v.imageView.setImageDrawable(this._c.getDrawable(R.drawable.contact));
                 e.printStackTrace();
             }
-            Log.e("Image Thumb", "---------" + data.getThumb());
             view.setTag(data);
 
             // view.setBackgroundColor(Color.parseColor("#88e0e7e0"));

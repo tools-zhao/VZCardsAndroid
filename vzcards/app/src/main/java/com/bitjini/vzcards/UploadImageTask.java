@@ -94,7 +94,8 @@ public class UploadImageTask extends AsyncTask<Void, Void, String> {
 
 
             HttpResponse response = httpclient.execute(httpPost);
-
+            int responseCode=response.getStatusLine().getStatusCode();
+            Log.e("responseCode=",""+responseCode);
             String responseBody = EntityUtils.toString(response.getEntity());
             Log.v(" HTTP Response", responseBody);
             return responseBody;

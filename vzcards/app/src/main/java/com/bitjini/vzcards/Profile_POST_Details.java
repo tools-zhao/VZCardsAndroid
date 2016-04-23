@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
-* Created by VEENA on 12/7/2015.
-*/
+ * Created by VEENA on 12/7/2015.
+ */
 public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
     private Context context;
@@ -190,4 +190,3 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
     }
 }
-

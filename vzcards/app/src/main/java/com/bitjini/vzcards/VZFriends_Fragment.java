@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.animation.ObjectAnimator;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -23,6 +25,7 @@ import android.widget.Filterable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,57 +70,84 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     Filter filter;
     // Pop up
     ContentResolver resolver;
-
+    ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
-
+        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progressBar);
         c = vzfrnds.getContext();
         selectUsers = new ArrayList<SelectUser>();
 
-        try {
-            String received = new HttpAsyncTask(getActivity()).execute(VZFRIENDS_URL + p.token_sharedPreference).get();
-
-            JSONObject jsonObject = new JSONObject(received);
-            String response = jsonObject.getString("response");
-
-            // Getting JSON Array node
-            JSONArray arr = jsonObject.getJSONArray("response");
-
-            // looping through All Contacts
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject c = arr.getJSONObject(i);
-                // Feed node is JSON Object
-                String phone = c.getString("phone");
-                String firstname = c.getString("firstname");
-                String lastname = c.getString("lastname");
-                String photo = c.getString("photo");
-
-                Log.e("phone ", "" + phone);
-
-                SelectUser selectUser = new SelectUser();
-                selectUser.setfName(firstname);
-                selectUser.setLname(lastname);
-                selectUser.setPhone(phone);
-                selectUser.setPhoto(photo);
-                selectUsers.add(selectUser);
-            }
-
-            Log.e(" received :", "" + response);
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 //            resolver = c.getContentResolver();
         listView = (ListView)vzfrnds.findViewById(R.id.contactList);
         mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
 //        displayText = (TextView) findViewById(R.id.resultText);
+
+
+            ObjectAnimator animation = ObjectAnimator.ofInt (progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration (1000); //in milliseconds
+        animation.setRepeatCount(5);
+            animation.setInterpolator (new DecelerateInterpolator());
+            animation.start ();
+             new HttpAsyncTask(getActivity()){
+                @Override
+                 public void onPostExecute(String received) {
+                    try {
+                        progressBar.clearAnimation();
+                        progressBar.setVisibility(View.GONE);
+                        listView.setVisibility(View.VISIBLE);
+                        JSONObject jsonObject = new JSONObject(received);
+                        String response = jsonObject.getString("response");
+
+                        // Getting JSON Array node
+                        JSONArray arr = jsonObject.getJSONArray("response");
+
+                        // looping through All Contacts
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject c = arr.getJSONObject(i);
+                            // Feed node is JSON Object
+                            String phone = c.getString("phone");
+                            String firstname = c.getString("firstname");
+                            String lastname = c.getString("lastname");
+                            String photo = c.getString("photo");
+
+                            String company = c.getString("company");
+                            String pin_code = c.getString("pin_code");
+                            String industry = c.getString("industry");
+                            String address1 = c.getString("address_line_1");
+                            String address2 = c.getString("address_line_2");
+                            String city = c.getString("city");
+                            String company_photo = c.getString("company_photo");
+                            String email = c.getString("email");
+
+                            SelectUser selectUser = new SelectUser();
+                            selectUser.setfName(firstname);
+                            selectUser.setLname(lastname);
+                            selectUser.setPhone(phone);
+                            selectUser.setPhoto(photo);
+                            selectUser.setEmail(email);
+                            selectUser.setCompany(company);
+                            selectUser.setPin_code(pin_code);
+                            selectUser.setIndustry(industry);
+                            selectUser.setAddress1(address1);
+                            selectUser.setAddress2(address2);
+                            selectUser.setCity(city);
+                            selectUser.setComany_photo(company_photo);
+                            selectUsers.add(selectUser);
+                        }
+
+
+                        Log.e(" received :", "" + response);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.execute(VZFRIENDS_URL + p.token_sharedPreference);
+
 
         listView.setTextFilterEnabled(true);
         setupSearchView();
@@ -125,6 +155,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         listView.setAdapter(adapter);
         filter = adapter.getFilter();
         listView.setFastScrollEnabled(true);
+        listView.setOnItemClickListener(this);
 
         Button profilebtn = (Button) vzfrnds.findViewById(R.id.profilebtn);
         Button referral = (Button) vzfrnds.findViewById(R.id.referralbtn);
@@ -172,25 +203,28 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        LayoutInflater li = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = li.inflate(R.layout.vz_frnds, null);
 
-        Bitmap image = null;
         SelectUser data = (SelectUser) parent.getItemAtPosition(position);
+        Friends_Profile ldf = new Friends_Profile();
 
-        String name = data.getName();
-        String phoneNo = data.getPhone();
-//                image = data.getThumb();
-//
-//
-//                if (image== null) {
+        Bundle args = new Bundle();
 
-        Drawable d = getResources().getDrawable(R.drawable.simple_profile_placeholder1);
-        ImageView contactimage = (ImageView) view.findViewById(R.id.contactImage);
-        contactimage.setImageDrawable(d);
-        contactimage.buildDrawingCache();
-        image = contactimage.getDrawingCache();
-//                }
+        args.putString("fname", data.getfName());
+        args.putString("lname", data.getLname());
+        args.putString("photo", data.getPhoto());
+        args.putString("phone", data.getPhone());
+        args.putString("company", data.getCompany());
+        args.putString("pin_code", data.getPin_code());
+        args.putString("industry", data.getIndustry());
+        args.putString("address1", data.getAddress1());
+        args.putString("address2", data.getAddress2());
+        args.putString("city", data.getCity());
+        args.putString("company_photo", data.getComany_photo());
+        ldf.setArguments(args);
+        //Inflate the fragment
+        getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in,R.anim.slide_out).add(R.id.vzfrnds_list_frame, ldf).addToBackStack(ldf.toString())
+                .commit();
+        }
 
         //dynamically increase the size of the imageview
 //                int width = image.getWidth();
@@ -204,19 +238,19 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 //                Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix,true);
 
         //Passing data to nextscreen
-        Intent nextScreenIntent = new Intent(c, DisplayContact.class);
-        nextScreenIntent.putExtra("name", name);
-        nextScreenIntent.putExtra("phoneNo", phoneNo);
+//        Intent nextScreenIntent = new Intent(c, DisplayContact.class);
+//        nextScreenIntent.putExtra("name", name);
+//        nextScreenIntent.putExtra("phoneNo", phoneNo);
+//
+//        Bundle extras = new Bundle();
+//        extras.putParcelable("photo", image);
+//
+//        nextScreenIntent.putExtras(extras);
+//
+//
+//        Log.e("n", name + "." + phoneNo);
+//        startActivity(nextScreenIntent);
 
-        Bundle extras = new Bundle();
-        extras.putParcelable("photo", image);
-
-        nextScreenIntent.putExtras(extras);
-
-
-        Log.e("n", name + "." + phoneNo);
-        startActivity(nextScreenIntent);
-    }
 
     public void onClick(View v) {
         switch (v.getId()) {
@@ -229,7 +263,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), profilefragment).addToBackStack(null)
+                        .add(contentView.getId(), profilefragment)
                         .commit();
 
 
@@ -243,7 +277,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager1 = getFragmentManager();
                 fragmentManager1.beginTransaction()
-                        .replace(contentView2.getId(), fragment).addToBackStack(null)
+                        .replace(contentView2.getId(), fragment)
                         .commit();
 
 
@@ -314,10 +348,10 @@ class VZFriends_Adapter extends BaseAdapter implements Filterable {
 
         //set Image if exxists
         try {
-            if (data.getPhoto()!= null) {
-//                Picasso.with(_c).load(data.getPhoto()).into(v.imageView);
-                v.imageView.setTag(data.getPhoto());
-                new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
+            if (!data.getPhoto().isEmpty()) {
+                Picasso.with(_c).load(data.getPhoto()).into(v.imageView);
+//                v.imageView.setTag(data.getPhoto());
+//                new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
 
             } else {
                 v.imageView.setImageResource(R.drawable.simple_profile_placeholder1);
@@ -327,10 +361,8 @@ class VZFriends_Adapter extends BaseAdapter implements Filterable {
 
         } catch
                 (OutOfMemoryError e) {
-            //  v.imageView.setImageDrawable(this._c.getDrawable(R.drawable.contact));
             e.printStackTrace();
         }
-        Log.e("Image Thumb", "---------" + data.getThumb());
         view.setTag(data);
 
         // view.setBackgroundColor(Color.parseColor("#88e0e7e0"));
