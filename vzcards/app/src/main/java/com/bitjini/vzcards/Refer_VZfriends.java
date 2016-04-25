@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -53,7 +54,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by bitjini on 18/12/15.
  */
-public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextListener {
+public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextListener, AdapterView.OnItemClickListener {
 
 
     String VZFRIENDS_URL = "http://vzcards-api.herokuapp.com/get_my_friends/?access_token=";
@@ -80,7 +81,10 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vzfriends_list);
 
+
+
         selectUsers = new ArrayList<SelectUser>();
+
 
         try {
 
@@ -132,12 +136,14 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
         listView.setAdapter(adapter);
         filter = adapter.getFilter();
         listView.setFastScrollEnabled(true);
+        listView.setOnItemClickListener(this);
 
     }
 
 
     private void setupSearchView()
     {
+
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setOnQueryTextListener(this);
         mSearchView.setSubmitButtonEnabled(true);
@@ -178,50 +184,24 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
     }
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        LayoutInflater li = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = li.inflate(R.layout.vz_frnds, null);
-
-        Bitmap image = null;
         SelectUser data = (SelectUser) parent.getItemAtPosition(position);
+        Intent nextScreenIntent = new Intent(Refer_VZfriends.this, Friends_Profile.class);
 
-        String name = data.getName();
-        String phoneNo = data.getPhone();
-//                image = data.getThumb();
-//
-//
-//                if (image== null) {
-
-        Drawable d = getResources().getDrawable(R.drawable.simple_profile_placeholder1);
-        ImageView contactimage = (ImageView) view.findViewById(R.id.contactImage);
-        contactimage.setImageDrawable(d);
-        contactimage.buildDrawingCache();
-        image = contactimage.getDrawingCache();
-//                }
-
-        //dynamically increase the size of the imageview
-//                int width = image.getWidth();
-//                int height = image.getHeight();
-//                int newWidth = 300;
-//                int newHeight = 240;
-//                float scaleWidth = ((float) newWidth) / width;
-//                float scaleHeight = ((float) newHeight) / height;
-//                Matrix matrix = new Matrix();
-//                matrix.postScale(scaleWidth, scaleHeight);
-//                Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix,true);
-
-        //Passing data to nextscreen
-        Intent nextScreenIntent = new Intent(c, DisplayContact.class);
-        nextScreenIntent.putExtra("name", name);
-        nextScreenIntent.putExtra("phoneNo", phoneNo);
-
-        Bundle extras = new Bundle();
-        extras.putParcelable("photo", image);
-
-        nextScreenIntent.putExtras(extras);
-
-
-        Log.e("n", name + "." + phoneNo);
+        nextScreenIntent.putExtra("fname", data.getfName());
+        nextScreenIntent.putExtra("lname", data.getLname());
+        nextScreenIntent.putExtra("photo", data.getPhoto());
+        nextScreenIntent.putExtra("phone", data.getPhone());
+        nextScreenIntent.putExtra("company", data.getCompany());
+        nextScreenIntent.putExtra("pin_code", data.getPin_code());
+        nextScreenIntent.putExtra("industry", data.getIndustry());
+        nextScreenIntent.putExtra("address_line_1", data.getAddress1());
+        nextScreenIntent.putExtra("address_line_2", data.getAddress2());
+        nextScreenIntent.putExtra("city", data.getCity());
+        nextScreenIntent.putExtra("company_photo", data.getComany_photo());
+        nextScreenIntent.putExtra("email", data.getEmail());
         startActivity(nextScreenIntent);
+
+        Log.e("getCompany :",""+data.getCompany());
     }
 
 

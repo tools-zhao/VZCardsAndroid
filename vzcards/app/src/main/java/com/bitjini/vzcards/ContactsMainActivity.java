@@ -1,17 +1,20 @@
 package com.bitjini.vzcards;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -45,9 +48,11 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
 
     // Contact List
     ListView listView;
+    // Request code for READ_CONTACTS. It can be any number > 0.
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
     // Cursor to load contacts list
-    Cursor phones, email;
+    public  Cursor phones, email;
     SearchView mSearchView;
 
     Filter filter;
@@ -70,11 +75,10 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
 //        initSearchView();
 
 
-        phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+      showContacts();
         LoadContact loadContact = new LoadContact();
 
         loadContact.execute();
-
         //getting screen size--(1280 X 720)
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -86,7 +90,28 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
 
 
     }
+    public void showContacts() {
+        // Check the SDK version and whether the permission is already granted or not.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+            //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+        } else {
+            phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                showContacts();
+            } else {
+                Toast.makeText(ContactsMainActivity.this, "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     // Load data on background
     class LoadContact extends AsyncTask<Void, Void, Void>  {
         @Override

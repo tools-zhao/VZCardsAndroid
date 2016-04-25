@@ -24,7 +24,7 @@
 
         <activity android:name=".ContactsMainActivity"></activity>
         <activity android:name=".Friends_Profile"></activity>
-        <activity android:name=".Refer_VZfriends"></activity>
+        <activity android:name=".Refer_VZfriends"  android:windowSoftInputMode="stateHidden"></activity>
         <activity android:name=".DisplayContact"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data

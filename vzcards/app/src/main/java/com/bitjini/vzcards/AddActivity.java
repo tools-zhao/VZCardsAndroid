@@ -85,7 +85,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     public ImageView item_image;
     Button addImage;
     EditText txtItem, txtDescription;
-    EditText txtDate_validity;
+    TextView txtDate_validity;
     ImageButton submit;
     public static String Item_picturePath;
     public String item_photo = "", item = "", description = "", date_validity = "", question = "";
@@ -102,7 +102,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         addImage = (Button) iHave.findViewById(R.id.addImage);
         txtItem = (EditText) iHave.findViewById(R.id.ask);
         txtDescription = (EditText) iHave.findViewById(R.id.desc);
-        txtDate_validity = (EditText) iHave.findViewById(R.id.validity);
+        txtDate_validity = (TextView) iHave.findViewById(R.id.validity);
         item_image = (ImageView) iHave.findViewById(R.id.item_img);
 
         btnCander = (ImageButton) iHave.findViewById(R.id.click);

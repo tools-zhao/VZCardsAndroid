@@ -181,9 +181,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         // send the adapterArraylist to the adapter and set it to listview
         editTextAdapter = new EditTextAdapter(Friends_Profile.this, arrayList, R.layout.profile_layout);
         listView.setAdapter(editTextAdapter);
-        InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (getCurrentFocus() != null){
-            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);}
+
 //
 
     }

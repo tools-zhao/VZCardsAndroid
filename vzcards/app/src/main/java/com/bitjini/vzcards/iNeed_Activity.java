@@ -76,7 +76,8 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     ImageButton btnCander;
     public ImageView item_image;
     Button addImage;
-    EditText txtItem,txtDescription,txtDate_validity;
+    EditText txtItem,txtDescription;
+    TextView txtDate_validity;
     ImageButton submit;
     public static String Item_picturePath;
     public String item_photo = "", item = "", description = "", date_validity="",question="";
@@ -94,7 +95,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         addImage=(Button) iNeed.findViewById(R.id.addImage);
         txtItem=(EditText) iNeed.findViewById(R.id.ask);
         txtDescription=(EditText) iNeed.findViewById(R.id.desc);
-        txtDate_validity=(EditText) iNeed.findViewById(R.id.validity);
+        txtDate_validity=(TextView) iNeed.findViewById(R.id.validity);
         item_image=(ImageView) iNeed.findViewById(R.id.item_img);
         submit=(ImageButton) iNeed.findViewById(R.id.imgbtn);
 

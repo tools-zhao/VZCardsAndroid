@@ -238,19 +238,6 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 //                matrix.postScale(scaleWidth, scaleHeight);
 //                Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix,true);
 
-        //Passing data to nextscreen
-//        Intent nextScreenIntent = new Intent(c, DisplayContact.class);
-//        nextScreenIntent.putExtra("name", name);
-//        nextScreenIntent.putExtra("phoneNo", phoneNo);
-//
-//        Bundle extras = new Bundle();
-//        extras.putParcelable("photo", image);
-//
-//        nextScreenIntent.putExtras(extras);
-//
-//
-//        Log.e("n", name + "." + phoneNo);
-//        startActivity(nextScreenIntent);
 
 
     public void onClick(View v) {
