@@ -59,12 +59,12 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
     ArrayList<String > phoneArray=new ArrayList<>();
 
     public ProgressDialog progress;
-
+    public Cursor phones;
     // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
     // Cursor to load contacts list
-    Cursor phones;
+
    Activity _activity;
     // Pop up
     ContentResolver resolver;
@@ -207,14 +207,14 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         @Override
         protected Void doInBackground(Void... voids) {
 
-
+            FeedActivity f=new FeedActivity();
+             Log.e("show contact:",""+f.phones);
 //            // Get Contact list from Phone
-            phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+            Log.e("phones", "" + f.phones);
 
-
-            if (phones != null) {
-                Log.e("count", "" + phones.getCount());
-                if (phones.getCount() == 0) {
+            if (f.phones != null) {
+                Log.e("count", "" + f.phones.getCount());
+                if (f.phones.getCount() == 0) {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
@@ -224,8 +224,8 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                     });
                 }
 
-                while (phones.moveToNext()) {
-                    String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                while (f.phones.moveToNext()) {
+                    String phoneNumber = f.phones.getString(f.phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
                     phoneNumber=phoneNumber.replaceAll("[\\D]", "");
                     // get the country code
@@ -272,5 +272,6 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             return CountryZipCode;
         }
     }
+
 }
 

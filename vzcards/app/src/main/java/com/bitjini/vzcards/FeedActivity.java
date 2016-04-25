@@ -1,11 +1,14 @@
 package com.bitjini.vzcards;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -14,9 +17,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -66,10 +71,12 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
     String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=";
     ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    public Cursor phones;
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
     ArrayList<DataFeeds> feeds = new ArrayList<DataFeeds>();
     String token_sharedPreference;
+    // Request code for READ_CONTACTS. It can be any number > 0.
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
     ListView listView;
     public FeedsAdapter adapter;
@@ -119,7 +126,8 @@ FrameLayout layout_MainMenu;
        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         System.out.println(" getting token from sharedpreference " + token_sharedPreference);
 
-        new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+token_sharedPreference);
+      showContacts();
+
         // call AsynTask to perform network operation on separate thread
         getFeedsContents();
         // set on onList item click
@@ -239,7 +247,28 @@ FrameLayout layout_MainMenu;
         }, 5000);
 
     }
+    private void showContacts() {
+        // Check the SDK version and whether the permission is already granted or not.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+            //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+        } else {
+            phones =getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
+            new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+token_sharedPreference);
+        }
+    }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                showContacts();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
         protected void onPreExecute() {
 

@@ -52,7 +52,7 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
     // Cursor to load contacts list
-    public  Cursor phones, email;
+     Cursor phones, email;
     SearchView mSearchView;
 
     Filter filter;
@@ -76,9 +76,7 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
 
 
       showContacts();
-        LoadContact loadContact = new LoadContact();
 
-        loadContact.execute();
         //getting screen size--(1280 X 720)
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -97,7 +95,9 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
         } else {
             phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+            LoadContact loadContact = new LoadContact();
 
+            loadContact.execute();
         }
     }
     @Override
