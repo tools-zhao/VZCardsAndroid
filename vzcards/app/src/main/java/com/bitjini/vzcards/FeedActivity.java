@@ -253,7 +253,6 @@ FrameLayout layout_MainMenu;
             getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
         } else {
-            phones =getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
             new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+token_sharedPreference);
         }

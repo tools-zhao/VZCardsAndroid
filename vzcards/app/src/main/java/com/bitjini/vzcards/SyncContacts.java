@@ -207,14 +207,16 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            FeedActivity f=new FeedActivity();
-             Log.e("show contact:",""+f.phones);
-//            // Get Contact list from Phone
-            Log.e("phones", "" + f.phones);
 
-            if (f.phones != null) {
-                Log.e("count", "" + f.phones.getCount());
-                if (f.phones.getCount() == 0) {
+            phones =context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+
+            Log.e("show contact:",""+phones);
+//            // Get Contact list from Phone
+//            Log.e("phones", "" + phones);
+
+            if (phones != null) {
+                Log.e("count", "" + phones.getCount());
+                if (phones.getCount() == 0) {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
@@ -224,8 +226,8 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                     });
                 }
 
-                while (f.phones.moveToNext()) {
-                    String phoneNumber = f.phones.getString(f.phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                while (phones.moveToNext()) {
+                    String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
                     phoneNumber=phoneNumber.replaceAll("[\\D]", "");
                     // get the country code

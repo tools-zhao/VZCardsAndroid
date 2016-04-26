@@ -1,39 +1,27 @@
 package com.bitjini.vzcards;
 
 import android.app.Activity;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
-import android.content.ActivityNotFoundException;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.ContactsContract;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -46,7 +34,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -56,8 +43,11 @@ import java.util.concurrent.ExecutionException;
  */
 public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextListener, AdapterView.OnItemClickListener {
 
-
+    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
     String VZFRIENDS_URL = "http://vzcards-api.herokuapp.com/get_my_friends/?access_token=";
+    public String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
+
+    String token_sharedPreference;
     VerifyScreen p = new VerifyScreen();
 
     Context c;
@@ -75,6 +65,9 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
     Filter filter;
     // Pop up
     ContentResolver resolver;
+    private ProgressDialog progress;
+
+
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,28 +177,89 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
     }
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
         SelectUser data = (SelectUser) parent.getItemAtPosition(position);
-        Intent nextScreenIntent = new Intent(Refer_VZfriends.this, Friends_Profile.class);
+        reffered_ticket=""; reffered_phone="";my_ticket="";
+        // get the name and phone number from phone book on item click
+        ticket_id_2 = data.getfName()+""+data.getLname();
+        phone_2 = data.getPhone().replaceAll("\\D+", "");
+        Log.e("name =:",""+ticket_id_2);
+        Log.e("phone2 =:",""+phone_2);
 
-        nextScreenIntent.putExtra("fname", data.getfName());
-        nextScreenIntent.putExtra("lname", data.getLname());
-        nextScreenIntent.putExtra("photo", data.getPhoto());
-        nextScreenIntent.putExtra("phone", data.getPhone());
-        nextScreenIntent.putExtra("company", data.getCompany());
-        nextScreenIntent.putExtra("pin_code", data.getPin_code());
-        nextScreenIntent.putExtra("industry", data.getIndustry());
-        nextScreenIntent.putExtra("address_line_1", data.getAddress1());
-        nextScreenIntent.putExtra("address_line_2", data.getAddress2());
-        nextScreenIntent.putExtra("city", data.getCity());
-        nextScreenIntent.putExtra("company_photo", data.getComany_photo());
-        nextScreenIntent.putExtra("email", data.getEmail());
-        startActivity(nextScreenIntent);
+        // create an alert dialog box
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Do you want to refer " + ticket_id_2);
+        alertDialogBuilder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
 
-        Log.e("getCompany :",""+data.getCompany());
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+
+                        Intent intent=getIntent();
+                        // retrive the data sent by feed detail
+                        ticket_id_1 = intent.getStringExtra("ticket_id");
+                        phone_1 = intent.getStringExtra("phone1");
+                        connecter_vz_id = intent.getStringExtra("connector_vz_id");
+                        Log.e("ticket_id_1 =:",""+ticket_id_1);
+                        Log.e("phone1 =:",""+phone_1);
+                        Log.e("connector_vz_id =:",""+connecter_vz_id);
+
+                        p.sharedPreferences = getSharedPreferences(p.VZCARD_PREFS, 0);
+                        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            public void run() {
+                                if(progress!=null){
+                                    progress = new ProgressDialog(Refer_VZfriends.this);
+                                    progress.setMessage("Loading");
+                                    progress.show();}
+                                new Connect_AsynTask(){
+                                    protected void onPostExecute(String result) {
+                                        if (progress != null && progress.isShowing()) {
+
+                                            progress.dismiss();
+                                            progress = null;
+                                        }
+                                        Toast.makeText(getApplicationContext(), "Tickets Connected", Toast.LENGTH_LONG).show();
+
+                                    }
+                                }.execute(URL_CONNECT + token_sharedPreference);
+
+
+
+                            }
+                        });
+
+
+
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("cancel",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+
     }
 
 
-    class VZFriends_Adapter extends BaseAdapter implements Filterable {
+
+
+
+
+
+
+class VZFriends_Adapter extends BaseAdapter implements Filterable {
 
         private ArrayList<SelectUser> arrayList = new ArrayList<>();
         private ArrayList<SelectUser> arrayListFilter=null;

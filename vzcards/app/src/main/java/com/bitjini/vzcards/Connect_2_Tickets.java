@@ -57,6 +57,9 @@ public class Connect_2_Tickets extends Fragment {
         my_ticket = "";
         reffered_ticket = "";
         reffered_phone = "";
+        Log.e("ticket_id_1 =:",""+ticket_id_1);
+        Log.e("phone1 =:",""+phone_1);
+        Log.e("connector_vz_id =:",""+connecter_vz_id);
 
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);

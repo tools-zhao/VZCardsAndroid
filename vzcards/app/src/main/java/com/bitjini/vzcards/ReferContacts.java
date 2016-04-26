@@ -2,17 +2,12 @@ package com.bitjini.vzcards;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -21,30 +16,21 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Filter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import android.support.v4.app.Fragment;
-import com.bitjini.vzcards.SelectUser;
-import com.bitjini.vzcards.SelectUserAdapter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by bitjini on 16/2/16.
@@ -205,7 +191,7 @@ return refer_contact;
                                     phone1 = getArguments().getString("phone1");
                                     connector_vz_id = getArguments().getString("connector_vz_id");
 
-                                    Connect_2_Tickets connect = new Connect_2_Tickets();
+                                    Fragment connect = new Connect_2_Tickets();
 
                                     Bundle args = new Bundle();
                                     args.putString("ticket_id_1", ticket_id_1);

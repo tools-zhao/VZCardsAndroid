@@ -439,9 +439,9 @@ try{
                     Intent nextScreenIntent = new Intent(_c, Friends_Profile.class);
 
 
-                    nextScreenIntent.putExtra("fname", data.getFname());
-                    nextScreenIntent.putExtra("lname", data.getLname());
-                    nextScreenIntent.putExtra("photo", data.getPhoto());
+                    nextScreenIntent.putExtra("fname", data.getReferredfName());
+                    nextScreenIntent.putExtra("lname", data.getReferredlName());
+                    nextScreenIntent.putExtra("photo", data.getReferedPhoto());
                     nextScreenIntent.putExtra("phone", data.getPhone());
                     nextScreenIntent.putExtra("company", data.getCompany());
                     nextScreenIntent.putExtra("pin_code", data.getPin_code());
