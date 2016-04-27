@@ -1,38 +1,28 @@
 package com.bitjini.vzcards;
 
 import android.app.Activity;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
-import android.content.ActivityNotFoundException;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.ContactsContract;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -45,7 +35,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -53,10 +42,13 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by bitjini on 18/12/15.
  */
-public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextListener {
+public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextListener, AdapterView.OnItemClickListener {
 
-
+    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
     String VZFRIENDS_URL = "http://vzcards-api.herokuapp.com/get_my_friends/?access_token=";
+    public String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
+
+    String token_sharedPreference;
     VerifyScreen p = new VerifyScreen();
 
     Context c;
@@ -74,13 +66,22 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
     Filter filter;
     // Pop up
     ContentResolver resolver;
+    private ProgressDialog progress;
+
+
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vzfriends_list);
 
+
+        InputMethodManager inputManager2 = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (getCurrentFocus() != null){
+            inputManager2.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
         selectUsers = new ArrayList<SelectUser>();
+
 
         try {
 
@@ -132,12 +133,14 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
         listView.setAdapter(adapter);
         filter = adapter.getFilter();
         listView.setFastScrollEnabled(true);
+        listView.setOnItemClickListener(this);
 
     }
 
 
     private void setupSearchView()
     {
+
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setOnQueryTextListener(this);
         mSearchView.setSubmitButtonEnabled(true);
@@ -178,54 +181,72 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
     }
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        LayoutInflater li = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = li.inflate(R.layout.vz_frnds, null);
 
-        Bitmap image = null;
         SelectUser data = (SelectUser) parent.getItemAtPosition(position);
+        reffered_ticket=""; reffered_phone="";my_ticket="";
+        // get the name and phone number from phone book on item click
+        ticket_id_2 = data.getfName()+""+data.getLname();
+        phone_2 = data.getPhone().replaceAll("\\D+", "");
+        Log.e("name =:",""+ticket_id_2);
+        Log.e("phone2 =:",""+phone_2);
 
-        String name = data.getName();
-        String phoneNo = data.getPhone();
-//                image = data.getThumb();
-//
-//
-//                if (image== null) {
+        // create an alert dialog box
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Do you want to refer " + ticket_id_2);
+        alertDialogBuilder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
 
-        Drawable d = getResources().getDrawable(R.drawable.simple_profile_placeholder1);
-        ImageView contactimage = (ImageView) view.findViewById(R.id.contactImage);
-        contactimage.setImageDrawable(d);
-        contactimage.buildDrawingCache();
-        image = contactimage.getDrawingCache();
-//                }
-
-        //dynamically increase the size of the imageview
-//                int width = image.getWidth();
-//                int height = image.getHeight();
-//                int newWidth = 300;
-//                int newHeight = 240;
-//                float scaleWidth = ((float) newWidth) / width;
-//                float scaleHeight = ((float) newHeight) / height;
-//                Matrix matrix = new Matrix();
-//                matrix.postScale(scaleWidth, scaleHeight);
-//                Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix,true);
-
-        //Passing data to nextscreen
-        Intent nextScreenIntent = new Intent(c, DisplayContact.class);
-        nextScreenIntent.putExtra("name", name);
-        nextScreenIntent.putExtra("phoneNo", phoneNo);
-
-        Bundle extras = new Bundle();
-        extras.putParcelable("photo", image);
-
-        nextScreenIntent.putExtras(extras);
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
 
 
-        Log.e("n", name + "." + phoneNo);
-        startActivity(nextScreenIntent);
+                        Intent intent=getIntent();
+                        // retrive the data sent by feed detail
+                        ticket_id_1 = intent.getStringExtra("ticket_id");
+                        phone_1 = intent.getStringExtra("phone1");
+                        connecter_vz_id = intent.getStringExtra("connector_vz_id");
+                        Log.e("ticket_id_1 =:",""+ticket_id_1);
+                        Log.e("phone1 =:",""+phone_1);
+                        Log.e("connector_vz_id =:",""+connecter_vz_id);
+
+                        Intent intent2=new Intent(Refer_VZfriends.this,Connect_2_Tickets.class);
+                        intent2.putExtra("ticket_id_1", ticket_id_1);
+                        intent2.putExtra("phone1", phone_1);
+                        intent2.putExtra("connector_vz_id", connecter_vz_id);
+                        intent2.putExtra("phone2", phone_2);
+                        intent2.putExtra("ticket_id_2", ticket_id_2);
+                        startActivity(intent2);
+
+
+
+
+
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("cancel",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+
     }
 
 
-    class VZFriends_Adapter extends BaseAdapter implements Filterable {
+
+
+
+
+
+
+class VZFriends_Adapter extends BaseAdapter implements Filterable {
 
         private ArrayList<SelectUser> arrayList = new ArrayList<>();
         private ArrayList<SelectUser> arrayListFilter=null;

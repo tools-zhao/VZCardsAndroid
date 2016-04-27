@@ -1,47 +1,37 @@
 package com.bitjini.vzcards;
 
+import android.Manifest;
 import android.app.Activity;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Filter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import android.support.v4.app.Fragment;
-import com.bitjini.vzcards.SelectUser;
-import com.bitjini.vzcards.SelectUserAdapter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by bitjini on 16/2/16.
@@ -53,7 +43,11 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
 
     // Contact List
     ListView listView;
+    // Request code for READ_CONTACTS. It can be any number > 0.
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
+    Context context=null;
+    Activity _activity;
     // Cursor to load contacts list
     Cursor phones, email;
     SearchView mSearchView;
@@ -74,18 +68,39 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
         listView = (ListView) refer_contact.findViewById(R.id.contactList);
         mSearchView = (SearchView) refer_contact.findViewById(R.id.searchview);
 
+        showContacts();
 
 //        initSearchView();
 
 
-        phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-        LoadContact loadContact = new LoadContact();
 
-        loadContact.execute();
 return refer_contact;
 
     }
+    private void showContacts() {
+        // Check the SDK version and whether the permission is already granted or not.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+            //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+        } else {
+            phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
+            LoadContact loadContact = new LoadContact();
+
+            loadContact.execute();
+        }
+    }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                showContacts();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     // Load data on background
     class LoadContact extends AsyncTask<Void, Void, Void> {
         @Override
@@ -177,21 +192,15 @@ return refer_contact;
                                     phone1 = getArguments().getString("phone1");
                                     connector_vz_id = getArguments().getString("connector_vz_id");
 
-                                    Connect_2_Tickets connect = new Connect_2_Tickets();
+                                    Intent intent=new Intent(getActivity(),Connect_2_Tickets.class);
+                                    intent.putExtra("ticket_id_1", ticket_id_1);
+                                    intent.putExtra("phone1", phone1);
+                                    intent.putExtra("connector_vz_id", connector_vz_id);
+                                    intent.putExtra("phone2", phone2);
+                                    intent.putExtra("ticket_id_2", name);
+                                    startActivity(intent);
 
-                                    Bundle args = new Bundle();
-                                    args.putString("ticket_id_1", ticket_id_1);
-                                    args.putString("phone1", phone1);
-                                    args.putString("connector_vz_id", connector_vz_id);
-                                    args.putString("phone2", phone2);
-                                    args.putString("ticket_id_2", name);
 
-
-                                    connect.setArguments(args);
-
-                                    //Inflate the fragment
-                                    getFragmentManager().beginTransaction().add(R.id.vzfrnds_list_frame, connect).addToBackStack(connect.toString())
-                                            .commit();
                                 }
                             });
 
@@ -242,50 +251,3 @@ return refer_contact;
 }
 
 
-//
-///**
-// * Shows a list that can be filtered in-place with a SearchView in non-iconified mode.
-// */
-//        public class SearchViewFilterMode extends Activity implements SearchView.OnQueryTextListener {
-//
-//            private SearchView mSearchView;
-//            private ListView mListView;
-//
-//            private final String[] mStrings = Cheeses.sCheeseStrings;
-//
-//            @Override
-//            protected void onCreate(Bundle savedInstanceState) {
-//                super.onCreate(savedInstanceState);
-//                getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-//
-//                setContentView(R.layout.contact_listview);
-//
-//                mSearchView = (SearchView) findViewById(R.id.searchview);
-//                mListView = (ListView) findViewById(R.id.contactList);
-//                mListView.setAdapter(new ArrayAdapter<String>(this,
-//                        android.R.layout.simple_list_item_1,
-//                        mStrings));
-//                mListView.setTextFilterEnabled(true);
-//                setupSearchView();
-//            }
-//
-//            private void setupSearchView() {
-//                mSearchView.setIconifiedByDefault(false);
-//                mSearchView.setOnQueryTextListener(this);
-//                mSearchView.setSubmitButtonEnabled(true);
-//                mSearchView.setQueryHint("Search Here");
-//            }
-//
-//            public boolean onQueryTextChange(String newText) {
-//                if (TextUtils.isEmpty(newText)) {
-//                    mListView.clearTextFilter();
-//                } else {
-//                    mListView.setFilterText(newText.toString());
-//                }
-//                return true;
-//            }
-//
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//        }

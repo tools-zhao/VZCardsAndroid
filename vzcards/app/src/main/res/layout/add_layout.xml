@@ -95,14 +95,14 @@
             android:layout_gravity="center_horizontal">
 
 
-            <EditText
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/text_drawable"
                 android:hint="Validity"
                 android:gravity="center"
                 android:id="@+id/validity"
-                android:layout_gravity="center"></EditText>
+                android:layout_gravity="center"></TextView>
 
         </RelativeLayout>
         <ImageButton
@@ -113,6 +113,7 @@
             android:src="@drawable/calender"
             android:id="@+id/click"
             android:layout_above="@+id/imgbtn"
+            android:layout_alignParentRight="true"
             android:layout_alignEnd="@+id/l3" />
         <ImageButton
             android:layout_width="100dp"

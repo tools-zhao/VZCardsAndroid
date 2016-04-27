@@ -1,35 +1,34 @@
 package com.bitjini.vzcards;
 
+import android.Manifest;
 import android.animation.LayoutTransition;
-import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
-import android.view.animation.Transformation;
-import android.widget.LinearLayout.LayoutParams;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -42,19 +41,19 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
     String HISTORY_URL = "http://vzcards-api.herokuapp.com/history/?access_token=";
     VerifyScreen p = new VerifyScreen();
     private SwipeRefreshLayout swipeRefreshLayout;
+    // Request code for READ_CONTACTS. It can be any number > 0.
+    private static final int PERMISSIONS_REQUEST_CALL_CONTACTS = 100;
 
     MyProfile_Fragment pr = new MyProfile_Fragment();
     ArrayList<ReferalUsers> groupItem = new ArrayList<ReferalUsers>();
     Button vzfrnds, profilebtn, referralbtn;
     ListView list;
-    ProgressBar progressBar;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View referral = inflater.inflate(R.layout.list_referal_activity, container, false);
         RelativeLayout linearLayout = (RelativeLayout) referral.findViewById(R.id.parent);
         linearLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
-        progressBar = (ProgressBar) referral.findViewById(R.id.progressBar);
         swipeRefreshLayout = (SwipeRefreshLayout) referral.findViewById(R.id.pullToRefresh);
         // the refresh listner. this would be called when the layout is pulled down
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -75,14 +74,8 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
         // Populate our list with groups and it's children
         // Creating the list adapter and populating the list
-        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-        animation.setDuration(1000); //in milliseconds
-        animation.setInterpolator(new DecelerateInterpolator());
-        animation.start();
+
         getReferalContents();
-        progressBar.clearAnimation();
-        progressBar.setVisibility(View.GONE);
-        list.setVisibility(View.VISIBLE);
 
         CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
         list.setAdapter(listAdapter);
@@ -157,16 +150,18 @@ try{
 
                             String referedFname = "", referedLname = "", refphoto = "", phone = "", company = "", pin_code = "", industry = "",
                                     address1 = "", address2 = "", city = "", company_photo = "", email = "";
-
+                            String refQuestion="",refDescription ="",refTicket_id = "",refItemName ="",
+                            refDate_validity = "",refVz_id = "",refItem_photo = "",refDate_created = "";
 
                             String refPhoneDetails = c2.getString("reffered_phone_details");
 
+                            // check if refPhone Details is a string or valid json object
                             JsonParser parser1 = new JsonParser();
                             JsonElement jsonObject1 = parser1.parse(refPhoneDetails);
-//                        Log.e("json object1 1=",""+jsonObject1);
+
                             if (jsonObject1.isJsonObject()) {
                                 JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
-//                        Log.w("reffered_phone_", "" + reffered_phone_details);
+
                                 referedFname = reffered_phone_details.getString("firstname");
                                 referedLname = reffered_phone_details.getString("lastname");
                                 refphoto = reffered_phone_details.getString("photo");
@@ -181,9 +176,8 @@ try{
                                 email = reffered_phone_details.getString("email");
 
                                 Log.e("json reffered_phone_ 2=", "" + jsonObject1);
-                            } else {
+                            } else  {
                                 phone = c2.getString("reffered_phone_details");
-                                referedFname = c2.getString("reffered_ticket_details");
                                 company = "";
                                 pin_code = "";
                                 industry = "";
@@ -195,6 +189,27 @@ try{
 
                                 Log.e("json reffered_ticket 3=", "" + referedFname);
                                 Log.e("json reffered_phone_ 3=", "" + phone);
+                            }
+                            String refTicketDetails = c2.getString("reffered_ticket_details");
+
+                            // check if refPhone Details is a string or valid json object
+                            JsonParser parser2 = new JsonParser();
+                            JsonElement jsonObject2 = parser2.parse(refPhoneDetails);
+
+                            if (jsonObject2.isJsonObject()) {
+                                JSONObject reffered_TicketDetails = c2.getJSONObject("reffered_ticket_details");
+                                 refQuestion = reffered_TicketDetails.getString("question");
+                                 refDescription = reffered_TicketDetails.getString("description");
+                                 refTicket_id = reffered_TicketDetails.getString("ticket_id");
+                                 refItemName = reffered_TicketDetails.getString("item");
+                                 refDate_validity = reffered_TicketDetails.getString("date_validity");
+                                 refVz_id = reffered_TicketDetails.getString("vz_id");
+                                 refItem_photo = reffered_TicketDetails.getString("item_photo");
+                                 refDate_created = reffered_TicketDetails.getString("date_created");
+                            }
+                            else
+                            {
+                                referedFname = c2.getString("reffered_ticket_details");
                             }
 
 
@@ -228,7 +243,7 @@ try{
                             referalUsers.setLname(lastname);
                             referalUsers.setPhoto(photo);
 
-                            // Referral
+                            // Referral details
                             referalUsers.setReferredfName(referedFname);
                             referalUsers.setReferredlName(referedLname);
                             referalUsers.setReferedPhoto(refphoto);
@@ -241,6 +256,11 @@ try{
                             referalUsers.setAddress2(address2);
                             referalUsers.setCity(city);
                             referalUsers.setComany_photo(company_photo);
+                            // Referred ticket details
+
+                            referalUsers.setRefDesc(refDescription);
+                            referalUsers.setRefItemName(refItemName);
+                            referalUsers.setRefItem_photo(refItem_photo);
 
                             Log.e("referedFname 1=", "" + referedFname);
                             groupItem.add(referalUsers);
@@ -378,9 +398,9 @@ try{
             View toolbar = (View) v.findViewById(R.id.toolbar);
             TextView desc = (TextView) v.findViewById(R.id.textView1);
             ImageView item_photo = (ImageView) v.findViewById(R.id.item_photo);
-            desc.setText(cat.getDesc());
-            if (!cat.getItem_photo().isEmpty()) {
-                Picasso.with(_c).load(cat.getItem_photo()).resize(250, 250).into(item_photo);
+            desc.setText(cat.getRefItemName()+"\n"+cat.getRefDesc());
+            if (!cat.getRefItem_photo().isEmpty()) {
+                Picasso.with(_c).load(cat.getRefItem_photo()).resize(250, 250).placeholder(R.drawable.no_pic_placeholder_with_border_800x800).into(item_photo);
 //                    referredPhoto.setTag(cat.getReferedPhoto());
 //                    new DownloadImagesTask(_c).execute(referredPhoto);// Download item_photo from AsynTask
 
@@ -399,14 +419,16 @@ try{
 
         public void onClick(View view) {
 //            ReferalUsers cat=itemList.get(position);
-            int position=(Integer)view.getTag();
+            int position = 0;
+            if(view.getTag()!=null)
+            {
+                position=(Integer)view.getTag();
+            }
             ReferalUsers data=itemList.get(position);
             switch (view.getId()) {
                 case R.id.btnCall:
                     try {
-                        Intent callIntent = new Intent(Intent.ACTION_CALL);
-                        callIntent.setData(Uri.parse("tel:" + data.getPhone()));
-                        startActivity(callIntent);
+                       CallPhone(data.getPhone());
                     } catch (android.content.ActivityNotFoundException ex) {
                         Toast.makeText(_c, "your Activity is not found", Toast.LENGTH_LONG).show();
                     }
@@ -414,29 +436,21 @@ try{
 
                 case R.id.btnVzCard:
 
-                    Friends_Profile ldf = new Friends_Profile();
-
-                    Bundle args = new Bundle();
-
-                    Log.e("fname", data.getReferredfName());
-                    args.putString("fname", data.getReferredfName());
-                    args.putString("lname", data.getReferredlName());
-                    args.putString("lname", data.getReferredlName());
-                    args.putString("photo", data.getReferedPhoto());
-                    args.putString("phone", data.getPhone());
-                    args.putString("company", data.getCompany());
-                    args.putString("pin_code", data.getPin_code());
-                    args.putString("industry", data.getIndustry());
-                    args.putString("address1", data.getAddress1());
-                    args.putString("address2", data.getAddress2());
-                    args.putString("city", data.getCity());
-                    args.putString("company_photo", data.getComany_photo());
-                    ldf.setArguments(args);
-                    //Inflate the fragment
-                    getFragmentManager().beginTransaction().add(R.id.referral_frame, ldf).addToBackStack(ldf.toString())
-                            .commit();
+                    Intent nextScreenIntent = new Intent(_c, Friends_Profile.class);
 
 
+                    nextScreenIntent.putExtra("fname", data.getReferredfName());
+                    nextScreenIntent.putExtra("lname", data.getReferredlName());
+                    nextScreenIntent.putExtra("photo", data.getReferedPhoto());
+                    nextScreenIntent.putExtra("phone", data.getPhone());
+                    nextScreenIntent.putExtra("company", data.getCompany());
+                    nextScreenIntent.putExtra("pin_code", data.getPin_code());
+                    nextScreenIntent.putExtra("industry", data.getIndustry());
+                    nextScreenIntent.putExtra("address1", data.getAddress1());
+                    nextScreenIntent.putExtra("address2", data.getAddress2());
+                    nextScreenIntent.putExtra("city", data.getCity());
+                    nextScreenIntent.putExtra("company_photo", data.getComany_photo());
+                    startActivity(nextScreenIntent);
 
                     break;
                 default:
@@ -449,6 +463,18 @@ try{
         @Override
         public boolean isEnabled(int position) {
             return true;
+        }
+        private void CallPhone(String phone) {
+            // Check the SDK version and whether the permission is already granted or not.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, PERMISSIONS_REQUEST_CALL_CONTACTS);
+                //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+            } else {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                Log.e("phone ",""+phone);
+                callIntent.setData(Uri.parse("tel:" + "+"+phone));
+                startActivity(callIntent);
+            }
         }
 
 

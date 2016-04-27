@@ -11,6 +11,47 @@ public class ReferalUsers {
     String photo="",referedPhoto="",comany_photo="",item_photo="";
     String desc,itemName,dateValidity;
     String ticketReferedName;
+    String refQuestion="",refDesc="",refItemName="",refDateValidity="",refItem_photo="";
+
+    public String getRefItem_photo() {
+        return refItem_photo;
+    }
+
+    public void setRefItem_photo(String refItem_photo) {
+        this.refItem_photo = refItem_photo;
+    }
+
+    public String getRefQuestion() {
+        return refQuestion;
+    }
+
+    public void setRefQuestion(String refQuestion) {
+        this.refQuestion = refQuestion;
+    }
+
+    public String getRefDesc() {
+        return refDesc;
+    }
+
+    public void setRefDesc(String refDesc) {
+        this.refDesc = refDesc;
+    }
+
+    public String getRefItemName() {
+        return refItemName;
+    }
+
+    public void setRefItemName(String refItemName) {
+        this.refItemName = refItemName;
+    }
+
+    public String getRefDateValidity() {
+        return refDateValidity;
+    }
+
+    public void setRefDateValidity(String refDateValidity) {
+        this.refDateValidity = refDateValidity;
+    }
 
     public String getTicketReferedName() {
         return ticketReferedName;

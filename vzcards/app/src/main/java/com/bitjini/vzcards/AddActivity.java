@@ -67,6 +67,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -85,7 +86,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     public ImageView item_image;
     Button addImage;
     EditText txtItem, txtDescription;
-    EditText txtDate_validity;
+    TextView txtDate_validity;
     ImageButton submit;
     public static String Item_picturePath;
     public String item_photo = "", item = "", description = "", date_validity = "", question = "";
@@ -93,7 +94,15 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     public Bitmap output, bitmap;
     ImageButton btnCander;
     VerifyScreen p = new VerifyScreen();
+    static final int DATE_DIALOG_ID = 999;
+    private int myear;
+    private int mmonth;
+    private int mday;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -102,7 +111,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         addImage = (Button) iHave.findViewById(R.id.addImage);
         txtItem = (EditText) iHave.findViewById(R.id.ask);
         txtDescription = (EditText) iHave.findViewById(R.id.desc);
-        txtDate_validity = (EditText) iHave.findViewById(R.id.validity);
+        txtDate_validity = (TextView) iHave.findViewById(R.id.validity);
         item_image = (ImageView) iHave.findViewById(R.id.item_img);
 
         btnCander = (ImageButton) iHave.findViewById(R.id.click);
@@ -211,7 +220,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                                 progress.dismiss();
                                                 progress = null;
                                             }
-                                            Log.e("debug=",""+result);
+                                            Log.e("debug=", "" + result);
                                             item_image.setImageBitmap(bitmap);
 
                                             if (result != null) {
@@ -439,18 +448,17 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 conn.connect();
 
 
-                int responseCode=conn.getResponseCode();
+                int responseCode = conn.getResponseCode();
 
-                Log.e("res code" ,""+responseCode);
+                Log.e("res code", "" + responseCode);
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
                     String line;
-                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    while ((line=br.readLine()) != null) {
-                        response+=line;
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line = br.readLine()) != null) {
+                        response += line;
                     }
-                }
-                else {
-                    response="";
+                } else {
+                    response = "";
 
                 }
                 System.out.println("finalResult " + response);
@@ -464,13 +472,12 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
             return null;
         }
-        private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
-        {
+
+        private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
             StringBuilder result = new StringBuilder();
             boolean first = true;
 
-            for (NameValuePair pair : params)
-            {
+            for (NameValuePair pair : params) {
                 if (first)
                     first = false;
                 else
@@ -569,6 +576,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
 
     }
+
     public void onClick(View v) {
         switch (v.getId()) {
 
@@ -581,8 +589,9 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             case R.id.imgbtn:
                 new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
                 break;
-            case  R.id.click:
+            case R.id.click:
                 showDatePickerDialog(v);
+
                 break;
             case R.id.ineed:
                 Fragment needFragment = new iNeed_Activity();
@@ -592,39 +601,54 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), needFragment).addToBackStack(contentView.toString())
+                        .add(contentView.getId(), needFragment).addToBackStack(null)
                         .commit();
                 break;
 
         }
     }
 
-
-
-        public void showDatePickerDialog(View v) {
+    //
+    public void showDatePickerDialog(View v) {
         DialogFragment newFragent = new DatePickerDialog1();
         newFragent.show(getActivity().getFragmentManager(), "datePicker");
     }
 
 
-    public class DatePickerDialog1 extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
+    public class DatePickerDialog1 extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
 
+        private int myear;
+        private int mmonth;
+        private int mday;
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
             final Calendar c = Calendar.getInstance();
 
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
+            myear = c.get(Calendar.YEAR);
+            mmonth = c.get(Calendar.MONTH);
+            mday= c.get(Calendar.DAY_OF_MONTH);
 
 
+            Date newDate=c.getTime();
+            Log.e("new date :",""+newDate);
+            DatePickerDialog da=new DatePickerDialog(getActivity(), this, myear, mmonth, mday);
+            da.getDatePicker().setMinDate(c.getTime().getTime());
             // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
+            return da;
         }
 
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            if (year < myear)
+                view.updateDate(myear, mmonth, mday);
+
+            if (monthOfYear < mmonth && year == myear)
+                view.updateDate(myear, mmonth, mday);
+
+            if (dayOfMonth < mday && year == myear && monthOfYear == mmonth)
+                view.updateDate(myear, mmonth, mday);
+
             int month = monthOfYear + 1;
             String formattedMonth = "" + month;
             String formattedDayOfMonth = "" + dayOfMonth;
@@ -642,4 +666,5 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         }
     }
 }
+
 
