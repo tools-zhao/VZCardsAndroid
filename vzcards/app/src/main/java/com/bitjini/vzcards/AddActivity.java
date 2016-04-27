@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -16,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -81,6 +83,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
     private final int SELECT_PHOTO = 1;
     private Uri outputFileUri;
+    private static final int PERMISSIONS_REQUEST_CAMERA = 200;
 
     Button havebtn;
     public ImageView item_image;
@@ -132,7 +135,11 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     }
 
     public void openImageIntent() {
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
+        }
+        else
+        {
         // Determine Uri of camera image to save.
         final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
         root.mkdir();
@@ -164,8 +171,9 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         // Add the camera options.
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
         startActivityForResult(chooserIntent, SELECT_PHOTO);
-    }
+        }
 
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -342,7 +350,17 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         }
 
     }
-
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_CAMERA) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                openImageIntent();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     public void decodeFile(String filePath) {
         // Decode image size
         BitmapFactory.Options o = new BitmapFactory.Options();

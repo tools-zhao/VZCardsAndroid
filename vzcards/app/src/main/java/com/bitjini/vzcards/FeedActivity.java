@@ -61,7 +61,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by bitjini on 28/12/15.
@@ -444,6 +446,7 @@ FrameLayout layout_MainMenu;
             holder.referButtonRed = (RadioButton) v.findViewById(R.id.referButton);
             holder.referButtonGreen = (RadioButton) v.findViewById(R.id.referButton);
             holder.radioGroup = (RadioGroup) v.findViewById(R.id.radioGroup1);
+
 
 
             holder.name.setText(String.valueOf(data.getFname()));

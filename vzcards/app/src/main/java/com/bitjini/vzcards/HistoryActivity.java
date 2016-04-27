@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +60,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     ArrayList<SelectUser> connectorDetails;
     History_Adapter adapter;
     ListView listView;
+    ProgressDialog progressDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -335,10 +338,20 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
                                    String ticketId=data.getTicket_id();
                                     // remove ticket details
+                                    progressDialog=new ProgressDialog(getActivity());
+                                    if(progressDialog!=null){
+                                    progressDialog.setMessage("Deleting ticket..");
+                                    progressDialog.show();
+                                    progressDialog.setCancelable(false);}
                                     new HttpAsyncTask(getActivity()){
                                        @Override
                                         public void onPostExecute(String result)
                                        {
+                                           if(progressDialog!=null & progressDialog.isShowing())
+                                           {
+                                               progressDialog.dismiss();
+                                               progressDialog=null;
+                                           }
 
                                             if(responseCode==200){
                                                 Integer index = (Integer) v.getTag();
@@ -564,23 +577,30 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         String created_date=date_created.replaceAll("[^0-9-:]", " ");
         String output = created_date.substring(0, 19);
         Log.e(" date_created rep  :", "" + output);
-         // Create Calendar instance
+
         Calendar calendar1 = Calendar.getInstance();
         Calendar calendar2= Calendar.getInstance();
 
+
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+"));
         String result = sdf.format(calendar2.getTime());
+
         System.out.println(result);
 
 
+
         try {
-            // set the created date to calender1 object
-            String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-             Date date = new SimpleDateFormat(pattern).parse(date_created);
+
+
+             Date date = sdf.parse(date_created);
              calendar1.setTime(date);
 
             // set the current date to calender2 object
-             Date date2 = new SimpleDateFormat(pattern).parse(result);
-             calendar2.setTime(date2);
+
+             Date date2 = sdf.parse(result);
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date2);
 
             Log.e("date1 =",""+date);
             Log.e("date2 =",""+date2);
@@ -616,25 +636,41 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         if(diffInSecond<=60)
         {
             elapsed=diffInSecond;
-            time="seconds";
+            time="seconds ago";
             System.out.println("Difference in Seconds : " + elapsed);
         }
         if(diffInSecond>60 && diffInMinute<60){
 
             elapsed=diffInMinute;
-            time="mins";
+
+            if(elapsed>1){
+                time="mins ago";
+            }
+            else {
+                time="min ago";
+            }
             System.out.println("Difference in Minute : " + elapsed);
         }
         if(diffInMinute>60 && diffInHour<24)
         {
             elapsed=diffInHour;
-            time="hrs";
+            if(elapsed>1){
+                time="hrs ago";
+            }
+            else {
+                time="hour ago";
+            }
             System.out.println("Difference in Hours : " + elapsed);
         }
         if(diffInHour>24 && diffInDays<30) {
 
             elapsed=diffInDays;
-            time="days";
+            if(elapsed>1){
+                time="days ago";
+            }
+            else {
+                time="day ago";
+            }
             System.out.println("Difference in Days : " + elapsed);
         }
         if(diffInDays>30) {

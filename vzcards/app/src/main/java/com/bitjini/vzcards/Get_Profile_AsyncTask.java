@@ -50,9 +50,13 @@ public class Get_Profile_AsyncTask extends AsyncTask<String, Void, String> {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
+
 //            Toast.makeText(this, "Received!", Toast.LENGTH_LONG).show();
             Log.e(" response of profile...","" + result);
+
             try {
+                jsonObj = new JSONObject(result);
+
                      jsonObj = new JSONObject(result);
 
 
@@ -71,6 +75,7 @@ public class Get_Profile_AsyncTask extends AsyncTask<String, Void, String> {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
         }
 
         private String downloadUrl(String urlString) throws IOException {

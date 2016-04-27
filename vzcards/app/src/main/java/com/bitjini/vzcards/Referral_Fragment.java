@@ -2,6 +2,7 @@ package com.bitjini.vzcards;
 
 import android.Manifest;
 import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -48,13 +50,18 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
     ArrayList<ReferalUsers> groupItem = new ArrayList<ReferalUsers>();
     Button vzfrnds, profilebtn, referralbtn;
     ListView list;
+    ProgressBar progressBar;
+    int count=0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View referral = inflater.inflate(R.layout.list_referal_activity, container, false);
         RelativeLayout linearLayout = (RelativeLayout) referral.findViewById(R.id.parent);
         linearLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+
+        progressBar = (ProgressBar) referral.findViewById(R.id.progressBar);
         swipeRefreshLayout = (SwipeRefreshLayout) referral.findViewById(R.id.pullToRefresh);
+
         // the refresh listner. this would be called when the layout is pulled down
         swipeRefreshLayout.setOnRefreshListener(this);
         // sets the colors used in the refresh animation
@@ -75,7 +82,25 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
         // Populate our list with groups and it's children
         // Creating the list adapter and populating the list
 
-        getReferalContents();
+        if(count==0) {
+            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration(1000); //in milliseconds
+            animation.setRepeatCount(5);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
+             // refresh contents
+            getReferalContents();
+
+            progressBar.clearAnimation();
+            progressBar.setVisibility(View.GONE);
+            list.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            list.setVisibility(View.VISIBLE);
+            // refresh contents
+            getReferalContents();
+        }
 
         CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
         list.setAdapter(listAdapter);
@@ -127,7 +152,8 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
     }
     public void getReferalContents() {
-try{
+        try{
+            count=1;
         String received=new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
 
                     Log.e("received History", "" + received);

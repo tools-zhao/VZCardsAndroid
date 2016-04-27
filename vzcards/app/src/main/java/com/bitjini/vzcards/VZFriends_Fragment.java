@@ -9,14 +9,17 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -50,7 +53,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by bitjini on 18/12/15.
  */
-public class VZFriends_Fragment extends Fragment implements View.OnClickListener,SearchView.OnQueryTextListener, AdapterView.OnItemClickListener {
+public class VZFriends_Fragment extends Fragment implements View.OnClickListener,SearchView.OnQueryTextListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     String VZFRIENDS_URL = "http://vzcards-api.herokuapp.com/get_my_friends/?access_token=";
     VerifyScreen p = new VerifyScreen();
@@ -71,12 +74,22 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     // Pop up
     ContentResolver resolver;
     ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
+    int count=0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
         progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progressBar);
+        swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
+
+        // the refresh listner. this would be called when the layout is pulled down
+        swipeRefreshLayout.setOnRefreshListener(this);
+        // sets the colors used in the refresh animation
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
+                R.color.colorPrimary
+                ,R.color.red);
         c = vzfrnds.getContext();
         selectUsers = new ArrayList<SelectUser>();
 
@@ -86,68 +99,26 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 //        displayText = (TextView) findViewById(R.id.resultText);
 
 
-            ObjectAnimator animation = ObjectAnimator.ofInt (progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-            animation.setDuration (1000); //in milliseconds
-        animation.setRepeatCount(5);
-            animation.setInterpolator (new DecelerateInterpolator());
-            animation.start ();
-             new HttpAsyncTask(getActivity()){
-                @Override
-                 public void onPostExecute(String received) {
-                    try {
-                        progressBar.clearAnimation();
-                        progressBar.setVisibility(View.GONE);
-                        listView.setVisibility(View.VISIBLE);
-                        JSONObject jsonObject = new JSONObject(received);
-                        String response = jsonObject.getString("response");
 
-                        // Getting JSON Array node
-                        JSONArray arr = jsonObject.getJSONArray("response");
+        if(count==0) {
+            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration(1000); //in milliseconds
+            animation.setRepeatCount(5);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
 
-                        // looping through All Contacts
-                        for (int i = 0; i < arr.length(); i++) {
-                            JSONObject c = arr.getJSONObject(i);
-                            // Feed node is JSON Object
-                            String phone = c.getString("phone");
-                            String firstname = c.getString("firstname");
-                            String lastname = c.getString("lastname");
-                            String photo = c.getString("photo");
+            getVzFrnds();
 
-                            String company = c.getString("company");
-                            String pin_code = c.getString("pin_code");
-                            String industry = c.getString("industry");
-                            String address1 = c.getString("address_line_1");
-                            String address2 = c.getString("address_line_2");
-                            String city = c.getString("city");
-                            String company_photo = c.getString("company_photo");
-                            String email = c.getString("email");
-
-                            SelectUser selectUser = new SelectUser();
-                            selectUser.setfName(firstname);
-                            selectUser.setLname(lastname);
-                            selectUser.setPhone(phone);
-                            selectUser.setPhoto(photo);
-                            selectUser.setEmail(email);
-                            selectUser.setCompany(company);
-                            selectUser.setPin_code(pin_code);
-                            selectUser.setIndustry(industry);
-                            selectUser.setAddress1(address1);
-                            selectUser.setAddress2(address2);
-                            selectUser.setCity(city);
-                            selectUser.setComany_photo(company_photo);
-                            selectUsers.add(selectUser);
-                        }
-
-
-                        Log.e(" received :", "" + response);
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }.execute(VZFRIENDS_URL + p.token_sharedPreference);
-
+            progressBar.clearAnimation();
+            progressBar.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            listView.setVisibility(View.VISIBLE);
+            // refresh contents
+            getVzFrnds();
+        }
 
         listView.setTextFilterEnabled(true);
         setupSearchView();
@@ -156,6 +127,29 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         filter = adapter.getFilter();
         listView.setFastScrollEnabled(true);
         listView.setOnItemClickListener(this);
+
+        // to avoid triggering of swipe to refresh on scrolling of listview
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                boolean enable = false;
+                if(listView != null && listView.getChildCount() > 0){
+                    // check if the first item of the list is visible
+                    boolean firstItemVisible = listView.getFirstVisiblePosition() == 0;
+                    // check if the top of the first item is visible
+                    boolean topOfFirstItemVisible = listView.getChildAt(0).getTop() == 0;
+                    // enabling or disabling the refresh layout
+                    enable = firstItemVisible && topOfFirstItemVisible;
+                }
+                swipeRefreshLayout.setEnabled(enable);
+            }
+        });
 
         Button profilebtn = (Button) vzfrnds.findViewById(R.id.profilebtn);
         Button referral = (Button) vzfrnds.findViewById(R.id.referralbtn);
@@ -166,7 +160,92 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         return vzfrnds;
 
     }
+    public void getVzFrnds()
+    {
+        try{
+            count=1;
+            String received=new HttpAsyncTask(getActivity()).execute(VZFRIENDS_URL + p.token_sharedPreference).get();
 
+            JSONObject jsonObject = new JSONObject(received);
+                    String response = jsonObject.getString("response");
+
+                    // Getting JSON Array node
+                    JSONArray arr = jsonObject.getJSONArray("response");
+
+                    // looping through All Contacts
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject c = arr.getJSONObject(i);
+                        // Feed node is JSON Object
+                        String phone = c.getString("phone");
+                        String firstname = c.getString("firstname");
+                        String lastname = c.getString("lastname");
+                        String photo = c.getString("photo");
+
+                        String company = c.getString("company");
+                        String pin_code = c.getString("pin_code");
+                        String industry = c.getString("industry");
+                        String address1 = c.getString("address_line_1");
+                        String address2 = c.getString("address_line_2");
+                        String city = c.getString("city");
+                        String company_photo = c.getString("company_photo");
+                        String email = c.getString("email");
+
+                        SelectUser selectUser = new SelectUser();
+                        selectUser.setfName(firstname);
+                        selectUser.setLname(lastname);
+                        selectUser.setPhone(phone);
+                        selectUser.setPhoto(photo);
+                        selectUser.setEmail(email);
+                        selectUser.setCompany(company);
+                        selectUser.setPin_code(pin_code);
+                        selectUser.setIndustry(industry);
+                        selectUser.setAddress1(address1);
+                        selectUser.setAddress2(address2);
+                        selectUser.setCity(city);
+                        selectUser.setComany_photo(company_photo);
+                        selectUsers.add(selectUser);
+                    }
+
+
+                    Log.e(" received :", "" + response);
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    public void onRefresh() {
+        // TODO Auto-generated method stub
+
+        refreshContent();
+
+    }
+    private void refreshContent(){
+
+        new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
+
+                selectUsers.clear();
+                getVzFrnds();
+                adapter = new VZFriends_Adapter(selectUsers,getActivity());
+                listView.setAdapter(adapter);
+                filter = adapter.getFilter();
+                //do processing to get new data and set your listview's adapter, maybe  reinitialise the loaders you may be using or so
+                //when your data has finished loading, set the refresh state of the view to false
+                swipeRefreshLayout.setRefreshing(false);
+
+            }
+        }, 5000);
+
+    }
     private void setupSearchView()
     {
         mSearchView.setIconifiedByDefault(false);

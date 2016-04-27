@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,9 +13,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -58,6 +61,10 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public static final String MY_PROFILE_PREFERENCES = "mypref.txt";
     public static final String PROFILE_IMAGE="profile";
     public static final String COMPANY_IMAGE="company";
+
+    private static final int PERMISSIONS_REQUEST_CAMERA = 105;
+    private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 106;
+    private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 107;
 
 
     public static final String TASKS = "key";
@@ -153,6 +160,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
             //Profile details
             if(receivedData!=null) {
+
                 JSONObject jsonObj = new JSONObject(receivedData);
 
                 firstname = jsonObj.getString("firstname");
@@ -165,9 +173,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 city = jsonObj.getString("city");
                 pin_code = jsonObj.getString("pin_code");
                 photo= jsonObj.getString("photo");
-                company_photo=jsonObj.getString("company_photo");
+                company_photo=jsonObj.getString("company_photo");}
 
-            }
 
 
         } catch (JSONException e) {
@@ -233,7 +240,6 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     editTextAdapter.actv(true);
                     editTextAdapter.notifyDataSetChanged();
 
-                    Toast.makeText(getActivity(), "click 0", Toast.LENGTH_LONG).show();
                     clickCount = 1;
 
                 } else if (clickCount == 1) {
@@ -251,7 +257,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                     editTextAdapter.notifyDataSetChanged();
 
-                    Toast.makeText(getActivity(), "click 1", Toast.LENGTH_LONG).show();
+
                     clickCount = 0;
 
                 }
@@ -317,38 +323,45 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
     private void openImageIntent() {
-
-        // Determine Uri of camera image to save.
-        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
-        root.mkdir();
-        final String fname = "img_" + System.currentTimeMillis() + ".jpg";
-        final File sdImageMainDirectory = new File(root, fname);
-        outputFileUri = Uri.fromFile(sdImageMainDirectory);
-
-        // Camera.
-        final List<Intent> cameraIntents = new ArrayList<Intent>();
-        final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        final PackageManager packageManager = getActivity().getPackageManager();
-        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-        for (ResolveInfo res : listCam) {
-            final String packageName = res.activityInfo.packageName;
-            final Intent intent = new Intent(captureIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(packageName);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-            cameraIntents.add(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
         }
+      else
+        {// Determine Uri of camera image to save.
+                    final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
+                    root.mkdir();
+                    final String fname = "img_" + System.currentTimeMillis() + ".jpg";
+                    final File sdImageMainDirectory = new File(root, fname);
+                    outputFileUri = Uri.fromFile(sdImageMainDirectory);
 
-        //FileSystem
-        final Intent galleryIntent = new Intent();
-        galleryIntent.setType("image/");
-        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    // Camera.
+                    final List<Intent> cameraIntents = new ArrayList<Intent>();
+                    final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    final PackageManager packageManager = getActivity().getPackageManager();
+                    final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+                    for (ResolveInfo res : listCam) {
+                        final String packageName = res.activityInfo.packageName;
+                        final Intent intent = new Intent(captureIntent);
+                        intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                        intent.setPackage(packageName);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                        cameraIntents.add(intent);
+                    }
 
-        // Chooser of filesystem options.
-        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
-        // Add the camera options.
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
-        startActivityForResult(chooserIntent, SELECT_PHOTO);
+                    //FileSystem
+                    final Intent galleryIntent = new Intent();
+                    galleryIntent.setType("image/");
+                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+                    // Chooser of filesystem options.
+                    final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+                    // Add the camera options.
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
+                    startActivityForResult(chooserIntent, SELECT_PHOTO);
+                }
+
+
+
     }
 
 
@@ -682,6 +695,17 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     }
 
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_CAMERA) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                openImageIntent();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     public void onClick(View v) {
         switch (v.getId()) {
 
