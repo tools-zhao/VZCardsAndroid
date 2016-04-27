@@ -58,4 +58,14 @@
         android:layout_gravity="center" />
 </RelativeLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
+    <TextView
+        android:id="@+id/tv_no_product"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="empty"
+        android:visibility="gone" />
     </FrameLayout>

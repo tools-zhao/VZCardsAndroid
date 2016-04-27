@@ -95,14 +95,14 @@
         android:layout_gravity="center_horizontal">
 
 
-        <EditText
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/text_drawable"
             android:hint="Validity"
             android:gravity="center"
             android:id="@+id/validity"
-            android:layout_gravity="center"></EditText>
+            android:layout_gravity="center"></TextView>
 
     </RelativeLayout>
     <ImageButton

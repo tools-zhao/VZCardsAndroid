@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/profile_frame"
     android:layout_width="match_parent"
     android:clickable="true"
+    android:layout_marginTop="0dp"
     android:background="?android:attr/colorBackground"
     android:layout_height="match_parent" >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:background="#43c1d9f2"
+        android:layout_marginTop="0dp"
         android:layout_height="match_parent">
-        <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:layout_above="@+id/l8"
-            android:fillViewport="true">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent">
@@ -108,7 +104,7 @@
 
                 </LinearLayout>
             </RelativeLayout>
-        </ScrollView>
+
 
     </RelativeLayout>
 

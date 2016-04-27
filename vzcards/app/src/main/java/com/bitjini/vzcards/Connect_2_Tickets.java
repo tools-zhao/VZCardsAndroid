@@ -1,7 +1,9 @@
 package com.bitjini.vzcards;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -37,48 +39,48 @@ import java.util.List;
 /**
  * Created by bitjini on 15/2/16.
  */
-public class Connect_2_Tickets extends Fragment {
+public class Connect_2_Tickets extends Activity {
 
     String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
     String token_sharedPreference;
     private ProgressDialog progress;
     String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View connectFeeds = inflater.inflate(R.layout.connect_tickets, container, false);
+    public void onCreate( Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.connect_tickets);
 
+        Intent i=getIntent();
         //Retrieve the value
-        connecter_vz_id = getArguments().getString("connector_vz_id");
-        phone_1 = getArguments().getString("phone1");
-        ticket_id_1 = getArguments().getString("ticket_id_1");
-        phone_2 = getArguments().getString("phone2");
-        ticket_id_2 = getArguments().getString("ticket_id_2");
+        connecter_vz_id = i.getStringExtra("connector_vz_id");
+        phone_1 = i.getStringExtra("phone1");
+        ticket_id_1 = i.getStringExtra("ticket_id_1");
+        phone_2 = i.getStringExtra("phone2");
+        ticket_id_2 = i.getStringExtra("ticket_id_2");
         my_ticket = "";
         reffered_ticket = "";
         reffered_phone = "";
+        Log.e("ticket_id_1 =:",""+ticket_id_1);
+        Log.e("phone1 =:",""+phone_1);
+        Log.e("connector_vz_id =:",""+connecter_vz_id);
 
         VerifyScreen p = new VerifyScreen();
-        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
+        p.sharedPreferences = getSharedPreferences(p.VZCARD_PREFS, 0);
         token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         System.out.println(" getting token from sharedpreference " + token_sharedPreference);
         // call AsynTask to perform network operation on separate thread
-        new HttpPostClass(getActivity()).execute(URL_CONNECT + token_sharedPreference);
+        new HttpPostClass().execute(URL_CONNECT + token_sharedPreference);
 
-        return connectFeeds;
     }
 
     private class HttpPostClass extends AsyncTask<String, Void, String> {
 
-        private final Context context;
+         Context context;
 
-        public HttpPostClass(Context c) {
-            this.context = c;
-        }
 
         protected void onPreExecute() {
-            progress = new ProgressDialog(this.context);
-            progress.setMessage("Loading");
+            progress = new ProgressDialog(Connect_2_Tickets.this);
+            progress.setMessage("Connecting please wait....");
             progress.show();
         }
 
@@ -154,7 +156,8 @@ public class Connect_2_Tickets extends Fragment {
 
         protected void onPostExecute(String result) {
             progress.dismiss();
-            Toast.makeText(getActivity(), "Connected tickets", Toast.LENGTH_LONG).show();
+            Toast.makeText(Connect_2_Tickets.this, "Connected tickets", Toast.LENGTH_LONG).show();
+            finish();
 //            if (result != null) {
 //                Log.e("valid =", "" + result.toString());
 //                try {

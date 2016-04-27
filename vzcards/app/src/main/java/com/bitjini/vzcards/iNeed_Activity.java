@@ -60,6 +60,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -76,7 +77,8 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     ImageButton btnCander;
     public ImageView item_image;
     Button addImage;
-    EditText txtItem,txtDescription,txtDate_validity;
+    EditText txtItem,txtDescription;
+    TextView txtDate_validity;
     ImageButton submit;
     public static String Item_picturePath;
     public String item_photo = "", item = "", description = "", date_validity="",question="";
@@ -94,7 +96,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         addImage=(Button) iNeed.findViewById(R.id.addImage);
         txtItem=(EditText) iNeed.findViewById(R.id.ask);
         txtDescription=(EditText) iNeed.findViewById(R.id.desc);
-        txtDate_validity=(EditText) iNeed.findViewById(R.id.validity);
+        txtDate_validity=(TextView) iNeed.findViewById(R.id.validity);
         item_image=(ImageView) iNeed.findViewById(R.id.item_img);
         submit=(ImageButton) iNeed.findViewById(R.id.imgbtn);
 
@@ -557,7 +559,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), haveFragment).addToBackStack(contentView.toString())
+                        .add(contentView.getId(), haveFragment).addToBackStack(null)
                         .commit();
                 break;
 
@@ -575,21 +577,37 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     public class DatePickerDialog1 extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
 
 
+        private int myear;
+        private int mmonth;
+        private int mday;
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
             final Calendar c = Calendar.getInstance();
 
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
+            myear = c.get(Calendar.YEAR);
+            mmonth = c.get(Calendar.MONTH);
+            mday= c.get(Calendar.DAY_OF_MONTH);
 
 
+            Date newDate=c.getTime();
+            Log.e("new date :",""+newDate);
+            DatePickerDialog da=new DatePickerDialog(getActivity(), this, myear, mmonth, mday);
+            da.getDatePicker().setMinDate(c.getTime().getTime());
             // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
+            return da;
         }
 
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            if (year < myear)
+                view.updateDate(myear, mmonth, mday);
+
+            if (monthOfYear < mmonth && year == myear)
+                view.updateDate(myear, mmonth, mday);
+
+            if (dayOfMonth < mday && year == myear && monthOfYear == mmonth)
+                view.updateDate(myear, mmonth, mday);
+
             int month = monthOfYear + 1;
             String formattedMonth = "" + month;
             String formattedDayOfMonth = "" + dayOfMonth;

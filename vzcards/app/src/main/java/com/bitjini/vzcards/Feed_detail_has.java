@@ -93,6 +93,10 @@ public class Feed_detail_has extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.refer_vzfrnd:
                 Intent intent = new Intent(getActivity(), Refer_VZfriends.class);
+
+                intent.putExtra("ticket_id", ticket_id_1);
+                intent.putExtra("phone1", phone1);
+                intent.putExtra("connector_vz_id", connector_vz_id);
                 startActivity(intent);
                 break;
 
@@ -102,7 +106,7 @@ public class Feed_detail_has extends Fragment implements View.OnClickListener {
                 ReferContacts connect = new ReferContacts();
 
                 Bundle args = new Bundle();
-                args.putString("ticket_id_1", ticket_id_1);
+                args.putString("ticket_id", ticket_id_1);
                 args.putString("phone1", phone1);
                 args.putString("connector_vz_id", connector_vz_id);
 

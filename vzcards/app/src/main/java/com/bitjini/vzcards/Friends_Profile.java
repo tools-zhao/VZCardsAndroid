@@ -4,6 +4,7 @@ package com.bitjini.vzcards;
  * Created by bitjini on 11/4/16.
  */
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -60,7 +62,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by VEENA on 12/7/2015.
  */
-public class Friends_Profile extends Fragment implements View.OnClickListener {
+public class Friends_Profile extends Activity implements View.OnClickListener {
 
 
     public ImageView imageProfile, imageCompany,imageCall;
@@ -95,19 +97,19 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
     public static String picturePath;
     LinearLayout linearLayout;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
 
-        profile = inflater.inflate(R.layout.frnds_profile, container, false);
+        super.onCreate(savedInstanceState);
+       setContentView(R.layout.frnds_profile);
 
-       listView = (ListView) profile.findViewById(R.id.profileList);
-       linearLayout=(LinearLayout) profile.findViewById(R.id.l2);
+       listView = (ListView) findViewById(R.id.profileList);
+       linearLayout=(LinearLayout) findViewById(R.id.l2);
 
-        textViewName = (TextView) profile.findViewById(R.id.name);
+        textViewName = (TextView)findViewById(R.id.name);
         //Picking Profile picture
-        imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
-        imageCompany = (ImageView) profile.findViewById(R.id.btn_pick);
-        imageCall = (ImageView) profile.findViewById(R.id.btn_call);
+        imageProfile = (ImageView)findViewById(R.id.profilePic);
+        imageCompany = (ImageView) findViewById(R.id.btn_pick);
+        imageCall = (ImageView) findViewById(R.id.btn_call);
 
         //image listeners
         imageCall.setOnClickListener(this);
@@ -125,40 +127,33 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
         label.add("Pin_code");
         // Making http get request to load profile details
 
+        Intent intent=getIntent();
+        // Receiving data
 
-                firstname = getArguments().getString("fname");
-                lastname =  getArguments().getString("lname");
-                email =  getArguments().getString("email");
-                phone =  getArguments().getString("phone");
-                industry =  getArguments().getString("industry");
-                company =  getArguments().getString("company");
-                address_line_1 =  getArguments().getString("address_line_1");
-                address_line_2 =  getArguments().getString("address_line_2");
-                city =  getArguments().getString("city");
-                pin_code = getArguments().getString("pin_code");
-                photo=  getArguments().getString("photo");
-                company_photo= getArguments().getString("company_photo");
-
-
+        firstname = intent.getStringExtra("fname");
+        lastname = intent.getStringExtra("lname");
+        email =  intent.getStringExtra("email");
+        phone = intent.getStringExtra("phone");
+        industry =  intent.getStringExtra("industry");
+        company =  intent.getStringExtra("company");
+        address_line_1 = intent.getStringExtra("address_line_1");
+        address_line_2 =intent.getStringExtra("address_line_2");
+        city =  intent.getStringExtra("city");
+        pin_code =intent.getStringExtra("pin_code");
+        photo=  intent.getStringExtra("photo");
+        company_photo= intent.getStringExtra("company_photo");
 
 
         if(!photo.isEmpty()) {
-
-                Picasso.with(getActivity()).load(photo).resize(180, 180).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
-
-
+            Picasso.with(getApplicationContext()).load(photo).resize(180, 180).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
 //            imageProfile.setTag(photo);
 //            new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
-
         }
 
-
-
         if(!company_photo.isEmpty()) {
-            Picasso.with(getActivity()).load(company_photo).resize(70, 70).placeholder(R.drawable.com_logo).into(imageCompany);
+            Picasso.with(getApplicationContext()).load(company_photo).resize(70, 70).placeholder(R.drawable.com_logo).into(imageCompany);
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
-
         }
 
 
@@ -184,14 +179,11 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
 
 
         // send the adapterArraylist to the adapter and set it to listview
-        editTextAdapter = new EditTextAdapter(getActivity(), arrayList, R.layout.profile_layout);
+        editTextAdapter = new EditTextAdapter(Friends_Profile.this, arrayList, R.layout.profile_layout);
         listView.setAdapter(editTextAdapter);
-        InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (getActivity().getCurrentFocus() != null){
-            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);}
+
 //
 
-        return profile;
     }
 
 
@@ -231,12 +223,12 @@ public class Friends_Profile extends Fragment implements View.OnClickListener {
             case R.id.btn_call:
                 try{
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:"+phone));
+                    callIntent.setData(Uri.parse("tel:"+ "+" +phone));
                     startActivity(callIntent);
                 }
                 catch (android.content.ActivityNotFoundException ex)
                 {
-                    Toast.makeText(getActivity(),"your Activity is not found",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"your Activity is not found",Toast.LENGTH_LONG).show();
                 }
                 break;
 
