@@ -722,19 +722,17 @@ FrameLayout layout_MainMenu;
                     // send data to Connect_2_Tickets
                     Connect_2_Tickets connect = new Connect_2_Tickets();
 
-                    Bundle args = new Bundle();
-                    args.putString("ticket_id_1", ticket_id_1);
-                    args.putString("ticket_id_2", ticket_id_2);
-                    args.putString("phone1", phone1);
-                    args.putString("phone2", phone2);
-                    args.putString("connector_vz_id", connector_vz_id);
 
-                    connect.setArguments(args);
+                    Intent intent=new Intent(getActivity(),Connect_2_Tickets.class);
+                    intent.putExtra("ticket_id_1", ticket_id_1);
+                    intent.putExtra("phone1", phone1);
+                    intent.putExtra("connector_vz_id", connector_vz_id);
+                    intent.putExtra("phone2", phone2);
+                    intent.putExtra("ticket_id_2", ticket_id_2);
+                    startActivity(intent);
 
-                    //Inflate the fragment
-                    getFragmentManager().beginTransaction().add(R.id.feed_detail, connect).addToBackStack(connect.toString())
-                            .commit();
                     pwindo.dismiss();
+
                     adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
                     listView.setAdapter(adapter);
 

@@ -109,6 +109,7 @@
         android:layout_marginTop="10dp"
         android:layout_below="@+id/refer_vzfrnd"
         android:textColor="#add58a"
+        android:layout_marginBottom="10dp"
         android:id="@+id/refer_contact"/>
 
 

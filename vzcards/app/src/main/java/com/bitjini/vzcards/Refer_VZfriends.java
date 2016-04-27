@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
@@ -75,7 +76,10 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
         setContentView(R.layout.vzfriends_list);
 
 
-
+        InputMethodManager inputManager2 = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (getCurrentFocus() != null){
+            inputManager2.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
         selectUsers = new ArrayList<SelectUser>();
 
 
@@ -205,32 +209,15 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
                         Log.e("phone1 =:",""+phone_1);
                         Log.e("connector_vz_id =:",""+connecter_vz_id);
 
-                        p.sharedPreferences = getSharedPreferences(p.VZCARD_PREFS, 0);
-                        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
-
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(new Runnable() {
-                            public void run() {
-                                if(progress!=null){
-                                    progress = new ProgressDialog(Refer_VZfriends.this);
-                                    progress.setMessage("Loading");
-                                    progress.show();}
-                                new Connect_AsynTask(){
-                                    protected void onPostExecute(String result) {
-                                        if (progress != null && progress.isShowing()) {
-
-                                            progress.dismiss();
-                                            progress = null;
-                                        }
-                                        Toast.makeText(getApplicationContext(), "Tickets Connected", Toast.LENGTH_LONG).show();
-
-                                    }
-                                }.execute(URL_CONNECT + token_sharedPreference);
+                        Intent intent2=new Intent(Refer_VZfriends.this,Connect_2_Tickets.class);
+                        intent2.putExtra("ticket_id_1", ticket_id_1);
+                        intent2.putExtra("phone1", phone_1);
+                        intent2.putExtra("connector_vz_id", connecter_vz_id);
+                        intent2.putExtra("phone2", phone_2);
+                        intent2.putExtra("ticket_id_2", ticket_id_2);
+                        startActivity(intent2);
 
 
-
-                            }
-                        });
 
 
 

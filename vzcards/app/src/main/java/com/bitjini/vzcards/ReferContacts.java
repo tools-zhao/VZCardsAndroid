@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -191,21 +192,15 @@ return refer_contact;
                                     phone1 = getArguments().getString("phone1");
                                     connector_vz_id = getArguments().getString("connector_vz_id");
 
-                                    Fragment connect = new Connect_2_Tickets();
+                                    Intent intent=new Intent(getActivity(),Connect_2_Tickets.class);
+                                    intent.putExtra("ticket_id_1", ticket_id_1);
+                                    intent.putExtra("phone1", phone1);
+                                    intent.putExtra("connector_vz_id", connector_vz_id);
+                                    intent.putExtra("phone2", phone2);
+                                    intent.putExtra("ticket_id_2", name);
+                                    startActivity(intent);
 
-                                    Bundle args = new Bundle();
-                                    args.putString("ticket_id_1", ticket_id_1);
-                                    args.putString("phone1", phone1);
-                                    args.putString("connector_vz_id", connector_vz_id);
-                                    args.putString("phone2", phone2);
-                                    args.putString("ticket_id_2", name);
 
-
-                                    connect.setArguments(args);
-
-                                    //Inflate the fragment
-                                    getFragmentManager().beginTransaction().add(R.id.vzfrnds_list_frame, connect).addToBackStack(connect.toString())
-                                            .commit();
                                 }
                             });
 

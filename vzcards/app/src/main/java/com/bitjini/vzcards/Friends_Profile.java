@@ -223,7 +223,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
             case R.id.btn_call:
                 try{
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:"+phone));
+                    callIntent.setData(Uri.parse("tel:"+ "+" +phone));
                     startActivity(callIntent);
                 }
                 catch (android.content.ActivityNotFoundException ex)

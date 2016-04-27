@@ -471,7 +471,8 @@ try{
                 //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
             } else {
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:" + phone));
+                Log.e("phone ",""+phone);
+                callIntent.setData(Uri.parse("tel:" + "+"+phone));
                 startActivity(callIntent);
             }
         }
