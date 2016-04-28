@@ -70,7 +70,7 @@ import java.util.Date;
  */
 public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=";
+    String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
     ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
     public Cursor phones;
@@ -256,7 +256,7 @@ FrameLayout layout_MainMenu;
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
         } else {
 
-            new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+token_sharedPreference);
+            new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL);
         }
     }
     public void onRequestPermissionsResult(int requestCode, String[] permissions,

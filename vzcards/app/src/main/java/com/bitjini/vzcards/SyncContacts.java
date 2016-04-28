@@ -122,11 +122,11 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                             params.add(new BasicNameValuePair("contact_list", s));
                             Log.e("s", "" + s);
                         }
-                        OutputStream os = null;
+                        OutputStream os;
 
                         os = conn.getOutputStream();
 
-                        BufferedWriter writer = null;
+                        BufferedWriter writer;
 
                         writer = new BufferedWriter(
                                 new OutputStreamWriter(os, "UTF-8"));
@@ -230,6 +230,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                     String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
                     phoneNumber=phoneNumber.replaceAll("[\\D]", "");
+                    phoneNumber=phoneNumber.replaceFirst("^0+(?!$)", "");
                     // get the country code
                     String countryCode = GetCountryZipCode();
 

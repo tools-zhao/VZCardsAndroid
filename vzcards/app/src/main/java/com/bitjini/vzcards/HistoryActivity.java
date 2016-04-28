@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -61,11 +63,14 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     History_Adapter adapter;
     ListView listView;
     ProgressDialog progressDialog;
+    ProgressBar progressBar;
+    int count=0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View history = inflater.inflate(R.layout.history_listview, container, false);
 
+        progressBar = (ProgressBar) history.findViewById(R.id.progressBar);
 
         swipeRefreshLayout = (SwipeRefreshLayout) history.findViewById(R.id.pullToRefresh);
         // the refresh listner. this would be called when the layout is pulled down
@@ -79,7 +84,22 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 //        View header = inflater.inflate(R.layout.header, listView, false);
 //        listView.addHeaderView(header, null, false);
-        getHistoryContents();
+        if(count==0) {
+            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration(1000); //in milliseconds
+            animation.setRepeatCount(5);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
+
+            getHistoryContents();
+            progressBar.clearAnimation();
+            progressBar.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
+        else {
+            listView.setVisibility(View.VISIBLE);
+            getHistoryContents();
+        }
         adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
         listView.setAdapter(adapter);
@@ -136,7 +156,8 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     }
     public void getHistoryContents()
     {
-        try {
+        try{
+            count=1;
             String result = new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
             Log.e("received History", "" + result);
 
@@ -265,7 +286,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             convertView = null;
             if (convertView == null) {
                 LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = li.inflate(R.layout.history_layout, null);
+                view = li.inflate(R.layout.history_layout, viewGroup,false);
 
 
             } else {

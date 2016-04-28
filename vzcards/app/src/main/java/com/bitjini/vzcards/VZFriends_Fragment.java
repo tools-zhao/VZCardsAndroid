@@ -395,12 +395,10 @@ class VZFriends_Adapter extends BaseAdapter implements Filterable {
         if (view == null) {
             LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = li.inflate(R.layout.vz_frnds, null);
-            Log.e("inside", "here---------------In View1");
-
 
         } else {
             view = convertView;
-            Log.e("Inside", "here------------------In View2");
+
         }
         v = new ViewHolder();
         v.fname = (TextView) view.findViewById(R.id.name);
@@ -423,17 +421,11 @@ class VZFriends_Adapter extends BaseAdapter implements Filterable {
             } else {
                 v.imageView.setImageResource(R.drawable.simple_profile_placeholder1);
             }
-        } catch (ArrayIndexOutOfBoundsException ae) {
+        } catch (ArrayIndexOutOfBoundsException | OutOfMemoryError ae) {
             ae.printStackTrace();
 
-        } catch
-                (OutOfMemoryError e) {
-            e.printStackTrace();
         }
         view.setTag(data);
-
-        // view.setBackgroundColor(Color.parseColor("#88e0e7e0"));
-
 
         return view;
     }
