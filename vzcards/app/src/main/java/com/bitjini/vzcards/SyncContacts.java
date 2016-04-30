@@ -118,6 +118,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                         params.add(new BasicNameValuePair("vz_id", p.vz_id_sharedPreference));
                         Log.e(" p.vz_id_", "" + p.vz_id_sharedPreference);
 
+                        Log.e("phone array size",""+phoneArray.size());
                         for(String s: phoneArray) {
                             params.add(new BasicNameValuePair("contact_list", s));
                             Log.e("s", "" + s);
