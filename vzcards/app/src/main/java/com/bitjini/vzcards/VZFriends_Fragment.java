@@ -299,6 +299,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         nextScreenIntent.putExtra("company_photo", data.getComany_photo());
         nextScreenIntent.putExtra("email", data.getEmail());
         startActivity(nextScreenIntent);
+        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 
         Log.e("getCompany :",""+data.getCompany());
         //Inflate the fragment

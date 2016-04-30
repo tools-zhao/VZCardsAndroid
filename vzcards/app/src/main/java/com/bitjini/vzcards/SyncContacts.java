@@ -99,12 +99,17 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             p.sharedPreferences = context.getSharedPreferences(p.VZCARD_PREFS, 0);
            p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
+            //Create connection
             URL url = new URL(postURL);
             final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
             conn.setRequestMethod("POST");
-            conn.setDoInput(true);
+            conn.setRequestProperty("Content-Type",
+                    "application/x-www-form-urlencoded");
+
+            conn.setRequestProperty("USER-AGENT", "Mozilla/5.0");
+            conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
             conn.setDoOutput(true);
 
             new LoadContact() {
@@ -118,35 +123,31 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                         params.add(new BasicNameValuePair("vz_id", p.vz_id_sharedPreference));
                         Log.e(" p.vz_id_", "" + p.vz_id_sharedPreference);
 
-                        Log.e("phone array size",""+phoneArray.size());
                         for(String s: phoneArray) {
                             params.add(new BasicNameValuePair("contact_list", s));
                             Log.e("s", "" + s);
                         }
-                        OutputStream os;
+                        //Send request
+                        DataOutputStream wr = new DataOutputStream (
+                                conn.getOutputStream ());
+                        wr.writeBytes (getQuery(params));
+                        wr.flush ();
+                        wr.close ();
 
-                        os = conn.getOutputStream();
-
-                        BufferedWriter writer;
-
-                        writer = new BufferedWriter(
-                                new OutputStreamWriter(os, "UTF-8"));
-                        writer.write(getQuery(params));
                         //Get Response
                         InputStream is = conn.getInputStream();
                         BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                         String line;
-                        StringBuffer response = new StringBuffer();
+                        StringBuilder response = new StringBuilder();
                         while ((line = rd.readLine()) != null) {
                             response.append(line);
                             response.append('"');
                         }
                         rd.close();
 
+
                         Log.e(" contact list Response", "" + response.toString());
-                        writer.flush();
-                        writer.close();
-                        os.close();
+
 
 
                     } catch (IOException e) {
