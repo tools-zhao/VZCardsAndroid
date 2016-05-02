@@ -147,7 +147,7 @@ FrameLayout layout_MainMenu;
             animation.setInterpolator(new DecelerateInterpolator());
             animation.start();
             // refresh contents
-            getFeedsContents(URL_GETLIST + token_sharedPreference + "&page=" +currentPage);
+            getFeedsContents(URL_GETLIST + token_sharedPreference);
 
             progressBar.clearAnimation();
             progressBar.setVisibility(View.GONE);
@@ -159,9 +159,9 @@ FrameLayout layout_MainMenu;
             // refresh contents
             getFeedsContents(URL_GETLIST + token_sharedPreference);
         }
-
-        adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
-        listView.setAdapter(adapter);
+            adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+            listView.setAdapter(adapter);
+        Log.e("feed size 1st time",""+feedsArrayList.size());
 
 
 
@@ -259,17 +259,20 @@ FrameLayout layout_MainMenu;
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
                 Log.e("visibleItemCount",""+visibleItemCount);
-                Log.e("firstVisibleItem",""+firstVisibleItem);
+                Log.e("lastIndexInScreen",""+firstVisibleItem);
+                Log.e("totalItemCount",""+totalItemCount);
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
 
-                    // It is time to load more items
 
+                    // It is time to load more items
                     isLoading = true;
                   totalPage=(int) Math.ceil((double)countOfFeeds / 10.0);
                     Log.e("totalPage ",""+totalPage);
+
                     loadMore();
 
                 }
+
 
             }
         });
@@ -278,6 +281,7 @@ FrameLayout layout_MainMenu;
     }
     public void getFeedsContents(String url) {
         try {
+
             progressCount = 1;
             String received =  new HttpAsyncTask().execute(url).get();
 
@@ -333,6 +337,7 @@ FrameLayout layout_MainMenu;
 
                 feedsArrayList.add(dataFeeds);
 
+
             }
 
 //            adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
@@ -372,10 +377,16 @@ FrameLayout layout_MainMenu;
             @Override public void run() {
 
                 feedsArrayList.clear();
-                getFeedsContents(URL_GETLIST + token_sharedPreference + "&page=1");
+
+                currentPage=1;
+                totalPage=0;
+                countOfFeeds=0;
+                isLoading = false;
+                getFeedsContents(URL_GETLIST + token_sharedPreference );
                 adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
                 listView.setAdapter(adapter);
 
+                Log.e("feed size aft refresh",""+feedsArrayList.size());
                 swipeRefreshLayout.setRefreshing(false);
             }
         }, 5000);
@@ -388,24 +399,26 @@ FrameLayout layout_MainMenu;
 //
 //        if(feedsArrayList.size()<=90){ // Limit the number of items to 100 (stop loading when reaching 100 items)
 ////
-//        currentPage=1;
 
-           if(currentPage<totalPage) {
+        currentPage++;
+           if(currentPage<=totalPage) {
+
 
                Log.e("currentpage=",""+currentPage);
+
+
 //               feedsArrayList.clear();
-//            for(i=next;i<=next+9;i++)
-               feedsArrayList.clear();
                getFeedsContents("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference +"&page="+currentPage);
-               adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
-               listView.setAdapter(adapter);
+//               adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+//               listView.setAdapter(adapter);
 //            // Notify the ListView of data changed
 //
-//            adapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
+               Log.e("feed size load more",""+feedsArrayList.size());
 
                isLoading = false;
            }
-        currentPage++;
+//        currentPage++;
             // Update next
 
 //            next=i;

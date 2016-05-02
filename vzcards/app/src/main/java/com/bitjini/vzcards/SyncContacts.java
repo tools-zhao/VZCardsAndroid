@@ -125,7 +125,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
                         for(String s: phoneArray) {
                             params.add(new BasicNameValuePair("contact_list", s));
-                            Log.e("s", "" + s);
+//                            Log.e("s", "" + s);
                         }
                         //Send request
                         DataOutputStream wr = new DataOutputStream (
@@ -146,7 +146,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                         rd.close();
 
 
-                        Log.e(" contact list Response", "" + response.toString());
+//                        Log.e(" contact list Response", "" + response.toString());
 
 
 
@@ -212,12 +212,12 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
             phones =context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
-            Log.e("show contact:",""+phones);
+//            Log.e("show contact:",""+phones);
 //            // Get Contact list from Phone
 //            Log.e("phones", "" + phones);
 
             if (phones != null) {
-                Log.e("count", "" + phones.getCount());
+//                Log.e("count", "" + phones.getCount());
                 if (phones.getCount() == 0) {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
@@ -254,7 +254,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
                 }
             } else {
-                Log.e("Cursor close 1", "----------------");
+//                Log.e("Cursor close 1", "----------------");
             }
             //phones.close();
             return null;

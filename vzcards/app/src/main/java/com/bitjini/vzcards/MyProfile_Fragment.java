@@ -266,7 +266,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         if (!groupItem.isEmpty())
             json2 = new Gson().toJson(groupItem);// updated array
-        Log.e("updated array", "" + json2);
+//        Log.e("updated array", "" + json2);
         json = new Gson().toJson(arrayList); //default array
 
 
@@ -307,7 +307,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
         Gson gson = new Gson();
         String json = data.getString(TASKS, null);
-        Log.e("Load json shared prefs ", "" + json);
+//        Log.e("Load json shared prefs ", "" + json);
 
         Type type = new TypeToken<ArrayList<ListItem>>() {
         }.getType();

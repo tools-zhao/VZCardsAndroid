@@ -156,7 +156,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             count=1;
         String received=new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
 
-                    Log.e("received History", "" + received);
+//                    Log.e("received History", "" + received);
 
                     JSONObject jsonObject = new JSONObject(received);
 
@@ -169,7 +169,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                         JSONObject c = arr.getJSONObject(i);
                         // Connection Node in an array
                         JSONArray arr2 = c.getJSONArray("connections");
-                        Log.e(" connections :", "" + arr2);
+//                        Log.e(" connections :", "" + arr2);
 
                         for (int i2 = 0; i2 < arr2.length(); i2++) {
                             JSONObject c2 = arr2.getJSONObject(i2);
@@ -201,7 +201,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                                 company_photo = reffered_phone_details.getString("company_photo");
                                 email = reffered_phone_details.getString("email");
 
-                                Log.e("json reffered_phone_ 2=", "" + jsonObject1);
+//                                Log.e("json reffered_phone_ 2=", "" + jsonObject1);
                             } else  {
                                 phone = c2.getString("reffered_phone_details");
                                 company = "";
@@ -213,8 +213,8 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                                 company_photo = "";
                                 email = "";
 
-                                Log.e("json reffered_ticket 3=", "" + referedFname);
-                                Log.e("json reffered_phone_ 3=", "" + phone);
+//                                Log.e("json reffered_ticket 3=", "" + referedFname);
+//                                Log.e("json reffered_phone_ 3=", "" + phone);
                             }
                             String refTicketDetails = c2.getString("reffered_ticket_details");
 
@@ -250,7 +250,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
 
                             JSONObject ticket_details = c.getJSONObject("ticket_details");
-                            Log.e(" ticket_details :", "" + ticket_details);
+//                            Log.e(" ticket_details :", "" + ticket_details);
                             String question = ticket_details.getString("question");
                             String description = ticket_details.getString("description");
                             String ticket_id = ticket_details.getString("ticket_id");
@@ -288,18 +288,18 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                             referalUsers.setRefItemName(refItemName);
                             referalUsers.setRefItem_photo(refItem_photo);
 
-                            Log.e("referedFname 1=", "" + referedFname);
+//                            Log.e("referedFname 1=", "" + referedFname);
                             groupItem.add(referalUsers);
                             String json2 = new Gson().toJson(groupItem);// updated array
-                            Log.e("groupItem array", "" + json2);
+//                            Log.e("groupItem array", "" + json2);
 
                         }
 
 
                     }
-                    for (ReferalUsers u : groupItem) {
-                        Log.w("list ", "" + u.getReferredfName());
-                    }
+//                    for (ReferalUsers u : groupItem) {
+//                        Log.w("list ", "" + u.getReferredfName());
+//                    }
 
 
                 } catch (JSONException e) {
@@ -391,7 +391,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             name.setText(cat.getFname() + " " + cat.getLname());
 
             referredName.setText(cat.getReferredfName() + " " + cat.getReferredlName());
-            Log.e("referred fname in item=",""+cat.getReferredfName());
+//            Log.e("referred fname in item=",""+cat.getReferredfName());
 
             itemName.setText("for " + cat.getItemName());
             try {
