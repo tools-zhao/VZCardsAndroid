@@ -51,6 +51,14 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
     Button vzfrnds, profilebtn, referralbtn;
     ListView list;
     ProgressBar progressBar;
+    CustomListAdapter listAdapter;
+
+    int countOfFeeds=0;
+    int currentPage=1;
+    int totalPage=0;
+    int progressCount=0;
+    boolean isLoading=false;
+
     int count=0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,7 +97,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             animation.setInterpolator(new DecelerateInterpolator());
             animation.start();
              // refresh contents
-            getReferalContents();
+            getReferalContents(HISTORY_URL + p.token_sharedPreference);
 
             progressBar.clearAnimation();
             progressBar.setVisibility(View.GONE);
@@ -99,10 +107,10 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
         {
             list.setVisibility(View.VISIBLE);
             // refresh contents
-            getReferalContents();
+            getReferalContents(HISTORY_URL + p.token_sharedPreference);
         }
 
-        CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+        listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
         list.setAdapter(listAdapter);
 
         // Creating an item click listener, to open/close our toolbar for each item
@@ -145,21 +153,53 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                     enable = firstItemVisible && topOfFirstItemVisible;
                 }
                 swipeRefreshLayout.setEnabled(enable);
+                Log.i("Main",totalItemCount+"");
+
+                int lastIndexInScreen = visibleItemCount + firstVisibleItem;
+
+                if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
+
+
+                    // It is time to load more items
+                    isLoading = true;
+                    totalPage=(int) Math.ceil((double)countOfFeeds / 10.0);
+                    Log.e("totalPage ",""+totalPage);
+
+                    loadMore();
+
+                }
             }
         });
 
         return referral;
 
     }
-    public void getReferalContents() {
+    public void loadMore(){
+
+        currentPage++;
+        if(currentPage<=totalPage) {
+
+            Log.e("currentpage=",""+currentPage);
+
+            getReferalContents("http://vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+
+//            // Notify the ListView of data changed
+//
+            listAdapter.notifyDataSetChanged();
+
+            isLoading = false;
+        }
+
+    }
+    public void getReferalContents(String url) {
         try{
             count=1;
-        String received=new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
+        String received=new HttpAsyncTask(getActivity()).execute(url).get();
 
 //                    Log.e("received History", "" + received);
 
                     JSONObject jsonObject = new JSONObject(received);
-
+            countOfFeeds=jsonObject.getInt("count");
                     String response = jsonObject.getString("response");
                     // Getting JSON Array node
                     JSONArray arr = jsonObject.getJSONArray("response");
@@ -325,7 +365,11 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             @Override public void run() {
 
                 groupItem.clear();
-                getReferalContents();
+                currentPage=1;
+                totalPage=0;
+                countOfFeeds=0;
+                isLoading = false;
+                getReferalContents(HISTORY_URL + p.token_sharedPreference);
                 CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
                 list.setAdapter(listAdapter);
 

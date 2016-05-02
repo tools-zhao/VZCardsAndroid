@@ -158,9 +158,6 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
-                Log.e("visibleItemCount",""+visibleItemCount);
-                Log.e("lastIndexInScreen",""+firstVisibleItem);
-                Log.e("totalItemCount",""+totalItemCount);
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
 
 
