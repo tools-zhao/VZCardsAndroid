@@ -65,6 +65,13 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     ProgressDialog progressDialog;
     ProgressBar progressBar;
     int count=0;
+
+    int countOfFeeds=0;
+    int currentPage=1;
+    int totalPage=0;
+    int progressCount=0;
+    boolean isLoading=false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,14 +98,14 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             animation.setInterpolator(new DecelerateInterpolator());
             animation.start();
 
-            getHistoryContents();
+            getHistoryContents(HISTORY_URL + p.token_sharedPreference);
             progressBar.clearAnimation();
             progressBar.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
         }
         else {
             listView.setVisibility(View.VISIBLE);
-            getHistoryContents();
+            getHistoryContents(HISTORY_URL + p.token_sharedPreference);
         }
         adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
@@ -147,6 +154,24 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     enable = firstItemVisible && topOfFirstItemVisible;
                 }
                 swipeRefreshLayout.setEnabled(enable);
+                Log.i("Main",totalItemCount+"");
+
+                int lastIndexInScreen = visibleItemCount + firstVisibleItem;
+
+                Log.e("visibleItemCount",""+visibleItemCount);
+                Log.e("lastIndexInScreen",""+firstVisibleItem);
+                Log.e("totalItemCount",""+totalItemCount);
+                if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
+
+
+                    // It is time to load more items
+                    isLoading = true;
+                    totalPage=(int) Math.ceil((double)countOfFeeds / 10.0);
+                    Log.e("totalPage ",""+totalPage);
+
+                    loadMore();
+
+                }
             }
         });
 
@@ -154,16 +179,16 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
         return history;
     }
-    public void getHistoryContents()
+    public void getHistoryContents(String url)
     {
         try{
             count=1;
-            String result = new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
+            String result = new HttpAsyncTask(getActivity()).execute(url).get();
             Log.e("received History", "" + result);
 
 
             JSONObject jsonObject = new JSONObject(result);
-
+            countOfFeeds=jsonObject.getInt("count");
             String response = jsonObject.getString("response");
             // Getting JSON Array node
             JSONArray arr = jsonObject.getJSONArray("response");
@@ -233,7 +258,12 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
                 selectUsers.clear();
                 connectorDetails.clear();
-                getHistoryContents();
+
+                currentPage=1;
+                totalPage=0;
+                countOfFeeds=0;
+                isLoading = false;
+                getHistoryContents(HISTORY_URL + p.token_sharedPreference);
 
                 adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
@@ -246,7 +276,23 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         }, 5000);
 
     }
+    public void loadMore(){
 
+        currentPage++;
+        if(currentPage<=totalPage) {
+
+            Log.e("currentpage=",""+currentPage);
+
+            getHistoryContents("http://vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+
+//            // Notify the ListView of data changed
+//
+            adapter.notifyDataSetChanged();
+
+            isLoading = false;
+        }
+
+    }
     private class History_Adapter extends BaseAdapter {
 
         private ArrayList<SelectUser> arrayListFilter = null;

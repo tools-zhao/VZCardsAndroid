@@ -246,16 +246,6 @@ FrameLayout layout_MainMenu;
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
 
-//                if(totalItemCount<countOfFeeds && !isLoading)
-//                {  // It is time to load more items
-////
-//                    isLoading = true;
-//                     totalPage=(int) Math.ceil((double)countOfFeeds / 10.0);
-//
-//                    loadMore();
-//
-//                }
-
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
                 Log.e("visibleItemCount",""+visibleItemCount);
@@ -394,23 +384,13 @@ FrameLayout layout_MainMenu;
     }
     public void loadMore(){
 
-//
-//        int i;
-//
-//        if(feedsArrayList.size()<=90){ // Limit the number of items to 100 (stop loading when reaching 100 items)
-////
-
         currentPage++;
            if(currentPage<=totalPage) {
 
-
                Log.e("currentpage=",""+currentPage);
 
-
-//               feedsArrayList.clear();
                getFeedsContents("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference +"&page="+currentPage);
-//               adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
-//               listView.setAdapter(adapter);
+
 //            // Notify the ListView of data changed
 //
             adapter.notifyDataSetChanged();
@@ -418,14 +398,6 @@ FrameLayout layout_MainMenu;
 
                isLoading = false;
            }
-//        currentPage++;
-            // Update next
-
-//            next=i;
-//
-//        }
-
-
 
     }
 
