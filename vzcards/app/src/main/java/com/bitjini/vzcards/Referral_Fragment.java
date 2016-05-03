@@ -58,6 +58,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
     int totalPage=0;
     int progressCount=0;
     boolean isLoading=false;
+    View footer;
 
     int count=0;
     @Override
@@ -80,7 +81,12 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
         referralbtn = (Button) referral.findViewById(R.id.referralbtn);
         referral.setSelected(true);
         referral.setPressed(true);
+
         list = (ListView) referral.findViewById(R.id.referralList);
+
+        LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        footer = (View) inflater2.inflate(R.layout.loading_layout, null);
+
         profilebtn = (Button) referral.findViewById(R.id.profilebtn);
         vzfrnds = (Button) referral.findViewById(R.id.vzfrnds);
 
@@ -109,6 +115,9 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             // refresh contents
             getReferalContents(HISTORY_URL + p.token_sharedPreference);
         }
+
+
+
 
         listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
         list.setAdapter(listAdapter);
@@ -176,6 +185,12 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
     }
     public void loadMore(){
 
+            list.addFooterView(footer);
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override public void run() {
+//
         currentPage++;
         if(currentPage<=totalPage) {
 
@@ -188,9 +203,17 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             listAdapter.notifyDataSetChanged();
 
             isLoading = false;
-        }
+            list.removeFooterView(footer);
 
-    }
+
+        }
+        else {
+            list.removeFooterView(footer);
+        }
+                }
+            }, 2000);
+
+        }
     public void getReferalContents(String url) {
         try{
             count=1;

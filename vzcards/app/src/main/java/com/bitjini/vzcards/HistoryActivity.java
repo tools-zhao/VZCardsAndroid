@@ -66,6 +66,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     ProgressBar progressBar;
     int count=0;
 
+    View footer;
     int countOfFeeds=0;
     int currentPage=1;
     int totalPage=0;
@@ -88,6 +89,9 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 ,R.color.red);
 
         listView = (ListView) history.findViewById(R.id.historyList);
+        LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        footer = (View) inflater2.inflate(R.layout.loading_layout, null);
+
 
 //        View header = inflater.inflate(R.layout.header, listView, false);
 //        listView.addHeaderView(header, null, false);
@@ -275,6 +279,12 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     }
     public void loadMore(){
 
+        listView.addFooterView(footer);
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override public void run() {
+//
         currentPage++;
         if(currentPage<=totalPage) {
 
@@ -287,7 +297,15 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             adapter.notifyDataSetChanged();
 
             isLoading = false;
+            listView.removeFooterView(footer);
+
+
         }
+        else {
+            listView.removeFooterView(footer);
+        }
+            }
+        }, 2000);
 
     }
     private class History_Adapter extends BaseAdapter {

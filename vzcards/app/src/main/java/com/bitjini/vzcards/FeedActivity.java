@@ -74,7 +74,7 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
     String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
 
     String URL_GETLIST="http://vzcards-api.herokuapp.com/get_list/?access_token=";
-    ProgressBar progressBar;
+    ProgressBar progressBar,progressBar2;
     private SwipeRefreshLayout swipeRefreshLayout;
     public Cursor phones;
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
@@ -95,8 +95,7 @@ FrameLayout layout_MainMenu;
     boolean isLoading=false;
 
     int next;
-    ProgressDialog progress;
-
+    View footer;
     DataFeeds dataFeeds2 = new DataFeeds();
     DataFeeds dataFeeds1 = new DataFeeds();
 
@@ -123,7 +122,10 @@ FrameLayout layout_MainMenu;
         }
 
         listView = (ListView) feed.findViewById(R.id.feedList);
-//        listView.addFooterView(progressBar);
+
+        LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        footer = (View) inflater2.inflate(R.layout.loading_layout, null);
+
 
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
@@ -149,6 +151,7 @@ FrameLayout layout_MainMenu;
             animation.setRepeatCount(5);
             animation.setInterpolator(new DecelerateInterpolator());
             animation.start();
+
             // refresh contents
             getFeedsContents(URL_GETLIST + token_sharedPreference);
 
@@ -162,10 +165,9 @@ FrameLayout layout_MainMenu;
             // refresh contents
             getFeedsContents(URL_GETLIST + token_sharedPreference);
         }
-            adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
-            listView.setAdapter(adapter);
-//        listView.removeFooterView(progressBar);
 
+        adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+            listView.setAdapter(adapter);
 
 
 
@@ -250,34 +252,36 @@ FrameLayout layout_MainMenu;
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
 
+
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
                 Log.e("visibleItemCount",""+visibleItemCount);
                 Log.e("lastIndexInScreen",""+firstVisibleItem);
                 Log.e("totalItemCount",""+totalItemCount);
+
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
 
 
                     // It is time to load more items
                     isLoading = true;
-                  totalPage=(int) Math.ceil((double)countOfFeeds / 10.0);
+                    totalPage=(int) Math.ceil((double)countOfFeeds / 10.0);
                     Log.e("totalPage ",""+totalPage);
-
                     loadMore();
-
                 }
-
 
             }
         });
 
         return feed;
     }
+
     public void getFeedsContents(String url) {
         try {
 
+
             progressCount = 1;
-            String received =  new HttpAsyncTask().execute(url).get();
+
+           String received =  new HttpAsyncTask().execute(url).get();
 
 
             JSONObject jsonObj = new JSONObject(received);
@@ -332,11 +336,8 @@ FrameLayout layout_MainMenu;
                 feedsArrayList.add(dataFeeds);
 
 
+
             }
-
-//            adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
-//            listView.setAdapter(adapter);
-
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -385,33 +386,39 @@ FrameLayout layout_MainMenu;
             }
         }, 5000);
 
+
     }
     public void loadMore(){
-        progressBar.setVisibility(View.VISIBLE);
-        listView.setVisibility(View.GONE);
-        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-        animation.setDuration(1000); //in milliseconds
-        animation.setRepeatCount(5);
-        animation.setInterpolator(new DecelerateInterpolator());
-        animation.start();
-        currentPage++;
-           if(currentPage<=totalPage) {
+       listView.addFooterView(footer);
 
-               Log.e("currentpage=",""+currentPage);
+        new Handler().postDelayed(new Runnable() {
 
-               getFeedsContents("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference +"&page="+currentPage);
-
-//            // Notify the ListView of data changed
+            @Override public void run() {
 //
-            adapter.notifyDataSetChanged();
-               Log.e("feed size load more",""+feedsArrayList.size());
+                currentPage++;
+                if (currentPage <= totalPage) {
 
-               isLoading = false;
-           }
-        progressBar.clearAnimation();
-        progressBar.setVisibility(View.GONE);
-        listView.setVisibility(View.VISIBLE);
-    }
+                    Log.e("currentpage=", "" + currentPage);
+
+
+                    getFeedsContents("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference + "&page=" + currentPage);
+
+                  // Notify the ListView of data changed
+                    adapter.notifyDataSetChanged();
+                    Log.e("feed size load more", "" + feedsArrayList.size());
+
+                    isLoading = false;
+                    listView.removeFooterView(footer);
+
+
+                }
+                else {
+                    listView.removeFooterView(footer);
+                }
+            }
+            }, 2000);
+
+        }
 
     private void showContacts() {
         // Check the SDK version and whether the permission is already granted or not.
