@@ -125,7 +125,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
                         for(String s: phoneArray) {
                             params.add(new BasicNameValuePair("contact_list", s));
-//                            Log.e("s", "" + s);
+                            Log.e("s", "" + s);
                         }
                         //Send request
                         DataOutputStream wr = new DataOutputStream (
@@ -146,7 +146,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                         rd.close();
 
 
-//                        Log.e(" contact list Response", "" + response.toString());
+                        Log.e(" contact list Response", "" + response.toString());
 
 
 

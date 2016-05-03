@@ -372,7 +372,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 //                    v.item_photo.setTag(data.getItem_photo());
 //                    new DownloadImageProgress(_c).execute(String.valueOf(v.item_photo));// Download item_photo from AsynTask
-                    Picasso.with(_c).load(data.getItem_photo()).resize(250, 250).into( v.item_photo);
+                    Picasso.with(_c).load(data.getItem_photo()).resize(250, 250).placeholder(R.drawable.progress_animation).into( v.item_photo);
                 }
 
             } catch (ArrayIndexOutOfBoundsException ae) {
@@ -606,7 +606,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     if (!cat.getPhoto().isEmpty()) {
 //                        photo.setTag(cat.getPhoto());
 //                        new DownloadImagesTask(getActivity()).execute(photo);// Download item_photo from AsynTask
-                        Picasso.with(_c).load(cat.getPhoto()).into( photo);
+                        Picasso.with(_c).load(cat.getPhoto()).placeholder(R.drawable.progress_animation).into( photo);
 
 
                     } else {
@@ -614,7 +614,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     }
                     if (!cat.getReferredPhoto().isEmpty()) {
 
-                        Picasso.with(_c).load(cat.getReferredPhoto()).into(referredPhoto);
+                        Picasso.with(_c).load(cat.getReferredPhoto()).placeholder(R.drawable.progress_animation).into(referredPhoto);
 //                        referredPhoto.setTag(cat.getReferredPhoto());
 //                        new DownloadImagesTask(getActivity()).execute(referredPhoto);// Download item_photo from AsynTask
 

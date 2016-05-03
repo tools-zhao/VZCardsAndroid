@@ -2,6 +2,6 @@
 
 <animated-rotate
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:drawable="@drawable/progress_image"
+    android:drawable="@drawable/transperentprogress1"
     android:pivotX="50%"
     android:pivotY="50%" />

@@ -123,6 +123,8 @@ FrameLayout layout_MainMenu;
         }
 
         listView = (ListView) feed.findViewById(R.id.feedList);
+//        listView.addFooterView(progressBar);
+
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         // get the access token from shared prefernces
@@ -137,6 +139,7 @@ FrameLayout layout_MainMenu;
             Log.e("", "You are conncted");
         } else {
             Log.e("", "You are NOT conncted");
+            Toast.makeText(getActivity(),"Check your Network Connectivity",Toast.LENGTH_LONG).show();
         }
         showContacts();
 
@@ -161,7 +164,8 @@ FrameLayout layout_MainMenu;
         }
             adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
             listView.setAdapter(adapter);
-        Log.e("feed size 1st time",""+feedsArrayList.size());
+//        listView.removeFooterView(progressBar);
+
 
 
 
@@ -383,7 +387,13 @@ FrameLayout layout_MainMenu;
 
     }
     public void loadMore(){
-
+        progressBar.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.GONE);
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+        animation.setDuration(1000); //in milliseconds
+        animation.setRepeatCount(5);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.start();
         currentPage++;
            if(currentPage<=totalPage) {
 
@@ -398,7 +408,9 @@ FrameLayout layout_MainMenu;
 
                isLoading = false;
            }
-
+        progressBar.clearAnimation();
+        progressBar.setVisibility(View.GONE);
+        listView.setVisibility(View.VISIBLE);
     }
 
     private void showContacts() {
@@ -533,7 +545,7 @@ FrameLayout layout_MainMenu;
 //            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
           if(!data.getItem_photo().isEmpty())
             {
-                Picasso.with(context).load(data.getItem_photo()).into(holder.item_photo);
+                Picasso.with(context).load(data.getItem_photo()).placeholder(R.drawable.progress_animation).into(holder.item_photo);
                 //            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
             } else
           {
@@ -543,7 +555,7 @@ FrameLayout layout_MainMenu;
             if(!data.getPhoto().isEmpty())
             {
 
-            Picasso.with(context).load(data.getPhoto()).into(holder.photo);}
+            Picasso.with(context).load(data.getPhoto()).placeholder(R.drawable.progress_animation).into(holder.photo);}
             else  {
                 holder.photo.setImageResource(R.drawable.profile_pic_placeholder);
                 //            new DownloadImagesTask(getActivity()).execute(holder.photo);
