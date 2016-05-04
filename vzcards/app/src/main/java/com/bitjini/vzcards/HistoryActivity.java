@@ -1,5 +1,7 @@
 package com.bitjini.vzcards;
 
+import android.animation.ObjectAnimator;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,11 +62,23 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     ArrayList<SelectUser> connectorDetails;
     History_Adapter adapter;
     ListView listView;
+    ProgressDialog progressDialog;
+    ProgressBar progressBar;
+    int count=0;
+
+    View footer;
+    int countOfFeeds=0;
+    int currentPage=1;
+    int totalPage=0;
+    int progressCount=0;
+    boolean isLoading=false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View history = inflater.inflate(R.layout.history_listview, container, false);
 
+        progressBar = (ProgressBar) history.findViewById(R.id.progressBar);
 
         swipeRefreshLayout = (SwipeRefreshLayout) history.findViewById(R.id.pullToRefresh);
         // the refresh listner. this would be called when the layout is pulled down
@@ -73,10 +89,28 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 ,R.color.red);
 
         listView = (ListView) history.findViewById(R.id.historyList);
+        LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        footer = (View) inflater2.inflate(R.layout.loading_layout, null);
+
 
 //        View header = inflater.inflate(R.layout.header, listView, false);
 //        listView.addHeaderView(header, null, false);
-        getHistoryContents();
+        if(count==0) {
+            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration(1000); //in milliseconds
+            animation.setRepeatCount(5);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
+
+            getHistoryContents(HISTORY_URL + p.token_sharedPreference);
+            progressBar.clearAnimation();
+            progressBar.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
+        else {
+            listView.setVisibility(View.VISIBLE);
+            getHistoryContents(HISTORY_URL + p.token_sharedPreference);
+        }
         adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
         listView.setAdapter(adapter);
@@ -124,6 +158,21 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     enable = firstItemVisible && topOfFirstItemVisible;
                 }
                 swipeRefreshLayout.setEnabled(enable);
+                Log.i("Main",totalItemCount+"");
+
+                int lastIndexInScreen = visibleItemCount + firstVisibleItem;
+
+                if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
+
+
+                    // It is time to load more items
+                    isLoading = true;
+                    totalPage=(int) Math.ceil((double)countOfFeeds / 10.0);
+                    Log.e("totalPage ",""+totalPage);
+
+                    loadMore();
+
+                }
             }
         });
 
@@ -131,15 +180,16 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
         return history;
     }
-    public void getHistoryContents()
+    public void getHistoryContents(String url)
     {
-        try {
-            String result = new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
+        try{
+            count=1;
+            String result = new HttpAsyncTask(getActivity()).execute(url).get();
             Log.e("received History", "" + result);
 
 
             JSONObject jsonObject = new JSONObject(result);
-
+            countOfFeeds=jsonObject.getInt("count");
             String response = jsonObject.getString("response");
             // Getting JSON Array node
             JSONArray arr = jsonObject.getJSONArray("response");
@@ -209,7 +259,12 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
                 selectUsers.clear();
                 connectorDetails.clear();
-                getHistoryContents();
+
+                currentPage=1;
+                totalPage=0;
+                countOfFeeds=0;
+                isLoading = false;
+                getHistoryContents(HISTORY_URL + p.token_sharedPreference);
 
                 adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
@@ -222,7 +277,37 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         }, 5000);
 
     }
+    public void loadMore(){
 
+        listView.addFooterView(footer);
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override public void run() {
+//
+        currentPage++;
+        if(currentPage<=totalPage) {
+
+            Log.e("currentpage=",""+currentPage);
+
+            getHistoryContents("http://vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+
+//            // Notify the ListView of data changed
+//
+            adapter.notifyDataSetChanged();
+
+            isLoading = false;
+            listView.removeFooterView(footer);
+
+
+        }
+        else {
+            listView.removeFooterView(footer);
+        }
+            }
+        }, 2000);
+
+    }
     private class History_Adapter extends BaseAdapter {
 
         private ArrayList<SelectUser> arrayListFilter = null;
@@ -262,7 +347,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             convertView = null;
             if (convertView == null) {
                 LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = li.inflate(R.layout.history_layout, null);
+                view = li.inflate(R.layout.history_layout, viewGroup,false);
 
 
             } else {
@@ -305,7 +390,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 //                    v.item_photo.setTag(data.getItem_photo());
 //                    new DownloadImageProgress(_c).execute(String.valueOf(v.item_photo));// Download item_photo from AsynTask
-                    Picasso.with(_c).load(data.getItem_photo()).resize(250, 250).into( v.item_photo);
+                    Picasso.with(_c).load(data.getItem_photo()).resize(250, 250).placeholder(R.drawable.progress_animation).into( v.item_photo);
                 }
 
             } catch (ArrayIndexOutOfBoundsException ae) {
@@ -335,10 +420,20 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
                                    String ticketId=data.getTicket_id();
                                     // remove ticket details
+                                    progressDialog=new ProgressDialog(getActivity());
+                                    if(progressDialog!=null){
+                                    progressDialog.setMessage("Deleting ticket..");
+                                    progressDialog.show();
+                                    progressDialog.setCancelable(false);}
                                     new HttpAsyncTask(getActivity()){
                                        @Override
                                         public void onPostExecute(String result)
                                        {
+                                           if(progressDialog!=null & progressDialog.isShowing())
+                                           {
+                                               progressDialog.dismiss();
+                                               progressDialog=null;
+                                           }
 
                                             if(responseCode==200){
                                                 Integer index = (Integer) v.getTag();
@@ -529,7 +624,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     if (!cat.getPhoto().isEmpty()) {
 //                        photo.setTag(cat.getPhoto());
 //                        new DownloadImagesTask(getActivity()).execute(photo);// Download item_photo from AsynTask
-                        Picasso.with(_c).load(cat.getPhoto()).into( photo);
+                        Picasso.with(_c).load(cat.getPhoto()).placeholder(R.drawable.progress_animation).into( photo);
 
 
                     } else {
@@ -537,7 +632,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     }
                     if (!cat.getReferredPhoto().isEmpty()) {
 
-                        Picasso.with(_c).load(cat.getReferredPhoto()).into(referredPhoto);
+                        Picasso.with(_c).load(cat.getReferredPhoto()).placeholder(R.drawable.progress_animation).into(referredPhoto);
 //                        referredPhoto.setTag(cat.getReferredPhoto());
 //                        new DownloadImagesTask(getActivity()).execute(referredPhoto);// Download item_photo from AsynTask
 
@@ -564,23 +659,30 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         String created_date=date_created.replaceAll("[^0-9-:]", " ");
         String output = created_date.substring(0, 19);
         Log.e(" date_created rep  :", "" + output);
-         // Create Calendar instance
+
         Calendar calendar1 = Calendar.getInstance();
         Calendar calendar2= Calendar.getInstance();
 
+
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+"));
         String result = sdf.format(calendar2.getTime());
+
         System.out.println(result);
 
 
+
         try {
-            // set the created date to calender1 object
-            String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-             Date date = new SimpleDateFormat(pattern).parse(date_created);
+
+
+             Date date = sdf.parse(date_created);
              calendar1.setTime(date);
 
             // set the current date to calender2 object
-             Date date2 = new SimpleDateFormat(pattern).parse(result);
-             calendar2.setTime(date2);
+
+             Date date2 = sdf.parse(result);
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date2);
 
             Log.e("date1 =",""+date);
             Log.e("date2 =",""+date2);
@@ -616,25 +718,41 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         if(diffInSecond<=60)
         {
             elapsed=diffInSecond;
-            time="seconds";
+            time="seconds ago";
             System.out.println("Difference in Seconds : " + elapsed);
         }
         if(diffInSecond>60 && diffInMinute<60){
 
             elapsed=diffInMinute;
-            time="mins";
+
+            if(elapsed>1){
+                time="mins ago";
+            }
+            else {
+                time="min ago";
+            }
             System.out.println("Difference in Minute : " + elapsed);
         }
         if(diffInMinute>60 && diffInHour<24)
         {
             elapsed=diffInHour;
-            time="hrs";
+            if(elapsed>1){
+                time="hrs ago";
+            }
+            else {
+                time="hour ago";
+            }
             System.out.println("Difference in Hours : " + elapsed);
         }
         if(diffInHour>24 && diffInDays<30) {
 
             elapsed=diffInDays;
-            time="days";
+            if(elapsed>1){
+                time="days ago";
+            }
+            else {
+                time="day ago";
+            }
             System.out.println("Difference in Days : " + elapsed);
         }
         if(diffInDays>30) {
