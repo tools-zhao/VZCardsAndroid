@@ -61,15 +61,20 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by bitjini on 28/12/15.
  */
 public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=";
-    ProgressBar progressBar;
+    String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+
+    String URL_GETLIST="http://vzcards-api.herokuapp.com/get_list/?access_token=";
+    ProgressBar progressBar,progressBar2;
     private SwipeRefreshLayout swipeRefreshLayout;
     public Cursor phones;
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
@@ -83,8 +88,14 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
     ViewHolder holder;
 FrameLayout layout_MainMenu;
 
-    ProgressDialog progress;
+    int countOfFeeds=0;
+    int currentPage=1;
+    int totalPage=0;
+    int progressCount=0;
+    boolean isLoading=false;
 
+    int next;
+    View footer;
     DataFeeds dataFeeds2 = new DataFeeds();
     DataFeeds dataFeeds1 = new DataFeeds();
 
@@ -111,25 +122,55 @@ FrameLayout layout_MainMenu;
         }
 
         listView = (ListView) feed.findViewById(R.id.feedList);
+
+        LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        footer = (View) inflater2.inflate(R.layout.loading_layout, null);
+
+
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
+        // get the access token from shared prefernces
+        VerifyScreen p = new VerifyScreen();
+        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
+        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+        System.out.println(" getting token from sharedpreference " + token_sharedPreference);
+
 
         // check if you are connected or not
         if (isConnected()) {
             Log.e("", "You are conncted");
         } else {
             Log.e("", "You are NOT conncted");
+            Toast.makeText(getActivity(),"Check your Network Connectivity",Toast.LENGTH_LONG).show();
+        }
+        showContacts();
+
+        if(progressCount==0) {
+            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration(1000); //in milliseconds
+            animation.setRepeatCount(5);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
+
+            // refresh contents
+            getFeedsContents(URL_GETLIST + token_sharedPreference);
+
+            progressBar.clearAnimation();
+            progressBar.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            listView.setVisibility(View.VISIBLE);
+            // refresh contents
+            getFeedsContents(URL_GETLIST + token_sharedPreference);
         }
 
-        // get the access token from shared prefernces
-        VerifyScreen p = new VerifyScreen();
-        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-       token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
-        System.out.println(" getting token from sharedpreference " + token_sharedPreference);
+        adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+            listView.setAdapter(adapter);
 
-      showContacts();
 
-        // call AsynTask to perform network operation on separate thread
-        getFeedsContents();
+
         // set on onList item click
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -209,16 +250,106 @@ FrameLayout layout_MainMenu;
                     enable = firstItemVisible && topOfFirstItemVisible;
                 }
                 swipeRefreshLayout.setEnabled(enable);
+                Log.i("Main",totalItemCount+"");
+
+
+                int lastIndexInScreen = visibleItemCount + firstVisibleItem;
+
+                Log.e("visibleItemCount",""+visibleItemCount);
+                Log.e("lastIndexInScreen",""+firstVisibleItem);
+                Log.e("totalItemCount",""+totalItemCount);
+
+                if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
+
+
+                    // It is time to load more items
+                    isLoading = true;
+                    totalPage=(int) Math.ceil((double)countOfFeeds / 10.0);
+                    Log.e("totalPage ",""+totalPage);
+                    loadMore();
+                }
+
             }
         });
 
         return feed;
     }
-    public void getFeedsContents() {
 
-        new HttpAsyncTask().execute("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference);
+    public void getFeedsContents(String url) {
+        try {
 
+
+            progressCount = 1;
+
+           String received =  new HttpAsyncTask().execute(url).get();
+
+
+            JSONObject jsonObj = new JSONObject(received);
+
+
+            // Getting JSON Array node
+           countOfFeeds=jsonObj.getInt("count");
+            Log.e("countOfFeeds",""+countOfFeeds);
+            JSONArray arr = jsonObj.getJSONArray("response");
+
+            // looping through All Contacts
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject c = arr.getJSONObject(i);
+                // Feed node is JSON Object
+                JSONObject feed = c.getJSONObject("feed");
+
+                String item = feed.getString("item");
+                String question = feed.getString("question");
+                String item_photo = feed.getString("item_photo");
+                String description = feed.getString("description");
+                String ticket_id = feed.getString("ticket_id");
+                String isNeeds = "1", isHas = "0";
+                String vz_id=feed.getString("vz_id");
+
+                if (question == isNeeds) {
+                    isNeeds = question;
+                }
+                if (question == isHas) {
+                    isHas = question;
+                }
+                // user_details node is JSON Object
+                JSONObject user_detail = c.getJSONObject("user_details");
+
+                String firstname = user_detail.getString("firstname");
+                String photo = user_detail.getString("photo");
+                String phone = user_detail.getString("phone");
+
+                DataFeeds dataFeeds = new DataFeeds();
+
+                dataFeeds.setFname(firstname);
+                dataFeeds.setItem(item);
+                dataFeeds.setQuestion(question);
+                dataFeeds.setPhoto(photo);
+                dataFeeds.setItem_photo(item_photo);
+                dataFeeds.setDescription(description);
+                dataFeeds.setIsHas(isHas);
+                dataFeeds.setIsNeeds(isNeeds);
+                dataFeeds.setTicket_id(ticket_id);
+                dataFeeds.setVz_id(vz_id);
+                dataFeeds.setPhone(phone);
+
+                feedsArrayList.add(dataFeeds);
+
+
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
+
+
+
             public boolean isConnected() {
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -241,12 +372,54 @@ FrameLayout layout_MainMenu;
             @Override public void run() {
 
                 feedsArrayList.clear();
-                getFeedsContents();
+
+                currentPage=1;
+                totalPage=0;
+                countOfFeeds=0;
+                isLoading = false;
+                getFeedsContents(URL_GETLIST + token_sharedPreference );
+                adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+                listView.setAdapter(adapter);
+
+                Log.e("feed size aft refresh",""+feedsArrayList.size());
                 swipeRefreshLayout.setRefreshing(false);
             }
         }, 5000);
 
+
     }
+    public void loadMore(){
+       listView.addFooterView(footer);
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override public void run() {
+//
+                currentPage++;
+                if (currentPage <= totalPage) {
+
+                    Log.e("currentpage=", "" + currentPage);
+
+
+                    getFeedsContents("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference + "&page=" + currentPage);
+
+                  // Notify the ListView of data changed
+                    adapter.notifyDataSetChanged();
+                    Log.e("feed size load more", "" + feedsArrayList.size());
+
+                    isLoading = false;
+                    listView.removeFooterView(footer);
+
+
+                }
+                else {
+                    listView.removeFooterView(footer);
+                }
+            }
+            }, 2000);
+
+        }
+
     private void showContacts() {
         // Check the SDK version and whether the permission is already granted or not.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
@@ -254,7 +427,7 @@ FrameLayout layout_MainMenu;
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
         } else {
 
-            new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL+token_sharedPreference);
+            new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL);
         }
     }
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -269,13 +442,7 @@ FrameLayout layout_MainMenu;
         }
     }
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
-        protected void onPreExecute() {
 
-            ObjectAnimator animation = ObjectAnimator.ofInt (progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-            animation.setDuration (5000); //in milliseconds
-            animation.setInterpolator (new DecelerateInterpolator());
-            animation.start ();
-        }
         @Override
         protected String doInBackground(String... urls) {
 
@@ -284,74 +451,6 @@ FrameLayout layout_MainMenu;
                 return downloadUrl(urls[0]);
             } catch (IOException e) {
                 return "Unable to download the requested page.";
-            }
-        }
-
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-            progressBar.clearAnimation();
-            progressBar.setVisibility(View.GONE);
-            Toast.makeText(getActivity(), "Received!", Toast.LENGTH_LONG).show();
-            Log.e("response of feeds...", "" + result);
-            try {
-
-                JSONObject jsonObj = new JSONObject(result.toString());
-
-                // Getting JSON Array node
-                JSONArray arr = jsonObj.getJSONArray("response");
-
-                // looping through All Contacts
-                for (int i = 0; i < arr.length(); i++) {
-                    JSONObject c = arr.getJSONObject(i);
-                    // Feed node is JSON Object
-                    JSONObject feed = c.getJSONObject("feed");
-
-                    String item = feed.getString("item");
-                    String question = feed.getString("question");
-                    String item_photo = feed.getString("item_photo");
-                    String description = feed.getString("description");
-                    String ticket_id = feed.getString("ticket_id");
-                    String isNeeds = "1", isHas = "0";
-                    String vz_id=feed.getString("vz_id");
-
-                    if (question == isNeeds) {
-                        isNeeds = question;
-                    }
-                    if (question == isHas) {
-                        isHas = question;
-                    }
-                    // user_details node is JSON Object
-                    JSONObject user_detail = c.getJSONObject("user_details");
-
-                    String firstname = user_detail.getString("firstname");
-                    String photo = user_detail.getString("photo");
-                    String phone = user_detail.getString("phone");
-
-                    DataFeeds dataFeeds = new DataFeeds();
-
-                    dataFeeds.setFname(firstname);
-                    dataFeeds.setItem(item);
-                    dataFeeds.setQuestion(question);
-                    dataFeeds.setPhoto(photo);
-                    dataFeeds.setItem_photo(item_photo);
-                    dataFeeds.setDescription(description);
-                    dataFeeds.setIsHas(isHas);
-                    dataFeeds.setIsNeeds(isNeeds);
-                    dataFeeds.setTicket_id(ticket_id);
-                    dataFeeds.setVz_id(vz_id);
-                    dataFeeds.setPhone(phone);
-
-                    feedsArrayList.add(dataFeeds);
-
-                }
-                listView.setVisibility(View.VISIBLE);
-                adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
-                listView.setAdapter(adapter);
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
 
@@ -446,13 +545,14 @@ FrameLayout layout_MainMenu;
             holder.radioGroup = (RadioGroup) v.findViewById(R.id.radioGroup1);
 
 
+
             holder.name.setText(String.valueOf(data.getFname()));
             holder.item.setText(String.valueOf(data.getItem()));
 
 //            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
           if(!data.getItem_photo().isEmpty())
             {
-                Picasso.with(context).load(data.getItem_photo()).into(holder.item_photo);
+                Picasso.with(context).load(data.getItem_photo()).placeholder(R.drawable.progress_animation).into(holder.item_photo);
                 //            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
             } else
           {
@@ -462,7 +562,7 @@ FrameLayout layout_MainMenu;
             if(!data.getPhoto().isEmpty())
             {
 
-            Picasso.with(context).load(data.getPhoto()).into(holder.photo);}
+            Picasso.with(context).load(data.getPhoto()).placeholder(R.drawable.progress_animation).into(holder.photo);}
             else  {
                 holder.photo.setImageResource(R.drawable.profile_pic_placeholder);
                 //            new DownloadImagesTask(getActivity()).execute(holder.photo);

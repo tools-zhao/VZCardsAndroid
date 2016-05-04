@@ -2,6 +2,7 @@ package com.bitjini.vzcards;
 
 import android.Manifest;
 import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -48,13 +50,27 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
     ArrayList<ReferalUsers> groupItem = new ArrayList<ReferalUsers>();
     Button vzfrnds, profilebtn, referralbtn;
     ListView list;
+    ProgressBar progressBar;
+    CustomListAdapter listAdapter;
+
+    int countOfFeeds=0;
+    int currentPage=1;
+    int totalPage=0;
+    int progressCount=0;
+    boolean isLoading=false;
+    View footer;
+
+    int count=0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View referral = inflater.inflate(R.layout.list_referal_activity, container, false);
         RelativeLayout linearLayout = (RelativeLayout) referral.findViewById(R.id.parent);
         linearLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+
+        progressBar = (ProgressBar) referral.findViewById(R.id.progressBar);
         swipeRefreshLayout = (SwipeRefreshLayout) referral.findViewById(R.id.pullToRefresh);
+
         // the refresh listner. this would be called when the layout is pulled down
         swipeRefreshLayout.setOnRefreshListener(this);
         // sets the colors used in the refresh animation
@@ -65,7 +81,12 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
         referralbtn = (Button) referral.findViewById(R.id.referralbtn);
         referral.setSelected(true);
         referral.setPressed(true);
+
         list = (ListView) referral.findViewById(R.id.referralList);
+
+        LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        footer = (View) inflater2.inflate(R.layout.loading_layout, null);
+
         profilebtn = (Button) referral.findViewById(R.id.profilebtn);
         vzfrnds = (Button) referral.findViewById(R.id.vzfrnds);
 
@@ -75,9 +96,30 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
         // Populate our list with groups and it's children
         // Creating the list adapter and populating the list
 
-        getReferalContents();
+        if(count==0) {
+            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration(1000); //in milliseconds
+            animation.setRepeatCount(5);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
+             // refresh contents
+            getReferalContents(HISTORY_URL + p.token_sharedPreference);
 
-        CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+            progressBar.clearAnimation();
+            progressBar.setVisibility(View.GONE);
+            list.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            list.setVisibility(View.VISIBLE);
+            // refresh contents
+            getReferalContents(HISTORY_URL + p.token_sharedPreference);
+        }
+
+
+
+
+        listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
         list.setAdapter(listAdapter);
 
         // Creating an item click listener, to open/close our toolbar for each item
@@ -120,20 +162,67 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                     enable = firstItemVisible && topOfFirstItemVisible;
                 }
                 swipeRefreshLayout.setEnabled(enable);
+                Log.i("Main",totalItemCount+"");
+
+                int lastIndexInScreen = visibleItemCount + firstVisibleItem;
+
+                if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
+
+
+                    // It is time to load more items
+                    isLoading = true;
+                    totalPage=(int) Math.ceil((double)countOfFeeds / 10.0);
+                    Log.e("totalPage ",""+totalPage);
+
+                    loadMore();
+
+                }
             }
         });
 
         return referral;
 
     }
-    public void getReferalContents() {
-try{
-        String received=new HttpAsyncTask(getActivity()).execute(HISTORY_URL + p.token_sharedPreference).get();
+    public void loadMore(){
 
-                    Log.e("received History", "" + received);
+            list.addFooterView(footer);
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override public void run() {
+//
+        currentPage++;
+        if(currentPage<=totalPage) {
+
+            Log.e("currentpage=",""+currentPage);
+
+            getReferalContents("http://vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+
+//            // Notify the ListView of data changed
+//
+            listAdapter.notifyDataSetChanged();
+
+            isLoading = false;
+            list.removeFooterView(footer);
+
+
+        }
+        else {
+            list.removeFooterView(footer);
+        }
+                }
+            }, 2000);
+
+        }
+    public void getReferalContents(String url) {
+        try{
+            count=1;
+        String received=new HttpAsyncTask(getActivity()).execute(url).get();
+
+//                    Log.e("received History", "" + received);
 
                     JSONObject jsonObject = new JSONObject(received);
-
+            countOfFeeds=jsonObject.getInt("count");
                     String response = jsonObject.getString("response");
                     // Getting JSON Array node
                     JSONArray arr = jsonObject.getJSONArray("response");
@@ -143,7 +232,7 @@ try{
                         JSONObject c = arr.getJSONObject(i);
                         // Connection Node in an array
                         JSONArray arr2 = c.getJSONArray("connections");
-                        Log.e(" connections :", "" + arr2);
+//                        Log.e(" connections :", "" + arr2);
 
                         for (int i2 = 0; i2 < arr2.length(); i2++) {
                             JSONObject c2 = arr2.getJSONObject(i2);
@@ -175,7 +264,7 @@ try{
                                 company_photo = reffered_phone_details.getString("company_photo");
                                 email = reffered_phone_details.getString("email");
 
-                                Log.e("json reffered_phone_ 2=", "" + jsonObject1);
+//                                Log.e("json reffered_phone_ 2=", "" + jsonObject1);
                             } else  {
                                 phone = c2.getString("reffered_phone_details");
                                 company = "";
@@ -187,8 +276,8 @@ try{
                                 company_photo = "";
                                 email = "";
 
-                                Log.e("json reffered_ticket 3=", "" + referedFname);
-                                Log.e("json reffered_phone_ 3=", "" + phone);
+//                                Log.e("json reffered_ticket 3=", "" + referedFname);
+//                                Log.e("json reffered_phone_ 3=", "" + phone);
                             }
                             String refTicketDetails = c2.getString("reffered_ticket_details");
 
@@ -224,7 +313,7 @@ try{
 
 
                             JSONObject ticket_details = c.getJSONObject("ticket_details");
-                            Log.e(" ticket_details :", "" + ticket_details);
+//                            Log.e(" ticket_details :", "" + ticket_details);
                             String question = ticket_details.getString("question");
                             String description = ticket_details.getString("description");
                             String ticket_id = ticket_details.getString("ticket_id");
@@ -262,18 +351,18 @@ try{
                             referalUsers.setRefItemName(refItemName);
                             referalUsers.setRefItem_photo(refItem_photo);
 
-                            Log.e("referedFname 1=", "" + referedFname);
+//                            Log.e("referedFname 1=", "" + referedFname);
                             groupItem.add(referalUsers);
                             String json2 = new Gson().toJson(groupItem);// updated array
-                            Log.e("groupItem array", "" + json2);
+//                            Log.e("groupItem array", "" + json2);
 
                         }
 
 
                     }
-                    for (ReferalUsers u : groupItem) {
-                        Log.w("list ", "" + u.getReferredfName());
-                    }
+//                    for (ReferalUsers u : groupItem) {
+//                        Log.w("list ", "" + u.getReferredfName());
+//                    }
 
 
                 } catch (JSONException e) {
@@ -299,7 +388,11 @@ try{
             @Override public void run() {
 
                 groupItem.clear();
-                getReferalContents();
+                currentPage=1;
+                totalPage=0;
+                countOfFeeds=0;
+                isLoading = false;
+                getReferalContents(HISTORY_URL + p.token_sharedPreference);
                 CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
                 list.setAdapter(listAdapter);
 
@@ -365,7 +458,7 @@ try{
             name.setText(cat.getFname() + " " + cat.getLname());
 
             referredName.setText(cat.getReferredfName() + " " + cat.getReferredlName());
-            Log.e("referred fname in item=",""+cat.getReferredfName());
+//            Log.e("referred fname in item=",""+cat.getReferredfName());
 
             itemName.setText("for " + cat.getItemName());
             try {

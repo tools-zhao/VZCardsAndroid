@@ -99,7 +99,7 @@
                 android:layout_marginLeft="2dp"
                 android:layout_below="@+id/profilePic"
                 android:layout_gravity="right"
-                android:textColor="#ff363b81"
+                android:textColor="@drawable/refer_text"
                 android:layout_marginTop="12dp"
                 android:textAllCaps="true"
                 android:shadowColor="#5f8ac7"

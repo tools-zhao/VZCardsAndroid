@@ -38,7 +38,7 @@
       android:orientation="vertical">
             <TextView
                 android:layout_width="120dp"
-                android:layout_height="25dp"
+                android:layout_height="27dp"
                 android:text=" House "
                 android:id="@+id/itemName"
                 android:layout_toRightOf="@+id/image1"

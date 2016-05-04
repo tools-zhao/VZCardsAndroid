@@ -99,12 +99,17 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             p.sharedPreferences = context.getSharedPreferences(p.VZCARD_PREFS, 0);
            p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
+            //Create connection
             URL url = new URL(postURL);
             final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
             conn.setRequestMethod("POST");
-            conn.setDoInput(true);
+            conn.setRequestProperty("Content-Type",
+                    "application/x-www-form-urlencoded");
+
+            conn.setRequestProperty("USER-AGENT", "Mozilla/5.0");
+            conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
             conn.setDoOutput(true);
 
             new LoadContact() {
@@ -122,30 +127,27 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                             params.add(new BasicNameValuePair("contact_list", s));
                             Log.e("s", "" + s);
                         }
-                        OutputStream os = null;
+                        //Send request
+                        DataOutputStream wr = new DataOutputStream (
+                                conn.getOutputStream ());
+                        wr.writeBytes (getQuery(params));
+                        wr.flush ();
+                        wr.close ();
 
-                        os = conn.getOutputStream();
-
-                        BufferedWriter writer = null;
-
-                        writer = new BufferedWriter(
-                                new OutputStreamWriter(os, "UTF-8"));
-                        writer.write(getQuery(params));
                         //Get Response
                         InputStream is = conn.getInputStream();
                         BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                         String line;
-                        StringBuffer response = new StringBuffer();
+                        StringBuilder response = new StringBuilder();
                         while ((line = rd.readLine()) != null) {
                             response.append(line);
                             response.append('"');
                         }
                         rd.close();
 
+
                         Log.e(" contact list Response", "" + response.toString());
-                        writer.flush();
-                        writer.close();
-                        os.close();
+
 
 
                     } catch (IOException e) {
@@ -210,12 +212,12 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
             phones =context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
-            Log.e("show contact:",""+phones);
+//            Log.e("show contact:",""+phones);
 //            // Get Contact list from Phone
 //            Log.e("phones", "" + phones);
 
             if (phones != null) {
-                Log.e("count", "" + phones.getCount());
+//                Log.e("count", "" + phones.getCount());
                 if (phones.getCount() == 0) {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
@@ -230,6 +232,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                     String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
                     phoneNumber=phoneNumber.replaceAll("[\\D]", "");
+                    phoneNumber=phoneNumber.replaceFirst("^0+(?!$)", "");
                     // get the country code
                     String countryCode = GetCountryZipCode();
 
@@ -251,7 +254,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
                 }
             } else {
-                Log.e("Cursor close 1", "----------------");
+//                Log.e("Cursor close 1", "----------------");
             }
             //phones.close();
             return null;
