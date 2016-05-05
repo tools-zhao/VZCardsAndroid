@@ -99,15 +99,15 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 R.color.colorPrimary
                 ,R.color.red);
 
-//        getHistoryContents(HISTORY_URL + p.token_sharedPreference);
+        getHistoryContents(HISTORY_URL + p.token_sharedPreference);
 //
 //            if(selectUsers.isEmpty())
 //            {
 //                Toast.makeText(getActivity(),"No data to Display",Toast.LENGTH_LONG).show();
 //            }
-//        adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
+        adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
-//        listView.setAdapter(adapter);
+        listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -791,13 +791,13 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 //                Toast.LENGTH_LONG).show();
 //    }
 //
-    @Override
-    public void onPause() {
-        // TODO Auto-generated method stub
-        super.onPause();
-
-        Toast.makeText(getActivity(),
-                "MyFragment.onPause()",
-                Toast.LENGTH_LONG).show();
-    }
+//    @Override
+//    public void onPause() {
+//        // TODO Auto-generated method stub
+//        super.onPause();
+//
+//        Toast.makeText(getActivity(),
+//                "MyFragment.onPause()",
+//                Toast.LENGTH_LONG).show();
+//    }
     }

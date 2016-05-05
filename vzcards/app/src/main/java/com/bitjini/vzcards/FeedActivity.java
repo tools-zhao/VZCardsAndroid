@@ -163,12 +163,12 @@ FrameLayout layout_MainMenu;
 //        {
 //            listView.setVisibility(View.VISIBLE);
 //            // refresh contents
-//            getFeedsContents(URL_GETLIST + token_sharedPreference);
-////        }
-//
-//        adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
-//            listView.setAdapter(adapter);
-//
+            getFeedsContents(URL_GETLIST + token_sharedPreference);
+//        }
+
+        adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+            listView.setAdapter(adapter);
+
 
 
         // set on onList item click

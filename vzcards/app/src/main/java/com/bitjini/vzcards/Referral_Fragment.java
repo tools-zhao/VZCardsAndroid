@@ -113,14 +113,14 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 //        {
 //            list.setVisibility(View.VISIBLE);
 //            // refresh contents
-//            getReferalContents(HISTORY_URL + p.token_sharedPreference);
+            getReferalContents(HISTORY_URL + p.token_sharedPreference);
 ////        }
 //
 //
 //
 //
-//        listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
-//        list.setAdapter(listAdapter);
+        listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+        list.setAdapter(listAdapter);
 
         // Creating an item click listener, to open/close our toolbar for each item
 

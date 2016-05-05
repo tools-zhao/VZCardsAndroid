@@ -191,6 +191,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         if(!photo.isEmpty()) {
 
             Picasso.with(getActivity()).load(photo).resize(250, 250).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+            SavePreferences(PROFILE_IMAGE, photo);
 //            imageProfile.setTag(photo);
 //                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
 
@@ -199,6 +200,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         if(!company_photo.isEmpty()) {
             Picasso.with(getActivity()).load(company_photo).resize(100, 100).placeholder(R.drawable.com_logo).into(imageCompany);
+            SavePreferences(COMPANY_IMAGE, company_photo);
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
         }
