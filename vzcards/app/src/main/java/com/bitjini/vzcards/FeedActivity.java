@@ -93,7 +93,7 @@ FrameLayout layout_MainMenu;
     int totalPage=0;
     int progressCount=0;
     boolean isLoading=false;
-
+    int itemCount=0;
     int next;
     View footer;
     DataFeeds dataFeeds2 = new DataFeeds();
@@ -103,7 +103,7 @@ FrameLayout layout_MainMenu;
                              Bundle savedInstanceState) {
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
 
-        progressBar = (ProgressBar) feed.findViewById(R.id.progressBar);
+//        progressBar = (ProgressBar) feed.findViewById(R.id.progressBar);
 
         swipeRefreshLayout = (SwipeRefreshLayout) feed.findViewById(R.id.pullToRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -145,30 +145,30 @@ FrameLayout layout_MainMenu;
         }
         showContacts();
 
-        if(progressCount==0) {
-            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-            animation.setDuration(1000); //in milliseconds
-            animation.setRepeatCount(5);
-            animation.setInterpolator(new DecelerateInterpolator());
-            animation.start();
-
-            // refresh contents
-            getFeedsContents(URL_GETLIST + token_sharedPreference);
-
-            progressBar.clearAnimation();
-            progressBar.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            listView.setVisibility(View.VISIBLE);
-            // refresh contents
-            getFeedsContents(URL_GETLIST + token_sharedPreference);
-        }
-
-        adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
-            listView.setAdapter(adapter);
-
+//        if(progressCount==0) {
+//            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+//            animation.setDuration(1000); //in milliseconds
+//            animation.setRepeatCount(5);
+//            animation.setInterpolator(new DecelerateInterpolator());
+//            animation.start();
+//
+//            // refresh contents
+//            getFeedsContents(URL_GETLIST + token_sharedPreference);
+//
+//            progressBar.clearAnimation();
+//            progressBar.setVisibility(View.GONE);
+//            listView.setVisibility(View.VISIBLE);
+//        }
+//        else
+//        {
+//            listView.setVisibility(View.VISIBLE);
+//            // refresh contents
+//            getFeedsContents(URL_GETLIST + token_sharedPreference);
+////        }
+//
+//        adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+//            listView.setAdapter(adapter);
+//
 
 
         // set on onList item click
@@ -251,7 +251,18 @@ FrameLayout layout_MainMenu;
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
+                if(itemCount==totalItemCount)
+                {
+                    swipeRefreshLayout.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+//                                                    swipeRefreshLayout.setRefreshing(true);
+                                                    refreshContent();
 
+                                                }
+                                            }
+                    );
+                }
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 

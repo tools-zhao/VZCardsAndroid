@@ -68,7 +68,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
         RelativeLayout linearLayout = (RelativeLayout) referral.findViewById(R.id.parent);
         linearLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
-        progressBar = (ProgressBar) referral.findViewById(R.id.progressBar);
+//        progressBar = (ProgressBar) referral.findViewById(R.id.progressBar);
         swipeRefreshLayout = (SwipeRefreshLayout) referral.findViewById(R.id.pullToRefresh);
 
         // the refresh listner. this would be called when the layout is pulled down
@@ -95,32 +95,32 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
         // Populate our list with groups and it's children
         // Creating the list adapter and populating the list
-
-        if(count==0) {
-            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-            animation.setDuration(1000); //in milliseconds
-            animation.setRepeatCount(5);
-            animation.setInterpolator(new DecelerateInterpolator());
-            animation.start();
-             // refresh contents
-            getReferalContents(HISTORY_URL + p.token_sharedPreference);
-
-            progressBar.clearAnimation();
-            progressBar.setVisibility(View.GONE);
-            list.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            list.setVisibility(View.VISIBLE);
-            // refresh contents
-            getReferalContents(HISTORY_URL + p.token_sharedPreference);
-        }
-
-
-
-
-        listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
-        list.setAdapter(listAdapter);
+//
+//        if(count==0) {
+//            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+//            animation.setDuration(1000); //in milliseconds
+//            animation.setRepeatCount(5);
+//            animation.setInterpolator(new DecelerateInterpolator());
+//            animation.start();
+//             // refresh contents
+//            getReferalContents(HISTORY_URL + p.token_sharedPreference);
+//
+//            progressBar.clearAnimation();
+//            progressBar.setVisibility(View.GONE);
+//            list.setVisibility(View.VISIBLE);
+//        }
+//        else
+//        {
+//            list.setVisibility(View.VISIBLE);
+//            // refresh contents
+//            getReferalContents(HISTORY_URL + p.token_sharedPreference);
+////        }
+//
+//
+//
+//
+//        listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+//        list.setAdapter(listAdapter);
 
         // Creating an item click listener, to open/close our toolbar for each item
 
@@ -163,6 +163,19 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
+                int itemCount=0;
+                if(itemCount==totalItemCount)
+                {
+                    swipeRefreshLayout.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+//                                                    swipeRefreshLayout.setRefreshing(true);
+                                                    refreshContent();
+
+                                                }
+                                            }
+                    );
+                }
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 

@@ -87,7 +87,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
-        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progressBar);
+//        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progressBar);
         swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
 
         // the refresh listner. this would be called when the layout is pulled down
@@ -109,25 +109,25 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
 
 
-        if(count==0) {
-            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-            animation.setDuration(1000); //in milliseconds
-            animation.setRepeatCount(5);
-            animation.setInterpolator(new DecelerateInterpolator());
-            animation.start();
-
-            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-
-            progressBar.clearAnimation();
-            progressBar.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            listView.setVisibility(View.VISIBLE);
+//        if(count==0) {
+//            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+//            animation.setDuration(1000); //in milliseconds
+//            animation.setRepeatCount(5);
+//            animation.setInterpolator(new DecelerateInterpolator());
+//            animation.start();
+//
+//            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+//
+//            progressBar.clearAnimation();
+//            progressBar.setVisibility(View.GONE);
+//            listView.setVisibility(View.VISIBLE);
+//        }
+//        else
+//        {
+//            listView.setVisibility(View.VISIBLE);
             // refresh contents
             getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-        }
+//        }
 
         listView.setTextFilterEnabled(true);
         setupSearchView();
@@ -158,7 +158,19 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
+                int itemCount=0;
+                if(itemCount==totalItemCount)
+                {
+                    swipeRefreshLayout.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+//                                                    swipeRefreshLayout.setRefreshing(true);
+                                                    refreshContent();
 
+                                                }
+                                            }
+                    );
+                }
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
