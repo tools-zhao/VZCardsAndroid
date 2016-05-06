@@ -160,7 +160,7 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
             } else {
                 Log.e("Cursor close 1", "----------------");
             }
-            //phones.close();
+            phones.close();
             return null;
         }
 

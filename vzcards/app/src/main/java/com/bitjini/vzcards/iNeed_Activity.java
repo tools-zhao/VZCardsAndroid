@@ -118,11 +118,20 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
         addImage.setOnClickListener(this);
-        btnCander = (ImageButton) iNeed.findViewById(R.id.click);
-        btnCander.setOnClickListener(this);
+//        btnCander = (ImageButton) iNeed.findViewById(R.id.click);
+//        btnCander.setOnClickListener(this);
         submit.setOnClickListener(this);
 
         havebtn.setOnClickListener(this);
+
+        txtDate_validity.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                showDatePickerDialog(v);
+                return false;
+            }
+        });
       txtItem.setOnTouchListener(new View.OnTouchListener() {
           @Override
           public boolean onTouch(View v, MotionEvent event) {
@@ -436,10 +445,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
             HttpPost post = new HttpPost(postURL);
 
-            item= txtItem.getText().toString();
-            description= txtDescription.getText().toString();
-            date_validity=txtDate_validity.getText().toString();
-            question="1";
+
 
             Log.e(" question test:",""+question);
             Log.e(" item_photo test:",""+item_photo);
@@ -590,18 +596,28 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
             //setting company picture
             case R.id.imgbtn:
-                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET+p.token_sharedPreference);
+                item= txtItem.getText().toString();
+                description= txtDescription.getText().toString();
+                date_validity=txtDate_validity.getText().toString();
+                question="1";
+
+                if( item.length()==0 || description.length()==0 || date_validity.length()==0)
+                {
+                    Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT).show();
+
+                }
+                else {
+                    new INeed_Task(getActivity()).execute(URL_CREATE_TICKET+p.token_sharedPreference);
+
+                }
+
                 break;
-            case  R.id.click:
-                showDatePickerDialog(v);
-                break;
-//            case  R.id.ask:
-//                    done1.setVisibility(View.VISIBLE);
+//            case  R.id.click:
+//                showDatePickerDialog(v);
 //                break;
-//            case R.id.desc:
-//                    done2.setVisibility(View.VISIBLE);
-//                 break;
+
             case R.id.done:
+                txtItem.setCursorVisible(false);
                 InputMethodManager inputManager2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (getActivity().getCurrentFocus() != null){
                     inputManager2.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -609,6 +625,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                 done1.setVisibility(View.GONE);
                 break;
             case R.id.done2:
+                txtDescription.setCursorVisible(false);
                 InputMethodManager inputManager1 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (getActivity().getCurrentFocus() != null){
                     inputManager1.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
