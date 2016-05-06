@@ -644,7 +644,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), needFragment).addToBackStack(null)
+                        .replace(contentView.getId(), needFragment)
                         .commit();
                 break;
 

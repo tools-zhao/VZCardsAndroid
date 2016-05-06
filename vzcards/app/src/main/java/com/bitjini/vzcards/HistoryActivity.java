@@ -152,24 +152,24 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
 
-                if(itemCount==totalItemCount)
-                {
-                    swipeRefreshLayout.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-//                                                    swipeRefreshLayout.setRefreshing(true);
-//                                                   refreshContent();
-                                                    getHistoryContents(HISTORY_URL + p.token_sharedPreference);
-
-
-                                                    adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
-
-                                                    listView.setAdapter(adapter);
-
-                                                }
-                                            }
-                    );
-                }
+//                if(itemCount==totalItemCount)
+//                {
+//                    swipeRefreshLayout.post(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+////                                                    swipeRefreshLayout.setRefreshing(true);
+////                                                   refreshContent();
+//                                                    getHistoryContents(HISTORY_URL + p.token_sharedPreference);
+//
+//
+//                                                    adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
+//
+//                                                    listView.setAdapter(adapter);
+//
+//                                                }
+//                                            }
+//                    );
+//                }
 
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;

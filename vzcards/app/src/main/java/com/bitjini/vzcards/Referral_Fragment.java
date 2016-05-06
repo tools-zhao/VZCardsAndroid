@@ -163,19 +163,19 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
-                int itemCount=0;
-                if(itemCount==totalItemCount)
-                {
-                    swipeRefreshLayout.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-//                                                    swipeRefreshLayout.setRefreshing(true);
-                                                    refreshContent();
-
-                                                }
-                                            }
-                    );
-                }
+//                int itemCount=0;
+//                if(itemCount==totalItemCount)
+//                {
+//                    swipeRefreshLayout.post(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+////                                                    swipeRefreshLayout.setRefreshing(true);
+//                                                    refreshContent();
+//
+//                                                }
+//                                            }
+//                    );
+//                }
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 

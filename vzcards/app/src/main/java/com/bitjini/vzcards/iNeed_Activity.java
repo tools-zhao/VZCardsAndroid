@@ -624,7 +624,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), haveFragment).addToBackStack(null)
+                        .replace(contentView.getId(), haveFragment)
                         .commit();
                 break;
 

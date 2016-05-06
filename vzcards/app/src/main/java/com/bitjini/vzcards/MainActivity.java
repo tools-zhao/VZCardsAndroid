@@ -12,24 +12,31 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 /**
  * Created by VEENA on 12/7/2015.
  */
 public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
 
-
+    ProgressBar progressContainer;
+    TabLayout tabLayout;
+     ViewPager viewPager;
+     TabPagerAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInsatnceState)
     {
         super.onCreate(savedInsatnceState);
         setContentView(R.layout.viewpager_activty);
+        progressContainer = (ProgressBar)findViewById(R.id.progress);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
 //        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_vz_profile));
 //
@@ -56,8 +63,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         tabLayout.addTab(tabLayout.newTab().setCustomView(view4));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        final TabPagerAdapter adapter = new TabPagerAdapter
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        adapter = new TabPagerAdapter
                 (getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setOffscreenPageLimit(3); // the number of "off screen" pages to keep loaded each side of the current page
 
@@ -125,5 +132,43 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.refresh:
+
+
+                progressContainer.setVisibility(View.VISIBLE);
+
+                adapter.notifyDataSetChanged();
+
+               progressContainer.setVisibility(View.GONE);
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    public static String POSITION = "POSITION";
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(POSITION, tabLayout.getSelectedTabPosition());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        viewPager.setCurrentItem(savedInstanceState.getInt(POSITION));
     }
 }

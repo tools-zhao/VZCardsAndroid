@@ -253,18 +253,18 @@ FrameLayout layout_MainMenu;
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
-                if(itemCount==totalItemCount)
-                {
-                    swipeRefreshLayout.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-//                                                    swipeRefreshLayout.setRefreshing(true);
-                                                    refreshContent();
-
-                                                }
-                                            }
-                    );
-                }
+//                if(itemCount==totalItemCount)
+//                {
+//                    swipeRefreshLayout.post(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+////                                                    swipeRefreshLayout.setRefreshing(true);
+//                                                    refreshContent();
+//
+//                                                }
+//                                            }
+//                    );
+//                }
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
@@ -296,7 +296,7 @@ FrameLayout layout_MainMenu;
 
            String received =  new HttpAsyncTask().execute(url).get();
 
-
+            Log.e("refresh =",""+received);
             JSONObject jsonObj = new JSONObject(received);
 
 
