@@ -33,7 +33,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -241,7 +240,6 @@ FrameLayout layout_MainMenu;
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
-
                 boolean enable = false;
                 if(listView != null && listView.getChildCount() > 0){
                     // check if the first item of the list is visible
@@ -253,18 +251,18 @@ FrameLayout layout_MainMenu;
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
-//                if(itemCount==totalItemCount)
-//                {
-//                    swipeRefreshLayout.post(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-////                                                    swipeRefreshLayout.setRefreshing(true);
-//                                                    refreshContent();
-//
-//                                                }
-//                                            }
-//                    );
-//                }
+                if(itemCount==totalItemCount)
+                {
+                    swipeRefreshLayout.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+//                                                    swipeRefreshLayout.setRefreshing(true);
+                                                    refreshContent();
+
+                                                }
+                                            }
+                    );
+                }
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
@@ -296,7 +294,7 @@ FrameLayout layout_MainMenu;
 
            String received =  new HttpAsyncTask().execute(url).get();
 
-            Log.e("refresh =",""+received);
+
             JSONObject jsonObj = new JSONObject(received);
 
 
@@ -513,7 +511,8 @@ FrameLayout layout_MainMenu;
     static class ViewHolder {
         public TextView name, question, item;
         public View viewLine;
-        public ImageView item_photo, photo;
+        public RoundedImageView photo;
+        public ImageView item_photo;
         public RadioButton referButtonRed, referButtonGreen;
         public RadioGroup radioGroup;
     }
@@ -550,7 +549,7 @@ FrameLayout layout_MainMenu;
             holder.question = (TextView) v.findViewById(R.id.selectionText);
             holder.item = (TextView) v.findViewById(R.id.feedProfile);
             holder.item_photo = (ImageView) v.findViewById(R.id.itemPhoto);
-            holder.photo = (ImageView) v.findViewById(R.id.profilePic);
+            holder.photo = (RoundedImageView) v.findViewById(R.id.profilePic);
             holder.viewLine = (View) v.findViewById(R.id.viewLine);
 
             holder.referButtonRed = (RadioButton) v.findViewById(R.id.referButton);
@@ -565,7 +564,7 @@ FrameLayout layout_MainMenu;
 //            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
           if(!data.getItem_photo().isEmpty())
             {
-                Picasso.with(context).load(data.getItem_photo()).into(holder.item_photo);
+                Picasso.with(context).load(data.getItem_photo()).placeholder(R.drawable.no_pic_placeholder_with_border_800x800).into(holder.item_photo);
                 //            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
             } else
           {
@@ -575,7 +574,7 @@ FrameLayout layout_MainMenu;
             if(!data.getPhoto().isEmpty())
             {
 
-            Picasso.with(context).load(data.getPhoto()).placeholder(R.drawable.progress_animation).into(holder.photo);}
+            Picasso.with(context).load(data.getPhoto()).placeholder(R.drawable.profile_pic_placeholder).into(holder.photo);}
             else  {
                 holder.photo.setImageResource(R.drawable.profile_pic_placeholder);
                 //            new DownloadImagesTask(getActivity()).execute(holder.photo);
