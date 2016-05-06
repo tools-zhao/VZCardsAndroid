@@ -27,8 +27,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -93,6 +95,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
     VerifyScreen p = new VerifyScreen();
 
+    Button done1,done2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -107,6 +110,8 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         submit=(ImageButton) iNeed.findViewById(R.id.imgbtn);
 
          havebtn = (Button) iNeed.findViewById(R.id.ihave);
+        done1 = (Button) iNeed.findViewById(R.id.done);
+        done2 = (Button) iNeed.findViewById(R.id.done2);
 
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
@@ -118,6 +123,22 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         submit.setOnClickListener(this);
 
         havebtn.setOnClickListener(this);
+      txtItem.setOnTouchListener(new View.OnTouchListener() {
+          @Override
+          public boolean onTouch(View v, MotionEvent event) {
+              done1.setVisibility(View.VISIBLE);
+              return false;
+          }
+      });
+        txtDescription.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                done2.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+        done1.setOnClickListener(this);
+        done2.setOnClickListener(this);
 
         return iNeed;
     }
@@ -573,6 +594,26 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                 break;
             case  R.id.click:
                 showDatePickerDialog(v);
+                break;
+//            case  R.id.ask:
+//                    done1.setVisibility(View.VISIBLE);
+//                break;
+//            case R.id.desc:
+//                    done2.setVisibility(View.VISIBLE);
+//                 break;
+            case R.id.done:
+                InputMethodManager inputManager2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getActivity().getCurrentFocus() != null){
+                    inputManager2.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                done1.setVisibility(View.GONE);
+                break;
+            case R.id.done2:
+                InputMethodManager inputManager1 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getActivity().getCurrentFocus() != null){
+                    inputManager1.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                done2.setVisibility(View.GONE);
                 break;
             case R.id.ihave:
 

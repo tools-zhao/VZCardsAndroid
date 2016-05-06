@@ -33,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -240,6 +241,7 @@ FrameLayout layout_MainMenu;
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
+
                 boolean enable = false;
                 if(listView != null && listView.getChildCount() > 0){
                     // check if the first item of the list is visible
@@ -524,7 +526,7 @@ FrameLayout layout_MainMenu;
         boolean red = false, green = false;
 
         public FeedsAdapter(Context context, int textViewResourceId, ArrayList<DataFeeds> items) {
-            super(context, textViewResourceId, items);
+              super(context, textViewResourceId, items);
             this.context = context;
             FeedActivity.this.feeds = items;
         }
@@ -563,7 +565,7 @@ FrameLayout layout_MainMenu;
 //            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
           if(!data.getItem_photo().isEmpty())
             {
-                Picasso.with(context).load(data.getItem_photo()).placeholder(R.drawable.progress_animation).into(holder.item_photo);
+                Picasso.with(context).load(data.getItem_photo()).into(holder.item_photo);
                 //            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
             } else
           {

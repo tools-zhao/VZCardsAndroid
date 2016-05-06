@@ -62,6 +62,7 @@ public class Connect_2_Tickets extends Activity {
         reffered_phone = "";
         Log.e("ticket_id_1 =:",""+ticket_id_1);
         Log.e("phone1 =:",""+phone_1);
+        Log.e("phone2 =:",""+phone_2);
         Log.e("connector_vz_id =:",""+connecter_vz_id);
 
         VerifyScreen p = new VerifyScreen();
