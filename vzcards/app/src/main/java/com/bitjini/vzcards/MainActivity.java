@@ -1,8 +1,10 @@
 package com.bitjini.vzcards;
 
+import android.animation.ObjectAnimator;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -15,7 +17,10 @@ import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 /**
@@ -23,7 +28,8 @@ import android.widget.ProgressBar;
  */
 public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
 
-    ProgressBar progressContainer;
+    ImageButton progressContainer;
+    ProgressBar progressBar;
     TabLayout tabLayout;
      ViewPager viewPager;
      TabPagerAdapter adapter;
@@ -32,12 +38,38 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     {
         super.onCreate(savedInsatnceState);
         setContentView(R.layout.viewpager_activty);
-        progressContainer = (ProgressBar)findViewById(R.id.progress);
+        progressContainer = (ImageButton)findViewById(R.id.progress);
+        progressBar = (ProgressBar)findViewById(R.id.progress1);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
          tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
+        progressContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressContainer.setVisibility(View.GONE);
+
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(0);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override public void run() {
+
+
+                        // refresh contents
+                        adapter.notifyDataSetChanged();
+
+
+                        progressBar.setVisibility(View.GONE);
+                        progressContainer.setVisibility(View.VISIBLE);
+                    }
+                }, 5000);
+
+            }
+
+
+        });
 //        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_vz_profile));
 //
 //        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.feeds_drawable));
@@ -133,31 +165,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         super.onConfigurationChanged(newConfig);
 
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.refresh:
 
-
-                progressContainer.setVisibility(View.VISIBLE);
-
-                adapter.notifyDataSetChanged();
-
-               progressContainer.setVisibility(View.GONE);
-
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
     public static String POSITION = "POSITION";
 
     @Override

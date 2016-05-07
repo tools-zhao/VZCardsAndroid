@@ -386,7 +386,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), profilefragment)
+                        .replace(contentView.getId(), profilefragment)
                         .commit();
 
 

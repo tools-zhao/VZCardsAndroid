@@ -130,6 +130,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         profilebtn = (Button) profile.findViewById(R.id.profilebtn);
         referralbtn = (Button) profile.findViewById(R.id.referralbtn);
         vzfrndsbtn = (Button) profile.findViewById(R.id.vzfrnds);
+        vzfrndsbtn.setSelected(false);
+        referralbtn.setSelected(false);
 
 
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
