@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,7 +81,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public Bitmap output;
     int clickCount = 0;
     //Declaring widgets
-    Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
+    Button editbtn;
+    RadioButton profilebtn, vzfrndsbtn, referralbtn;
     TextView textViewName;
 
     public ProgressDialog progress;
@@ -127,11 +129,13 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         imageCompany.setClickable(false);
         imageProfile.setClickable(false);
 
-        profilebtn = (Button) profile.findViewById(R.id.profilebtn);
-        referralbtn = (Button) profile.findViewById(R.id.referralbtn);
-        vzfrndsbtn = (Button) profile.findViewById(R.id.vzfrnds);
-        vzfrndsbtn.setSelected(false);
-        referralbtn.setSelected(false);
+        profilebtn = (RadioButton) profile.findViewById(R.id.profilebtn);
+        referralbtn = (RadioButton) profile.findViewById(R.id.referralbtn);
+        vzfrndsbtn = (RadioButton) profile.findViewById(R.id.vzfrnds);
+
+        profilebtn.setChecked(true);
+        vzfrndsbtn.setChecked(false);
+        referralbtn.setChecked(false);
 
 
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);

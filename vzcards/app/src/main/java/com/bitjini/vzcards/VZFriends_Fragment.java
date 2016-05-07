@@ -76,13 +76,12 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    View footer;
     int countOfFrnds=0;
     int currentPage=1;
     int totalPage=0;
-    int progressCount=0;
     boolean isLoading=false;
-    View footer;
-    int count=0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -109,12 +108,12 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
         // refresh contents
         getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-
+        adapter = new VZFriends_Adapter(selectUsers,getActivity());
+        listView.setAdapter(adapter);
 
         listView.setTextFilterEnabled(true);
         setupSearchView();
-        adapter = new VZFriends_Adapter(selectUsers,getActivity());
-        listView.setAdapter(adapter);
+
         filter = adapter.getFilter();
         listView.setFastScrollEnabled(true);
         listView.setOnItemClickListener(this);
@@ -141,18 +140,6 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
 
-//                if(itemCount==totalItemCount)
-//                {
-//                    swipeRefreshLayout.post(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-////                                                    swipeRefreshLayout.setRefreshing(true);
-//                                                    refreshContent();
-//
-//                                                }
-//                                            }
-//                    );
-//                }
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
@@ -168,7 +155,6 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 }
             }
         });
-
         Button profilebtn = (Button) vzfrnds.findViewById(R.id.profilebtn);
         Button referral = (Button) vzfrnds.findViewById(R.id.referralbtn);
 
@@ -181,7 +167,6 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     public void getVzFrnds(String url)
     {
         try{
-            count=1;
             String received=new HttpAsyncTask(getActivity()).execute(url).get();
 
             JSONObject jsonObject = new JSONObject(received);
@@ -227,7 +212,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             }
 
 
-            Log.e(" received :", "" + response);
+//            Log.e(" received :", "" + response);
 
 
         } catch (JSONException e) {
@@ -240,37 +225,6 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     }
 
 
-    public void loadMore(){
-
-        listView.addFooterView(footer);
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override public void run() {
-//
-                currentPage++;
-                if(currentPage<=totalPage) {
-
-                    Log.e("currentpage=",""+currentPage);
-
-                    getVzFrnds("http://vzcards-api.herokuapp.com/get_my_friends/?access_token="+ p.token_sharedPreference +"&page="+currentPage);
-
-//            // Notify the ListView of data changed
-//
-                    adapter.notifyDataSetChanged();
-
-                    isLoading = false;
-                    listView.removeFooterView(footer);
-
-
-                }
-                else {
-                    listView.removeFooterView(footer);
-                }
-            }
-        }, 2000);
-
-    }
 
     public void onRefresh() {
         // TODO Auto-generated method stub
@@ -288,7 +242,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 currentPage=1;
                 totalPage=0;
                 countOfFrnds=0;
-                isLoading=false;
+                isLoading = false;
                 getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
                 adapter = new VZFriends_Adapter(selectUsers,getActivity());
                 listView.setAdapter(adapter);
@@ -299,6 +253,37 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
             }
         }, 5000);
+
+    }
+    public void loadMore(){
+
+        listView.addFooterView(footer);
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override public void run() {
+//
+                currentPage++;
+                if(currentPage<totalPage) {
+
+                    Log.e("currentpage=",""+currentPage);
+
+                    getVzFrnds("http://vzcards-api.herokuapp.com/get_my_friends/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+
+//            // Notify the ListView of data changed
+//
+                    adapter.notifyDataSetChanged();
+
+                    isLoading = false;
+                    listView.removeFooterView(footer);
+
+
+                }
+                else {
+                    listView.removeFooterView(footer);
+                }
+            }
+        }, 2000);
 
     }
     private void setupSearchView()

@@ -40,7 +40,7 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     }
     @Override
     public int getItemPosition(Object object) {
-        return PagerAdapter.POSITION_NONE;
+        return PagerAdapter.POSITION_UNCHANGED;
     }
     @Override
     public int getCount() {
