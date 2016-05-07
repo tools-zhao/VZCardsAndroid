@@ -1,9 +1,9 @@
-
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:id="@+id/vzfrnds_list_frame"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="?android:attr/colorBackground">-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vzfrnds_list_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pullToRefresh"
@@ -53,8 +53,38 @@
             android:divider="#97e6ecf2"
             android:dividerHeight="5.0sp"
             android:layout_above="@+id/l8"></ListView>
+
         <!--</RelativeLayout>-->
     </android.support.v4.widget.SwipeRefreshLayout>
+    <com.github.jorgecastilloprz.FABProgressCircle
+        android:id="@+id/fabProgressCircle"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="right|bottom"
+        app:reusable="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="15dp"
+        app:arcColor="#326464"
+        app:elevation="@dimen/fab_elevation"
+        app:roundedStroke="true"
+        app:arcWidth="4dp"
+        >
+
+        <!--Google FAB-->
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/refresh"
+            android:layout_alignParentRight="true"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:padding="5dp"
+            android:src="@drawable/replay"
+            app:rippleColor="@color/fab_ripple"
+            app:elevation="@dimen/fab_elevation"
+            app:borderWidth="2dp"
+            />
+
+    </com.github.jorgecastilloprz.FABProgressCircle>
     <!--<TextView-->
         <!--android:id="@+id/tv_no_product"-->
         <!--style="@android:style/TextAppearance.Medium"-->
@@ -65,4 +95,4 @@
         <!--android:text="empty"-->
         <!--android:gravity="center"-->
         <!--android:visibility="gone" />-->
-<!--</FrameLayout>-->
+</FrameLayout>

@@ -38,38 +38,38 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     {
         super.onCreate(savedInsatnceState);
         setContentView(R.layout.viewpager_activty);
-        progressContainer = (ImageButton)findViewById(R.id.progress);
-        progressBar = (ProgressBar)findViewById(R.id.progress1);
+//        progressContainer = (ImageButton)findViewById(R.id.progress);
+//        progressBar = (ProgressBar)findViewById(R.id.progress1);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
          tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
-        progressContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressContainer.setVisibility(View.GONE);
-
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar.setProgress(0);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override public void run() {
-
-
-                        // refresh contents
-                        adapter.notifyDataSetChanged();
-
-
-                        progressBar.setVisibility(View.GONE);
-                        progressContainer.setVisibility(View.VISIBLE);
-                    }
-                }, 5000);
-
-            }
-
-
-        });
+//        progressContainer.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                progressContainer.setVisibility(View.GONE);
+//
+//                progressBar.setVisibility(View.VISIBLE);
+//                progressBar.setProgress(0);
+//
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override public void run() {
+//
+//
+//                        // refresh contents
+//                        adapter.notifyDataSetChanged();
+//
+//
+//                        progressBar.setVisibility(View.GONE);
+//                        progressContainer.setVisibility(View.VISIBLE);
+//                    }
+//                }, 5000);
+//
+//            }
+//
+//
+//        });
 //        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_vz_profile));
 //
 //        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.feeds_drawable));
@@ -166,17 +166,17 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     }
 
-//    public static String POSITION = "POSITION";
-//
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putInt(POSITION, tabLayout.getSelectedTabPosition());
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        viewPager.setCurrentItem(savedInstanceState.getInt(POSITION));
-//    }
+    public static String POSITION = "POSITION";
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(POSITION, tabLayout.getSelectedTabPosition());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        viewPager.setCurrentItem(savedInstanceState.getInt(POSITION));
+    }
 }

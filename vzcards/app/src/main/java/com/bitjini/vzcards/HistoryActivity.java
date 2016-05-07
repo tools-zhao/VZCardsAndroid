@@ -4,8 +4,11 @@ import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -29,6 +32,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.jorgecastilloprz.FABProgressCircle;
+import com.github.jorgecastilloprz.listeners.FABProgressListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -51,7 +56,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by VEENA on 12/7/2015.
  */
-public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener, FABProgressListener {
 
     String HISTORY_URL = "http://vzcards-api.herokuapp.com/history/?access_token=";
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -66,6 +71,9 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     ProgressDialog progressDialog;
     ProgressBar progressBar;
     int count=0;
+
+    private FABProgressCircle fabProgressCircle;
+    private boolean taskRunning;
 
     View footer;
     int countOfFeeds=0;
@@ -83,16 +91,14 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 //        progressBar = (ProgressBar) history.findViewById(R.id.progressBar);
 
         swipeRefreshLayout = (SwipeRefreshLayout) history.findViewById(R.id.pullToRefresh);
+        fabProgressCircle = (FABProgressCircle)history. findViewById(R.id.fabProgressCircle);
+        FloatingActionButton fab = (FloatingActionButton)history.findViewById(R.id.refresh);
         listView = (ListView) history.findViewById(R.id.historyList);
         LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
         // the refresh listner. this would be called when the layout is pulled down
         swipeRefreshLayout.setOnRefreshListener(this);
-        /**
-         * Showing Swipe Refresh animation on activity create
-         * As animation won't start on onCreate, post runnable is used
-         */
 
         // sets the colors used in the refresh animation
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
@@ -100,11 +106,6 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 ,R.color.red);
 
         getHistoryContents(HISTORY_URL + p.token_sharedPreference);
-//
-//            if(selectUsers.isEmpty())
-//            {
-//                Toast.makeText(getActivity(),"No data to Display",Toast.LENGTH_LONG).show();
-//            }
         adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
         listView.setAdapter(adapter);
@@ -152,26 +153,6 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
 
-//                if(itemCount==totalItemCount)
-//                {
-//                    swipeRefreshLayout.post(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-////                                                    swipeRefreshLayout.setRefreshing(true);
-////                                                   refreshContent();
-//                                                    getHistoryContents(HISTORY_URL + p.token_sharedPreference);
-//
-//
-//                                                    adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
-//
-//                                                    listView.setAdapter(adapter);
-//
-//                                                }
-//                                            }
-//                    );
-//                }
-
-
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
@@ -189,9 +170,25 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         });
 
 
+        fabProgressCircle.attachListener(this);
 
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!taskRunning) {
+                    fabProgressCircle.show();
+                    refreshContent();
+                    taskRunning = false;
+                    fabProgressCircle.beginFinalAnimation();
+                }
+
+
+            }
+        });
         return history;
     }
+
     public void getHistoryContents(String url)
     {
         try{
@@ -322,6 +319,14 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         }, 2000);
 
     }
+
+    @Override
+    public void onFABProgressAnimationEnd() {
+//        Snackbar.make(fabProgressCircle, R.string.cloud_upload_complete, Snackbar.LENGTH_LONG)
+//                .setAction("Action", null)
+//                .show();
+    }
+
     private class History_Adapter extends BaseAdapter {
 
         private ArrayList<SelectUser> arrayListFilter = null;

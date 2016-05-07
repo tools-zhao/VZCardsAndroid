@@ -91,15 +91,17 @@ public class Feed_detail_has extends Fragment implements View.OnClickListener {
 
     public void onClick(View v) {
         switch (v.getId()) {
+//            case R.id.refer_vzfrnd:
+//                Intent intent = new Intent(getActivity(), Refer_VZfriends.class);
+//
+//                intent.putExtra("ticket_id", ticket_id_1);
+//                intent.putExtra("phone1", phone1);
+//                intent.putExtra("connector_vz_id", connector_vz_id);
+//                startActivity(intent);
+//                break;
             case R.id.refer_vzfrnd:
-                Intent intent = new Intent(getActivity(), Refer_VZfriends.class);
-
-                intent.putExtra("ticket_id", ticket_id_1);
-                intent.putExtra("phone1", phone1);
-                intent.putExtra("connector_vz_id", connector_vz_id);
-                startActivity(intent);
+                Log.e("Refer to needs","");
                 break;
-
             case R.id.refer_contact:
 
                 // send the parameters to refer contact

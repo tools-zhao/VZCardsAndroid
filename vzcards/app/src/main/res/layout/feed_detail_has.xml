@@ -92,7 +92,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginLeft="25dp"
-        android:text="Refer VZ Friend"
+        android:text="Refer Tickets"
         android:background="@drawable/drawable_refer_frnd"
         android:layout_below="@+id/l4"
         android:layout_marginRight="25dp"

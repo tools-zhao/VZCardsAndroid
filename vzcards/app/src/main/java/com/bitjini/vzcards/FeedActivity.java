@@ -79,7 +79,7 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
     public Cursor phones;
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
     ArrayList<DataFeeds> feeds = new ArrayList<DataFeeds>();
-    String token_sharedPreference;
+    String token_sharedPreference,vz_id;
     // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
@@ -133,6 +133,7 @@ FrameLayout layout_MainMenu;
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+        vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
         System.out.println(" getting token from sharedpreference " + token_sharedPreference);
 
 
@@ -167,7 +168,7 @@ FrameLayout layout_MainMenu;
                 String item_photo = dataFeeds.getItem_photo();
                 String ticket_id= dataFeeds.getTicket_id();
                 String phone1=dataFeeds.getPhone();
-                String connector_vz_id=dataFeeds.getVz_id();
+                String connector_vz_id=vz_id;
                 String question=dataFeeds.getQuestion();
 
 
@@ -300,6 +301,7 @@ FrameLayout layout_MainMenu;
                 String ticket_id = feed.getString("ticket_id");
                 String isNeeds = "1", isHas = "0";
                 String vz_id=feed.getString("vz_id");
+
 
                 if (question == isNeeds) {
                     isNeeds = question;

@@ -53,27 +53,27 @@
             android:layout_height="35dp"
             android:id="@+id/logo"
             android:src="@drawable/navbarlogo2x"
-            android:layout_alignParentLeft="true"/>
-        <ImageButton
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-            android:id="@+id/progress"
-            android:background="@drawable/refresh"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
-        <ProgressBar
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:id="@+id/progress1"
-            android:visibility="gone"
-            android:layout_gravity="right"
-            android:indeterminateDrawable="@drawable/progress_animation"
-            android:max="500"
-            android:progress="0" />
+            android:layout_centerHorizontal="true"/>
+        <!--<ImageButton-->
+        <!--android:layout_width="30dp"-->
+        <!--android:layout_height="30dp"-->
+            <!--android:id="@+id/progress"-->
+            <!--android:background="@drawable/refresh"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_alignParentEnd="true" />-->
+        <!--<ProgressBar-->
+            <!--android:layout_width="30dp"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:id="@+id/progress1"-->
+            <!--android:visibility="gone"-->
+            <!--android:layout_gravity="right"-->
+            <!--android:indeterminateDrawable="@drawable/progress_animation"-->
+            <!--android:max="500"-->
+            <!--android:progress="0" />-->
     </RelativeLayout>
 
     <android.support.design.widget.TabLayout

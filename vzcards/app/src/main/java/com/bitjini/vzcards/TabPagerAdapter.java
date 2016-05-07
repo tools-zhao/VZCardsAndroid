@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Created by VEENA on 12/7/2015.
@@ -40,12 +41,13 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     }
     @Override
     public int getItemPosition(Object object) {
-        return PagerAdapter.POSITION_UNCHANGED;
+        return PagerAdapter.POSITION_NONE;
     }
     @Override
     public int getCount() {
         return 4;
     }
+ 
 // public void notifyChangeInPosition(int n) {
 ////     shift the ID returned by getItemId outside the range of all previous fragments
 //    baseId += getCount() + n;
