@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     ImageButton progressContainer;
     ProgressBar progressBar;
-    TabLayout tabLayout;
+   public TabLayout tabLayout;
      ViewPager viewPager;
      TabPagerAdapter adapter;
     @Override
@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 //        setSupportActionBar(toolbar);
 
          tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+
 
 //        progressContainer.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-
+                tab.setTag(tab.getPosition());
 //                ... anything you may need to do to handle pager state ...
 //                adapter.notifyDataSetChanged(); //this line will force all pages to be loaded fresh when changing between fragments
 

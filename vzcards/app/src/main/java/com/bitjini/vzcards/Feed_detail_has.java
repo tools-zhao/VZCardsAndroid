@@ -1,10 +1,12 @@
 package com.bitjini.vzcards;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,10 +33,14 @@ public class Feed_detail_has extends Fragment implements View.OnClickListener {
     Button referVZbtn, referContactbtn;
 
     String ticket_id_1, phone1, connector_vz_id;
+    public void onCreate(Bundle savedInstanceState) {
 
+        super.onCreate(savedInstanceState);
+    }
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View feed_has = inflater.inflate(R.layout.feed_detail_has, container, false);
+
 
         title = (TextView) feed_has.findViewById(R.id.title);
         description = (TextView) feed_has.findViewById(R.id.description);
