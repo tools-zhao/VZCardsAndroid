@@ -64,7 +64,7 @@ public class Connect_2_Tickets extends Activity {
         Log.e("phone1 =:",""+phone_1);
         Log.e("phone2 =:",""+phone_2);
         Log.e("connector_vz_id =:",""+connecter_vz_id);
-
+        Log.e("ticket_id_2 =:",""+ticket_id_2);
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getSharedPreferences(p.VZCARD_PREFS, 0);
         token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);

@@ -689,8 +689,10 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                     inputManager2.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
                 done1.setVisibility(View.GONE);
+                done2.setVisibility(View.GONE);
                 break;
             case R.id.done2:
+                done1.setVisibility(View.GONE);
                 txtDescription.setCursorVisible(false);
                 InputMethodManager inputManager1 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (getActivity().getCurrentFocus() != null){

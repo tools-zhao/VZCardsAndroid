@@ -102,6 +102,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
                                                 String ticket_id = dataFeeds.getTicket_id();
                                                 String phone1 = dataFeeds.getPhone();
 
+                                                Log.e("n ticketId=",""+ticket_id);
 
                                                 String question = dataFeeds.getQuestion();
 
@@ -135,6 +136,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
                                                 dataFeeds_Has.setTicket_id(ticket_id_1Has);
                                                 dataFeeds_Has.setPhone(phone1Has);
 
+                                                Log.e("h ticket_id=",""+ticket_id_1Has);
 
                                                 initiatePopupWindow();
 

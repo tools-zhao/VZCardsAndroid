@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -104,6 +106,14 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
                 R.color.colorPrimary
                 ,R.color.red);
+        // check if you are connected or not
+        if (isConnected()) {
+            Log.e("", "You are conncted");
+        } else {
+            Log.e("", "You are NOT conncted");
+            Toast.makeText(getActivity(),"Check your Network Connectivity",Toast.LENGTH_LONG).show();
+        }
+
 
         getHistoryContents(HISTORY_URL + p.token_sharedPreference);
         adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
@@ -326,7 +336,14 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 //                .setAction("Action", null)
 //                .show();
     }
-
+    public boolean isConnected() {
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected())
+            return true;
+        else
+            return false;
+    }
     private class History_Adapter extends BaseAdapter {
 
         private ArrayList<SelectUser> arrayListFilter = null;
