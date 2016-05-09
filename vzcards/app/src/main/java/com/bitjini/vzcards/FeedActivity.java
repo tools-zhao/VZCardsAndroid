@@ -177,16 +177,27 @@ FrameLayout layout_MainMenu;
                     Feed_detail_has ldf = new Feed_detail_has();
 
                     Bundle args = new Bundle();
-                    args.putString("title", title);
-                    args.putString("desc", desc);
-                    args.putString("name", name);
-                    args.putString("photo", photo);
-                    args.putString("ticket_id", ticket_id);
-                    args.putString("item_photo", item_photo);
-                    args.putString("phone1", phone1);
-                    args.putString("connector_vz_id", connector_vz_id);
-                    args.putString("question",question);
+                    // sending values of has
+                    args.putString("titleHas", title);
+                    args.putString("descHas", desc);
+                    args.putString("nameHas", name);
+                    args.putString("photoHas", photo);
+                    args.putString("ticket_idHas", ticket_id);
+                    args.putString("item_photoHas", item_photo);
+                    args.putString("phone1Has", phone1);
+                    args.putString("connector_vz_idHas", connector_vz_id);
+                    args.putString("questionHas",question);
 
+                    // sending values of needs
+                    args.putString("titleNeeds", title);
+                    args.putString("descNeeds", desc);
+                    args.putString("nameNeeds", name);
+                    args.putString("photoNeeds", photo);
+                    args.putString("ticket_idNeeds", ticket_id);
+                    args.putString("item_photoNeeds", item_photo);
+                    args.putString("phone1Needs", phone1);
+                    args.putString("connector_vz_idNeeds", connector_vz_id);
+                    args.putString("questionNeeds",question);
                     ldf.setArguments(args);
 
                     //Inflate the fragment
@@ -199,15 +210,27 @@ FrameLayout layout_MainMenu;
 
                     Bundle args = new Bundle();
 
-                    args.putString("title", title);
-                    args.putString("desc", desc);
-                    args.putString("name", name);
-                    args.putString("photo", photo);
-                    args.putString("ticket_id", ticket_id);
-                    args.putString("item_photo", item_photo);
-                    args.putString("phone1", phone1);
-                    args.putString("connector_vz_id", connector_vz_id);
-                    args.putString("question",question);
+                    args.putString("titleNeeds", title);
+                    args.putString("descNeeds", desc);
+                    args.putString("nameNeeds", name);
+                    args.putString("photoNeeds", photo);
+                    args.putString("ticket_idNeeds", ticket_id);
+                    args.putString("item_photoNeeds", item_photo);
+                    args.putString("phone1Needs", phone1);
+                    args.putString("connector_vz_idNeeds", connector_vz_id);
+                    args.putString("questionNeeds",question);
+
+//                    Bundle args = new Bundle();
+                    args.putString("titleHas", title);
+                    args.putString("descHas", desc);
+                    args.putString("nameHas", name);
+                    args.putString("photoHas", photo);
+                    args.putString("ticket_idHas", ticket_id);
+                    args.putString("item_photoHas", item_photo);
+                    args.putString("phone1Has", phone1);
+                    args.putString("connector_vz_idHas", connector_vz_id);
+                    args.putString("questionHas",question);
+
                     ldf.setArguments(args);
 
                     //Inflate the fragment
@@ -567,17 +590,6 @@ FrameLayout layout_MainMenu;
 
             }
 
-
-//            if(Integer.parseInt(data.getQuestion()) == 1)
-//            {
-//                holder.referButtonRed.setChecked(true);
-//                holder.referButtonGreen.setChecked(false);
-//            }
-//            else
-//            {
-//                holder.r.setChecked(false);
-//                female.setChecked(true);
-//            }
             if (Integer.parseInt(data.getQuestion()) == 1) {
                 holder.question.setBackgroundColor(Color.parseColor("#f27166"));
                 holder.question.setText("needs");

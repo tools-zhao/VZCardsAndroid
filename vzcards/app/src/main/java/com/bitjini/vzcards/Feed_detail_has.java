@@ -49,15 +49,16 @@ public class Feed_detail_has extends Fragment implements View.OnClickListener {
         referContactbtn.setOnClickListener(this);
 
         //Retrieve the value
-        String item = getArguments().getString("title");
-        String desc = getArguments().getString("desc");
-        String profileName = getArguments().getString("name");
-        String photo = getArguments().getString("photo");
-        String itemPic = getArguments().getString("item_photo");
+        String item = getArguments().getString("titleHas");
+        String desc = getArguments().getString("descHas");
+        String profileName = getArguments().getString("nameHas");
+        String photo = getArguments().getString("photoHas");
+        String itemPic = getArguments().getString("item_photoHas");
 
-        ticket_id_1 = getArguments().getString("ticket_id");
-        phone1 = getArguments().getString("phone1");
-        connector_vz_id = getArguments().getString("connector_vz_id");
+        ticket_id_1 = getArguments().getString("ticket_idHas");
+        phone1 = getArguments().getString("phone1Has");
+        connector_vz_id = getArguments().getString("connector_vz_idHas");
+
 
 
         Log.e("photo url ", "" + photo);
@@ -101,18 +102,52 @@ public class Feed_detail_has extends Fragment implements View.OnClickListener {
 //                break;
             case R.id.refer_vzfrnd:
                 Log.e("Refer to needs","");
+                NeedFeeds ldf = new NeedFeeds();
+                //Retrieve the value from feeds
+                String itemHAs = getArguments().getString("titleHas");
+                String descHas = getArguments().getString("descHas");
+                String profileNameHas = getArguments().getString("nameHas");
+                String photo = getArguments().getString("photoHas");
+                String itemPicHas = getArguments().getString("item_photoHas");
+
+                String ticket_id_1Has = getArguments().getString("ticket_idHas");
+                String phone1Has = getArguments().getString("phone1Has");
+                String connector_vz_idHas = getArguments().getString("connector_vz_idHas");
+                String questionHas = getArguments().getString("questionHas");
+
+                Log.e("itemPic ",""+itemPicHas);
+                // Send values to HasFeeds
+                Bundle args = new Bundle();
+                args.putString("titleHas", itemHAs);
+                args.putString("descHas", descHas);
+                args.putString("nameHas", profileNameHas);
+                args.putString("photoHas", photo);
+                args.putString("ticket_idHas", ticket_id_1Has);
+                args.putString("item_photoHas", itemPicHas);
+                args.putString("phone1Has", phone1Has);
+                args.putString("connector_vz_idHas", connector_vz_idHas);
+                args.putString("questionHas",questionHas);
+
+                ldf.setArguments(args);
+
+                //Inflate the fragment
+                getFragmentManager().beginTransaction().add(R.id.feed_detail_has_Frame, ldf).addToBackStack(ldf.toString())
+                        .commit();
+
+
+
                 break;
             case R.id.refer_contact:
 
                 // send the parameters to refer contact
                 ReferContacts connect = new ReferContacts();
 
-                Bundle args = new Bundle();
-                args.putString("ticket_id", ticket_id_1);
-                args.putString("phone1", phone1);
-                args.putString("connector_vz_id", connector_vz_id);
+                Bundle args2 = new Bundle();
+                args2.putString("ticket_id", ticket_id_1);
+                args2.putString("phone1", phone1);
+                args2.putString("connector_vz_id", connector_vz_id);
 
-                connect.setArguments(args);
+                connect.setArguments(args2);
 
                 //Inflate the fragment
                 getFragmentManager().beginTransaction().add(R.id.feed_detail_has_Frame, connect).addToBackStack(connect.toString())
