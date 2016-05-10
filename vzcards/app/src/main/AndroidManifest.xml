@@ -23,6 +23,8 @@
 
 
         <activity android:name=".ContactsMainActivity"></activity>
+        <activity android:name=".Feed_detail_has"></activity>
+        <activity android:name=".Feed_detail_needs"></activity>
         <activity android:name=".Friends_Profile"></activity>
         <activity android:name=".Refer_VZfriends"  android:windowSoftInputMode="stateHidden"></activity>
         <activity android:name=".Connect_2_Tickets"  android:windowSoftInputMode="stateHidden"></activity>

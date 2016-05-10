@@ -174,68 +174,68 @@ FrameLayout layout_MainMenu;
 
                 if (Integer.parseInt(dataFeeds.getQuestion()) == 0) {
                     //Put the value for has to feed detail has
-                    Feed_detail_has ldf = new Feed_detail_has();
+                    Intent intent=new Intent(getActivity(),Feed_detail_has.class);
 
-                    Bundle args = new Bundle();
+
                     // sending values of has
-                    args.putString("titleHas", title);
-                    args.putString("descHas", desc);
-                    args.putString("nameHas", name);
-                    args.putString("photoHas", photo);
-                    args.putString("ticket_idHas", ticket_id);
-                    args.putString("item_photoHas", item_photo);
-                    args.putString("phone1Has", phone1);
-                    args.putString("connector_vz_idHas", connector_vz_id);
-                    args.putString("questionHas",question);
+                    intent.putExtra("titleHas", title);
+                    intent.putExtra("descHas", desc);
+                    intent.putExtra("nameHas", name);
+                    intent.putExtra("photoHas", photo);
+                    intent.putExtra("ticket_idHas", ticket_id);
+                    intent.putExtra("item_photoHas", item_photo);
+                    intent.putExtra("phone1Has", phone1);
+                    intent.putExtra("connector_vz_idHas", connector_vz_id);
+                    intent.putExtra("questionHas",question);
 
                     // sending values of needs
-                    args.putString("titleNeeds", title);
-                    args.putString("descNeeds", desc);
-                    args.putString("nameNeeds", name);
-                    args.putString("photoNeeds", photo);
-                    args.putString("ticket_idNeeds", ticket_id);
-                    args.putString("item_photoNeeds", item_photo);
-                    args.putString("phone1Needs", phone1);
-                    args.putString("connector_vz_idNeeds", connector_vz_id);
-                    args.putString("questionNeeds",question);
-                    ldf.setArguments(args);
+                    intent.putExtra("titleNeeds", title);
+                    intent.putExtra("descNeeds", desc);
+                    intent.putExtra("nameNeeds", name);
+                    intent.putExtra("photoNeeds", photo);
+                    intent.putExtra("ticket_idNeeds", ticket_id);
+                    intent.putExtra("item_photoNeeds", item_photo);
+                    intent.putExtra("phone1Needs", phone1);
+                    intent.putExtra("connector_vz_idNeeds", connector_vz_id);
+                    intent.putExtra("questionNeeds",question);
+                    startActivity(intent);
 
-                    //Inflate the fragment
-                    getFragmentManager().beginTransaction().add(R.id.feed_detail, ldf).addToBackStack(ldf.toString())
-                            .commit();
+//                    //Inflate the fragment
+//                    getFragmentManager().beginTransaction().add(R.id.feed_detail, ldf).addToBackStack(ldf.toString())
+//                            .commit();
                 }
                 if (Integer.parseInt(dataFeeds.getQuestion()) == 1) {
                     //Put the value needs to feed_details
-                   Feed_detail_needs ldf = new Feed_detail_needs();
+                    Intent intent=new Intent(getActivity(),Feed_detail_needs.class);
 
-                    Bundle args = new Bundle();
 
-                    args.putString("titleNeeds", title);
-                    args.putString("descNeeds", desc);
-                    args.putString("nameNeeds", name);
-                    args.putString("photoNeeds", photo);
-                    args.putString("ticket_idNeeds", ticket_id);
-                    args.putString("item_photoNeeds", item_photo);
-                    args.putString("phone1Needs", phone1);
-                    args.putString("connector_vz_idNeeds", connector_vz_id);
-                    args.putString("questionNeeds",question);
+
+                    intent.putExtra("titleNeeds", title);
+                    intent.putExtra("descNeeds", desc);
+                    intent.putExtra("nameNeeds", name);
+                    intent.putExtra("photoNeeds", photo);
+                    intent.putExtra("ticket_idNeeds", ticket_id);
+                    intent.putExtra("item_photoNeeds", item_photo);
+                    intent.putExtra("phone1Needs", phone1);
+                    intent.putExtra("connector_vz_idNeeds", connector_vz_id);
+                    intent.putExtra("questionNeeds",question);
 
 //                    Bundle args = new Bundle();
-                    args.putString("titleHas", title);
-                    args.putString("descHas", desc);
-                    args.putString("nameHas", name);
-                    args.putString("photoHas", photo);
-                    args.putString("ticket_idHas", ticket_id);
-                    args.putString("item_photoHas", item_photo);
-                    args.putString("phone1Has", phone1);
-                    args.putString("connector_vz_idHas", connector_vz_id);
-                    args.putString("questionHas",question);
+                    intent.putExtra("titleHas", title);
+                    intent.putExtra("descHas", desc);
+                    intent.putExtra("nameHas", name);
+                    intent.putExtra("photoHas", photo);
+                    intent.putExtra("ticket_idHas", ticket_id);
+                    intent.putExtra("item_photoHas", item_photo);
+                    intent.putExtra("phone1Has", phone1);
+                    intent.putExtra("connector_vz_idHas", connector_vz_id);
+                    intent.putExtra("questionHas",question);
 
-                    ldf.setArguments(args);
+                    startActivity(intent);
 
-                    //Inflate the fragment
-                    getFragmentManager().beginTransaction().add(R.id.feed_detail, ldf).addToBackStack(ldf.toString())
-                            .commit();
+//                    //Inflate the fragment
+//                    getFragmentManager().beginTransaction().add(R.id.feed_detail, ldf).addToBackStack(ldf.toString())
+//                            .commit();
                 }
             }
         });
