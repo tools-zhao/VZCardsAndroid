@@ -78,6 +78,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/replay"
+
             app:rippleColor="@color/fab_ripple"
             app:borderWidth="2dp"
             />

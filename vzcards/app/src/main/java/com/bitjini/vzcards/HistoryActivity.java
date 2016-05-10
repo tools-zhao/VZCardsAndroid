@@ -94,6 +94,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
         swipeRefreshLayout = (SwipeRefreshLayout) history.findViewById(R.id.pullToRefresh);
         fabProgressCircle = (FABProgressCircle)history. findViewById(R.id.fabProgressCircle);
+
         FloatingActionButton fab = (FloatingActionButton)history.findViewById(R.id.refresh);
         listView = (ListView) history.findViewById(R.id.historyList);
         LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

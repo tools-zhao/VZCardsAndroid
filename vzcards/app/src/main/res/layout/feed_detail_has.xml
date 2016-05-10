@@ -92,14 +92,15 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginLeft="25dp"
         android:text="Refer Tickets"
         android:background="@drawable/drawable_refer_frnd"
-        android:layout_below="@+id/l4"
-        android:layout_marginRight="25dp"
-        android:layout_marginTop="5dp"
         android:textColor="#add58a"
-        android:id="@+id/refer_vzfrnd"/>
+        android:elevation="6dp"
+        android:id="@+id/refer_vzfrnd"
+        android:layout_marginBottom="10dp"
+        android:layout_above="@+id/refer_contact"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -107,9 +108,9 @@
         android:background="@drawable/drawable_refer_frnd"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/refer_vzfrnd"
+        android:layout_alignParentBottom="true"
         android:textColor="#add58a"
+        android:elevation="6dp"
         android:layout_marginBottom="10dp"
         android:id="@+id/refer_contact"/>
 

@@ -1,18 +1,23 @@
 package com.bitjini.vzcards;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,7 +42,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by bitjini on 9/5/16.
  */
-public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     String URL_GETLIST="http://vzcards-api.herokuapp.com/get_list/?access_token=";
     String token_sharedPreference;
