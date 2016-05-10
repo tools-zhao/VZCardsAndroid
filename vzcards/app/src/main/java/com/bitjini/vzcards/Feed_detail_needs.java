@@ -45,14 +45,14 @@ public class Feed_detail_needs extends Fragment implements View.OnClickListener 
         referVZbtn.setOnClickListener(this);
         referContactbtn.setOnClickListener(this);
         //Retrieve the value
-        String item = getArguments().getString("title");
-        String desc = getArguments().getString("desc");
-        String profileName = getArguments().getString("name");
-        String photo = getArguments().getString("photo");
-        String itemPic=getArguments().getString("item_photo");
-        ticket_id_1 = getArguments().getString("ticket_id");
-        phone1 = getArguments().getString("phone1");
-        connector_vz_id = getArguments().getString("connector_vz_id");
+        String item = getArguments().getString("titleNeeds");
+        String desc = getArguments().getString("descNeeds");
+        String profileName = getArguments().getString("nameNeeds");
+        String photo = getArguments().getString("photoNeeds");
+        String itemPic=getArguments().getString("item_photoNeeds");
+        ticket_id_1 = getArguments().getString("ticket_idNeeds");
+        phone1 = getArguments().getString("phone1Needs");
+        connector_vz_id = getArguments().getString("connector_vz_idNeeds");
 
         Log.e("photo url ", "" + photo);
         title.setText(item);
@@ -87,13 +87,46 @@ public class Feed_detail_needs extends Fragment implements View.OnClickListener 
     }
     public void onClick(View v) {
         switch (v.getId()) {
+//            case R.id.refer_vzfrnd:
+//                Intent intent = new Intent(getActivity(), Refer_VZfriends.class);
+//
+//                intent.putExtra("ticket_id", ticket_id_1);
+//                intent.putExtra("phone1", phone1);
+//                intent.putExtra("connector_vz_id", connector_vz_id);
+//                startActivity(intent);
+//                break;
             case R.id.refer_vzfrnd:
-                Intent intent = new Intent(getActivity(), Refer_VZfriends.class);
+               Log.e("Refer to has","");
+                HasFeeds ldf = new HasFeeds();
+                //Retrieve the value from feeds
+                String itemNeeds = getArguments().getString("titleNeeds");
+                String descNeeds = getArguments().getString("descNeeds");
+                String profileNameNeeds = getArguments().getString("nameNeeds");
+                String photoNeeds = getArguments().getString("photoNeeds");
+                String itemPicNeeds=getArguments().getString("item_photoNeeds");
+                String ticket_id_1Needs = getArguments().getString("ticket_idNeeds");
+                String phone1Needs = getArguments().getString("phone1Needs");
+                String connector_vz_idNeeds = getArguments().getString("connector_vz_idNeeds");
+                String questionNeeds = getArguments().getString("questionNeeds");
 
-                intent.putExtra("ticket_id", ticket_id_1);
-                intent.putExtra("phone1", phone1);
-                intent.putExtra("connector_vz_id", connector_vz_id);
-                startActivity(intent);
+                // Send values to HasFeeds
+                Bundle args = new Bundle();
+                // sending values of needs
+                args.putString("titleNeeds", itemNeeds);
+                args.putString("descNeeds", descNeeds);
+                args.putString("nameNeeds", profileNameNeeds);
+                args.putString("photoNeeds", photoNeeds);
+                args.putString("ticket_idNeeds", ticket_id_1Needs);
+                args.putString("item_photoNeeds", itemPicNeeds);
+                args.putString("phone1Needs", phone1Needs);
+                args.putString("connector_vz_idNeeds", connector_vz_idNeeds);
+                args.putString("questionNeeds",questionNeeds);
+                ldf.setArguments(args);
+                ldf.setArguments(args);
+
+                //Inflate the fragment
+                getFragmentManager().beginTransaction().add(R.id.feed_detail_need_frame, ldf).addToBackStack(ldf.toString())
+                        .commit();
                 break;
 
             case R.id.refer_contact:
@@ -101,12 +134,12 @@ public class Feed_detail_needs extends Fragment implements View.OnClickListener 
                 // send the parameters to refer contact
                 ReferContacts connect = new ReferContacts();
 
-                Bundle args = new Bundle();
-                args.putString("ticket_id", ticket_id_1);
-                args.putString("phone1", phone1);
-                args.putString("connector_vz_id", connector_vz_id);
+                Bundle args2 = new Bundle();
+                args2.putString("ticket_id", ticket_id_1);
+                args2.putString("phone1", phone1);
+                args2.putString("connector_vz_id", connector_vz_id);
 
-                connect.setArguments(args);
+                connect.setArguments(args2);
 
                 //Inflate the fragment
                 getFragmentManager().beginTransaction().add(R.id.feed_detail_need_frame, connect).addToBackStack(connect.toString())

@@ -26,10 +26,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.support.v4.app.Fragment;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -94,7 +96,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     TextView txtDate_validity;
     ImageButton submit;
     public static String Item_picturePath;
-    public String item_photo = "", item = "", description = "", date_validity = "", question = "";
+    public String item_photo="", item="", description="", date_validity="", question = "";
     public ProgressDialog progress = null;
     public Bitmap output, bitmap;
     ImageButton btnCander;
@@ -103,6 +105,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     private int myear;
     private int mmonth;
     private int mday;
+    Button done1,done2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,16 +122,45 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         txtDate_validity = (TextView) iHave.findViewById(R.id.validity);
         item_image = (ImageView) iHave.findViewById(R.id.item_img);
 
-        btnCander = (ImageButton) iHave.findViewById(R.id.click);
+//        btnCander = (ImageButton) iHave.findViewById(R.id.click);
 
         submit = (ImageButton) iHave.findViewById(R.id.imgbtn);
 
-        btnCander.setOnClickListener(this);
+        done1 = (Button) iHave.findViewById(R.id.done);
+        done2 = (Button) iHave.findViewById(R.id.done2);
+
+//        btnCander.setOnClickListener(this);
         addImage.setOnClickListener(this);
 
         submit.setOnClickListener(this);
 
         Button iNeed = (Button) iHave.findViewById(R.id.ineed);
+
+        txtDate_validity.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                showDatePickerDialog(v);
+                return false;
+            }
+        });
+        txtItem.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                done1.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+        txtDescription.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                done2.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+        done1.setOnClickListener(this);
+        done2.setOnClickListener(this);
+
 
 
         iNeed.setOnClickListener(this);
@@ -460,10 +492,6 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             conn.setDoInput(true);
             conn.setDoOutput(true);
 
-            item = txtItem.getText().toString();
-            description = txtDescription.getText().toString();
-            date_validity = txtDate_validity.getText().toString();
-            question = "0";
 
             Log.e(" question test:", "" + question);
             Log.e(" item_photo test:", "" + item_photo);
@@ -630,11 +658,47 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
             //setting company picture
             case R.id.imgbtn:
-                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
-                break;
-            case R.id.click:
-                showDatePickerDialog(v);
+                item = txtItem.getText().toString();
+                description = txtDescription.getText().toString();
+                date_validity = txtDate_validity.getText().toString();
+                question = "0";
 
+
+                Log.e("item=",""+item +""+ item.length());
+                if( item.length()==0 || description.length()==0 || date_validity.length()==0)
+                {
+                    Log.e("item=",""+item +""+ item.length());
+
+                    Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT).show();
+
+                }
+                else {
+                    Log.e("task item=",""+item +""+ item.length());
+                    new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+
+                }
+                break;
+//            case R.id.click:
+//                showDatePickerDialog(v);
+//
+//                break;
+            case R.id.done:
+                txtItem.setCursorVisible(false);
+                InputMethodManager inputManager2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getActivity().getCurrentFocus() != null){
+                    inputManager2.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                done1.setVisibility(View.GONE);
+                done2.setVisibility(View.GONE);
+                break;
+            case R.id.done2:
+                done1.setVisibility(View.GONE);
+                txtDescription.setCursorVisible(false);
+                InputMethodManager inputManager1 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getActivity().getCurrentFocus() != null){
+                    inputManager1.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                done2.setVisibility(View.GONE);
                 break;
             case R.id.ineed:
                 Fragment needFragment = new iNeed_Activity();
@@ -644,7 +708,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), needFragment).addToBackStack(null)
+                        .replace(contentView.getId(), needFragment)
                         .commit();
                 break;
 

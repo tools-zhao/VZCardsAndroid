@@ -5,12 +5,12 @@ import java.util.ArrayList;
 public class DataFeeds extends ArrayList<DataFeeds> {
 
     // Required fields for Feeds
-    String item,question,item_photo,description;
+    String item="",question="",item_photo="",description;
     String ticket_id;
     String isHas,isNeeds;
 
     //Required fields for profile and Feeds
-    String phone,fname,vz_id,photo;
+    String phone,fname,vz_id,photo="";
 
     public String getPhone() {
         return phone;

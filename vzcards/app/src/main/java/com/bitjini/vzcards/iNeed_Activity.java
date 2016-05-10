@@ -27,8 +27,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -93,6 +95,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
     VerifyScreen p = new VerifyScreen();
 
+    Button done1,done2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -107,17 +110,44 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         submit=(ImageButton) iNeed.findViewById(R.id.imgbtn);
 
          havebtn = (Button) iNeed.findViewById(R.id.ihave);
+        done1 = (Button) iNeed.findViewById(R.id.done);
+        done2 = (Button) iNeed.findViewById(R.id.done2);
 
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
         addImage.setOnClickListener(this);
-        btnCander = (ImageButton) iNeed.findViewById(R.id.click);
-        btnCander.setOnClickListener(this);
+//        btnCander = (ImageButton) iNeed.findViewById(R.id.click);
+//        btnCander.setOnClickListener(this);
         submit.setOnClickListener(this);
 
         havebtn.setOnClickListener(this);
+
+        txtDate_validity.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                showDatePickerDialog(v);
+                return false;
+            }
+        });
+      txtItem.setOnTouchListener(new View.OnTouchListener() {
+          @Override
+          public boolean onTouch(View v, MotionEvent event) {
+              done1.setVisibility(View.VISIBLE);
+              return false;
+          }
+      });
+        txtDescription.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                done2.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+        done1.setOnClickListener(this);
+        done2.setOnClickListener(this);
 
         return iNeed;
     }
@@ -415,10 +445,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
             HttpPost post = new HttpPost(postURL);
 
-            item= txtItem.getText().toString();
-            description= txtDescription.getText().toString();
-            date_validity=txtDate_validity.getText().toString();
-            question="1";
+
 
             Log.e(" question test:",""+question);
             Log.e(" item_photo test:",""+item_photo);
@@ -569,10 +596,44 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
             //setting company picture
             case R.id.imgbtn:
-                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET+p.token_sharedPreference);
+                item= txtItem.getText().toString();
+                description= txtDescription.getText().toString();
+                date_validity=txtDate_validity.getText().toString();
+                question="1";
+
+                if( item.length()==0 || description.length()==0 || date_validity.length()==0)
+                {
+                    Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT).show();
+
+                }
+                else {
+                    new INeed_Task(getActivity()).execute(URL_CREATE_TICKET+p.token_sharedPreference);
+
+                }
+
                 break;
-            case  R.id.click:
-                showDatePickerDialog(v);
+//            case  R.id.click:
+//                showDatePickerDialog(v);
+//                break;
+
+            case R.id.done:
+                txtItem.setCursorVisible(false);
+                InputMethodManager inputManager2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getActivity().getCurrentFocus() != null){
+                    inputManager2.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                done1.setVisibility(View.GONE);
+                done2.setVisibility(View.GONE);
+
+                break;
+            case R.id.done2:
+                done1.setVisibility(View.GONE);
+                txtDescription.setCursorVisible(false);
+                InputMethodManager inputManager1 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getActivity().getCurrentFocus() != null){
+                    inputManager1.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                done2.setVisibility(View.GONE);
                 break;
             case R.id.ihave:
 
@@ -583,7 +644,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), haveFragment).addToBackStack(null)
+                        .replace(contentView.getId(), haveFragment)
                         .commit();
                 break;
 

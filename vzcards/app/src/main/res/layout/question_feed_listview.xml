@@ -11,17 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/feedList"
-        android:layout_below="@+id/Layout1"
-        android:divider="#97e6ecf2"
-        android:dividerHeight="5.0sp"
-        android:layout_above="@+id/l8"
-        android:layout_marginTop="5dp"
-        android:choiceMode="multipleChoice"
-        android:listSelector="@drawable/list_item_selector"></ListView>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/feedList"
+            android:divider="#97e6ecf2"
+            android:dividerHeight="5.0sp"
+            android:layout_above="@+id/l8"
+            android:layout_marginTop="5dp"
+            android:choiceMode="multipleChoice"
+            android:listSelector="@drawable/list_item_selector"></ListView>
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
@@ -35,4 +34,4 @@
         android:gravity="center"
         android:text="empty"
         android:visibility="gone" />
-    </FrameLayout>
+</FrameLayout>

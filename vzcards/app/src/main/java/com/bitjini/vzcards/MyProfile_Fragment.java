@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,7 +81,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public Bitmap output;
     int clickCount = 0;
     //Declaring widgets
-    Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
+    Button editbtn;
+    RadioButton profilebtn, vzfrndsbtn, referralbtn;
     TextView textViewName;
 
     public ProgressDialog progress;
@@ -127,9 +129,13 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         imageCompany.setClickable(false);
         imageProfile.setClickable(false);
 
-        profilebtn = (Button) profile.findViewById(R.id.profilebtn);
-        referralbtn = (Button) profile.findViewById(R.id.referralbtn);
-        vzfrndsbtn = (Button) profile.findViewById(R.id.vzfrnds);
+        profilebtn = (RadioButton) profile.findViewById(R.id.profilebtn);
+        referralbtn = (RadioButton) profile.findViewById(R.id.referralbtn);
+        vzfrndsbtn = (RadioButton) profile.findViewById(R.id.vzfrnds);
+
+        profilebtn.setChecked(true);
+        vzfrndsbtn.setChecked(false);
+        referralbtn.setChecked(false);
 
 
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
@@ -191,6 +197,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         if(!photo.isEmpty()) {
 
             Picasso.with(getActivity()).load(photo).resize(250, 250).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+//            SavePreferences(PROFILE_IMAGE, photo);
 //            imageProfile.setTag(photo);
 //                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
 
@@ -199,6 +206,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         if(!company_photo.isEmpty()) {
             Picasso.with(getActivity()).load(company_photo).resize(100, 100).placeholder(R.drawable.com_logo).into(imageCompany);
+//            SavePreferences(COMPANY_IMAGE, company_photo);
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
         }

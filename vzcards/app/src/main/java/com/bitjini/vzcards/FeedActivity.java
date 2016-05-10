@@ -79,7 +79,7 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
     public Cursor phones;
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
     ArrayList<DataFeeds> feeds = new ArrayList<DataFeeds>();
-    String token_sharedPreference;
+    String token_sharedPreference,vz_id;
     // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
@@ -93,7 +93,7 @@ FrameLayout layout_MainMenu;
     int totalPage=0;
     int progressCount=0;
     boolean isLoading=false;
-
+    int itemCount=0;
     int next;
     View footer;
     DataFeeds dataFeeds2 = new DataFeeds();
@@ -103,7 +103,7 @@ FrameLayout layout_MainMenu;
                              Bundle savedInstanceState) {
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
 
-        progressBar = (ProgressBar) feed.findViewById(R.id.progressBar);
+
 
         swipeRefreshLayout = (SwipeRefreshLayout) feed.findViewById(R.id.pullToRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -133,6 +133,7 @@ FrameLayout layout_MainMenu;
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+        vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
         System.out.println(" getting token from sharedpreference " + token_sharedPreference);
 
 
@@ -145,26 +146,10 @@ FrameLayout layout_MainMenu;
         }
         showContacts();
 
-        if(progressCount==0) {
-            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-            animation.setDuration(1000); //in milliseconds
-            animation.setRepeatCount(5);
-            animation.setInterpolator(new DecelerateInterpolator());
-            animation.start();
 
             // refresh contents
             getFeedsContents(URL_GETLIST + token_sharedPreference);
 
-            progressBar.clearAnimation();
-            progressBar.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            listView.setVisibility(View.VISIBLE);
-            // refresh contents
-            getFeedsContents(URL_GETLIST + token_sharedPreference);
-        }
 
         adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
             listView.setAdapter(adapter);
@@ -183,7 +168,7 @@ FrameLayout layout_MainMenu;
                 String item_photo = dataFeeds.getItem_photo();
                 String ticket_id= dataFeeds.getTicket_id();
                 String phone1=dataFeeds.getPhone();
-                String connector_vz_id=dataFeeds.getVz_id();
+                String connector_vz_id=vz_id;
                 String question=dataFeeds.getQuestion();
 
 
@@ -192,16 +177,27 @@ FrameLayout layout_MainMenu;
                     Feed_detail_has ldf = new Feed_detail_has();
 
                     Bundle args = new Bundle();
-                    args.putString("title", title);
-                    args.putString("desc", desc);
-                    args.putString("name", name);
-                    args.putString("photo", photo);
-                    args.putString("ticket_id", ticket_id);
-                    args.putString("item_photo", item_photo);
-                    args.putString("phone1", phone1);
-                    args.putString("connector_vz_id", connector_vz_id);
-                    args.putString("question",question);
+                    // sending values of has
+                    args.putString("titleHas", title);
+                    args.putString("descHas", desc);
+                    args.putString("nameHas", name);
+                    args.putString("photoHas", photo);
+                    args.putString("ticket_idHas", ticket_id);
+                    args.putString("item_photoHas", item_photo);
+                    args.putString("phone1Has", phone1);
+                    args.putString("connector_vz_idHas", connector_vz_id);
+                    args.putString("questionHas",question);
 
+                    // sending values of needs
+                    args.putString("titleNeeds", title);
+                    args.putString("descNeeds", desc);
+                    args.putString("nameNeeds", name);
+                    args.putString("photoNeeds", photo);
+                    args.putString("ticket_idNeeds", ticket_id);
+                    args.putString("item_photoNeeds", item_photo);
+                    args.putString("phone1Needs", phone1);
+                    args.putString("connector_vz_idNeeds", connector_vz_id);
+                    args.putString("questionNeeds",question);
                     ldf.setArguments(args);
 
                     //Inflate the fragment
@@ -214,15 +210,27 @@ FrameLayout layout_MainMenu;
 
                     Bundle args = new Bundle();
 
-                    args.putString("title", title);
-                    args.putString("desc", desc);
-                    args.putString("name", name);
-                    args.putString("photo", photo);
-                    args.putString("ticket_id", ticket_id);
-                    args.putString("item_photo", item_photo);
-                    args.putString("phone1", phone1);
-                    args.putString("connector_vz_id", connector_vz_id);
-                    args.putString("question",question);
+                    args.putString("titleNeeds", title);
+                    args.putString("descNeeds", desc);
+                    args.putString("nameNeeds", name);
+                    args.putString("photoNeeds", photo);
+                    args.putString("ticket_idNeeds", ticket_id);
+                    args.putString("item_photoNeeds", item_photo);
+                    args.putString("phone1Needs", phone1);
+                    args.putString("connector_vz_idNeeds", connector_vz_id);
+                    args.putString("questionNeeds",question);
+
+//                    Bundle args = new Bundle();
+                    args.putString("titleHas", title);
+                    args.putString("descHas", desc);
+                    args.putString("nameHas", name);
+                    args.putString("photoHas", photo);
+                    args.putString("ticket_idHas", ticket_id);
+                    args.putString("item_photoHas", item_photo);
+                    args.putString("phone1Has", phone1);
+                    args.putString("connector_vz_idHas", connector_vz_id);
+                    args.putString("questionHas",question);
+
                     ldf.setArguments(args);
 
                     //Inflate the fragment
@@ -251,7 +259,18 @@ FrameLayout layout_MainMenu;
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
+                if(itemCount==totalItemCount)
+                {
+                    swipeRefreshLayout.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+//                                                    swipeRefreshLayout.setRefreshing(true);
+                                                    refreshContent();
 
+                                                }
+                                            }
+                    );
+                }
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
@@ -305,6 +324,7 @@ FrameLayout layout_MainMenu;
                 String ticket_id = feed.getString("ticket_id");
                 String isNeeds = "1", isHas = "0";
                 String vz_id=feed.getString("vz_id");
+
 
                 if (question == isNeeds) {
                     isNeeds = question;
@@ -500,7 +520,8 @@ FrameLayout layout_MainMenu;
     static class ViewHolder {
         public TextView name, question, item;
         public View viewLine;
-        public ImageView item_photo, photo;
+        public RoundedImageView photo;
+        public ImageView item_photo;
         public RadioButton referButtonRed, referButtonGreen;
         public RadioGroup radioGroup;
     }
@@ -513,7 +534,7 @@ FrameLayout layout_MainMenu;
         boolean red = false, green = false;
 
         public FeedsAdapter(Context context, int textViewResourceId, ArrayList<DataFeeds> items) {
-            super(context, textViewResourceId, items);
+              super(context, textViewResourceId, items);
             this.context = context;
             FeedActivity.this.feeds = items;
         }
@@ -537,7 +558,7 @@ FrameLayout layout_MainMenu;
             holder.question = (TextView) v.findViewById(R.id.selectionText);
             holder.item = (TextView) v.findViewById(R.id.feedProfile);
             holder.item_photo = (ImageView) v.findViewById(R.id.itemPhoto);
-            holder.photo = (ImageView) v.findViewById(R.id.profilePic);
+            holder.photo = (RoundedImageView) v.findViewById(R.id.profilePic);
             holder.viewLine = (View) v.findViewById(R.id.viewLine);
 
             holder.referButtonRed = (RadioButton) v.findViewById(R.id.referButton);
@@ -552,7 +573,7 @@ FrameLayout layout_MainMenu;
 //            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
           if(!data.getItem_photo().isEmpty())
             {
-                Picasso.with(context).load(data.getItem_photo()).placeholder(R.drawable.progress_animation).into(holder.item_photo);
+                Picasso.with(context).load(data.getItem_photo()).placeholder(R.drawable.no_pic_placeholder_with_border_800x800).into(holder.item_photo);
                 //            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
             } else
           {
@@ -562,24 +583,13 @@ FrameLayout layout_MainMenu;
             if(!data.getPhoto().isEmpty())
             {
 
-            Picasso.with(context).load(data.getPhoto()).placeholder(R.drawable.progress_animation).into(holder.photo);}
+            Picasso.with(context).load(data.getPhoto()).placeholder(R.drawable.profile_pic_placeholder).into(holder.photo);}
             else  {
                 holder.photo.setImageResource(R.drawable.profile_pic_placeholder);
                 //            new DownloadImagesTask(getActivity()).execute(holder.photo);
 
             }
 
-
-//            if(Integer.parseInt(data.getQuestion()) == 1)
-//            {
-//                holder.referButtonRed.setChecked(true);
-//                holder.referButtonGreen.setChecked(false);
-//            }
-//            else
-//            {
-//                holder.r.setChecked(false);
-//                female.setChecked(true);
-//            }
             if (Integer.parseInt(data.getQuestion()) == 1) {
                 holder.question.setBackgroundColor(Color.parseColor("#f27166"));
                 holder.question.setText("needs");

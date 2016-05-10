@@ -14,10 +14,10 @@ android {
 
     defaultConfig {
         applicationId "com.bitjini.vzcards"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.2"
 
         // Add the following two lines
         renderscriptTargetApi 18
@@ -41,4 +41,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile files('libs/httpcore-4.3.jar')
     compile files('libs/picasso-2.5.2.jar')
+    compile 'com.github.jorgecastilloprz:fabprogresscircle:1.01@aar'
 }

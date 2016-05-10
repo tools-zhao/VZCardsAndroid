@@ -4,8 +4,14 @@ import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -28,6 +34,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.jorgecastilloprz.FABProgressCircle;
+import com.github.jorgecastilloprz.listeners.FABProgressListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -50,7 +58,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by VEENA on 12/7/2015.
  */
-public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener, FABProgressListener {
 
     String HISTORY_URL = "http://vzcards-api.herokuapp.com/history/?access_token=";
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -59,12 +67,15 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     VerifyScreen p = new VerifyScreen();
     // ArrayList
     ArrayList<SelectUser> selectUsers=new ArrayList<>();
-    ArrayList<SelectUser> connectorDetails;
+    ArrayList<SelectUser> connectorDetails=new ArrayList<>();
     History_Adapter adapter;
     ListView listView;
     ProgressDialog progressDialog;
     ProgressBar progressBar;
     int count=0;
+
+    private FABProgressCircle fabProgressCircle;
+    private boolean taskRunning;
 
     View footer;
     int countOfFeeds=0;
@@ -72,50 +83,42 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     int totalPage=0;
     int progressCount=0;
     boolean isLoading=false;
+     int itemCount=0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View history = inflater.inflate(R.layout.history_listview, container, false);
 
-        progressBar = (ProgressBar) history.findViewById(R.id.progressBar);
+//        progressBar = (ProgressBar) history.findViewById(R.id.progressBar);
 
         swipeRefreshLayout = (SwipeRefreshLayout) history.findViewById(R.id.pullToRefresh);
-        // the refresh listner. this would be called when the layout is pulled down
-        swipeRefreshLayout.setOnRefreshListener(this);
-        // sets the colors used in the refresh animation
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
-                R.color.colorPrimary
-                ,R.color.red);
-
+        fabProgressCircle = (FABProgressCircle)history. findViewById(R.id.fabProgressCircle);
+        FloatingActionButton fab = (FloatingActionButton)history.findViewById(R.id.refresh);
         listView = (ListView) history.findViewById(R.id.historyList);
         LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
+        // the refresh listner. this would be called when the layout is pulled down
+        swipeRefreshLayout.setOnRefreshListener(this);
 
-//        View header = inflater.inflate(R.layout.header, listView, false);
-//        listView.addHeaderView(header, null, false);
-        if(count==0) {
-            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-            animation.setDuration(1000); //in milliseconds
-            animation.setRepeatCount(5);
-            animation.setInterpolator(new DecelerateInterpolator());
-            animation.start();
+        // sets the colors used in the refresh animation
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
+                R.color.colorPrimary
+                ,R.color.red);
+        // check if you are connected or not
+        if (isConnected()) {
+            Log.e("", "You are conncted");
+        } else {
+            Log.e("", "You are NOT conncted");
+            Toast.makeText(getActivity(),"Check your Network Connectivity",Toast.LENGTH_LONG).show();
+        }
 
-            getHistoryContents(HISTORY_URL + p.token_sharedPreference);
-            progressBar.clearAnimation();
-            progressBar.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
-        }
-        else {
-            listView.setVisibility(View.VISIBLE);
-            getHistoryContents(HISTORY_URL + p.token_sharedPreference);
-        }
+
+        getHistoryContents(HISTORY_URL + p.token_sharedPreference);
         adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
         listView.setAdapter(adapter);
-
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -147,7 +150,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
+                                 int visibleItemCount, final int totalItemCount) {
                 boolean enable = false;
                 if(listView != null && listView.getChildCount() > 0){
                     // check if the first item of the list is visible
@@ -177,9 +180,25 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         });
 
 
+        fabProgressCircle.attachListener(this);
 
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!taskRunning) {
+                    fabProgressCircle.show();
+                    refreshContent();
+                    taskRunning = false;
+                    fabProgressCircle.beginFinalAnimation();
+                }
+
+
+            }
+        });
         return history;
     }
+
     public void getHistoryContents(String url)
     {
         try{
@@ -229,6 +248,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 selectUser.setConnections(arr2);
                 selectUsers.add(selectUser);
 
+
             }
 
         } catch (JSONException e) {
@@ -266,6 +286,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 isLoading = false;
                 getHistoryContents(HISTORY_URL + p.token_sharedPreference);
 
+
                 adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
                 listView.setAdapter(adapter);
@@ -274,7 +295,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 swipeRefreshLayout.setRefreshing(false);
 
             }
-        }, 5000);
+        }, 2000);
 
     }
     public void loadMore(){
@@ -307,6 +328,21 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             }
         }, 2000);
 
+    }
+
+    @Override
+    public void onFABProgressAnimationEnd() {
+//        Snackbar.make(fabProgressCircle, R.string.cloud_upload_complete, Snackbar.LENGTH_LONG)
+//                .setAction("Action", null)
+//                .show();
+    }
+    public boolean isConnected() {
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected())
+            return true;
+        else
+            return false;
     }
     private class History_Adapter extends BaseAdapter {
 
@@ -767,4 +803,23 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 
     }
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        // TODO Auto-generated method stub
+//        super.onCreate(savedInstanceState);
+//
+//        Toast.makeText(getActivity(),
+//                "MyFragment.onCreate()",
+//                Toast.LENGTH_LONG).show();
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        // TODO Auto-generated method stub
+//        super.onPause();
+//
+//        Toast.makeText(getActivity(),
+//                "MyFragment.onPause()",
+//                Toast.LENGTH_LONG).show();
+//    }
     }
