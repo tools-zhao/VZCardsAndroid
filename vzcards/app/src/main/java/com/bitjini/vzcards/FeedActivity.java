@@ -591,7 +591,7 @@ FrameLayout layout_MainMenu;
             }
 
             if (Integer.parseInt(data.getQuestion()) == 1) {
-                holder.question.setBackgroundColor(Color.parseColor("#f27166"));
+                holder.question.setBackgroundResource(R.drawable.addimage_red);
                 holder.question.setText("needs");
                 holder.viewLine.setBackgroundColor(Color.parseColor("#f27166"));
                 holder.referButtonRed.setTag(position);
@@ -643,7 +643,7 @@ FrameLayout layout_MainMenu;
             }
 
             if (Integer.parseInt(data.getQuestion()) == 0) {
-                holder.question.setBackgroundColor(Color.parseColor("#add58a"));
+                holder.question.setBackgroundResource(R.drawable.addimage);
                 holder.question.setText("has");
                 holder.viewLine.setBackgroundColor(Color.parseColor("#add58a"));
                 holder.referButtonGreen.setTag(position);
@@ -761,7 +761,7 @@ FrameLayout layout_MainMenu;
             if (Integer.parseInt(dataFeeds1.getIsNeeds()) == 1) {
                 viewLine.setBackgroundColor(Color.parseColor("#f27166"));
                 question.setText("needs");
-                question.setBackgroundColor(Color.parseColor("#f27166"));
+                question.setBackgroundResource(R.drawable.addimage_red);
             }
 
             // Object 2
@@ -799,7 +799,7 @@ FrameLayout layout_MainMenu;
             if (Integer.parseInt(dataFeeds2.getIsHas()) == 0) {
                 viewLine2.setBackgroundColor(Color.parseColor("#add58a"));
                 question2.setText("has");
-                question2.setBackgroundColor(Color.parseColor("#add58a"));
+                question2.setBackgroundResource(R.drawable.addimage);
             }
 
 

@@ -380,7 +380,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
                 }
 
 
-                    holder.question.setBackgroundColor(Color.parseColor("#add58a"));
+                    holder.question.setBackgroundResource(R.drawable.addimage);
                     holder.question.setText("has");
                     holder.viewLine.setBackgroundColor(Color.parseColor("#add58a"));
 
@@ -444,7 +444,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             if (Integer.parseInt(dataFeeds_Has.getIsHas()) ==0) {
                 viewLine.setBackgroundColor(Color.parseColor("#add58a"));
                 question.setText("has");
-                question.setBackgroundColor(Color.parseColor("#add58a"));
+                question.setBackgroundResource(R.drawable.addimage);
             }
 
             // Object 2
@@ -460,7 +460,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             if (Integer.parseInt(dataFeeds_Needs.getIsNeeds()) == 1) {
                 viewLine2.setBackgroundColor(Color.parseColor("#f27166"));
                 question2.setText("needs");
-                question2.setBackgroundColor(Color.parseColor("#f27166"));
+                question2.setBackgroundResource(R.drawable.addimage_red);
             }
             name2.setText(dataFeeds_Needs.getFname());
             item2.setText(dataFeeds_Needs.getItem());
