@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-                tab.setTag(tab.getPosition());
+
 //                ... anything you may need to do to handle pager state ...
 //                adapter.notifyDataSetChanged(); //this line will force all pages to be loaded fresh when changing between fragments
 
