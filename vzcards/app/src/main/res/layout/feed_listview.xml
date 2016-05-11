@@ -3,8 +3,8 @@
     android:id="@+id/feed_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:foreground="@drawable/shape_window_dim"
-    android:background="?android:attr/colorBackground">
+    android:background="?android:attr/colorBackground"
+    android:foreground="@drawable/shape_window_dim">
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pullToRefresh"
@@ -25,6 +25,7 @@
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
     <TextView
         android:id="@+id/tv_no_product"
         style="@android:style/TextAppearance.Medium"
@@ -35,4 +36,17 @@
         android:gravity="center"
         android:text="empty"
         android:visibility="gone" />
-    </FrameLayout>
+
+    <ProgressBar
+    android:layout_width="60dp"
+    android:layout_height="60dp"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentEnd="true"
+    android:id="@+id/progress1"
+    android:visibility="gone"
+    android:layout_gravity="center"
+    android:indeterminateDrawable="@drawable/progress_animation"
+    android:max="500"
+    android:progress="0" />
+</FrameLayout>

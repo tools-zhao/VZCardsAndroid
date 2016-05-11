@@ -102,7 +102,7 @@ FrameLayout layout_MainMenu;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
-
+        progressBar = (ProgressBar)feed.findViewById(R.id.progress1);
 
 
         swipeRefreshLayout = (SwipeRefreshLayout) feed.findViewById(R.id.pullToRefresh);
@@ -446,8 +446,23 @@ FrameLayout layout_MainMenu;
             getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
         } else {
+            listView.setVisibility(View.GONE);
+//
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(0);
 
-            new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override public void run() {
+
+
+                        new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL);
+
+                        progressBar.setVisibility(View.GONE);
+                        listView.setVisibility(View.VISIBLE);
+                    }
+                }, 5000);
+//
+
         }
     }
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
