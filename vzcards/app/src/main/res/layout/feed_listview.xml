@@ -26,17 +26,26 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <TextView
-        android:id="@+id/tv_no_product"
-        style="@android:style/TextAppearance.Medium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:gravity="center"
-        android:text="empty"
-        android:visibility="gone" />
-
+    <!--<TextView-->
+        <!--android:id="@+id/tv_no_product"-->
+        <!--style="@android:style/TextAppearance.Medium"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_margin="10dp"-->
+        <!--android:gravity="center"-->
+        <!--android:text="empty"-->
+        <!--android:visibility="gone" />-->
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/progress"
+        android:src="@drawable/refresh_btn"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
+        android:elevation="16dp"
+        />
     <ProgressBar
     android:layout_width="60dp"
     android:layout_height="60dp"

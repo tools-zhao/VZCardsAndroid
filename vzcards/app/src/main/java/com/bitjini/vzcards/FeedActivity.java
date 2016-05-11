@@ -6,7 +6,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -73,6 +75,7 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
 
     String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
 
+    VerifyScreen p=new VerifyScreen();
     String URL_GETLIST="http://vzcards-api.herokuapp.com/get_list/?access_token=";
     ProgressBar progressBar,progressBar2;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -98,12 +101,12 @@ FrameLayout layout_MainMenu;
     View footer;
     DataFeeds dataFeeds2 = new DataFeeds();
     DataFeeds dataFeeds1 = new DataFeeds();
-
+    ImageView progressContainer;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
         progressBar = (ProgressBar)feed.findViewById(R.id.progress1);
-
+        progressContainer = (ImageView) feed.findViewById(R.id.progress);
 
         swipeRefreshLayout = (SwipeRefreshLayout) feed.findViewById(R.id.pullToRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -259,24 +262,24 @@ FrameLayout layout_MainMenu;
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
-                if(itemCount==totalItemCount)
-                {
-                    swipeRefreshLayout.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-//                                                    swipeRefreshLayout.setRefreshing(true);
-                                                    refreshContent();
-
-                                                }
-                                            }
-                    );
-                }
+//                if(itemCount==totalItemCount)
+//                {
+//                    swipeRefreshLayout.post(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+////                                                    swipeRefreshLayout.setRefreshing(true);
+//                                                    refreshContent();
+//
+//                                                }
+//                                            }
+//                    );
+//                }
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
-                Log.e("visibleItemCount",""+visibleItemCount);
-                Log.e("lastIndexInScreen",""+firstVisibleItem);
-                Log.e("totalItemCount",""+totalItemCount);
+//                Log.e("visibleItemCount",""+visibleItemCount);
+//                Log.e("lastIndexInScreen",""+firstVisibleItem);
+//                Log.e("totalItemCount",""+totalItemCount);
 
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
 
@@ -291,6 +294,16 @@ FrameLayout layout_MainMenu;
             }
         });
 
+        progressContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listView.setVisibility(View.GONE);
+
+                swipeRefreshLayout.setRefreshing(true);
+
+                refreshContent();
+            }
+        });
         return feed;
     }
 
@@ -302,62 +315,101 @@ FrameLayout layout_MainMenu;
 
            String received =  new HttpAsyncTask().execute(url).get();
 
-
+            int status=0;
             JSONObject jsonObj = new JSONObject(received);
+            if (jsonObj.has("status")) {
+               status= jsonObj.getInt("status");
+            }
+            if(status==401)
+            {
+                android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                alertDialogBuilder.setTitle("Authentication Failed");
+                alertDialogBuilder.setMessage("Invalid Access Token Please Login Again");
+                alertDialogBuilder.setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
 
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
+                                SharedPreferences.Editor sEdit = p.sharedPreferences.edit();
+                                sEdit.clear();
+                                sEdit.commit();
+                               Intent intent1=new Intent(getActivity(),VerifyScreen.class);
+                                startActivity(intent1);
+                            }
 
-            // Getting JSON Array node
-           countOfFeeds=jsonObj.getInt("count");
-            Log.e("countOfFeeds",""+countOfFeeds);
-            JSONArray arr = jsonObj.getJSONArray("response");
+                        });
 
-            // looping through All Contacts
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject c = arr.getJSONObject(i);
-                // Feed node is JSON Object
-                JSONObject feed = c.getJSONObject("feed");
+                alertDialogBuilder.setNegativeButton("cancel",
+                        new DialogInterface.OnClickListener() {
 
-                String item = feed.getString("item");
-                String question = feed.getString("question");
-                String item_photo = feed.getString("item_photo");
-                String description = feed.getString("description");
-                String ticket_id = feed.getString("ticket_id");
-                String isNeeds = "1", isHas = "0";
-                String vz_id=feed.getString("vz_id");
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
 
-
-                if (question == isNeeds) {
-                    isNeeds = question;
-                }
-                if (question == isHas) {
-                    isHas = question;
-                }
-                // user_details node is JSON Object
-                JSONObject user_detail = c.getJSONObject("user_details");
-
-                String firstname = user_detail.getString("firstname");
-                String photo = user_detail.getString("photo");
-                String phone = user_detail.getString("phone");
-
-                DataFeeds dataFeeds = new DataFeeds();
-
-                dataFeeds.setFname(firstname);
-                dataFeeds.setItem(item);
-                dataFeeds.setQuestion(question);
-                dataFeeds.setPhoto(photo);
-                dataFeeds.setItem_photo(item_photo);
-                dataFeeds.setDescription(description);
-                dataFeeds.setIsHas(isHas);
-                dataFeeds.setIsNeeds(isNeeds);
-                dataFeeds.setTicket_id(ticket_id);
-                dataFeeds.setVz_id(vz_id);
-                dataFeeds.setPhone(phone);
-
-                feedsArrayList.add(dataFeeds);
-
-
+                            }
+                        });
+                android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
 
             }
+
+
+            if (jsonObj.has("count")) {
+
+                // Getting JSON Array node
+                countOfFeeds = jsonObj.getInt("count");
+                Log.e("countOfFeeds", "" + countOfFeeds);
+                JSONArray arr = jsonObj.getJSONArray("response");
+
+                // looping through All Contacts
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject c = arr.getJSONObject(i);
+                    // Feed node is JSON Object
+                    JSONObject feed = c.getJSONObject("feed");
+
+                    String item = feed.getString("item");
+                    String question = feed.getString("question");
+                    String item_photo = feed.getString("item_photo");
+                    String description = feed.getString("description");
+                    String ticket_id = feed.getString("ticket_id");
+                    String isNeeds = "1", isHas = "0";
+                    String vz_id = feed.getString("vz_id");
+
+
+                    Log.e("item photo link2:", "" + item_photo);
+                    if (question == isNeeds) {
+                        isNeeds = question;
+                    }
+                    if (question == isHas) {
+                        isHas = question;
+                    }
+                    // user_details node is JSON Object
+                    JSONObject user_detail = c.getJSONObject("user_details");
+
+                    String firstname = user_detail.getString("firstname");
+                    String photo = user_detail.getString("photo");
+
+                    String phone = user_detail.getString("phone");
+
+                    DataFeeds dataFeeds = new DataFeeds();
+
+                    dataFeeds.setFname(firstname);
+                    dataFeeds.setItem(item);
+                    dataFeeds.setQuestion(question);
+                    dataFeeds.setPhoto(photo);
+                    dataFeeds.setItem_photo(item_photo);
+                    dataFeeds.setDescription(description);
+                    dataFeeds.setIsHas(isHas);
+                    dataFeeds.setIsNeeds(isNeeds);
+                    dataFeeds.setTicket_id(ticket_id);
+                    dataFeeds.setVz_id(vz_id);
+                    dataFeeds.setPhone(phone);
+
+                    feedsArrayList.add(dataFeeds);
+
+                }
+            }
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -366,6 +418,7 @@ FrameLayout layout_MainMenu;
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
     }
 
 
@@ -398,6 +451,7 @@ FrameLayout layout_MainMenu;
                 countOfFeeds=0;
                 isLoading = false;
                 getFeedsContents(URL_GETLIST + token_sharedPreference );
+                listView.setVisibility(View.VISIBLE);
                 adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
                 listView.setAdapter(adapter);
 

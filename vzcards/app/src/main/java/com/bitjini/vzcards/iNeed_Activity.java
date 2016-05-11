@@ -257,10 +257,12 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                                                     JSONObject json = null;
                                                     try {
                                                         json = new JSONObject(result);
-                                                        item_photo = json.getString("photo");
-//                                                        SavePreferences(COMPANY_IMAGE, item_photo);
+//                                                        item_photo = json.getString("photo");
+
                                                         String link = json.getString("link");
-                                                        Log.e("item photo:", "" + item_photo);
+                                                        item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/"+link;
+//
+                                                        Log.e("item_photo :", "" + item_photo);
                                                         Log.e("link :", "" + link);
                                                     } catch (JSONException e) {
                                                         e.printStackTrace();
@@ -330,10 +332,14 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                                                     JSONObject json = null;
                                                     try {
                                                         json = new JSONObject(result);
-                                                        item_photo = json.getString("photo");
-//                                                        SavePreferences(COMPANY_IMAGE, company_photo);
+//                                                        item_photo = json.getString("photo");
+
                                                         String link = json.getString("link");
+                                                        item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/"+link;
+//
                                                         Log.e("item_photo :", "" + item_photo);
+                                                        Log.e("link :", "" + link);
+
                                                     } catch (JSONException e) {
                                                         e.printStackTrace();
                                                     }

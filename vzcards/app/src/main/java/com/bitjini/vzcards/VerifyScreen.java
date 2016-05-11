@@ -420,6 +420,7 @@ public class VerifyScreen extends Activity {
                     sEdit.commit();
 
                      token_sharedPreference=sharedPreferences.getString("token",token);
+
                      vz_id_sharedPreference=sharedPreferences.getString("vz_id",vz_id);
                     phone_sharedPreference=sharedPreferences.getString("phone",phone);
                     System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
