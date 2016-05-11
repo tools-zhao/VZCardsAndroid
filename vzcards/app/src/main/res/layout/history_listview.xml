@@ -57,44 +57,19 @@
         <!--</RelativeLayout>-->
     </android.support.v4.widget.SwipeRefreshLayout>
 
-
-    <com.github.jorgecastilloprz.FABProgressCircle
-        android:id="@+id/fabProgressCircle"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="26dp"
-        android:layout_gravity="right|bottom"
+    <ImageView
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:id="@+id/progress"
+        android:src="@drawable/refresh_btn"
+    android:layout_gravity="bottom|right"
+        android:layout_marginRight="15dp"
         android:layout_marginBottom="15dp"
-        app:finalIcon="@drawable/ic_done"
-        app:arcColor="#7890"
-        app:reusable="true"
-
-        >
-
-        <!--Google FAB-->
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/refresh"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/replay"
-
-            app:rippleColor="@color/fab_ripple"
-            app:borderWidth="2dp"
-            />
+        android:elevation="16dp"
+        />
 
 
 
-    </com.github.jorgecastilloprz.FABProgressCircle>
 
-    <!--<TextView-->
-        <!--android:id="@+id/tv_no_product"-->
-        <!--style="@android:style/TextAppearance.Medium"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_margin="10dp"-->
-        <!--android:text="empty"-->
-        <!--android:gravity="center"-->
-        <!--android:visibility="gone" />-->
+
 </FrameLayout>

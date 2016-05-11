@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -71,11 +72,9 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     History_Adapter adapter;
     ListView listView;
     ProgressDialog progressDialog;
-    ProgressBar progressBar;
     int count=0;
-
-    private FABProgressCircle fabProgressCircle;
-    private boolean taskRunning;
+    ImageView progressContainer;
+    ProgressBar progressBar;
 
     View footer;
     int countOfFeeds=0;
@@ -90,12 +89,10 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                              Bundle savedInstanceState) {
         View history = inflater.inflate(R.layout.history_listview, container, false);
 
-//        progressBar = (ProgressBar) history.findViewById(R.id.progressBar);
-
+          progressContainer = (ImageView) history.findViewById(R.id.progress);
+//        progressBar = (ProgressBar)history.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) history.findViewById(R.id.pullToRefresh);
-        fabProgressCircle = (FABProgressCircle)history. findViewById(R.id.fabProgressCircle);
 
-        FloatingActionButton fab = (FloatingActionButton)history.findViewById(R.id.refresh);
         listView = (ListView) history.findViewById(R.id.historyList);
         LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
@@ -180,23 +177,17 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             }
         });
 
-
-        fabProgressCircle.attachListener(this);
-
-
-        fab.setOnClickListener(new View.OnClickListener() {
+        progressContainer.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if (!taskRunning) {
-                    fabProgressCircle.show();
-                    refreshContent();
-                    taskRunning = false;
-                    fabProgressCircle.beginFinalAnimation();
-                }
+            public void onClick(View v) {
+                listView.setVisibility(View.GONE);
 
+                swipeRefreshLayout.setRefreshing(true);
 
+                        refreshContent();
             }
         });
+
         return history;
     }
 
@@ -291,6 +282,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
                 listView.setAdapter(adapter);
+                listView.setVisibility(View.VISIBLE);
                 //do processing to get new data and set your listview's adapter, maybe  reinitialise the loaders you may be using or so
                 //when your data has finished loading, set the refresh state of the view to false
                 swipeRefreshLayout.setRefreshing(false);

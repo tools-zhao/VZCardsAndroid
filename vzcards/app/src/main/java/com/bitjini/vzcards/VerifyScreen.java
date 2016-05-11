@@ -75,7 +75,7 @@ public class VerifyScreen extends Activity {
         String token_sharedPreference=sharedPreferences.getString(TOKEN_KEY,null);
         if(token_sharedPreference!=null)
         {
-            Intent positveActivity = new Intent(getApplicationContext(), MainActivity.class);
+            Intent positveActivity = new Intent(getApplicationContext(), SplashScreen.class);
             startActivity(positveActivity);
             finish();
         }
