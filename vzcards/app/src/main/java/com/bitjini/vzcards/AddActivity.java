@@ -148,12 +148,14 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             public boolean onTouch(View v, MotionEvent event) {
 
                 done1.setVisibility(View.VISIBLE);
+                done2.setVisibility(View.GONE);
                 return false;
             }
         });
         txtDescription.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                done1.setVisibility(View.GONE);
                 done2.setVisibility(View.VISIBLE);
                 return false;
             }
