@@ -84,7 +84,7 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
         if(!photo.isEmpty())
         {
 
-            Picasso.with(getApplicationContext()).load(photo).into(profilePhoto);}
+            Picasso.with(getApplicationContext()).load(photo).fit().into(profilePhoto);}
         else  {
             profilePhoto.setImageResource(R.drawable.profile_pic_placeholder);
 //            profilePhoto.setTag(photo);

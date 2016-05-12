@@ -16,8 +16,8 @@
         android:layout_height="match_parent"
         android:id="@+id/feedList"
         android:layout_below="@+id/Layout1"
-        android:divider="#97e6ecf2"
-        android:dividerHeight="5.0sp"
+        android:divider="#43c1d9f2"
+        android:dividerHeight="2.0sp"
         android:layout_above="@+id/l8"
         android:layout_marginTop="5dp"
         android:choiceMode="multipleChoice"
@@ -47,8 +47,8 @@
         android:elevation="16dp"
         />
     <ProgressBar
-    android:layout_width="60dp"
-    android:layout_height="60dp"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
     android:layout_alignParentTop="true"
     android:layout_alignParentRight="true"
     android:layout_alignParentEnd="true"
