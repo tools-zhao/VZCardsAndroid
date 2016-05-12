@@ -188,7 +188,7 @@ FrameLayout layout_MainMenu;
                     intent.putExtra("ticket_idHas", ticket_id);
                     intent.putExtra("item_photoHas", item_photo);
                     intent.putExtra("phone1Has", phone1);
-                    intent.putExtra("connector_vz_idHas", connector_vz_id);
+                    intent.putExtra("connector_vz_idHas", vz_id);
                     intent.putExtra("questionHas",question);
 
                     // sending values of needs
@@ -199,7 +199,7 @@ FrameLayout layout_MainMenu;
                     intent.putExtra("ticket_idNeeds", ticket_id);
                     intent.putExtra("item_photoNeeds", item_photo);
                     intent.putExtra("phone1Needs", phone1);
-                    intent.putExtra("connector_vz_idNeeds", connector_vz_id);
+                    intent.putExtra("connector_vz_idNeeds", vz_id);
                     intent.putExtra("questionNeeds",question);
                     startActivity(intent);
 
@@ -220,7 +220,7 @@ FrameLayout layout_MainMenu;
                     intent.putExtra("ticket_idNeeds", ticket_id);
                     intent.putExtra("item_photoNeeds", item_photo);
                     intent.putExtra("phone1Needs", phone1);
-                    intent.putExtra("connector_vz_idNeeds", connector_vz_id);
+                    intent.putExtra("connector_vz_idNeeds", vz_id);
                     intent.putExtra("questionNeeds",question);
 
 //                    Bundle args = new Bundle();
@@ -231,7 +231,7 @@ FrameLayout layout_MainMenu;
                     intent.putExtra("ticket_idHas", ticket_id);
                     intent.putExtra("item_photoHas", item_photo);
                     intent.putExtra("phone1Has", phone1);
-                    intent.putExtra("connector_vz_idHas", connector_vz_id);
+                    intent.putExtra("connector_vz_idHas", vz_id);
                     intent.putExtra("questionHas",question);
 
                     startActivity(intent);
@@ -373,7 +373,7 @@ FrameLayout layout_MainMenu;
                     String description = feed.getString("description");
                     String ticket_id = feed.getString("ticket_id");
                     String isNeeds = "1", isHas = "0";
-                    String vz_id = feed.getString("vz_id");
+//                    String vz_id = feed.getString("vz_id");
 
 
                     Log.e("item photo link2:", "" + item_photo);

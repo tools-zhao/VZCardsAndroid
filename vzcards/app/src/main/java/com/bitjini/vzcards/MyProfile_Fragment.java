@@ -197,7 +197,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         if(!photo.isEmpty()) {
 
             Picasso.with(getActivity()).load(photo).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
-//            SavePreferences(PROFILE_IMAGE, photo);
+//            if(PROFILE_IMAGE.length()==0) {
+            SavePreferences(PROFILE_IMAGE, photo);
+//            }
 //            imageProfile.setTag(photo);
 //                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
 
@@ -211,7 +213,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         if(!company_photo.isEmpty()) {
             Picasso.with(getActivity()).load(company_photo).placeholder(R.drawable.com_logo).into(imageCompany);
-//            SavePreferences(COMPANY_IMAGE, company_photo);
+//            if(COMPANY_IMAGE.length()==0) {
+                SavePreferences(COMPANY_IMAGE, company_photo);
+//            }
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
         }else  {
@@ -777,7 +781,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager1 = getFragmentManager();
                 fragmentManager1.beginTransaction()
-                        .replace(contentView2.getId(), newfragment)
+                        .replace(contentView2.getId(), newfragment).addToBackStack(null)
                         .commit();
                 break;
 
@@ -790,7 +794,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
                 fragmentManager2.beginTransaction()
-                        .replace(contentView3.getId(), fragment)
+                        .replace(contentView3.getId(), fragment).addToBackStack(null)
                         .commit();
 
 
