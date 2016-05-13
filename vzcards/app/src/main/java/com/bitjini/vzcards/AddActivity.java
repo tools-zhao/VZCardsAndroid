@@ -20,7 +20,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -38,6 +40,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +53,10 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
@@ -60,8 +66,11 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -73,6 +82,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -89,15 +99,16 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 198;
     private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 199;
 
+    RelativeLayout main_layout,displayImage_layout;
     Button havebtn;
-    public ImageView item_image;
+    public ImageView item_image, showImage;
     Button addImage;
     EditText txtItem, txtDescription;
     TextView txtDate_validity;
     ImageButton submit;
     public static String Item_picturePath;
     public String item_photo="", item="", description="", date_validity="", question = "";
-    public ProgressDialog progress = null;
+    public ProgressDialog progress = null,progressDialog;
     public Bitmap output, bitmap;
     ImageButton btnCander;
     VerifyScreen p = new VerifyScreen();
@@ -105,7 +116,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     private int myear;
     private int mmonth;
     private int mday;
-    Button done1,done2;
+    Button done1,done2, cancel,choose;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,6 +132,13 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         txtDescription = (EditText) iHave.findViewById(R.id.desc);
         txtDate_validity = (TextView) iHave.findViewById(R.id.validity);
         item_image = (ImageView) iHave.findViewById(R.id.item_img);
+
+        main_layout=(RelativeLayout) iHave.findViewById(R.id.main_layout);
+       displayImage_layout=(RelativeLayout) iHave.findViewById(R.id.displayLayout);
+
+      showImage=(ImageView)iHave.findViewById(R.id.showImage);
+        choose=(Button)iHave.findViewById(R.id.choose);
+        cancel=(Button) iHave.findViewById(R.id.cancel);
 
 //        btnCander = (ImageButton) iHave.findViewById(R.id.click);
 
@@ -246,67 +264,64 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                         Log.e("path :", "" + Item_picturePath);
 
                         decodeFile(Item_picturePath);
+                        displayImage_layout.setVisibility(View.VISIBLE);
+                        main_layout.setVisibility(View.GONE);
+                        showImage.setImageBitmap(bitmap);
+                        choose.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                        alertDialogBuilder.setMessage("Do you want to upload the image");
-                        alertDialogBuilder.setPositiveButton("Ok",
-                                new DialogInterface.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-
-
-                                        // Upload image to server
-                                        progress = new ProgressDialog(getActivity());
-                                        if (progress != null) {
-                                            progress.setMessage("Uploading image ..Please Wait...");
-                                            progress.setCancelable(false);
-                                            progress.show();
-                                        }
-                                        new UploadImageTask(getActivity()) {
-                                            @Override
-                                            public void onPostExecute(String result) {
-                                                if (progress.isShowing()) {
-                                                    progress.dismiss();
-                                                    progress = null;
-                                                }
-                                                Log.e("debug=", "" + result);
-                                                item_image.setImageBitmap(bitmap);
-
-                                                if (result != null) {
-
-                                                    JSONObject json = null;
-                                                    try {
-                                                        json = new JSONObject(result);
-
-//                                                       item_photo = json.getString("photo");
-
-                                                        String link = json.getString("link");
-                                                        item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/"+link;
+                                main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
+                                item_image.setImageBitmap(bitmap);
+//                                 Upload image to server
+//                                progress = new ProgressDialog(getActivity());
+//                                if (progress != null) {
+//                                    progress.setMessage("Uploading image ..Please Wait...");
+//                                    progress.setCancelable(false);
+//                                    progress.show();
+//                                }
+//                                new UploadImageTask(getActivity()) {
+//                                    @Override
+//                                    public void onPostExecute(String result) {
+//                                        if (progress.isShowing()) {
+//                                            progress.dismiss();
+//                                            progress = null;
+//                                        }
+//                                        Log.e("debug=", "" + result);
 //
-                                                        Log.e("item_photo :", "" + item_photo);
-                                                        Log.e("link :", "" + link);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }
-                                        }.execute();
+//
+//
+//                                        if (result != null) {
+//
+//                                            JSONObject json = null;
+//                                            try {
+//                                                json = new JSONObject(result);
+//
+////                                                       item_photo = json.getString("photo");
+//
+//                                                String link = json.getString("link");
+//                                                item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/" + link;
+////
+//                                                Log.e("item_photo :", "" + item_photo);
+//                                                Log.e("link :", "" + link);
+//                                            } catch (JSONException e) {
+//                                                e.printStackTrace();
+//                                            }
+//                                        }
+//                                    }
+//                                }.execute();
+                            }
+                        });
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
+                            main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
 
-                                    }
-                                });
-
-                        alertDialogBuilder.setNegativeButton("cancel",
-                                new DialogInterface.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-
-                                    }
-                                });
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-                        alertDialog.show();
+                            }
+                        });
 
 
                     } else {
@@ -323,64 +338,29 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                         Log.e("path :", "" + Item_picturePath);
 
                         decodeFile(Item_picturePath);
+                        displayImage_layout.setVisibility(View.VISIBLE);
+                        main_layout.setVisibility(View.GONE);
+                        showImage.setImageBitmap(bitmap);
 
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                        alertDialogBuilder.setMessage("Do you want to upload the image");
-                        alertDialogBuilder.setPositiveButton("Ok",
-                                new DialogInterface.OnClickListener() {
+                        choose.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
+                                main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
+                                item_image.setImageBitmap(bitmap);
+                            }
+                        });
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
 
 
-                                        // Upload image to server
-                                        progress = new ProgressDialog(getActivity());
-                                        if (progress != null) {
-                                            progress.setMessage("Uploading image ..Please Wait...");
-                                            progress.setCancelable(false);
-                                            progress.show();
-                                        }
-                                        new UploadImageTask(getActivity()) {
-                                            @Override
-                                            public void onPostExecute(String result) {
-                                                if (progress.isShowing()) {
-                                                    progress.dismiss();
-                                                    progress = null;
-                                                }
-                                                item_image.setImageBitmap(bitmap);
-
-                                                if (result != null) {
-
-                                                    JSONObject json = null;
-                                                    try {
-                                                        json = new JSONObject(result);
-//                                                        item_photo = json.getString("photo");
-
-                                                        String link = json.getString("link");
-                                                        item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/"+link;
-//
-                                                        Log.e("item_photo :", "" + item_photo);
-                                                        Log.e("link :", "" + link);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }
-                                        }.execute();
-
-                                    }
-                                });
-
-                        alertDialogBuilder.setNegativeButton("cancel",
-                                new DialogInterface.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-
-                                    }
-                                });
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-                        alertDialog.show();
+                            }
+                        });
 
 
                     }
@@ -434,7 +414,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         BitmapFactory.decodeFile(filePath, o);
 
         // The new size we want to scale to
-        final int REQUIRED_SIZE = 1024;
+        final int REQUIRED_SIZE = 512;
 
         // Find the correct scale value. It should be the power of 2.
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
@@ -462,16 +442,21 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
         StringBuffer response = new StringBuffer();
 
+
         public INeed_Task(Context context) {
             this.context = context;
+
         }
 
         protected void onPreExecute() {
 
+
             progress = new ProgressDialog(this.context);
-            progress.setMessage("Sending...");
-            progress.setCancelable(false);
-            progress.show();
+            if(progress!=null) {
+                progress.setMessage("Sending...");
+                progress.setCancelable(false);
+                progress.show();
+            }
         }
 
         @Override
@@ -574,7 +559,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
         @Override
         public void onPostExecute(String result) {
-            if (progress.isShowing()) {
+            if (progress.isShowing() && progress!=null) {
                 progress.dismiss();
                 progress = null;
             }
@@ -583,6 +568,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             txtDescription.setText("");
             item_image.setImageResource(R.drawable.no_pic_placeholder);
             bitmap = null;
+            item_photo="";
+            Item_picturePath="";
             Toast.makeText(getActivity(), "Your Data is posted ", Toast.LENGTH_LONG).show();
 
             if (result != null) {
@@ -615,6 +602,11 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 File sourceFile_profile = new File(Item_picturePath );
                 Log.e("picturePath :", "" +Item_picturePath);
 
+                Bitmap bmp = BitmapFactory.decodeFile(Item_picturePath);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.JPEG, 70, bos);
+
+                ContentBody foto =new ByteArrayBody(bos.toByteArray(), "filename");
 
                 HttpClient httpclient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost(pr.URL_UPLOAD_IMAGE);
@@ -626,7 +618,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 HttpEntity entity = MultipartEntityBuilder.create()
                         .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                         .setBoundary(boundary)
-                        .addPart("photo", new FileBody(sourceFile_profile))
+                        .addPart("photo", foto)
                         .build();
 
                 httpPost.setEntity(entity);
@@ -681,10 +673,74 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
                 }
                 else {
+                    Log.e("item_photo :", "" + item_photo);
                     Log.e("task item=",""+item +""+ item.length());
-                    new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+                    Log.e("task item=",""+item +""+ item.length());
 
-                }
+                    if(Item_picturePath.length()!=0) {
+                        progressDialog = new ProgressDialog(getActivity());
+                        if (progressDialog != null) {
+                            progressDialog.setMessage("Collecting Data Please Wait...");
+                            progressDialog.setCancelable(false);
+                            progressDialog.show();
+                        }
+                        new UploadImageTask(getActivity()) {
+                            @Override
+                            public void onPostExecute(String result) {
+                                if (progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                    progressDialog = null;
+                                    Item_picturePath="";
+                                }
+                                if (result != null) {
+                                    JSONObject json = null;
+                                    try {
+                                        json = new JSONObject(result);
+//
+                                        String link = json.getString("link");
+                                        item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/" + link;
+//
+                                        Log.e("item_photo :", "" + item_photo);
+                                        Log.e("link :", "" + link);
+
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }.execute();
+                    }
+                    else {
+                        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                        alertDialogBuilder.setMessage("Post data without uploading image");
+                        alertDialogBuilder.setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+                                    }
+                                });
+                                        alertDialogBuilder.setNegativeButton("cancel",
+                                                new DialogInterface.OnClickListener() {
+
+                                                    @Override
+                                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                                    }
+                                                });
+                                        AlertDialog alertDialog = alertDialogBuilder.create();
+                                        alertDialog.show();
+
+                                    }
+
+
+
+
+
+                                }
                 break;
 //            case R.id.click:
 //                showDatePickerDialog(v);
@@ -722,6 +778,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
         }
     }
+
 
     //
     public void showDatePickerDialog(View v) {
