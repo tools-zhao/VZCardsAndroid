@@ -67,11 +67,13 @@
         android:layout_below="@+id/l1"
         android:gravity="center_horizontal">
         <ImageView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
+            android:paddingTop="50dp"
+            android:paddingBottom="50dp"
             android:id="@+id/item_photo"
             android:src="@drawable/no_pic_placeholder"/></LinearLayout>
     <LinearLayout

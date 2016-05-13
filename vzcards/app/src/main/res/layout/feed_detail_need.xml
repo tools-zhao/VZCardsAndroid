@@ -57,7 +57,7 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="160dp"
         android:background="#c3877980"
         android:orientation="vertical"
         android:id="@+id/l2"
@@ -67,7 +67,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
+            android:paddingBottom="50dp"
+            android:paddingTop="50dp"
             android:adjustViewBounds="true"
             android:id="@+id/item_photo"
             android:src="@drawable/no_pic_placeholder"/></LinearLayout>
