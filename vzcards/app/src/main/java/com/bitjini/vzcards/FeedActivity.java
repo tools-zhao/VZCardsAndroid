@@ -34,12 +34,15 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -101,12 +104,14 @@ FrameLayout layout_MainMenu;
     View footer;
     DataFeeds dataFeeds2 = new DataFeeds();
     DataFeeds dataFeeds1 = new DataFeeds();
-    ImageView progressContainer;
+    RoundedImageView progressContainer;
+
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
         progressBar = (ProgressBar)feed.findViewById(R.id.progress1);
-        progressContainer = (ImageView) feed.findViewById(R.id.progress);
+        progressContainer = (RoundedImageView) feed.findViewById(R.id.progress);
 
         swipeRefreshLayout = (SwipeRefreshLayout) feed.findViewById(R.id.pullToRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -297,9 +302,11 @@ FrameLayout layout_MainMenu;
         progressContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 listView.setVisibility(View.GONE);
 
                 swipeRefreshLayout.setRefreshing(true);
+                showContacts();
 
                 refreshContent();
             }

@@ -68,8 +68,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:scaleType="centerCrop"
-            android:paddingBottom="50dp"
-            android:paddingTop="50dp"
+            android:paddingBottom="55dp"
+            android:paddingTop="55dp"
             android:adjustViewBounds="true"
             android:id="@+id/item_photo"
             android:src="@drawable/no_pic_placeholder"/></LinearLayout>
@@ -116,25 +116,25 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="Refer Tickets"
-        android:background="@drawable/drawable_refer_red"
+        android:background="@drawable/ripple_effect_red"
         android:textColor="#f27166"
-        android:elevation="6dp"
         android:id="@+id/refer_vzfrnd"
         android:layout_above="@+id/refer_contact"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_marginBottom="10dp"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="Refer Phonebook Contact"
-        android:background="@drawable/drawable_refer_red"
+        android:background="@drawable/ripple_effect_red"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
         android:textColor="#f27166"
-        android:elevation="6dp"
+        style="?android:attr/borderlessButtonStyle"
         android:id="@+id/refer_contact"/>
 
 

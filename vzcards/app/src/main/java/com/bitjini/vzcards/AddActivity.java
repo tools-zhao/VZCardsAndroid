@@ -15,6 +15,11 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -26,6 +31,7 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,6 +46,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -101,7 +108,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
     RelativeLayout main_layout,displayImage_layout;
     Button havebtn;
-    public ImageView item_image, showImage;
+    public ImageView  showImage;
+    public ImageView item_image;
     Button addImage;
     EditText txtItem, txtDescription;
     TextView txtDate_validity;
@@ -117,7 +125,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     private int mmonth;
     private int mday;
     Button done1,done2, cancel,choose;
-
+    View iHave;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,12 +134,15 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View iHave = inflater.inflate(R.layout.add_layout, container, false);
+         iHave = inflater.inflate(R.layout.add_layout, container, false);
         addImage = (Button) iHave.findViewById(R.id.addImage);
         txtItem = (EditText) iHave.findViewById(R.id.ask);
         txtDescription = (EditText) iHave.findViewById(R.id.desc);
         txtDate_validity = (TextView) iHave.findViewById(R.id.validity);
         item_image = (ImageView) iHave.findViewById(R.id.item_img);
+
+
+
 
         main_layout=(RelativeLayout) iHave.findViewById(R.id.main_layout);
        displayImage_layout=(RelativeLayout) iHave.findViewById(R.id.displayLayout);
@@ -274,43 +285,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                 main_layout.setVisibility(View.VISIBLE);
                                 displayImage_layout.setVisibility(View.GONE);
                                 item_image.setImageBitmap(bitmap);
-//                                 Upload image to server
-//                                progress = new ProgressDialog(getActivity());
-//                                if (progress != null) {
-//                                    progress.setMessage("Uploading image ..Please Wait...");
-//                                    progress.setCancelable(false);
-//                                    progress.show();
-//                                }
-//                                new UploadImageTask(getActivity()) {
-//                                    @Override
-//                                    public void onPostExecute(String result) {
-//                                        if (progress.isShowing()) {
-//                                            progress.dismiss();
-//                                            progress = null;
-//                                        }
-//                                        Log.e("debug=", "" + result);
-//
-//
-//
-//                                        if (result != null) {
-//
-//                                            JSONObject json = null;
-//                                            try {
-//                                                json = new JSONObject(result);
-//
-////                                                       item_photo = json.getString("photo");
-//
-//                                                String link = json.getString("link");
-//                                                item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/" + link;
-////
-//                                                Log.e("item_photo :", "" + item_photo);
-//                                                Log.e("link :", "" + link);
-//                                            } catch (JSONException e) {
-//                                                e.printStackTrace();
-//                                            }
-//                                        }
-//                                    }
-//                                }.execute();
+
+
                             }
                         });
                         cancel.setOnClickListener(new View.OnClickListener() {
@@ -319,6 +295,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
                             main_layout.setVisibility(View.VISIBLE);
                                 displayImage_layout.setVisibility(View.GONE);
+
 
                             }
                         });
@@ -348,7 +325,23 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
                                 main_layout.setVisibility(View.VISIBLE);
                                 displayImage_layout.setVisibility(View.GONE);
+
+
+
+//                                //dynamically increase the size of the imageview
+//                                int width = bitmap.getWidth();
+//                                int height = bitmap.getHeight();
+//                                int newWidth = 650;
+//                                int newHeight = 350;
+//                                float scaleWidth = ((float) newWidth) / width;
+//                                float scaleHeight = ((float) newHeight) / height;
+//                                Matrix matrix = new Matrix();
+//                                matrix.postScale(scaleWidth, scaleHeight);
+//                                Bitmap newbm = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix,true);
+
                                 item_image.setImageBitmap(bitmap);
+
+
                             }
                         });
                         cancel.setOnClickListener(new View.OnClickListener() {
@@ -406,7 +399,24 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             }
         }
     }
+    public Bitmap BITMAP_RESIZER(Bitmap bitmap,int newWidth,int newHeight) {
+        Bitmap scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
 
+        float ratioX = newWidth / (float) bitmap.getWidth();
+        float ratioY = newHeight /(float) bitmap.getHeight();
+        float middleX = newWidth/ 2.0f;
+        float middleY = newHeight / 2.0f;
+
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
+
+        Canvas canvas = new Canvas(scaledBitmap);
+        canvas.setMatrix(scaleMatrix);
+        canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() /2, middleY - bitmap.getHeight()/2 , new Paint(Paint.FILTER_BITMAP_FLAG));
+
+        return scaledBitmap;
+
+    }
     public void decodeFile(String filePath) {
         // Decode image size
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -414,7 +424,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         BitmapFactory.decodeFile(filePath, o);
 
         // The new size we want to scale to
-        final int REQUIRED_SIZE = 512;
+        final int REQUIRED_SIZE = 1024;
 
         // Find the correct scale value. It should be the power of 2.
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
@@ -836,6 +846,37 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
             txtDate_validity.setText(year + "-" + formattedMonth + "-" + formattedDayOfMonth);
         }
+    }
+    private void scaleImage(ImageView view)
+    {
+        Drawable drawing = view.getDrawable();
+        if (drawing == null) {
+            return;
+        }
+        Bitmap bitmap = ((BitmapDrawable)drawing).getBitmap();
+
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int bounding_x = ((View)view.getParent()).getWidth();//EXPECTED WIDTH
+        int bounding_y = ((View)view.getParent()).getHeight();//EXPECTED HEIGHT
+
+        float xScale = ((float) bounding_x) / width;
+        float yScale = ((float) bounding_y) / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(xScale, yScale);
+
+        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+        width = scaledBitmap.getWidth();
+        height = scaledBitmap.getHeight();
+        BitmapDrawable result = new BitmapDrawable(getActivity().getResources(), scaledBitmap);
+
+        view.setImageDrawable(result);
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+        params.width = width;
+        params.height = height;
+        view.setLayoutParams(params);
     }
 }
 

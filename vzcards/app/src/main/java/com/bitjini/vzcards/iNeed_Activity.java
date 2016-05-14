@@ -30,6 +30,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -100,7 +102,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     VerifyScreen p = new VerifyScreen();
     RelativeLayout main_layout,displayImage_layout;
     Button done1,done2, cancel,choose;
-
+    Animation animScale;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -112,6 +114,8 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         txtDate_validity=(TextView) iNeed.findViewById(R.id.validity);
         item_image=(ImageView) iNeed.findViewById(R.id.item_img);
         submit=(ImageButton) iNeed.findViewById(R.id.imgbtn);
+
+        animScale = AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
 
         main_layout=(RelativeLayout) iNeed.findViewById(R.id.main_layout);
         displayImage_layout=(RelativeLayout) iNeed.findViewById(R.id.displayLayout);
@@ -553,6 +557,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
             //setting company picture
             case R.id.imgbtn:
+                v.startAnimation(animScale);
                 item= txtItem.getText().toString();
                 description= txtDescription.getText().toString();
                 date_validity=txtDate_validity.getText().toString();
