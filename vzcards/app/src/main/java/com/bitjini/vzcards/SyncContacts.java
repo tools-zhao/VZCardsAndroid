@@ -77,13 +77,6 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         this.context = context;
     }
 
-//    protected void onPreExecute() {
-//
-//        progress = new ProgressDialog(this.context);
-//       progress.setMessage("Synchronizing your contacts please wait...");
-//       progress.setCancelable(false);
-//        progress.show();
-//    }
     @Override
     protected String doInBackground(String... urls) {
         // params comes from the execute() call: params[0] is the url.
@@ -146,7 +139,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                         rd.close();
 
 
-                        Log.e(" contact list Response", "" + response.toString());
+//                        Log.e(" contact list Response", "" + response.toString());
 
 
 
@@ -189,14 +182,6 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
         return result.toString();
     }
-//    public void onPostExecute(String result)
-//    {
-//        if(progress.isShowing())
-//        {
-//            progress.dismiss();
-//            progress=null;
-//        }
-//    }
 
     // Load data on background
     class LoadContact extends AsyncTask<Void, Void, Void> {
@@ -236,47 +221,40 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                     // get the country code
                     String countryCode = GetCountryZipCode();
 
-//                    Log.e(" phone number :",""+phoneNumber);
-                    SelectUser selectUser = new SelectUser();
-
                     if(phoneNumber.length()== 10)
                     {
                         phoneNumber=countryCode+phoneNumber;
-//                        Log.e(" phone No.countrycode:",""+phoneNumber);
 
                     }
 
                     phoneArray.add(phoneNumber);
 
-//                    for (String s:phoneArray) {
-//                        Log.e(" phone arrays:", "" + s);
-//                    }
 
                 }
             } else {
 //                Log.e("Cursor close 1", "----------------");
             }
-            //phones.close();
+            phones.close();
             return null;
         }
-            public String GetCountryZipCode(){
-            String CountryID="";
-            String CountryZipCode="";
 
-            TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            //getNetworkCountryIso
-            CountryID= manager.getSimCountryIso().toUpperCase();
-            String[] rl=context.getResources().getStringArray(R.array.CountryCodes);
-            for(int i=0;i<rl.length;i++){
-                String[] g=rl[i].split(",");
-                if(g[1].trim().equals(CountryID.trim())){
-                    CountryZipCode=g[0];
-                    break;
-                }
-            }
-            return CountryZipCode;
-        }
     }
+    public String GetCountryZipCode(){
+        String CountryID="";
+        String CountryZipCode="";
 
+        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        CountryID= manager.getSimCountryIso().toUpperCase();
+        String[] rl=context.getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<rl.length;i++){
+            String[] g=rl[i].split(",");
+            if(g[1].trim().equals(CountryID.trim())){
+                CountryZipCode=g[0];
+                break;
+            }
+        }
+        return CountryZipCode;
+    }
 }
 

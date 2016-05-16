@@ -142,7 +142,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         item_image = (ImageView) iHave.findViewById(R.id.item_img);
 
 
-
+        item_image.setImageResource(R.drawable.no_pic_placeholder_full);
 
         main_layout=(RelativeLayout) iHave.findViewById(R.id.main_layout);
        displayImage_layout=(RelativeLayout) iHave.findViewById(R.id.displayLayout);

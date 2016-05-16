@@ -13,6 +13,7 @@ public class SelectUser {
     String phone;
     Bitmap thumb;
 
+    String syncPhone;
     JSONArray connections;
 
     public JSONArray getConnections() {
@@ -32,6 +33,14 @@ public class SelectUser {
     String company,industry,city,address1,address2,pin_code,email;
     String referedPhoto="",comany_photo="",item_photo="";
     String fName,lname,photo="",referredFname="",referredLname="",referredPhoto="";
+
+    public String getSyncPhone() {
+        return syncPhone;
+    }
+
+    public void setSyncPhone(String syncPhone) {
+        this.syncPhone = syncPhone;
+    }
 
     public String getCompany() {
         return company;

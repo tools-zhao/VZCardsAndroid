@@ -39,7 +39,7 @@ import java.util.ArrayList;
 public class ReferContacts extends Fragment implements SearchView.OnQueryTextListener {
 
     // ArrayList
-    ArrayList<SelectUser> selectUsers = null;
+    ArrayList<SelectUser> phoneList = null;
 
     // Contact List
     ListView listView;
@@ -49,7 +49,7 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
     Context context=null;
     Activity _activity;
     // Cursor to load contacts list
-    Cursor phones, email;
+    Cursor phones=null, email;
     SearchView mSearchView;
 
     Filter filter;
@@ -63,7 +63,7 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
         View refer_contact = inflater.inflate(R.layout.vzfriends_list, container, false);
 
 
-        selectUsers = new ArrayList<SelectUser>();
+        phoneList = new ArrayList<SelectUser>();
         resolver = getActivity().getContentResolver();
         listView = (ListView) refer_contact.findViewById(R.id.contactList);
         mSearchView = (SearchView) refer_contact.findViewById(R.id.searchview);
@@ -77,13 +77,12 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
 return refer_contact;
 
     }
-    private void showContacts() {
+    public void showContacts() {
         // Check the SDK version and whether the permission is already granted or not.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
         } else {
-            phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
             LoadContact loadContact = new LoadContact();
 
@@ -102,7 +101,7 @@ return refer_contact;
         }
     }
     // Load data on background
-    class LoadContact extends AsyncTask<Void, Void, Void> {
+   class LoadContact extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -112,6 +111,7 @@ return refer_contact;
         @Override
         protected Void doInBackground(Void... voids) {
             // Get Contact list from Phone
+            phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
             if (phones != null) {
                 Log.e("count", "" + phones.getCount());
@@ -144,7 +144,7 @@ return refer_contact;
                     selectUser.setThumb(bit_thumb);
                     selectUser.setName(name);
                     selectUser.setPhone(phoneNumber);
-                    selectUsers.add(selectUser);
+                    phoneList.add(selectUser);
 
                 }
             } else {
@@ -157,7 +157,7 @@ return refer_contact;
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            adapter = new SelectUserAdapter(selectUsers, getActivity());
+            adapter = new SelectUserAdapter(phoneList, getActivity());
             adapter.notifyDataSetChanged();
             listView.setAdapter(adapter);
             listView.setTextFilterEnabled(true);

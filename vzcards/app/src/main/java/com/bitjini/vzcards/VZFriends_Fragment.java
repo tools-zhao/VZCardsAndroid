@@ -1,15 +1,23 @@
 package com.bitjini.vzcards;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SyncContext;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -56,12 +64,16 @@ import java.util.concurrent.ExecutionException;
 public class VZFriends_Fragment extends Fragment implements View.OnClickListener,SearchView.OnQueryTextListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     String VZFRIENDS_URL = "http://vzcards-api.herokuapp.com/get_my_friends/?access_token=";
+
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+
     VerifyScreen p = new VerifyScreen();
 
     Context c;
     View v;
     // ArrayList
     ArrayList<SelectUser> selectUsers = new ArrayList<SelectUser>();
+    ArrayList<SelectUser> phoneList = new ArrayList<SelectUser>();
     VZFriends_Adapter adapter;
     List<SelectUser> temp;
     // Contact List
@@ -75,7 +87,6 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     ContentResolver resolver;
     ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
-
     View footer;
     int countOfFrnds=0;
     int currentPage=1;
@@ -86,7 +97,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
-//        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
 
         // the refresh listner. this would be called when the layout is pulled down
@@ -106,15 +117,33 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
 //        displayText = (TextView) findViewById(R.id.resultText);
 
-        // refresh contents
-        getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-        adapter = new VZFriends_Adapter(selectUsers,getActivity());
-        listView.setAdapter(adapter);
 
-        listView.setTextFilterEnabled(true);
+
+
+        // refresh contents
+        listView.setVisibility(View.GONE);
+
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setProgress(0);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
+                showContacts();
+                   getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+                listView.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+                adapter = new VZFriends_Adapter(selectUsers,getActivity());
+                listView.setAdapter(adapter);
+                listView.setTextFilterEnabled(true);
+                filter = adapter.getFilter();
+
+
+            }
+        }, 5000);
+
         setupSearchView();
 
-        filter = adapter.getFilter();
+
         listView.setFastScrollEnabled(true);
         listView.setOnItemClickListener(this);
 
@@ -164,6 +193,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         return vzfrnds;
 
     }
+
     public void getVzFrnds(String url)
     {
         try{
@@ -182,8 +212,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 JSONObject c = arr.getJSONObject(i);
                 // Feed node is JSON Object
                 String phone = c.getString("phone");
-                String firstname = c.getString("firstname");
-                String lastname = c.getString("lastname");
+//                String firstname = c.getString("firstname");
+//                String lastname = c.getString("lastname");
                 String photo = c.getString("photo");
 
                 String company = c.getString("company");
@@ -195,10 +225,33 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 String company_photo = c.getString("company_photo");
                 String email = c.getString("email");
 
+
                 SelectUser selectUser = new SelectUser();
-                selectUser.setfName(firstname);
-                selectUser.setLname(lastname);
-                selectUser.setPhone(phone);
+
+                for (SelectUser s:phoneList)
+                {
+                    String phoneNumber;
+                    phoneNumber=s.getPhone().replaceAll("[\\D]", "");
+                    phoneNumber=phoneNumber.replaceFirst("^0+(?!$)", "");
+                    // get the country code
+                    SyncContacts syncContacts=new SyncContacts(getActivity());
+                    String countryCode = syncContacts.GetCountryZipCode();
+
+
+                    if(phoneNumber.length()== 10)
+                    {
+                        phoneNumber=countryCode+phoneNumber;
+
+                    }
+                    if(phone.contains(phoneNumber))
+                       {
+                          selectUser.setfName(s.getName());
+                     }
+
+                }
+
+
+                selectUser.setSyncPhone(phone);
                 selectUser.setPhoto(photo);
                 selectUser.setEmail(email);
                 selectUser.setCompany(company);
@@ -208,7 +261,13 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 selectUser.setAddress2(address2);
                 selectUser.setCity(city);
                 selectUser.setComany_photo(company_photo);
+
+
                 selectUsers.add(selectUser);
+
+
+
+
             }
 
 
@@ -224,7 +283,75 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         }
     }
 
+    public void showContacts() {
+        // Check the SDK version and whether the permission is already granted or not.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+            //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+        } else {
+                    phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
+            LoadContact loadContact = new LoadContact();
+
+            loadContact.execute();
+
+
+
+        }
+    }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                showContacts();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    // Load data on background
+    class LoadContact extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            // Get Contact list from Phone
+
+            if (phones != null) {
+                Log.e("count", "" + phones.getCount());
+                if (phones.getCount() == 0) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Toast t = Toast.makeText(getActivity(), "No contact lists", Toast.LENGTH_LONG);
+                            t.show();
+                        }
+                    });
+                }
+
+                while (phones.moveToNext()) {
+
+                    String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                    SelectUser selectUser = new SelectUser();
+                    selectUser.setName(name);
+                    selectUser.setPhone(phoneNumber);
+                    phoneList.add(selectUser);
+
+                }
+            } else {
+                Log.e("Cursor close 1", "----------------");
+            }
+            phones.close();
+            return null;
+        }
+    }
 
     public void onRefresh() {
         // TODO Auto-generated method stub
@@ -329,7 +456,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         nextScreenIntent.putExtra("fname", data.getfName());
         nextScreenIntent.putExtra("lname", data.getLname());
         nextScreenIntent.putExtra("photo", data.getPhoto());
-        nextScreenIntent.putExtra("phone", data.getPhone());
+        nextScreenIntent.putExtra("phone", data.getSyncPhone());
         nextScreenIntent.putExtra("company", data.getCompany());
         nextScreenIntent.putExtra("pin_code", data.getPin_code());
         nextScreenIntent.putExtra("industry", data.getIndustry());
@@ -448,9 +575,9 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             v.imageView = (ImageView) view.findViewById(R.id.contactImage);
 
             final SelectUser data = (SelectUser) arrayList.get(i);
-            v.fname.setText(data.getfName() + " " + data.getLname());
+            v.fname.setText(data.getfName());
 
-            v.phone.setText(data.getPhone());
+            v.phone.setText(data.getSyncPhone());
 
             //set Image if exxists
             try {

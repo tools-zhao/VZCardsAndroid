@@ -115,6 +115,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         item_image=(ImageView) iNeed.findViewById(R.id.item_img);
         submit=(ImageButton) iNeed.findViewById(R.id.imgbtn);
 
+        item_image.setImageResource(R.drawable.no_pic_placeholder_full);
         animScale = AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
 
         main_layout=(RelativeLayout) iNeed.findViewById(R.id.main_layout);
