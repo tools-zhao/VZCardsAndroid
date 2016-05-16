@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -71,11 +72,9 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     History_Adapter adapter;
     ListView listView;
     ProgressDialog progressDialog;
-    ProgressBar progressBar;
     int count=0;
-
-    private FABProgressCircle fabProgressCircle;
-    private boolean taskRunning;
+    ImageView progressContainer;
+    ProgressBar progressBar;
 
     View footer;
     int countOfFeeds=0;
@@ -90,11 +89,10 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                              Bundle savedInstanceState) {
         View history = inflater.inflate(R.layout.history_listview, container, false);
 
-//        progressBar = (ProgressBar) history.findViewById(R.id.progressBar);
-
+          progressContainer = (ImageView) history.findViewById(R.id.progress);
+//        progressBar = (ProgressBar)history.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) history.findViewById(R.id.pullToRefresh);
-        fabProgressCircle = (FABProgressCircle)history. findViewById(R.id.fabProgressCircle);
-        FloatingActionButton fab = (FloatingActionButton)history.findViewById(R.id.refresh);
+
         listView = (ListView) history.findViewById(R.id.historyList);
         LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
@@ -179,23 +177,17 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             }
         });
 
-
-        fabProgressCircle.attachListener(this);
-
-
-        fab.setOnClickListener(new View.OnClickListener() {
+        progressContainer.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if (!taskRunning) {
-                    fabProgressCircle.show();
-                    refreshContent();
-                    taskRunning = false;
-                    fabProgressCircle.beginFinalAnimation();
-                }
+            public void onClick(View v) {
+                listView.setVisibility(View.GONE);
 
+                swipeRefreshLayout.setRefreshing(true);
 
+                        refreshContent();
             }
         });
+
         return history;
     }
 
@@ -208,48 +200,50 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 
             JSONObject jsonObject = new JSONObject(result);
-            countOfFeeds=jsonObject.getInt("count");
-            String response = jsonObject.getString("response");
-            // Getting JSON Array node
-            JSONArray arr = jsonObject.getJSONArray("response");
 
-            // looping through All Contacts
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject c = arr.getJSONObject(i);
-                // Connection Node in an array
-                JSONArray arr2 = c.getJSONArray("connections");
-                JSONArray connection = arr.getJSONObject(i).getJSONArray("connections");
-                String question="",description="",ticket_id="",itemName="",date_validity="",vz_id="",item_photo="",date_created="";
+                countOfFeeds = jsonObject.getInt("count");
+                String response = jsonObject.getString("response");
+                // Getting JSON Array node
+                JSONArray arr = jsonObject.getJSONArray("response");
 
-                // ticket_details Node in an json object
-                JSONObject ticket_details = c.getJSONObject("ticket_details");
+                // looping through All Contacts
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject c = arr.getJSONObject(i);
+                    // Connection Node in an array
+                    JSONArray arr2 = c.getJSONArray("connections");
+                    JSONArray connection = arr.getJSONObject(i).getJSONArray("connections");
+                    String question = "", description = "", ticket_id = "", itemName = "", date_validity = "", vz_id = "", item_photo = "", date_created = "";
 
-                 question = ticket_details.getString("question");
-                 description = ticket_details.getString("description");
-                 ticket_id = ticket_details.getString("ticket_id");
-                 itemName = ticket_details.getString("item");
-                 date_validity = ticket_details.getString("date_validity");
-                 vz_id = ticket_details.getString("vz_id");
-                 item_photo = ticket_details.getString("item_photo");
-                 date_created = ticket_details.getString("date_created");
+                    // ticket_details Node in an json object
+                    JSONObject ticket_details = c.getJSONObject("ticket_details");
+
+                    question = ticket_details.getString("question");
+                    description = ticket_details.getString("description");
+                    ticket_id = ticket_details.getString("ticket_id");
+                    itemName = ticket_details.getString("item");
+                    date_validity = ticket_details.getString("date_validity");
+                    vz_id = ticket_details.getString("vz_id");
+                    item_photo = ticket_details.getString("item_photo");
+                    date_created = ticket_details.getString("date_created");
 //                Log.e(" description :", "" + description);
 
-                String days = String.valueOf(getDateDifference(date_created));
+                    String days = String.valueOf(getDateDifference(date_created));
 
-                SelectUser selectUser = new SelectUser();
+                    SelectUser selectUser = new SelectUser();
 
-                selectUser.setItemName(itemName);
-                selectUser.setDate_created(days);
-                selectUser.setTicket_id(ticket_id);
-                selectUser.setItem_description(description);
-                selectUser.setDate_validity(date_validity);
-                selectUser.setItem_photo(item_photo);
-                selectUser.setQuestion(question);
-                selectUser.setConnections(arr2);
-                selectUsers.add(selectUser);
+                    selectUser.setItemName(itemName);
+                    selectUser.setDate_created(days);
+                    selectUser.setTicket_id(ticket_id);
+                    selectUser.setItem_description(description);
+                    selectUser.setDate_validity(date_validity);
+                    selectUser.setItem_photo(item_photo);
+                    selectUser.setQuestion(question);
+                    selectUser.setConnections(arr2);
+                    selectUsers.add(selectUser);
 
 
-            }
+                }
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -290,6 +284,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
                 listView.setAdapter(adapter);
+                listView.setVisibility(View.VISIBLE);
                 //do processing to get new data and set your listview's adapter, maybe  reinitialise the loaders you may be using or so
                 //when your data has finished loading, set the refresh state of the view to false
                 swipeRefreshLayout.setRefreshing(false);

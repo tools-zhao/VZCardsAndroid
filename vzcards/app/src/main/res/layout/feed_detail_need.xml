@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/feed_detail_need_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,44 +9,68 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:id="@+id/toolbar"
+        android:background="?attr/colorPrimary"
+        android:elevation="6dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        <ImageView
+            android:layout_width="130dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:src="@drawable/navbarlogo2x"
+            android:layout_gravity="center"/>
+    </android.support.v7.widget.Toolbar>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="52dp"
         android:background="#5f8ac7"
         android:id="@+id/l1"
-        android:layout_below="@+id/l0"
-        android:layout_gravity="center_horizontal">
-        <ImageView
+        android:layout_below="@+id/toolbar">
+        <com.bitjini.vzcards.RoundedImageView
             android:layout_width="45dp"
-            android:layout_height="40dp"
+            android:layout_height="45dp"
             android:layout_marginLeft="8dp"
+            android:padding="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="5dp"
             android:id="@+id/profilepic"
+            android:adjustViewBounds="true"
+            android:scaleType="matrix"
             android:src="@drawable/profile_pic_placeholder"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Name"
             android:id="@+id/name"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="15dp"
             android:textSize="25sp"
             android:gravity="center_vertical"
             android:textColor="#ffff"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="160dp"
         android:background="#c3877980"
         android:orientation="vertical"
         android:id="@+id/l2"
         android:layout_below="@+id/l1"
         android:gravity="center_horizontal">
         <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:scaleType="centerCrop"
+            android:paddingBottom="55dp"
+            android:paddingTop="55dp"
+            android:adjustViewBounds="true"
             android:id="@+id/item_photo"
             android:src="@drawable/no_pic_placeholder"/></LinearLayout>
     <LinearLayout
@@ -70,7 +95,7 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="180dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:gravity="center_horizontal"
@@ -90,24 +115,26 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginLeft="25dp"
         android:text="Refer Tickets"
-        android:background="@drawable/drawable_refer_red"
-        android:layout_below="@+id/l4"
-        android:layout_marginRight="25dp"
-        android:layout_marginTop="5dp"
+        android:background="@drawable/ripple_effect_red"
         android:textColor="#f27166"
-        android:id="@+id/refer_vzfrnd"/>
+        android:id="@+id/refer_vzfrnd"
+        android:layout_above="@+id/refer_contact"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_marginBottom="10dp"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="Refer Phonebook Contact"
-        android:background="@drawable/drawable_refer_red"
+        android:background="@drawable/ripple_effect_red"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/refer_vzfrnd"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
         android:textColor="#f27166"
+        style="?android:attr/borderlessButtonStyle"
         android:id="@+id/refer_contact"/>
 
 

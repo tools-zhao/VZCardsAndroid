@@ -75,7 +75,7 @@ public class VerifyScreen extends Activity {
         String token_sharedPreference=sharedPreferences.getString(TOKEN_KEY,null);
         if(token_sharedPreference!=null)
         {
-            Intent positveActivity = new Intent(getApplicationContext(), MainActivity.class);
+            Intent positveActivity = new Intent(getApplicationContext(), SplashScreen.class);
             startActivity(positveActivity);
             finish();
         }
@@ -420,6 +420,7 @@ public class VerifyScreen extends Activity {
                     sEdit.commit();
 
                      token_sharedPreference=sharedPreferences.getString("token",token);
+
                      vz_id_sharedPreference=sharedPreferences.getString("vz_id",vz_id);
                     phone_sharedPreference=sharedPreferences.getString("phone",phone);
                     System.out.println(" getting token from sharedpreference "+ token_sharedPreference);

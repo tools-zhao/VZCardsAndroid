@@ -69,7 +69,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
     // Pop up
     ContentResolver resolver;
 
-    Context context=_activity;
+    Context context;
 
     VerifyScreen p = new VerifyScreen();
 

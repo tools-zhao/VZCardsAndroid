@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     ImageButton progressContainer;
     ProgressBar progressBar;
-    TabLayout tabLayout;
+   public TabLayout tabLayout;
      ViewPager viewPager;
      TabPagerAdapter adapter;
     @Override
@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 //        setSupportActionBar(toolbar);
 
          tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+
 
 //        progressContainer.setOnClickListener(new View.OnClickListener() {
 //            @Override

@@ -1,18 +1,23 @@
 package com.bitjini.vzcards;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,7 +42,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by bitjini on 9/5/16.
  */
-public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     String URL_GETLIST="http://vzcards-api.herokuapp.com/get_list/?access_token=";
     String token_sharedPreference;
@@ -76,7 +81,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         layout_MainMenu = (FrameLayout) needFeeds.findViewById(R.id.feed_detail);
         layout_MainMenu.getForeground().setAlpha( 0);
 
-        LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater2 = (LayoutInflater) super.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
 
@@ -380,7 +385,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
                 }
 
 
-                    holder.question.setBackgroundColor(Color.parseColor("#add58a"));
+                    holder.question.setBackgroundResource(R.drawable.addimage);
                     holder.question.setText("has");
                     holder.viewLine.setBackgroundColor(Color.parseColor("#add58a"));
 
@@ -444,7 +449,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             if (Integer.parseInt(dataFeeds_Has.getIsHas()) ==0) {
                 viewLine.setBackgroundColor(Color.parseColor("#add58a"));
                 question.setText("has");
-                question.setBackgroundColor(Color.parseColor("#add58a"));
+                question.setBackgroundResource(R.drawable.addimage);
             }
 
             // Object 2
@@ -460,7 +465,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             if (Integer.parseInt(dataFeeds_Needs.getIsNeeds()) == 1) {
                 viewLine2.setBackgroundColor(Color.parseColor("#f27166"));
                 question2.setText("needs");
-                question2.setBackgroundColor(Color.parseColor("#f27166"));
+                question2.setBackgroundResource(R.drawable.addimage_red);
             }
             name2.setText(dataFeeds_Needs.getFname());
             item2.setText(dataFeeds_Needs.getItem());

@@ -57,7 +57,7 @@ public class Get_Profile_AsyncTask extends AsyncTask<String, Void, String> {
             try {
                 jsonObj = new JSONObject(result);
 
-                     jsonObj = new JSONObject(result);
+
 
 
                 firstname = jsonObj.getString("firstname");

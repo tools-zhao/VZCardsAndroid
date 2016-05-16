@@ -3,8 +3,8 @@
     android:id="@+id/feed_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:foreground="@drawable/shape_window_dim"
-    android:background="?android:attr/colorBackground">
+    android:background="?android:attr/colorBackground"
+    android:foreground="@drawable/shape_window_dim">
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pullToRefresh"
@@ -16,8 +16,8 @@
         android:layout_height="match_parent"
         android:id="@+id/feedList"
         android:layout_below="@+id/Layout1"
-        android:divider="#97e6ecf2"
-        android:dividerHeight="5.0sp"
+        android:divider="#43c1d9f2"
+        android:dividerHeight="2.0sp"
         android:layout_above="@+id/l8"
         android:layout_marginTop="5dp"
         android:choiceMode="multipleChoice"
@@ -25,14 +25,38 @@
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
-    <TextView
-        android:id="@+id/tv_no_product"
-        style="@android:style/TextAppearance.Medium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:gravity="center"
-        android:text="empty"
-        android:visibility="gone" />
-    </FrameLayout>
+
+    <!--<TextView-->
+        <!--android:id="@+id/tv_no_product"-->
+        <!--style="@android:style/TextAppearance.Medium"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_margin="10dp"-->
+        <!--android:gravity="center"-->
+        <!--android:text="empty"-->
+        <!--android:visibility="gone" />-->
+    <com.bitjini.vzcards.RoundedImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/progress"
+        android:background="@drawable/ripple_effect"
+        android:src="@drawable/refresh_btn"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
+        android:elevation="16dp"
+        />
+    <ProgressBar
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentEnd="true"
+    android:id="@+id/progress1"
+    android:visibility="gone"
+    android:layout_gravity="center"
+    android:indeterminateDrawable="@drawable/progress_animation"
+    android:max="500"
+    android:progress="0" />
+</FrameLayout>

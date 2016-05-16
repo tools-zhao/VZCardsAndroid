@@ -1,12 +1,12 @@
 package com.bitjini.vzcards;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Gravity;
@@ -77,7 +77,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
         layout_MainMenu = (FrameLayout) needFeeds.findViewById(R.id.feed_detail);
         layout_MainMenu.getForeground().setAlpha( 0);
 
-        LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater2 = (LayoutInflater) super.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
 
@@ -387,7 +387,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
                     //            new DownloadImagesTask(getActivity()).execute(holder.photo);
 
                 }
-                holder.question.setBackgroundColor(Color.parseColor("#f27166"));
+                holder.question.setBackgroundResource(R.drawable.addimage_red);
                 holder.question.setText("needs");
                 holder.viewLine.setBackgroundColor(Color.parseColor("#f27166"));
 
@@ -451,7 +451,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
             if (Integer.parseInt(dataFeeds_Needs.getIsNeeds()) == 1) {
                 viewLine.setBackgroundColor(Color.parseColor("#f27166"));
                 question.setText("needs");
-                question.setBackgroundColor(Color.parseColor("#f27166"));
+                question.setBackgroundResource(R.drawable.addimage_red);
             }
 
             // Object 2
@@ -467,7 +467,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
             if (Integer.parseInt(dataFeeds_Has.getIsHas()) == 0) {
                 viewLine2.setBackgroundColor(Color.parseColor("#add58a"));
                 question2.setText("has");
-                question2.setBackgroundColor(Color.parseColor("#add58a"));
+                question2.setBackgroundResource(R.drawable.addimage);
             }
             name2.setText(dataFeeds_Has.getFname());
             item2.setText(dataFeeds_Has.getItem());

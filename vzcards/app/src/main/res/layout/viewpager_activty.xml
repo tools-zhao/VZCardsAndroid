@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_layout"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:gravity="center"
+    android:animateLayoutChanges="true"
     >
 
     <!--<android.support.v7.widget.Toolbar-->
@@ -38,22 +39,23 @@
             <!--android:layout_alignParentRight="true" />-->
     <!--</android.support.v7.widget.Toolbar>-->
 
-    <RelativeLayout
+    <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="40dp"
         android:id="@+id/toolbar"
         android:background="?attr/colorPrimary"
         android:elevation="6dp"
-        android:padding="8dp"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
         <ImageView
-            android:layout_width="140dp"
-            android:layout_height="35dp"
-            android:id="@+id/logo"
+            android:layout_width="130dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:src="@drawable/navbarlogo2x"
-            android:layout_centerHorizontal="true"/>
+            android:layout_gravity="center"/>
+
         <!--<ImageButton-->
         <!--android:layout_width="30dp"-->
         <!--android:layout_height="30dp"-->
@@ -74,7 +76,7 @@
             <!--android:indeterminateDrawable="@drawable/progress_animation"-->
             <!--android:max="500"-->
             <!--android:progress="0" />-->
-    </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
@@ -89,8 +91,9 @@
         android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/viewPager"
+        android:background="#e4ffffff"
         android:layout_below="@+id/tab_layout">
 
 </android.support.v4.view.ViewPager>
 
-</RelativeLayout>
+</android.support.design.widget.AppBarLayout>

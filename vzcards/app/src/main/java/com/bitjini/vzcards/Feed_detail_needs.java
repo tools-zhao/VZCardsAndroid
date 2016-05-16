@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,7 +21,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Feed_detail_needs extends Fragment implements View.OnClickListener {
+public class Feed_detail_needs extends Activity implements View.OnClickListener {
 
     TextView title, description,name;
     ImageView profilePhoto,item_photo;
@@ -28,31 +29,32 @@ public class Feed_detail_needs extends Fragment implements View.OnClickListener 
 
 
     String ticket_id_1, phone1, connector_vz_id;
+    public void onCreate(Bundle savedInstanceState) {
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View feed_needs = inflater.inflate(R.layout.feed_detail_need, container, false);
+        super.onCreate(savedInstanceState);
+   setContentView(R.layout.feed_detail_need);
 
-        title = (TextView) feed_needs.findViewById(R.id.title);
-        description = (TextView) feed_needs.findViewById(R.id.description);
-        name = (TextView) feed_needs.findViewById(R.id.name);
-        profilePhoto = (ImageView) feed_needs.findViewById(R.id.profilepic);
-        item_photo=(ImageView) feed_needs.findViewById(R.id.item_photo);
+        title = (TextView) findViewById(R.id.title);
+        description = (TextView) findViewById(R.id.description);
+        name = (TextView) findViewById(R.id.name);
+        profilePhoto = (ImageView) findViewById(R.id.profilepic);
+        item_photo=(ImageView) findViewById(R.id.item_photo);
 
-        referVZbtn = (Button) feed_needs.findViewById(R.id.refer_vzfrnd);
-        referContactbtn = (Button) feed_needs.findViewById(R.id.refer_contact);
+        referVZbtn = (Button) findViewById(R.id.refer_vzfrnd);
+        referContactbtn = (Button) findViewById(R.id.refer_contact);
 
         referVZbtn.setOnClickListener(this);
         referContactbtn.setOnClickListener(this);
         //Retrieve the value
-        String item = getArguments().getString("titleNeeds");
-        String desc = getArguments().getString("descNeeds");
-        String profileName = getArguments().getString("nameNeeds");
-        String photo = getArguments().getString("photoNeeds");
-        String itemPic=getArguments().getString("item_photoNeeds");
-        ticket_id_1 = getArguments().getString("ticket_idNeeds");
-        phone1 = getArguments().getString("phone1Needs");
-        connector_vz_id = getArguments().getString("connector_vz_idNeeds");
+        Intent intent=getIntent();
+        String item = intent.getStringExtra("titleNeeds");
+        String desc = intent.getStringExtra("descNeeds");
+        String profileName = intent.getStringExtra("nameNeeds");
+        String photo = intent.getStringExtra("photoNeeds");
+        String itemPic=intent.getStringExtra("item_photoNeeds");
+        ticket_id_1 = intent.getStringExtra("ticket_idNeeds");
+        phone1 = intent.getStringExtra("phone1Needs");
+        connector_vz_id =intent.getStringExtra("connector_vz_idNeeds");
 
         Log.e("photo url ", "" + photo);
         title.setText(item);
@@ -62,7 +64,7 @@ public class Feed_detail_needs extends Fragment implements View.OnClickListener 
 
         if(!itemPic.isEmpty())
         {
-            Picasso.with(getActivity()).load(itemPic).into(item_photo);
+            Picasso.with(getApplicationContext()).load(itemPic).into(item_photo);
 //            item_photo.setTag(itemPic);
 //            new DownloadImagesTask(getActivity()).execute(item_photo);
         } else
@@ -73,7 +75,7 @@ public class Feed_detail_needs extends Fragment implements View.OnClickListener 
         if(!photo.isEmpty())
         {
 
-            Picasso.with(getActivity()).load(photo).into(profilePhoto);}
+            Picasso.with(getApplicationContext()).load(photo).into(profilePhoto);}
         else  {
             profilePhoto.setImageResource(R.drawable.profile_pic_placeholder);
 //            profilePhoto.setTag(photo);
@@ -83,7 +85,6 @@ public class Feed_detail_needs extends Fragment implements View.OnClickListener 
         }
 
 
-        return feed_needs;
     }
     public void onClick(View v) {
         switch (v.getId()) {
@@ -99,15 +100,16 @@ public class Feed_detail_needs extends Fragment implements View.OnClickListener 
                Log.e("Refer to has","");
                 HasFeeds ldf = new HasFeeds();
                 //Retrieve the value from feeds
-                String itemNeeds = getArguments().getString("titleNeeds");
-                String descNeeds = getArguments().getString("descNeeds");
-                String profileNameNeeds = getArguments().getString("nameNeeds");
-                String photoNeeds = getArguments().getString("photoNeeds");
-                String itemPicNeeds=getArguments().getString("item_photoNeeds");
-                String ticket_id_1Needs = getArguments().getString("ticket_idNeeds");
-                String phone1Needs = getArguments().getString("phone1Needs");
-                String connector_vz_idNeeds = getArguments().getString("connector_vz_idNeeds");
-                String questionNeeds = getArguments().getString("questionNeeds");
+                Intent i=getIntent();
+                String itemNeeds = i.getStringExtra("titleNeeds");
+                String descNeeds = i.getStringExtra("descNeeds");
+                String profileNameNeeds = i.getStringExtra("nameNeeds");
+                String photoNeeds = i.getStringExtra("photoNeeds");
+                String itemPicNeeds=i.getStringExtra("item_photoNeeds");
+                String ticket_id_1Needs = i.getStringExtra("ticket_idNeeds");
+                String phone1Needs = i.getStringExtra("phone1Needs");
+                String connector_vz_idNeeds = i.getStringExtra("connector_vz_idNeeds");
+                String questionNeeds = i.getStringExtra("questionNeeds");
 
                 // Send values to HasFeeds
                 Bundle args = new Bundle();
@@ -125,7 +127,7 @@ public class Feed_detail_needs extends Fragment implements View.OnClickListener 
                 ldf.setArguments(args);
 
                 //Inflate the fragment
-                getFragmentManager().beginTransaction().add(R.id.feed_detail_need_frame, ldf).addToBackStack(ldf.toString())
+                getFragmentManager().beginTransaction().replace(R.id.feed_detail_need_frame, ldf).addToBackStack(ldf.toString())
                         .commit();
                 break;
 
@@ -142,7 +144,7 @@ public class Feed_detail_needs extends Fragment implements View.OnClickListener 
                 connect.setArguments(args2);
 
                 //Inflate the fragment
-                getFragmentManager().beginTransaction().add(R.id.feed_detail_need_frame, connect).addToBackStack(connect.toString())
+                getFragmentManager().beginTransaction().replace(R.id.feed_detail_need_frame, connect).addToBackStack(connect.toString())
                         .commit();
                 break;
 

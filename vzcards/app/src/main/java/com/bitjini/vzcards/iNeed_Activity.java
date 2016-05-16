@@ -30,6 +30,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -37,6 +39,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +52,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -58,6 +63,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -83,20 +89,20 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
     Button havebtn;
     ImageButton btnCander;
-    public ImageView item_image;
+    public ImageView item_image,showImage;;
     Button addImage;
     EditText txtItem,txtDescription;
     TextView txtDate_validity;
     ImageButton submit;
-    public static String Item_picturePath;
+    public static String Item_picturePath="";
     public String item_photo = "", item = "", description = "", date_validity="",question="";
-    public ProgressDialog progress=null;
+    public ProgressDialog progress=null,progressDialog;
     public Bitmap bitmap=null;
 
     VerifyScreen p = new VerifyScreen();
-
-    Button done1,done2;
-
+    RelativeLayout main_layout,displayImage_layout;
+    Button done1,done2, cancel,choose;
+    Animation animScale;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -108,6 +114,15 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         txtDate_validity=(TextView) iNeed.findViewById(R.id.validity);
         item_image=(ImageView) iNeed.findViewById(R.id.item_img);
         submit=(ImageButton) iNeed.findViewById(R.id.imgbtn);
+
+        animScale = AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
+
+        main_layout=(RelativeLayout) iNeed.findViewById(R.id.main_layout);
+        displayImage_layout=(RelativeLayout) iNeed.findViewById(R.id.displayLayout);
+
+        showImage=(ImageView)iNeed.findViewById(R.id.showImage);
+        choose=(Button)iNeed.findViewById(R.id.choose);
+        cancel=(Button) iNeed.findViewById(R.id.cancel);
 
          havebtn = (Button) iNeed.findViewById(R.id.ihave);
         done1 = (Button) iNeed.findViewById(R.id.done);
@@ -136,12 +151,14 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
           @Override
           public boolean onTouch(View v, MotionEvent event) {
               done1.setVisibility(View.VISIBLE);
+              done2.setVisibility(View.GONE);
               return false;
           }
       });
         txtDescription.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                done1.setVisibility(View.GONE);
                 done2.setVisibility(View.VISIBLE);
                 return false;
             }
@@ -227,63 +244,29 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
                         decodeFile(Item_picturePath);
 
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                        alertDialogBuilder.setMessage("Do you want to upload the image");
-                        alertDialogBuilder.setPositiveButton("Ok",
-                                new DialogInterface.OnClickListener() {
+                        displayImage_layout.setVisibility(View.VISIBLE);
+                        main_layout.setVisibility(View.GONE);
+                        showImage.setImageBitmap(bitmap);
+                        choose.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-
-
-                                        // Upload image to server
-                                        progress = new ProgressDialog(getActivity());
-                                        if (progress != null) {
-                                            progress.setMessage("Uploading image ..Please Wait...");
-                                            progress.setCancelable(false);
-                                            progress.show();
-                                        }
-                                        new UploadImageTask(getActivity()) {
-                                            @Override
-                                            public void onPostExecute(String result) {
-                                                if (progress.isShowing()) {
-                                                    progress.dismiss();
-                                                    progress = null;
-                                                }
-                                                item_image.setImageBitmap(bitmap);
-
-                                                if (result != null) {
-
-                                                    JSONObject json = null;
-                                                    try {
-                                                        json = new JSONObject(result);
-                                                        item_photo = json.getString("photo");
-//                                                        SavePreferences(COMPANY_IMAGE, item_photo);
-                                                        String link = json.getString("link");
-                                                        Log.e("item photo:", "" + item_photo);
-                                                        Log.e("link :", "" + link);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }
-                                        }.execute();
+                                main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
+                                item_image.setImageBitmap(bitmap);
 
 
-                                    }
-                                });
+                            }
+                        });
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                        alertDialogBuilder.setNegativeButton("cancel",
-                                new DialogInterface.OnClickListener() {
+                                main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
 
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-
-                                    }
-                                });
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-                        alertDialog.show();
-
+                            }
+                        });
 
                     } else {
                         Uri selectedImage = data.getData();
@@ -300,60 +283,29 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
                         decodeFile(Item_picturePath);
 
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                        alertDialogBuilder.setMessage("Do you want to upload the image");
-                        alertDialogBuilder.setPositiveButton("Ok",
-                                new DialogInterface.OnClickListener() {
+                        displayImage_layout.setVisibility(View.VISIBLE);
+                        main_layout.setVisibility(View.GONE);
+                        showImage.setImageBitmap(bitmap);
 
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
+                        choose.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
+                                item_image.setImageBitmap(bitmap);
+                            }
+                        });
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
 
 
-                                        // Upload image to server
-                                        progress = new ProgressDialog(getActivity());
-                                        if (progress != null) {
-                                            progress.setMessage("Uploading image ..Please Wait...");
-                                            progress.setCancelable(false);
-                                            progress.show();
-                                        }
-                                        new UploadImageTask(getActivity()) {
-                                            @Override
-                                            public void onPostExecute(String result) {
-                                                if (progress.isShowing()) {
-                                                    progress.dismiss();
-                                                    progress = null;
-                                                }
-                                                item_image.setImageBitmap(bitmap);
-
-                                                if (result != null) {
-
-                                                    JSONObject json = null;
-                                                    try {
-                                                        json = new JSONObject(result);
-                                                        item_photo = json.getString("photo");
-//                                                        SavePreferences(COMPANY_IMAGE, company_photo);
-                                                        String link = json.getString("link");
-                                                        Log.e("item_photo :", "" + item_photo);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }
-                                        }.execute();
-
-                                    }
-                                });
-
-                        alertDialogBuilder.setNegativeButton("cancel",
-                                new DialogInterface.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-
-                                    }
-                                });
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-                        alertDialog.show();
+                            }
+                        });
 
 
                     }
@@ -419,6 +371,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         StringBuffer response = new StringBuffer();
         public INeed_Task(Context context) {
             this.context = context;
+
         }
         protected void onPreExecute() {
 
@@ -511,7 +464,9 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
             txtDate_validity.setText("");
             txtDescription.setText("");
             item_image.setImageResource(R.drawable.no_pic_placeholder);
-            bitmap=null;
+            bitmap = null;
+            item_photo="";
+            Item_picturePath="";
             Toast.makeText(getActivity(),"Your Data is posted ",Toast.LENGTH_LONG).show();
 
             if (result != null) {
@@ -545,6 +500,12 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                 Log.e("picturePath :", "" +Item_picturePath);
 
 
+                Bitmap bmp = BitmapFactory.decodeFile(Item_picturePath);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.JPEG, 70, bos);
+
+                ContentBody foto =new ByteArrayBody(bos.toByteArray(), "filename");
+
                 HttpClient httpclient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost(pr.URL_UPLOAD_IMAGE);
 
@@ -555,7 +516,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                 HttpEntity entity = MultipartEntityBuilder.create()
                         .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                         .setBoundary(boundary)
-                        .addPart("photo", new FileBody(sourceFile_profile))
+                        .addPart("photo", foto)
                         .build();
 
                 httpPost.setEntity(entity);
@@ -596,6 +557,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
             //setting company picture
             case R.id.imgbtn:
+                v.startAnimation(animScale);
                 item= txtItem.getText().toString();
                 description= txtDescription.getText().toString();
                 date_validity=txtDate_validity.getText().toString();
@@ -607,14 +569,69 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
                 }
                 else {
-                    new INeed_Task(getActivity()).execute(URL_CREATE_TICKET+p.token_sharedPreference);
 
+
+                    if (Item_picturePath.length() != 0) {
+                        progressDialog = new ProgressDialog(getActivity());
+                        if (progressDialog != null) {
+                            progressDialog.setMessage("Collecting Data Please Wait...");
+                            progressDialog.setCancelable(false);
+                            progressDialog.show();
+                        }
+                        new UploadImageTask(getActivity()) {
+                            @Override
+                            public void onPostExecute(String result) {
+                                if (progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                    progressDialog = null;
+                                    Item_picturePath = "";
+                                }
+                                if (result != null) {
+                                    JSONObject json = null;
+                                    try {
+                                        json = new JSONObject(result);
+//
+                                        String link = json.getString("link");
+                                        item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/" + link;
+//
+                                        Log.e("item_photo :", "" + item_photo);
+                                        Log.e("link :", "" + link);
+
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }.execute();
+                    } else {
+                        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                        alertDialogBuilder.setMessage("Post data without uploading image");
+                        alertDialogBuilder.setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+                                    }
+                                });
+                        alertDialogBuilder.setNegativeButton("cancel",
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                    }
+                                });
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
+
+                    }
                 }
 
                 break;
-//            case  R.id.click:
-//                showDatePickerDialog(v);
-//                break;
+
 
             case R.id.done:
                 txtItem.setCursorVisible(false);
@@ -650,7 +667,6 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
         }
     }
-
 
 
     public void showDatePickerDialog(View v) {
