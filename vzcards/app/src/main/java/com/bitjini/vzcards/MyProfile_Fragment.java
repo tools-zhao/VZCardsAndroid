@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,7 +81,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public Bitmap output;
     int clickCount = 0;
     //Declaring widgets
-    Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
+    Button editbtn;
+    RadioButton profilebtn, vzfrndsbtn, referralbtn;
     TextView textViewName;
 
     public ProgressDialog progress;
@@ -127,9 +129,13 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         imageCompany.setClickable(false);
         imageProfile.setClickable(false);
 
-        profilebtn = (Button) profile.findViewById(R.id.profilebtn);
-        referralbtn = (Button) profile.findViewById(R.id.referralbtn);
-        vzfrndsbtn = (Button) profile.findViewById(R.id.vzfrnds);
+        profilebtn = (RadioButton) profile.findViewById(R.id.profilebtn);
+        referralbtn = (RadioButton) profile.findViewById(R.id.referralbtn);
+        vzfrndsbtn = (RadioButton) profile.findViewById(R.id.vzfrnds);
+
+        profilebtn.setChecked(true);
+        vzfrndsbtn.setChecked(false);
+        referralbtn.setChecked(false);
 
 
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
@@ -190,17 +196,32 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         if(!photo.isEmpty()) {
 
-            Picasso.with(getActivity()).load(photo).resize(250, 250).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+            Picasso.with(getActivity()).load(photo).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+//            if(PROFILE_IMAGE.length()==0) {
+            SavePreferences(PROFILE_IMAGE, photo);
+//            }
 //            imageProfile.setTag(photo);
 //                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
+
+        } else  {
+            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
+            //            new DownloadImagesTask(getActivity()).execute(holder.photo);
 
         }
 
 
+
         if(!company_photo.isEmpty()) {
-            Picasso.with(getActivity()).load(company_photo).resize(100, 100).placeholder(R.drawable.com_logo).into(imageCompany);
+            Picasso.with(getActivity()).load(company_photo).placeholder(R.drawable.com_logo).into(imageCompany);
+//            if(COMPANY_IMAGE.length()==0) {
+                SavePreferences(COMPANY_IMAGE, company_photo);
+//            }
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
+        }else  {
+            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
+            //            new DownloadImagesTask(getActivity()).execute(holder.photo);
+
         }
 
 
@@ -238,7 +259,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     editTextAdapter.actv(true);
                     editTextAdapter.notifyDataSetChanged();
 
-                    Toast.makeText(getActivity(), "click 0", Toast.LENGTH_LONG).show();
+
                     clickCount = 1;
 
                 } else if (clickCount == 1) {
@@ -256,7 +277,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                     editTextAdapter.notifyDataSetChanged();
 
-                    Toast.makeText(getActivity(), "click 1", Toast.LENGTH_LONG).show();
+
                     clickCount = 0;
 
                 }
@@ -425,10 +446,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                                         JSONObject json = null;
                                                         try {
                                                             json = new JSONObject(result);
-                                                            photo = json.getString("photo");
-                                                            SavePreferences(PROFILE_IMAGE, photo);
+//                                                            photo = json.getString("photo");
+                                                            photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+
                                                             String link = json.getString("link");
-                                                            Log.e("photo :", "" + photo);
+                                                            SavePreferences(PROFILE_IMAGE, photo+link);
+                                                            Log.e("photo :", "" + photo+link);
                                                         } catch (JSONException e) {
                                                             e.printStackTrace();
                                                         }
@@ -492,10 +515,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                                         JSONObject json = null;
                                                         try {
                                                             json = new JSONObject(result);
-                                                            company_photo = json.getString("photo");
-                                                            SavePreferences(COMPANY_IMAGE, company_photo);
+//                                                            company_photo = json.getString("photo");
+                                                            company_photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+
                                                             String link = json.getString("link");
-                                                            Log.e("company photo:", "" + company_photo);
+                                                            SavePreferences(COMPANY_IMAGE, company_photo+link);
+                                                            Log.e("company_photo :", "" + company_photo+link);
                                                             Log.e("link :", "" + link);
                                                         } catch (JSONException e) {
                                                             e.printStackTrace();
@@ -567,9 +592,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                                         try {
                                                             json = new JSONObject(result);
                                                             photo = json.getString("photo");
-                                                            SavePreferences(PROFILE_IMAGE, photo);
+                                                            photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+
                                                             String link = json.getString("link");
-                                                            Log.e("photo :", "" + photo);
+                                                            SavePreferences(PROFILE_IMAGE, photo+link);
+                                                            Log.e("photo :", "" + photo+link);
                                                         } catch (JSONException e) {
                                                             e.printStackTrace();
                                                         }
@@ -629,9 +656,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                                         try {
                                                             json = new JSONObject(result);
                                                             company_photo = json.getString("photo");
-                                                            SavePreferences(COMPANY_IMAGE, company_photo);
+                                                            company_photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+
                                                             String link = json.getString("link");
-                                                            Log.e("photo :", "" + photo);
+                                                            SavePreferences(COMPANY_IMAGE, company_photo+link);
+                                                            Log.e("company_photo :", "" + company_photo+link);
+                                                            Log.e("link :", "" + link);
                                                         } catch (JSONException e) {
                                                             e.printStackTrace();
                                                         }

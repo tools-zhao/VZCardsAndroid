@@ -4,34 +4,66 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
-
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:background="#43c1d9f2"
+        android:visibility="gone"
+        android:id="@+id/displayLayout"
+        android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="2dp"
+        android:id="@+id/showImage"
+        android:layout_above="@+id/choose"
+        android:src="@drawable/no_pic_placeholder"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:id="@+id/choose"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="10dp"
+        android:text="Choose"
+        android:background="@drawable/drawable_refer"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="10dp"
+        android:text="Cancel"
+        android:id="@+id/cancel"
+        android:background="@drawable/drawable_refer"
+        />
+    </RelativeLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:background="#43c1d9f2"
+        android:visibility="visible"
+        android:id="@+id/main_layout"
         android:layout_height="match_parent">
 
-        <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+
+
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="130dp"
+            android:layout_height="180dp"
             android:background="#877980"
             android:orientation="vertical"
-            android:layout_below="@+id/l0"
             android:id="@+id/l1"
+            android:weightSum="1"
             android:gravity="center_horizontal">
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
                 android:id="@+id/item_img"
-                android:src="@drawable/no_pic_placeholder"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+
+                android:src="@drawable/no_pic_placeholder"/>
 
         </LinearLayout>
         <Button
@@ -46,7 +78,7 @@
             android:textAllCaps="false"
             android:textColor="#ffffff"
             android:background="@drawable/addimage"/>
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal"
@@ -55,19 +87,39 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:id="@+id/l2"
+            android:gravity="center_vertical"
             android:layout_below="@id/l1"
-            android:layout_gravity="center_horizontal">
+            android:layout_gravity="center_vertical">
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="What is it?"
-                android:inputType="textShortMessage"
                 android:gravity="center"
+                android:inputType="textShortMessage"
                 android:id="@+id/ask"
                 android:layout_gravity="center"
+                android:layout_marginRight="0dp"
                 android:background="@drawable/text_drawable"/>
-        </LinearLayout>
-        <LinearLayout
+            <Button
+                android:layout_width="40dp"
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content"
+                android:text="Done"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="2dp"
+                android:textColor="@drawable/refer_text"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textAllCaps="true"
+                android:shadowColor="#5f8ac7"
+                android:textSize="10sp"
+
+                android:visibility="gone"
+                android:layout_marginRight="2dp"
+                android:background="@drawable/drawable_refer"
+                android:id="@+id/done"/>
+        </RelativeLayout>
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:orientation="horizontal"
@@ -83,13 +135,29 @@
                 android:layout_height="match_parent"
                 android:hint="Description"
                 android:gravity="center"
-                android:inputType="textPostalAddress"
+                android:inputType="textMultiLine"
                 android:id="@+id/desc"
                 android:layout_gravity="center"
                 android:textSize="15sp"
                 android:background="@drawable/text_drawable"
                 />
-        </LinearLayout>
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:text="Done"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="2dp"
+                android:textColor="@drawable/refer_text"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="50dp"
+                android:textAllCaps="true"
+                android:shadowColor="#5f8ac7"
+                android:textSize="10sp"
+                android:visibility="gone"
+                android:layout_marginRight="2dp"
+                android:background="@drawable/drawable_refer"
+                android:id="@+id/done2"/>
+        </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -97,7 +165,7 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/text_drawable"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="60dp"
+            android:layout_marginRight="15dp"
             android:id="@+id/l4"
             android:layout_below="@+id/l3"
             android:layout_gravity="center_horizontal">
@@ -113,16 +181,16 @@
                 android:layout_gravity="center"></TextView>
 
         </RelativeLayout>
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginRight="10dp"
-            android:text="Pick Date"
-            android:src="@drawable/calender"
-            android:id="@+id/click"
-            android:layout_above="@+id/imgbtn"
-            android:layout_alignParentRight="true"
-            android:layout_alignEnd="@+id/l3" />
+        <!--<ImageButton-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:text="Pick Date"-->
+            <!--android:src="@drawable/calender"-->
+            <!--android:id="@+id/click"-->
+            <!--android:layout_above="@+id/imgbtn"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_alignEnd="@+id/l3" />-->
         <ImageButton
             android:layout_width="100dp"
             android:layout_height="25dp"
@@ -132,8 +200,7 @@
             android:layout_marginTop="20dp"
             android:layout_below="@+id/l4"
             android:layout_centerHorizontal="true" />
-            </RelativeLayout>
-        </ScrollView>
+
 
         <LinearLayout
             android:layout_width="match_parent"

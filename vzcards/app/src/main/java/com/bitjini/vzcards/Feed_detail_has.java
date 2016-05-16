@@ -1,15 +1,20 @@
 package com.bitjini.vzcards;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,40 +29,43 @@ import java.net.URL;
 /**
  * Created by bitjini on 10/2/16.
  */
-public class Feed_detail_has extends Fragment implements View.OnClickListener {
+public class Feed_detail_has extends Activity implements View.OnClickListener {
 
     TextView title, description, name;
     ImageView profilePhoto, item_photo;
     Button referVZbtn, referContactbtn;
 
     String ticket_id_1, phone1, connector_vz_id;
+    public void onCreate(Bundle savedInstanceState) {
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View feed_has = inflater.inflate(R.layout.feed_detail_has, container, false);
+        super.onCreate(savedInstanceState);
+  setContentView(R.layout.feed_detail_has);
 
-        title = (TextView) feed_has.findViewById(R.id.title);
-        description = (TextView) feed_has.findViewById(R.id.description);
-        name = (TextView) feed_has.findViewById(R.id.name);
-        profilePhoto = (ImageView) feed_has.findViewById(R.id.profilePic);
-        item_photo = (ImageView) feed_has.findViewById(R.id.item_photo);
 
-        referVZbtn = (Button) feed_has.findViewById(R.id.refer_vzfrnd);
-        referContactbtn = (Button) feed_has.findViewById(R.id.refer_contact);
+        title = (TextView)findViewById(R.id.title);
+        description = (TextView) findViewById(R.id.description);
+        name = (TextView) findViewById(R.id.name);
+        profilePhoto = (ImageView) findViewById(R.id.profilePic);
+        item_photo = (ImageView) findViewById(R.id.item_photo);
+
+        referVZbtn = (Button) findViewById(R.id.refer_vzfrnd);
+        referContactbtn = (Button) findViewById(R.id.refer_contact);
 
         referVZbtn.setOnClickListener(this);
         referContactbtn.setOnClickListener(this);
 
         //Retrieve the value
-        String item = getArguments().getString("title");
-        String desc = getArguments().getString("desc");
-        String profileName = getArguments().getString("name");
-        String photo = getArguments().getString("photo");
-        String itemPic = getArguments().getString("item_photo");
+        Intent intent=getIntent();
+        String item = intent.getStringExtra("titleHas");
+        String desc = intent.getStringExtra("descHas");
+        String profileName = intent.getStringExtra("nameHas");
+        String photo = intent.getStringExtra("photoHas");
+        String itemPic = intent.getStringExtra("item_photoHas");
 
-        ticket_id_1 = getArguments().getString("ticket_id");
-        phone1 = getArguments().getString("phone1");
-        connector_vz_id = getArguments().getString("connector_vz_id");
+        ticket_id_1 = intent.getStringExtra("ticket_idHas");
+        phone1 =intent.getStringExtra("phone1Has");
+        connector_vz_id = intent.getStringExtra("connector_vz_idHas");
+
 
 
         Log.e("photo url ", "" + photo);
@@ -67,7 +75,7 @@ public class Feed_detail_has extends Fragment implements View.OnClickListener {
 
         if(!itemPic.isEmpty())
         {
-            Picasso.with(getActivity()).load(itemPic).into(item_photo);
+            Picasso.with(getApplicationContext()).load(itemPic).into(item_photo);
 //            item_photo.setTag(itemPic);
 //            new DownloadImagesTask(getActivity()).execute(item_photo);
         } else
@@ -78,7 +86,7 @@ public class Feed_detail_has extends Fragment implements View.OnClickListener {
         if(!photo.isEmpty())
         {
 
-            Picasso.with(getActivity()).load(photo).into(profilePhoto);}
+            Picasso.with(getApplicationContext()).load(photo).fit().into(profilePhoto);}
         else  {
             profilePhoto.setImageResource(R.drawable.profile_pic_placeholder);
 //            profilePhoto.setTag(photo);
@@ -86,34 +94,71 @@ public class Feed_detail_has extends Fragment implements View.OnClickListener {
 
 
         }
-        return feed_has;
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
+//            case R.id.refer_vzfrnd:
+//                Intent intent = new Intent(getActivity(), Refer_VZfriends.class);
+//
+//                intent.putExtra("ticket_id", ticket_id_1);
+//                intent.putExtra("phone1", phone1);
+//                intent.putExtra("connector_vz_id", connector_vz_id);
+//                startActivity(intent);
+//                break;
             case R.id.refer_vzfrnd:
-                Intent intent = new Intent(getActivity(), Refer_VZfriends.class);
 
-                intent.putExtra("ticket_id", ticket_id_1);
-                intent.putExtra("phone1", phone1);
-                intent.putExtra("connector_vz_id", connector_vz_id);
-                startActivity(intent);
+                Log.e("Refer to needs","");
+                NeedFeeds ldf = new NeedFeeds();
+                //Retrieve the value from feeds
+                Intent i=getIntent();
+                String itemHAs = i.getStringExtra("titleHas");
+                String descHas = i.getStringExtra("descHas");
+                String profileNameHas = i.getStringExtra("nameHas");
+                String photo = i.getStringExtra("photoHas");
+                String itemPicHas = i.getStringExtra("item_photoHas");
+
+                String ticket_id_1Has = i.getStringExtra("ticket_idHas");
+                String phone1Has = i.getStringExtra("phone1Has");
+                String connector_vz_idHas = i.getStringExtra("connector_vz_idHas");
+                String questionHas = i.getStringExtra("questionHas");
+
+                Log.e("itemPic ",""+itemPicHas);
+                // Send values to HasFeeds
+                Bundle args = new Bundle();
+                args.putString("titleHas", itemHAs);
+                args.putString("descHas", descHas);
+                args.putString("nameHas", profileNameHas);
+                args.putString("photoHas", photo);
+                args.putString("ticket_idHas", ticket_id_1Has);
+                args.putString("item_photoHas", itemPicHas);
+                args.putString("phone1Has", phone1Has);
+                args.putString("connector_vz_idHas", connector_vz_idHas);
+                args.putString("questionHas",questionHas);
+
+                ldf.setArguments(args);
+
+                //Inflate the fragment
+                getFragmentManager().beginTransaction().add(R.id.feed_detail_has_Frame, ldf).addToBackStack(ldf.toString())
+                        .commit();
+
+
+
                 break;
-
             case R.id.refer_contact:
 
                 // send the parameters to refer contact
                 ReferContacts connect = new ReferContacts();
 
-                Bundle args = new Bundle();
-                args.putString("ticket_id", ticket_id_1);
-                args.putString("phone1", phone1);
-                args.putString("connector_vz_id", connector_vz_id);
+                Bundle args2 = new Bundle();
+                args2.putString("ticket_id", ticket_id_1);
+                args2.putString("phone1", phone1);
+                args2.putString("connector_vz_id", connector_vz_id);
 
-                connect.setArguments(args);
+                connect.setArguments(args2);
 
                 //Inflate the fragment
-                getFragmentManager().beginTransaction().add(R.id.feed_detail_has_Frame, connect).addToBackStack(connect.toString())
+                getFragmentManager().beginTransaction().replace(R.id.feed_detail_has_Frame, connect).addToBackStack(connect.toString())
                         .commit();
                 break;
 

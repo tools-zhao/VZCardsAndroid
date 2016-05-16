@@ -60,7 +60,7 @@ public class UploadImageTask extends AsyncTask<Void, Void, String> {
     Context context;
     private ProgressDialog dialog;
     Activity activity;
-    private String webAddressToPost = pr.URL_UPLOAD_IMAGE+p.token_sharedPreference;
+    private String webAddressToPost = pr.URL_UPLOAD_IMAGE;
 
     public UploadImageTask(Context c) {
         this.context = c;

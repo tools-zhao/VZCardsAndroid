@@ -1,8 +1,10 @@
 package com.bitjini.vzcards;
 
+import android.animation.ObjectAnimator;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -12,25 +14,63 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 /**
  * Created by VEENA on 12/7/2015.
  */
 public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
 
-
+    ImageButton progressContainer;
+    ProgressBar progressBar;
+   public TabLayout tabLayout;
+     ViewPager viewPager;
+     TabPagerAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInsatnceState)
     {
         super.onCreate(savedInsatnceState);
         setContentView(R.layout.viewpager_activty);
-
+//        progressContainer = (ImageButton)findViewById(R.id.progress);
+//        progressBar = (ProgressBar)findViewById(R.id.progress1);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
+
+//        progressContainer.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                progressContainer.setVisibility(View.GONE);
+//
+//                progressBar.setVisibility(View.VISIBLE);
+//                progressBar.setProgress(0);
+//
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override public void run() {
+//
+//
+//                        // refresh contents
+//                        adapter.notifyDataSetChanged();
+//
+//
+//                        progressBar.setVisibility(View.GONE);
+//                        progressContainer.setVisibility(View.VISIBLE);
+//                    }
+//                }, 5000);
+//
+//            }
+//
+//
+//        });
 //        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_vz_profile));
 //
 //        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.feeds_drawable));
@@ -56,8 +96,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         tabLayout.addTab(tabLayout.newTab().setCustomView(view4));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        final TabPagerAdapter adapter = new TabPagerAdapter
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        adapter = new TabPagerAdapter
                 (getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setOffscreenPageLimit(3); // the number of "off screen" pages to keep loaded each side of the current page
 
@@ -125,5 +165,19 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
+    }
+
+    public static String POSITION = "POSITION";
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(POSITION, tabLayout.getSelectedTabPosition());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        viewPager.setCurrentItem(savedInstanceState.getInt(POSITION));
     }
 }

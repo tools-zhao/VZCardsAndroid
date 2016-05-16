@@ -69,7 +69,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
     // Pop up
     ContentResolver resolver;
 
-    Context context=_activity;
+    Context context;
 
     VerifyScreen p = new VerifyScreen();
 
@@ -125,7 +125,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
                         for(String s: phoneArray) {
                             params.add(new BasicNameValuePair("contact_list", s));
-                            Log.e("s", "" + s);
+//                            Log.e("s", "" + s);
                         }
                         //Send request
                         DataOutputStream wr = new DataOutputStream (

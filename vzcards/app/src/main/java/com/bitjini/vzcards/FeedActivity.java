@@ -6,7 +6,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -32,12 +34,15 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -73,13 +78,14 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
 
     String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
 
+    VerifyScreen p=new VerifyScreen();
     String URL_GETLIST="http://vzcards-api.herokuapp.com/get_list/?access_token=";
     ProgressBar progressBar,progressBar2;
     private SwipeRefreshLayout swipeRefreshLayout;
     public Cursor phones;
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
     ArrayList<DataFeeds> feeds = new ArrayList<DataFeeds>();
-    String token_sharedPreference;
+    String token_sharedPreference,vz_id;
     // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
@@ -93,17 +99,19 @@ FrameLayout layout_MainMenu;
     int totalPage=0;
     int progressCount=0;
     boolean isLoading=false;
-
+    int itemCount=0;
     int next;
     View footer;
     DataFeeds dataFeeds2 = new DataFeeds();
     DataFeeds dataFeeds1 = new DataFeeds();
+    RoundedImageView progressContainer;
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
-
-        progressBar = (ProgressBar) feed.findViewById(R.id.progressBar);
+        progressBar = (ProgressBar)feed.findViewById(R.id.progress1);
+        progressContainer = (RoundedImageView) feed.findViewById(R.id.progress);
 
         swipeRefreshLayout = (SwipeRefreshLayout) feed.findViewById(R.id.pullToRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -133,6 +141,7 @@ FrameLayout layout_MainMenu;
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+        vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
         System.out.println(" getting token from sharedpreference " + token_sharedPreference);
 
 
@@ -145,26 +154,10 @@ FrameLayout layout_MainMenu;
         }
         showContacts();
 
-        if(progressCount==0) {
-            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-            animation.setDuration(1000); //in milliseconds
-            animation.setRepeatCount(5);
-            animation.setInterpolator(new DecelerateInterpolator());
-            animation.start();
 
             // refresh contents
             getFeedsContents(URL_GETLIST + token_sharedPreference);
 
-            progressBar.clearAnimation();
-            progressBar.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            listView.setVisibility(View.VISIBLE);
-            // refresh contents
-            getFeedsContents(URL_GETLIST + token_sharedPreference);
-        }
 
         adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
             listView.setAdapter(adapter);
@@ -183,51 +176,74 @@ FrameLayout layout_MainMenu;
                 String item_photo = dataFeeds.getItem_photo();
                 String ticket_id= dataFeeds.getTicket_id();
                 String phone1=dataFeeds.getPhone();
-                String connector_vz_id=dataFeeds.getVz_id();
+                String connector_vz_id=vz_id;
                 String question=dataFeeds.getQuestion();
 
 
                 if (Integer.parseInt(dataFeeds.getQuestion()) == 0) {
                     //Put the value for has to feed detail has
-                    Feed_detail_has ldf = new Feed_detail_has();
+                    Intent intent=new Intent(getActivity(),Feed_detail_has.class);
 
-                    Bundle args = new Bundle();
-                    args.putString("title", title);
-                    args.putString("desc", desc);
-                    args.putString("name", name);
-                    args.putString("photo", photo);
-                    args.putString("ticket_id", ticket_id);
-                    args.putString("item_photo", item_photo);
-                    args.putString("phone1", phone1);
-                    args.putString("connector_vz_id", connector_vz_id);
-                    args.putString("question",question);
 
-                    ldf.setArguments(args);
+                    // sending values of has
+                    intent.putExtra("titleHas", title);
+                    intent.putExtra("descHas", desc);
+                    intent.putExtra("nameHas", name);
+                    intent.putExtra("photoHas", photo);
+                    intent.putExtra("ticket_idHas", ticket_id);
+                    intent.putExtra("item_photoHas", item_photo);
+                    intent.putExtra("phone1Has", phone1);
+                    intent.putExtra("connector_vz_idHas", vz_id);
+                    intent.putExtra("questionHas",question);
 
-                    //Inflate the fragment
-                    getFragmentManager().beginTransaction().add(R.id.feed_detail, ldf).addToBackStack(ldf.toString())
-                            .commit();
+                    // sending values of needs
+                    intent.putExtra("titleNeeds", title);
+                    intent.putExtra("descNeeds", desc);
+                    intent.putExtra("nameNeeds", name);
+                    intent.putExtra("photoNeeds", photo);
+                    intent.putExtra("ticket_idNeeds", ticket_id);
+                    intent.putExtra("item_photoNeeds", item_photo);
+                    intent.putExtra("phone1Needs", phone1);
+                    intent.putExtra("connector_vz_idNeeds", vz_id);
+                    intent.putExtra("questionNeeds",question);
+                    startActivity(intent);
+
+//                    //Inflate the fragment
+//                    getFragmentManager().beginTransaction().add(R.id.feed_detail, ldf).addToBackStack(ldf.toString())
+//                            .commit();
                 }
                 if (Integer.parseInt(dataFeeds.getQuestion()) == 1) {
                     //Put the value needs to feed_details
-                   Feed_detail_needs ldf = new Feed_detail_needs();
+                    Intent intent=new Intent(getActivity(),Feed_detail_needs.class);
 
-                    Bundle args = new Bundle();
 
-                    args.putString("title", title);
-                    args.putString("desc", desc);
-                    args.putString("name", name);
-                    args.putString("photo", photo);
-                    args.putString("ticket_id", ticket_id);
-                    args.putString("item_photo", item_photo);
-                    args.putString("phone1", phone1);
-                    args.putString("connector_vz_id", connector_vz_id);
-                    args.putString("question",question);
-                    ldf.setArguments(args);
 
-                    //Inflate the fragment
-                    getFragmentManager().beginTransaction().add(R.id.feed_detail, ldf).addToBackStack(ldf.toString())
-                            .commit();
+                    intent.putExtra("titleNeeds", title);
+                    intent.putExtra("descNeeds", desc);
+                    intent.putExtra("nameNeeds", name);
+                    intent.putExtra("photoNeeds", photo);
+                    intent.putExtra("ticket_idNeeds", ticket_id);
+                    intent.putExtra("item_photoNeeds", item_photo);
+                    intent.putExtra("phone1Needs", phone1);
+                    intent.putExtra("connector_vz_idNeeds", vz_id);
+                    intent.putExtra("questionNeeds",question);
+
+//                    Bundle args = new Bundle();
+                    intent.putExtra("titleHas", title);
+                    intent.putExtra("descHas", desc);
+                    intent.putExtra("nameHas", name);
+                    intent.putExtra("photoHas", photo);
+                    intent.putExtra("ticket_idHas", ticket_id);
+                    intent.putExtra("item_photoHas", item_photo);
+                    intent.putExtra("phone1Has", phone1);
+                    intent.putExtra("connector_vz_idHas", vz_id);
+                    intent.putExtra("questionHas",question);
+
+                    startActivity(intent);
+
+//                    //Inflate the fragment
+//                    getFragmentManager().beginTransaction().add(R.id.feed_detail, ldf).addToBackStack(ldf.toString())
+//                            .commit();
                 }
             }
         });
@@ -251,13 +267,24 @@ FrameLayout layout_MainMenu;
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
-
+//                if(itemCount==totalItemCount)
+//                {
+//                    swipeRefreshLayout.post(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+////                                                    swipeRefreshLayout.setRefreshing(true);
+//                                                    refreshContent();
+//
+//                                                }
+//                                            }
+//                    );
+//                }
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
-                Log.e("visibleItemCount",""+visibleItemCount);
-                Log.e("lastIndexInScreen",""+firstVisibleItem);
-                Log.e("totalItemCount",""+totalItemCount);
+//                Log.e("visibleItemCount",""+visibleItemCount);
+//                Log.e("lastIndexInScreen",""+firstVisibleItem);
+//                Log.e("totalItemCount",""+totalItemCount);
 
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
 
@@ -272,6 +299,18 @@ FrameLayout layout_MainMenu;
             }
         });
 
+        progressContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                listView.setVisibility(View.GONE);
+
+                swipeRefreshLayout.setRefreshing(true);
+                showContacts();
+
+                refreshContent();
+            }
+        });
         return feed;
     }
 
@@ -283,61 +322,101 @@ FrameLayout layout_MainMenu;
 
            String received =  new HttpAsyncTask().execute(url).get();
 
-
+            int status=0;
             JSONObject jsonObj = new JSONObject(received);
+            if (jsonObj.has("status")) {
+               status= jsonObj.getInt("status");
+            }
+            if(status==401)
+            {
+                android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                alertDialogBuilder.setTitle("Authentication Failed");
+                alertDialogBuilder.setMessage("Invalid Access Token Please Login Again");
+                alertDialogBuilder.setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
 
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
+                                SharedPreferences.Editor sEdit = p.sharedPreferences.edit();
+                                sEdit.clear();
+                                sEdit.commit();
+                               Intent intent1=new Intent(getActivity(),VerifyScreen.class);
+                                startActivity(intent1);
+                            }
 
-            // Getting JSON Array node
-           countOfFeeds=jsonObj.getInt("count");
-            Log.e("countOfFeeds",""+countOfFeeds);
-            JSONArray arr = jsonObj.getJSONArray("response");
+                        });
 
-            // looping through All Contacts
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject c = arr.getJSONObject(i);
-                // Feed node is JSON Object
-                JSONObject feed = c.getJSONObject("feed");
+                alertDialogBuilder.setNegativeButton("cancel",
+                        new DialogInterface.OnClickListener() {
 
-                String item = feed.getString("item");
-                String question = feed.getString("question");
-                String item_photo = feed.getString("item_photo");
-                String description = feed.getString("description");
-                String ticket_id = feed.getString("ticket_id");
-                String isNeeds = "1", isHas = "0";
-                String vz_id=feed.getString("vz_id");
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
 
-                if (question == isNeeds) {
-                    isNeeds = question;
-                }
-                if (question == isHas) {
-                    isHas = question;
-                }
-                // user_details node is JSON Object
-                JSONObject user_detail = c.getJSONObject("user_details");
-
-                String firstname = user_detail.getString("firstname");
-                String photo = user_detail.getString("photo");
-                String phone = user_detail.getString("phone");
-
-                DataFeeds dataFeeds = new DataFeeds();
-
-                dataFeeds.setFname(firstname);
-                dataFeeds.setItem(item);
-                dataFeeds.setQuestion(question);
-                dataFeeds.setPhoto(photo);
-                dataFeeds.setItem_photo(item_photo);
-                dataFeeds.setDescription(description);
-                dataFeeds.setIsHas(isHas);
-                dataFeeds.setIsNeeds(isNeeds);
-                dataFeeds.setTicket_id(ticket_id);
-                dataFeeds.setVz_id(vz_id);
-                dataFeeds.setPhone(phone);
-
-                feedsArrayList.add(dataFeeds);
-
-
+                            }
+                        });
+                android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
 
             }
+
+
+            if (jsonObj.has("count")) {
+
+                // Getting JSON Array node
+                countOfFeeds = jsonObj.getInt("count");
+                Log.e("countOfFeeds", "" + countOfFeeds);
+                JSONArray arr = jsonObj.getJSONArray("response");
+
+                // looping through All Contacts
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject c = arr.getJSONObject(i);
+                    // Feed node is JSON Object
+                    JSONObject feed = c.getJSONObject("feed");
+
+                    String item = feed.getString("item");
+                    String question = feed.getString("question");
+                    String item_photo = feed.getString("item_photo");
+                    String description = feed.getString("description");
+                    String ticket_id = feed.getString("ticket_id");
+                    String isNeeds = "1", isHas = "0";
+//                    String vz_id = feed.getString("vz_id");
+
+
+                    Log.e("item photo link2:", "" + item_photo);
+                    if (question == isNeeds) {
+                        isNeeds = question;
+                    }
+                    if (question == isHas) {
+                        isHas = question;
+                    }
+                    // user_details node is JSON Object
+                    JSONObject user_detail = c.getJSONObject("user_details");
+
+                    String firstname = user_detail.getString("firstname");
+                    String photo = user_detail.getString("photo");
+
+                    String phone = user_detail.getString("phone");
+
+                    DataFeeds dataFeeds = new DataFeeds();
+
+                    dataFeeds.setFname(firstname);
+                    dataFeeds.setItem(item);
+                    dataFeeds.setQuestion(question);
+                    dataFeeds.setPhoto(photo);
+                    dataFeeds.setItem_photo(item_photo);
+                    dataFeeds.setDescription(description);
+                    dataFeeds.setIsHas(isHas);
+                    dataFeeds.setIsNeeds(isNeeds);
+                    dataFeeds.setTicket_id(ticket_id);
+                    dataFeeds.setVz_id(vz_id);
+                    dataFeeds.setPhone(phone);
+
+                    feedsArrayList.add(dataFeeds);
+
+                }
+            }
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -346,6 +425,7 @@ FrameLayout layout_MainMenu;
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
     }
 
 
@@ -378,6 +458,7 @@ FrameLayout layout_MainMenu;
                 countOfFeeds=0;
                 isLoading = false;
                 getFeedsContents(URL_GETLIST + token_sharedPreference );
+                listView.setVisibility(View.VISIBLE);
                 adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
                 listView.setAdapter(adapter);
 
@@ -426,8 +507,23 @@ FrameLayout layout_MainMenu;
             getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
         } else {
+            listView.setVisibility(View.GONE);
+//
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(0);
 
-            new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL);
+                new Handler().postDelayed(new Runnable() {
+                    @Override public void run() {
+
+
+                        new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL);
+
+                        progressBar.setVisibility(View.GONE);
+                        listView.setVisibility(View.VISIBLE);
+                    }
+                }, 5000);
+//
+
         }
     }
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -500,7 +596,8 @@ FrameLayout layout_MainMenu;
     static class ViewHolder {
         public TextView name, question, item;
         public View viewLine;
-        public ImageView item_photo, photo;
+        public RoundedImageView photo;
+        public ImageView item_photo;
         public RadioButton referButtonRed, referButtonGreen;
         public RadioGroup radioGroup;
     }
@@ -513,7 +610,7 @@ FrameLayout layout_MainMenu;
         boolean red = false, green = false;
 
         public FeedsAdapter(Context context, int textViewResourceId, ArrayList<DataFeeds> items) {
-            super(context, textViewResourceId, items);
+              super(context, textViewResourceId, items);
             this.context = context;
             FeedActivity.this.feeds = items;
         }
@@ -537,7 +634,7 @@ FrameLayout layout_MainMenu;
             holder.question = (TextView) v.findViewById(R.id.selectionText);
             holder.item = (TextView) v.findViewById(R.id.feedProfile);
             holder.item_photo = (ImageView) v.findViewById(R.id.itemPhoto);
-            holder.photo = (ImageView) v.findViewById(R.id.profilePic);
+            holder.photo = (RoundedImageView) v.findViewById(R.id.profilePic);
             holder.viewLine = (View) v.findViewById(R.id.viewLine);
 
             holder.referButtonRed = (RadioButton) v.findViewById(R.id.referButton);
@@ -552,7 +649,7 @@ FrameLayout layout_MainMenu;
 //            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
           if(!data.getItem_photo().isEmpty())
             {
-                Picasso.with(context).load(data.getItem_photo()).placeholder(R.drawable.progress_animation).into(holder.item_photo);
+                Picasso.with(context).load(data.getItem_photo()).placeholder(R.drawable.no_pic_placeholder_with_border_800x800).into(holder.item_photo);
                 //            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
             } else
           {
@@ -562,26 +659,15 @@ FrameLayout layout_MainMenu;
             if(!data.getPhoto().isEmpty())
             {
 
-            Picasso.with(context).load(data.getPhoto()).placeholder(R.drawable.progress_animation).into(holder.photo);}
+            Picasso.with(context).load(data.getPhoto()).placeholder(R.drawable.profile_pic_placeholder).into(holder.photo);}
             else  {
                 holder.photo.setImageResource(R.drawable.profile_pic_placeholder);
                 //            new DownloadImagesTask(getActivity()).execute(holder.photo);
 
             }
 
-
-//            if(Integer.parseInt(data.getQuestion()) == 1)
-//            {
-//                holder.referButtonRed.setChecked(true);
-//                holder.referButtonGreen.setChecked(false);
-//            }
-//            else
-//            {
-//                holder.r.setChecked(false);
-//                female.setChecked(true);
-//            }
             if (Integer.parseInt(data.getQuestion()) == 1) {
-                holder.question.setBackgroundColor(Color.parseColor("#f27166"));
+                holder.question.setBackgroundResource(R.drawable.addimage_red);
                 holder.question.setText("needs");
                 holder.viewLine.setBackgroundColor(Color.parseColor("#f27166"));
                 holder.referButtonRed.setTag(position);
@@ -633,7 +719,7 @@ FrameLayout layout_MainMenu;
             }
 
             if (Integer.parseInt(data.getQuestion()) == 0) {
-                holder.question.setBackgroundColor(Color.parseColor("#add58a"));
+                holder.question.setBackgroundResource(R.drawable.addimage);
                 holder.question.setText("has");
                 holder.viewLine.setBackgroundColor(Color.parseColor("#add58a"));
                 holder.referButtonGreen.setTag(position);
@@ -751,7 +837,7 @@ FrameLayout layout_MainMenu;
             if (Integer.parseInt(dataFeeds1.getIsNeeds()) == 1) {
                 viewLine.setBackgroundColor(Color.parseColor("#f27166"));
                 question.setText("needs");
-                question.setBackgroundColor(Color.parseColor("#f27166"));
+                question.setBackgroundResource(R.drawable.addimage_red);
             }
 
             // Object 2
@@ -789,7 +875,7 @@ FrameLayout layout_MainMenu;
             if (Integer.parseInt(dataFeeds2.getIsHas()) == 0) {
                 viewLine2.setBackgroundColor(Color.parseColor("#add58a"));
                 question2.setText("has");
-                question2.setBackgroundColor(Color.parseColor("#add58a"));
+                question2.setBackgroundResource(R.drawable.addimage);
             }
 
 

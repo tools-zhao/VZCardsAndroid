@@ -75,7 +75,7 @@ public class VerifyScreen extends Activity {
         String token_sharedPreference=sharedPreferences.getString(TOKEN_KEY,null);
         if(token_sharedPreference!=null)
         {
-            Intent positveActivity = new Intent(getApplicationContext(), MainActivity.class);
+            Intent positveActivity = new Intent(getApplicationContext(), SplashScreen.class);
             startActivity(positveActivity);
             finish();
         }
@@ -84,7 +84,7 @@ public class VerifyScreen extends Activity {
         // get the country code
         TelephonyManager tm = (TelephonyManager)getSystemService(getApplicationContext().TELEPHONY_SERVICE);
         String countryCode = tm.getNetworkCountryIso();
-
+        String countryZipCode = GetCountryZipCode();
 
         editTextPhoneNo = (EditText) findViewById(R.id.phoneNo);
         textViewCountryPrefix=(TextView)findViewById(R.id.initial);
@@ -93,6 +93,7 @@ public class VerifyScreen extends Activity {
         btn = (Button) findViewById(R.id.verify);
         // set the country code to textview
         textViewCountryCode.setText(countryCode);
+        textViewCountryPrefix.setText(countryZipCode);
 
 
 
@@ -111,7 +112,23 @@ public class VerifyScreen extends Activity {
             }
         });
     }
+    public String GetCountryZipCode(){
+        String CountryID="";
+        String CountryZipCode="";
 
+        TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        CountryID= manager.getSimCountryIso().toUpperCase();
+        String[] rl=getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<rl.length;i++){
+            String[] g=rl[i].split(",");
+            if(g[1].trim().equals(CountryID.trim())){
+                CountryZipCode=g[0];
+                break;
+            }
+        }
+        return CountryZipCode;
+    }
     // method to call AsyncTask PostClass for registration
     public void sendPostRequest(View View) {
         new PostClass(this).execute(URL_REGISTER);
@@ -403,6 +420,7 @@ public class VerifyScreen extends Activity {
                     sEdit.commit();
 
                      token_sharedPreference=sharedPreferences.getString("token",token);
+
                      vz_id_sharedPreference=sharedPreferences.getString("vz_id",vz_id);
                     phone_sharedPreference=sharedPreferences.getString("phone",phone);
                     System.out.println(" getting token from sharedpreference "+ token_sharedPreference);

@@ -15,27 +15,39 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.support.v4.app.Fragment;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +60,10 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
@@ -58,8 +73,11 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -71,6 +89,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -87,15 +106,17 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 198;
     private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 199;
 
+    RelativeLayout main_layout,displayImage_layout;
     Button havebtn;
+    public ImageView  showImage;
     public ImageView item_image;
     Button addImage;
     EditText txtItem, txtDescription;
     TextView txtDate_validity;
     ImageButton submit;
     public static String Item_picturePath;
-    public String item_photo = "", item = "", description = "", date_validity = "", question = "";
-    public ProgressDialog progress = null;
+    public String item_photo="", item="", description="", date_validity="", question = "";
+    public ProgressDialog progress = null,progressDialog;
     public Bitmap output, bitmap;
     ImageButton btnCander;
     VerifyScreen p = new VerifyScreen();
@@ -103,7 +124,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     private int myear;
     private int mmonth;
     private int mday;
-
+    Button done1,done2, cancel,choose;
+    View iHave;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,23 +134,64 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View iHave = inflater.inflate(R.layout.add_layout, container, false);
+         iHave = inflater.inflate(R.layout.add_layout, container, false);
         addImage = (Button) iHave.findViewById(R.id.addImage);
         txtItem = (EditText) iHave.findViewById(R.id.ask);
         txtDescription = (EditText) iHave.findViewById(R.id.desc);
         txtDate_validity = (TextView) iHave.findViewById(R.id.validity);
         item_image = (ImageView) iHave.findViewById(R.id.item_img);
 
-        btnCander = (ImageButton) iHave.findViewById(R.id.click);
+
+
+
+        main_layout=(RelativeLayout) iHave.findViewById(R.id.main_layout);
+       displayImage_layout=(RelativeLayout) iHave.findViewById(R.id.displayLayout);
+
+      showImage=(ImageView)iHave.findViewById(R.id.showImage);
+        choose=(Button)iHave.findViewById(R.id.choose);
+        cancel=(Button) iHave.findViewById(R.id.cancel);
+
+//        btnCander = (ImageButton) iHave.findViewById(R.id.click);
 
         submit = (ImageButton) iHave.findViewById(R.id.imgbtn);
 
-        btnCander.setOnClickListener(this);
+        done1 = (Button) iHave.findViewById(R.id.done);
+        done2 = (Button) iHave.findViewById(R.id.done2);
+
+//        btnCander.setOnClickListener(this);
         addImage.setOnClickListener(this);
 
         submit.setOnClickListener(this);
 
         Button iNeed = (Button) iHave.findViewById(R.id.ineed);
+
+        txtDate_validity.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                showDatePickerDialog(v);
+                return false;
+            }
+        });
+        txtItem.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                done1.setVisibility(View.VISIBLE);
+                done2.setVisibility(View.GONE);
+                return false;
+            }
+        });
+        txtDescription.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                done1.setVisibility(View.GONE);
+                done2.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+        done1.setOnClickListener(this);
+        done2.setOnClickListener(this);
+
 
 
         iNeed.setOnClickListener(this);
@@ -212,64 +275,30 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                         Log.e("path :", "" + Item_picturePath);
 
                         decodeFile(Item_picturePath);
+                        displayImage_layout.setVisibility(View.VISIBLE);
+                        main_layout.setVisibility(View.GONE);
+                        showImage.setImageBitmap(bitmap);
+                        choose.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                        alertDialogBuilder.setMessage("Do you want to upload the image");
-                        alertDialogBuilder.setPositiveButton("Ok",
-                                new DialogInterface.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-
-
-                                        // Upload image to server
-                                        progress = new ProgressDialog(getActivity());
-                                        if (progress != null) {
-                                            progress.setMessage("Uploading image ..Please Wait...");
-                                            progress.setCancelable(false);
-                                            progress.show();
-                                        }
-                                        new UploadImageTask(getActivity()) {
-                                            @Override
-                                            public void onPostExecute(String result) {
-                                                if (progress.isShowing()) {
-                                                    progress.dismiss();
-                                                    progress = null;
-                                                }
-                                                Log.e("debug=", "" + result);
-                                                item_image.setImageBitmap(bitmap);
-
-                                                if (result != null) {
-
-                                                    JSONObject json = null;
-                                                    try {
-                                                        json = new JSONObject(result);
-                                                        item_photo = json.getString("photo");
-//                                                        SavePreferences(COMPANY_IMAGE, item_photo);
-                                                        String link = json.getString("link");
-                                                        Log.e("item photo:", "" + item_photo);
-                                                        Log.e("link :", "" + link);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }
-                                        }.execute();
+                                main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
+                                item_image.setImageBitmap(bitmap);
 
 
-                                    }
-                                });
+                            }
+                        });
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                        alertDialogBuilder.setNegativeButton("cancel",
-                                new DialogInterface.OnClickListener() {
+                            main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
 
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
 
-                                    }
-                                });
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-                        alertDialog.show();
+                            }
+                        });
 
 
                     } else {
@@ -286,61 +315,45 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                         Log.e("path :", "" + Item_picturePath);
 
                         decodeFile(Item_picturePath);
+                        displayImage_layout.setVisibility(View.VISIBLE);
+                        main_layout.setVisibility(View.GONE);
+                        showImage.setImageBitmap(bitmap);
 
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                        alertDialogBuilder.setMessage("Do you want to upload the image");
-                        alertDialogBuilder.setPositiveButton("Ok",
-                                new DialogInterface.OnClickListener() {
+                        choose.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
+                                main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
 
 
-                                        // Upload image to server
-                                        progress = new ProgressDialog(getActivity());
-                                        if (progress != null) {
-                                            progress.setMessage("Uploading image ..Please Wait...");
-                                            progress.setCancelable(false);
-                                            progress.show();
-                                        }
-                                        new UploadImageTask(getActivity()) {
-                                            @Override
-                                            public void onPostExecute(String result) {
-                                                if (progress.isShowing()) {
-                                                    progress.dismiss();
-                                                    progress = null;
-                                                }
-                                                item_image.setImageBitmap(bitmap);
 
-                                                if (result != null) {
+//                                //dynamically increase the size of the imageview
+//                                int width = bitmap.getWidth();
+//                                int height = bitmap.getHeight();
+//                                int newWidth = 650;
+//                                int newHeight = 350;
+//                                float scaleWidth = ((float) newWidth) / width;
+//                                float scaleHeight = ((float) newHeight) / height;
+//                                Matrix matrix = new Matrix();
+//                                matrix.postScale(scaleWidth, scaleHeight);
+//                                Bitmap newbm = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix,true);
 
-                                                    JSONObject json = null;
-                                                    try {
-                                                        json = new JSONObject(result);
-                                                        item_photo = json.getString("photo");
-//                                                        SavePreferences(COMPANY_IMAGE, company_photo);
-                                                        String link = json.getString("link");
-                                                        Log.e("item_photo :", "" + item_photo);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }
-                                        }.execute();
+                                item_image.setImageBitmap(bitmap);
 
-                                    }
-                                });
 
-                        alertDialogBuilder.setNegativeButton("cancel",
-                                new DialogInterface.OnClickListener() {
+                            }
+                        });
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
+                                main_layout.setVisibility(View.VISIBLE);
+                                displayImage_layout.setVisibility(View.GONE);
 
-                                    }
-                                });
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-                        alertDialog.show();
+
+                            }
+                        });
 
 
                     }
@@ -386,7 +399,24 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             }
         }
     }
+    public Bitmap BITMAP_RESIZER(Bitmap bitmap,int newWidth,int newHeight) {
+        Bitmap scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
 
+        float ratioX = newWidth / (float) bitmap.getWidth();
+        float ratioY = newHeight /(float) bitmap.getHeight();
+        float middleX = newWidth/ 2.0f;
+        float middleY = newHeight / 2.0f;
+
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
+
+        Canvas canvas = new Canvas(scaledBitmap);
+        canvas.setMatrix(scaleMatrix);
+        canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() /2, middleY - bitmap.getHeight()/2 , new Paint(Paint.FILTER_BITMAP_FLAG));
+
+        return scaledBitmap;
+
+    }
     public void decodeFile(String filePath) {
         // Decode image size
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -422,16 +452,21 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
         StringBuffer response = new StringBuffer();
 
+
         public INeed_Task(Context context) {
             this.context = context;
+
         }
 
         protected void onPreExecute() {
 
+
             progress = new ProgressDialog(this.context);
-            progress.setMessage("Sending...");
-            progress.setCancelable(false);
-            progress.show();
+            if(progress!=null) {
+                progress.setMessage("Sending...");
+                progress.setCancelable(false);
+                progress.show();
+            }
         }
 
         @Override
@@ -460,10 +495,6 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             conn.setDoInput(true);
             conn.setDoOutput(true);
 
-            item = txtItem.getText().toString();
-            description = txtDescription.getText().toString();
-            date_validity = txtDate_validity.getText().toString();
-            question = "0";
 
             Log.e(" question test:", "" + question);
             Log.e(" item_photo test:", "" + item_photo);
@@ -538,7 +569,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
         @Override
         public void onPostExecute(String result) {
-            if (progress.isShowing()) {
+            if (progress.isShowing() && progress!=null) {
                 progress.dismiss();
                 progress = null;
             }
@@ -547,6 +578,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             txtDescription.setText("");
             item_image.setImageResource(R.drawable.no_pic_placeholder);
             bitmap = null;
+            item_photo="";
+            Item_picturePath="";
             Toast.makeText(getActivity(), "Your Data is posted ", Toast.LENGTH_LONG).show();
 
             if (result != null) {
@@ -579,6 +612,11 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 File sourceFile_profile = new File(Item_picturePath );
                 Log.e("picturePath :", "" +Item_picturePath);
 
+                Bitmap bmp = BitmapFactory.decodeFile(Item_picturePath);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.JPEG, 70, bos);
+
+                ContentBody foto =new ByteArrayBody(bos.toByteArray(), "filename");
 
                 HttpClient httpclient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost(pr.URL_UPLOAD_IMAGE);
@@ -590,7 +628,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 HttpEntity entity = MultipartEntityBuilder.create()
                         .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                         .setBoundary(boundary)
-                        .addPart("photo", new FileBody(sourceFile_profile))
+                        .addPart("photo", foto)
                         .build();
 
                 httpPost.setEntity(entity);
@@ -630,11 +668,111 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
             //setting company picture
             case R.id.imgbtn:
-                new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
-                break;
-            case R.id.click:
-                showDatePickerDialog(v);
+                item = txtItem.getText().toString();
+                description = txtDescription.getText().toString();
+                date_validity = txtDate_validity.getText().toString();
+                question = "0";
 
+
+                Log.e("item=",""+item +""+ item.length());
+                if( item.length()==0 || description.length()==0 || date_validity.length()==0)
+                {
+                    Log.e("item=",""+item +""+ item.length());
+
+                    Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT).show();
+
+                }
+                else {
+                    Log.e("item_photo :", "" + item_photo);
+                    Log.e("task item=",""+item +""+ item.length());
+                    Log.e("task item=",""+item +""+ item.length());
+
+                    if(Item_picturePath.length()!=0) {
+                        progressDialog = new ProgressDialog(getActivity());
+                        if (progressDialog != null) {
+                            progressDialog.setMessage("Collecting Data Please Wait...");
+                            progressDialog.setCancelable(false);
+                            progressDialog.show();
+                        }
+                        new UploadImageTask(getActivity()) {
+                            @Override
+                            public void onPostExecute(String result) {
+                                if (progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                    progressDialog = null;
+                                    Item_picturePath="";
+                                }
+                                if (result != null) {
+                                    JSONObject json = null;
+                                    try {
+                                        json = new JSONObject(result);
+//
+                                        String link = json.getString("link");
+                                        item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/" + link;
+//
+                                        Log.e("item_photo :", "" + item_photo);
+                                        Log.e("link :", "" + link);
+
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }.execute();
+                    }
+                    else {
+                        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                        alertDialogBuilder.setMessage("Post data without uploading image");
+                        alertDialogBuilder.setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+                                    }
+                                });
+                                        alertDialogBuilder.setNegativeButton("cancel",
+                                                new DialogInterface.OnClickListener() {
+
+                                                    @Override
+                                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                                    }
+                                                });
+                                        AlertDialog alertDialog = alertDialogBuilder.create();
+                                        alertDialog.show();
+
+                                    }
+
+
+
+
+
+                                }
+                break;
+//            case R.id.click:
+//                showDatePickerDialog(v);
+//
+//                break;
+            case R.id.done:
+                txtItem.setCursorVisible(false);
+                InputMethodManager inputManager2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getActivity().getCurrentFocus() != null){
+                    inputManager2.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                done1.setVisibility(View.GONE);
+                done2.setVisibility(View.GONE);
+                break;
+            case R.id.done2:
+                done1.setVisibility(View.GONE);
+                txtDescription.setCursorVisible(false);
+                InputMethodManager inputManager1 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getActivity().getCurrentFocus() != null){
+                    inputManager1.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                done2.setVisibility(View.GONE);
                 break;
             case R.id.ineed:
                 Fragment needFragment = new iNeed_Activity();
@@ -644,12 +782,13 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .add(contentView.getId(), needFragment).addToBackStack(null)
+                        .replace(contentView.getId(), needFragment)
                         .commit();
                 break;
 
         }
     }
+
 
     //
     public void showDatePickerDialog(View v) {
@@ -707,6 +846,37 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
             txtDate_validity.setText(year + "-" + formattedMonth + "-" + formattedDayOfMonth);
         }
+    }
+    private void scaleImage(ImageView view)
+    {
+        Drawable drawing = view.getDrawable();
+        if (drawing == null) {
+            return;
+        }
+        Bitmap bitmap = ((BitmapDrawable)drawing).getBitmap();
+
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int bounding_x = ((View)view.getParent()).getWidth();//EXPECTED WIDTH
+        int bounding_y = ((View)view.getParent()).getHeight();//EXPECTED HEIGHT
+
+        float xScale = ((float) bounding_x) / width;
+        float yScale = ((float) bounding_y) / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(xScale, yScale);
+
+        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+        width = scaledBitmap.getWidth();
+        height = scaledBitmap.getHeight();
+        BitmapDrawable result = new BitmapDrawable(getActivity().getResources(), scaledBitmap);
+
+        view.setImageDrawable(result);
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+        params.width = width;
+        params.height = height;
+        view.setLayoutParams(params);
     }
 }
 
