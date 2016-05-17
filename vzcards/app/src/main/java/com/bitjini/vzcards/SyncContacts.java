@@ -245,7 +245,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             } else {
 //                Log.e("Cursor close 1", "----------------");
             }
-            Log.e("Cursor close 1", "----------------"+phoneList12);
+//            Log.e("Cursor close 1", "----------------"+phoneList12);
             return null;
         }
 

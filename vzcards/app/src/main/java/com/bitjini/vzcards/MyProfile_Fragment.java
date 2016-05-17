@@ -1,6 +1,7 @@
 package com.bitjini.vzcards;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -45,6 +46,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +69,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 198;
     private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 199;
 
+    private static final int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
+
+    private Button btn_select_image;
+    private Uri mImageCaptureUri;
+    private File outPutFile = null;
+
     public static final String TASKS = "key";
 
     private final int SELECT_PHOTO = 1;
@@ -85,7 +94,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     RadioButton profilebtn, vzfrndsbtn, referralbtn;
     TextView textViewName;
 
-    public ProgressDialog progress;
+    public ProgressDialog progress,progressDialog1;
 
     ListView listView;
     EditTextAdapter editTextAdapter;
@@ -102,6 +111,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public static String photo="",company_photo="";
     public Bitmap bitmap;
     public static String picturePath;
+    public String profilePicturePath,companyPicturePath;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -115,6 +125,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         p.phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
         p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
+
 
 
         textViewName = (TextView) profile.findViewById(R.id.name);
@@ -273,8 +284,88 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     json2 = new Gson().toJson(groupItem);// updated array
 
                     SavePreferences(TASKS, json2);
-                    new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+                    if(profilePicturePath.length()!=0 || companyPicturePath.length()!=0) {
 
+                        progressDialog1 = new ProgressDialog(getActivity());
+                        if (progressDialog1 != null) {
+                            progressDialog1.setMessage("Saving user details..");
+                            progressDialog1.setCancelable(false);
+                            progressDialog1.show();
+                        }
+                        picturePath=profilePicturePath;
+                        new UploadImageTask(getActivity()) {
+                            @Override
+                            public void onPostExecute(String result) {
+                                if (progressDialog1.isShowing()) {
+                                    progressDialog1.dismiss();
+                                    progressDialog1 = null;
+                                    profilePicturePath = "";
+                                    picturePath="";
+
+
+                                }
+                                if (result != null) {
+                                    JSONObject json = null;
+                                    try {
+                                        json = new JSONObject(result);
+                                        photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+
+                                        String link = json.getString("link");
+                                        SavePreferences(PROFILE_IMAGE, photo + link);
+                                        Log.e("photo :", "" + photo + link);
+
+
+                                        progressDialog1 = new ProgressDialog(getActivity());
+                                        if (progressDialog1 != null) {
+                                            progressDialog1.setMessage("Saving user details..");
+                                            progressDialog1.setCancelable(false);
+                                            progressDialog1.show();
+
+                                        }
+                                        picturePath=companyPicturePath;
+                                        new UploadImageTask(getActivity()) {
+                                            @Override
+                                            public void onPostExecute(String result) {
+                                                if (progressDialog1.isShowing()) {
+                                                    progressDialog1.dismiss();
+                                                    progressDialog1 = null;
+                                                    companyPicturePath = "";
+                                                    picturePath="";
+                                                }
+                                                if (result != null) {
+                                                    JSONObject json = null;
+                                                    try {
+                                                        json = new JSONObject(result);
+//                                                            company_photo = json.getString("photo");
+                                                        company_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+
+                                                        String link = json.getString("link");
+                                                        SavePreferences(COMPANY_IMAGE, company_photo + link);
+                                                        Log.e("company_photo :", "" + company_photo + link);
+                                                        Log.e("link :", "" + link);
+                                                        new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }
+                                        }.execute();
+
+                                        new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }.execute();
+
+                    }
+                    else {
+                        new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+
+                    }
                     editTextAdapter.notifyDataSetChanged();
 
 
@@ -341,371 +432,570 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     }
 
-
-    private void openImageIntent() {
+    private void selectImageOption() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
-        } else {
+        }
+        else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 getActivity().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_WRITE_EXTERNAL_STORAGE);
             } else {
-                // Determine Uri of camera image to save.
-                final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
-                root.mkdir();
-                final String fname = "img_" + System.currentTimeMillis() + ".jpg";
-                final File sdImageMainDirectory = new File(root, fname);
-                outputFileUri = Uri.fromFile(sdImageMainDirectory);
+                final CharSequence[] items = { "Capture Photo", "Choose from Gallery", "Cancel" };
 
-                // Camera.
-                final List<Intent> cameraIntents = new ArrayList<Intent>();
-                final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                final PackageManager packageManager = getActivity().getPackageManager();
-                final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-                for (ResolveInfo res : listCam) {
-                    final String packageName = res.activityInfo.packageName;
-                    final Intent intent = new Intent(captureIntent);
-                    intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                    intent.setPackage(packageName);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-                    cameraIntents.add(intent);
-                }
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+                builder.setTitle("Add Photo!");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
 
-                //FileSystem
-                final Intent galleryIntent = new Intent();
-                galleryIntent.setType("image/");
-                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                        if (items[item].equals("Capture Photo")) {
 
-                // Chooser of filesystem options.
-                final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
-                // Add the camera options.
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
-                startActivityForResult(chooserIntent, SELECT_PHOTO);
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
+                            final String fname = "img_" + System.currentTimeMillis() + ".jpg";
+                          final File sdImageMainDirectory = new File(f, fname);
+//                           outputFileUri = Uri.fromFile(sdImageMainDirectory);
+                            mImageCaptureUri = Uri.fromFile(sdImageMainDirectory);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+                            startActivityForResult(intent, CAMERA_CODE);
+
+                        } else if (items[item].equals("Choose from Gallery")) {
+
+                            Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(i, GALLERY_CODE);
+
+                        } else if (items[item].equals("Cancel")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
             }
         }
     }
 
-
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == getActivity().RESULT_OK) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 getActivity().requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_READ_EXTERNAL_STORAGE);
             } else {
-                if (requestCode == SELECT_PHOTO) {
-                    final boolean isCamera;
 
-                    if (data == null) {
-                        isCamera = true;
-                    } else {
-                        final String action = data.getAction();
-                        if (action == null) {
-                            isCamera = false;
-                        } else {
-                            isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (requestCode == GALLERY_CODE && resultCode == Activity.RESULT_OK && data != null) {
+                    String fname = "img_" + System.currentTimeMillis() + ".jpg";
+                    outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), fname);
+
+                    mImageCaptureUri = data.getData();
+                    System.out.println("Gallery Image URI : " + mImageCaptureUri);
+                    CropingIMG();
+
+                } else if (requestCode == CAMERA_CODE && resultCode == Activity.RESULT_OK) {
+                    String fname = "img_" + System.currentTimeMillis() + ".jpg";
+                    outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), fname);
+
+                    System.out.println("Camera Image URI : " + mImageCaptureUri);
+                    CropingIMG();
+                } else if (requestCode == CROPING_CODE) {
+
+                    try {
+                        if (currentImageView == imageProfile) {
+
+
+                            if (outPutFile.exists()) {
+                                Bitmap photo = decodeFile(outPutFile);
+                                profilePicturePath = outPutFile.getPath();
+                                Log.e("profilePicturePath :", "" + profilePicturePath);
+                                imageProfile.setImageBitmap(photo);
+                            } else {
+                                Toast.makeText(getActivity(), "Error while save image", Toast.LENGTH_SHORT).show();
+                            }
                         }
+                        if (currentImageView == imageCompany) {
+
+                            if (outPutFile.exists()) {
+                                Bitmap photo = decodeFile(outPutFile);
+                                companyPicturePath = outPutFile.getPath();
+                                Log.e("companyPicturePath :", "" + companyPicturePath);
+                                imageCompany.setImageBitmap(photo);
+                            } else {
+                                Toast.makeText(getActivity(), "Error while save image", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
-                    Uri selectedImageUri;
-                    if (isCamera) {
-
-                        selectedImageUri = outputFileUri;
-
-                        if (currentImageView == imageProfile) {
-                            picturePath = selectedImageUri.getPath();
-                            Log.e("path :", "" + picturePath);
-                            decodeFile(picturePath);
-
-                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                            alertDialogBuilder.setMessage("Do you want to upload the image");
-                            alertDialogBuilder.setPositiveButton("Ok",
-                                    new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface arg0, int arg1) {
-
-                                            // Upload image to server
-                                            progress = new ProgressDialog(getActivity());
-                                            if (progress != null) {
-                                                progress.setMessage("Uploading image ..Please Wait...");
-                                                progress.setCancelable(false);
-                                                progress.show();
-                                            }
-                                            new UploadImageTask(getActivity()) {
-                                                @Override
-                                                public void onPostExecute(String result) {
-                                                    if (progress.isShowing()) {
-                                                        progress.dismiss();
-                                                        progress = null;
-                                                    }
-
-                                                    imageProfile.setImageBitmap(bitmap);
-                                                    if (result != null) {
-
-                                                        JSONObject json = null;
-                                                        try {
-                                                            json = new JSONObject(result);
-//                                                            photo = json.getString("photo");
-                                                            photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
-
-                                                            String link = json.getString("link");
-                                                            SavePreferences(PROFILE_IMAGE, photo+link);
-                                                            Log.e("photo :", "" + photo+link);
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                }
-                                            }.execute();
-                                            Log.e("profile photo outside:", "" + photo);
-
-                                        }
-
-                                    });
-
-                            alertDialogBuilder.setNegativeButton("cancel",
-                                    new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface arg0, int arg1) {
-
-                                        }
-                                    });
-                            AlertDialog alertDialog = alertDialogBuilder.create();
-                            alertDialog.show();
-
-                        }
-
-
-                        if (currentImageView == imageCompany) {
-                            picturePath = selectedImageUri.getPath();
-                            Log.e("path :", "" + picturePath);
-                            decodeFile(picturePath);
-////            v.imageView.setImageDrawable(roundedImage);
-//                        currentImageView.setImageBitmap(bitmap);
-                            // create an alert dialog box
-                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                            alertDialogBuilder.setMessage("Do you want to upload the image");
-                            alertDialogBuilder.setPositiveButton("Ok",
-                                    new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface arg0, int arg1) {
-
-
-                                            // Upload image to server
-                                            progress = new ProgressDialog(getActivity());
-                                            if (progress != null) {
-                                                progress.setMessage("Uploading Company image ..Please Wait...");
-                                                progress.setCancelable(false);
-                                                progress.show();
-                                            }
-                                            new UploadImageTask(getActivity()) {
-                                                @Override
-                                                public void onPostExecute(String result) {
-                                                    if (progress.isShowing()) {
-                                                        progress.dismiss();
-                                                        progress = null;
-                                                    }
-                                                    imageCompany.setImageBitmap(bitmap);
-
-                                                    if (result != null) {
-
-                                                        JSONObject json = null;
-                                                        try {
-                                                            json = new JSONObject(result);
-//                                                            company_photo = json.getString("photo");
-                                                            company_photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
-
-                                                            String link = json.getString("link");
-                                                            SavePreferences(COMPANY_IMAGE, company_photo+link);
-                                                            Log.e("company_photo :", "" + company_photo+link);
-                                                            Log.e("link :", "" + link);
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                }
-                                            }.execute();
-
-
-                                        }
-                                    });
-
-                            alertDialogBuilder.setNegativeButton("cancel",
-                                    new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface arg0, int arg1) {
-
-                                        }
-                                    });
-                            AlertDialog alertDialog = alertDialogBuilder.create();
-                            alertDialog.show();
-
-                        }
-
-
-                    } else {
-                        Uri selectedImage = data.getData();
-                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                        Cursor cursor = getActivity().getContentResolver().query(selectedImage,
-                                filePathColumn, null, null, null);
-                        cursor.moveToFirst();
-
-                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-
-                        if (currentImageView == imageProfile) {
-                            picturePath = cursor.getString(columnIndex);
-                            cursor.close();
-                            Log.e("path :", "" + picturePath);
-                            decodeFile(picturePath);
-                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                            alertDialogBuilder.setMessage("Do you want to upload the image");
-                            alertDialogBuilder.setPositiveButton("Ok",
-                                    new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface arg0, int arg1) {
-
-
-                                            // Upload image to server
-                                            progress = new ProgressDialog(getActivity());
-                                            if (progress != null) {
-                                                progress.setMessage("Uploading profile image ..Please Wait...");
-                                                progress.setCancelable(false);
-                                                progress.show();
-                                            }
-                                            new UploadImageTask(getActivity()) {
-                                                @Override
-                                                public void onPostExecute(String result) {
-                                                    if (progress.isShowing()) {
-                                                        progress.dismiss();
-                                                        progress = null;
-                                                    }
-                                                    imageProfile.setImageBitmap(bitmap);
-
-                                                    if (result != null) {
-
-                                                        JSONObject json = null;
-                                                        try {
-                                                            json = new JSONObject(result);
-                                                            photo = json.getString("photo");
-                                                            photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
-
-                                                            String link = json.getString("link");
-                                                            SavePreferences(PROFILE_IMAGE, photo+link);
-                                                            Log.e("photo :", "" + photo+link);
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                }
-                                            }.execute();
-                                            Log.e("profile photo outside:", "" + photo);
-                                        }
-                                    });
-
-                            alertDialogBuilder.setNegativeButton("cancel",
-                                    new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface arg0, int arg1) {
-
-                                        }
-                                    });
-                            AlertDialog alertDialog = alertDialogBuilder.create();
-                            alertDialog.show();
-
-                        }
-
-                        if (currentImageView == imageCompany) {
-                            picturePath = cursor.getString(columnIndex);
-                            cursor.close();
-                            Log.e("path :", "" + picturePath);
-                            decodeFile(picturePath);
-                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                            alertDialogBuilder.setMessage("Do you want to upload the image");
-                            alertDialogBuilder.setPositiveButton("Ok",
-                                    new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface arg0, int arg1) {
-
-
-                                            // Upload image to server
-                                            progress = new ProgressDialog(getActivity());
-                                            if (progress != null) {
-                                                progress.setMessage("Uploading company image ..Please Wait...");
-                                                progress.setCancelable(false);
-                                                progress.show();
-                                            }
-                                            new UploadImageTask(getActivity()) {
-                                                @Override
-                                                public void onPostExecute(String result) {
-                                                    if (progress.isShowing()) {
-                                                        progress.dismiss();
-                                                        progress = null;
-                                                    }
-                                                    imageCompany.setImageBitmap(bitmap);
-
-                                                    if (result != null) {
-
-                                                        JSONObject json = null;
-                                                        try {
-                                                            json = new JSONObject(result);
-                                                            company_photo = json.getString("photo");
-                                                            company_photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
-
-                                                            String link = json.getString("link");
-                                                            SavePreferences(COMPANY_IMAGE, company_photo+link);
-                                                            Log.e("company_photo :", "" + company_photo+link);
-                                                            Log.e("link :", "" + link);
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                }
-                                            }.execute();
-
-                                        }
-                                    });
-
-                            alertDialogBuilder.setNegativeButton("cancel",
-                                    new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface arg0, int arg1) {
-
-                                        }
-                                    });
-                            AlertDialog alertDialog = alertDialogBuilder.create();
-                            alertDialog.show();
-
-                        }
-                    }
-                } else if (resultCode == getActivity().RESULT_CANCELED) {
-                    // user cancelled Image capture
-                    Toast.makeText(getActivity(),
-                            "User cancelled image capture", Toast.LENGTH_SHORT)
-                            .show();
-                } else {
-                    // failed to capture image
-                    Toast.makeText(getActivity(),
-                            "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
-                            .show();
                 }
             }
         }
-
     }
+
+    private void CropingIMG() {
+
+        final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
+
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setType("image/*");
+
+        List<ResolveInfo> list = getActivity().getPackageManager().queryIntentActivities( intent, 0 );
+        int size = list.size();
+        if (size == 0) {
+            Toast.makeText(getActivity(), "Cann't find image croping app", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            intent.setData(mImageCaptureUri);
+            intent.putExtra("outputX", 512);
+            intent.putExtra("outputY", 512);
+            intent.putExtra("aspectX", 1);
+            intent.putExtra("aspectY", 1);
+            intent.putExtra("scale", true);
+
+            //TODO: don't use return-data tag because it's not return large image data and crash not given any message
+//            intent.putExtra("return-data", true);
+
+//            Create output file here
+            if(outPutFile!=null) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outPutFile));
+            }
+            if (size == 1) {
+                Intent i   = new Intent(intent);
+                ResolveInfo res = list.get(0);
+
+                i.setComponent( new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+
+                startActivityForResult(i, CROPING_CODE);
+            } else {
+                for (ResolveInfo res : list) {
+                    final CropOption co = new CropOption();
+
+                    co.title  = getActivity().getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
+                    co.icon  =getActivity(). getPackageManager().getApplicationIcon(res.activityInfo.applicationInfo);
+                    co.appIntent= new Intent(intent);
+                    co.appIntent.setComponent( new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                    cropOptions.add(co);
+                }
+
+                CropingOptionAdapter adapter = new CropingOptionAdapter(getActivity(), cropOptions);
+
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+                builder.setTitle("Choose Croping App");
+                builder.setCancelable(false);
+                builder.setAdapter( adapter, new DialogInterface.OnClickListener() {
+                    public void onClick( DialogInterface dialog, int item ) {
+                        startActivityForResult( cropOptions.get(item).appIntent, CROPING_CODE);
+                    }
+                });
+
+                builder.setOnCancelListener( new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel( DialogInterface dialog ) {
+
+                        if (mImageCaptureUri != null ) {
+                            getActivity().getContentResolver().delete(mImageCaptureUri, null, null );
+                            mImageCaptureUri = null;
+                        }
+                    }
+                } );
+
+                android.app.AlertDialog alert = builder.create();
+                alert.show();
+            }
+        }
+    }
+
+    private Bitmap decodeFile(File f) {
+        try {
+            // decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            // Find the correct scale value. It should be the power of 2.
+            final int REQUIRED_SIZE = 512;
+            int width_tmp = o.outWidth, height_tmp = o.outHeight;
+            int scale = 1;
+            while (true) {
+                if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE)
+                    break;
+                width_tmp /= 2;
+                height_tmp /= 2;
+                scale *= 2;
+            }
+
+            // decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (FileNotFoundException e) {
+        }
+        return null;
+    }
+//    private void openImageIntent() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
+//        } else {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                getActivity().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_WRITE_EXTERNAL_STORAGE);
+//            } else {
+//                // Determine Uri of camera image to save.
+//                final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
+//                root.mkdir();
+//                final String fname = "img_" + System.currentTimeMillis() + ".jpg";
+//                final File sdImageMainDirectory = new File(root, fname);
+//                outputFileUri = Uri.fromFile(sdImageMainDirectory);
+//
+//                // Camera.
+//                final List<Intent> cameraIntents = new ArrayList<Intent>();
+//                final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                final PackageManager packageManager = getActivity().getPackageManager();
+//                final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+//                for (ResolveInfo res : listCam) {
+//                    final String packageName = res.activityInfo.packageName;
+//                    final Intent intent = new Intent(captureIntent);
+//                    intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+//                    intent.setPackage(packageName);
+//                    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+//                    cameraIntents.add(intent);
+//                }
+//
+//                //FileSystem
+//                final Intent galleryIntent = new Intent();
+//                galleryIntent.setType("image/");
+//                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+//
+//                // Chooser of filesystem options.
+//                final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+//                // Add the camera options.
+//                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
+//                startActivityForResult(chooserIntent, SELECT_PHOTO);
+//            }
+//        }
+//    }
+//
+//
+//
+//
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (resultCode == getActivity().RESULT_OK) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                getActivity().requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_READ_EXTERNAL_STORAGE);
+//            } else {
+//                if (requestCode == SELECT_PHOTO) {
+//                    final boolean isCamera;
+//
+//                    if (data == null) {
+//                        isCamera = true;
+//                    } else {
+//                        final String action = data.getAction();
+//                        if (action == null) {
+//                            isCamera = false;
+//                        } else {
+//                            isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+//                        }
+//                    }
+//
+//                    Uri selectedImageUri;
+//                    if (isCamera) {
+//
+//                        selectedImageUri = outputFileUri;
+//
+//                        if (currentImageView == imageProfile) {
+//                            picturePath = selectedImageUri.getPath();
+//                            Log.e("path :", "" + picturePath);
+//                            decodeFile(picturePath);
+//
+//                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+//                            alertDialogBuilder.setMessage("Do you want to upload the image");
+//                            alertDialogBuilder.setPositiveButton("Ok",
+//                                    new DialogInterface.OnClickListener() {
+//
+//                                        @Override
+//                                        public void onClick(DialogInterface arg0, int arg1) {
+//
+//                                            // Upload image to server
+//                                            progress = new ProgressDialog(getActivity());
+//                                            if (progress != null) {
+//                                                progress.setMessage("Uploading image ..Please Wait...");
+//                                                progress.setCancelable(false);
+//                                                progress.show();
+//                                            }
+//                                            new UploadImageTask(getActivity()) {
+//                                                @Override
+//                                                public void onPostExecute(String result) {
+//                                                    if (progress.isShowing()) {
+//                                                        progress.dismiss();
+//                                                        progress = null;
+//                                                    }
+//
+//                                                    imageProfile.setImageBitmap(bitmap);
+//                                                    if (result != null) {
+//
+//                                                        JSONObject json = null;
+//                                                        try {
+//                                                            json = new JSONObject(result);
+////                                                            photo = json.getString("photo");
+//                                                            photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+//
+//                                                            String link = json.getString("link");
+//                                                            SavePreferences(PROFILE_IMAGE, photo+link);
+//                                                            Log.e("photo :", "" + photo+link);
+//                                                        } catch (JSONException e) {
+//                                                            e.printStackTrace();
+//                                                        }
+//                                                    }
+//                                                }
+//                                            }.execute();
+//                                            Log.e("profile photo outside:", "" + photo);
+//
+//                                        }
+//
+//                                    });
+//
+//                            alertDialogBuilder.setNegativeButton("cancel",
+//                                    new DialogInterface.OnClickListener() {
+//
+//                                        @Override
+//                                        public void onClick(DialogInterface arg0, int arg1) {
+//
+//                                        }
+//                                    });
+//                            AlertDialog alertDialog = alertDialogBuilder.create();
+//                            alertDialog.show();
+//
+//                        }
+//
+//
+//                        if (currentImageView == imageCompany) {
+//                            picturePath = selectedImageUri.getPath();
+//                            Log.e("path :", "" + picturePath);
+//                            decodeFile(picturePath);
+//////            v.imageView.setImageDrawable(roundedImage);
+////                        currentImageView.setImageBitmap(bitmap);
+//                            // create an alert dialog box
+//                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+//                            alertDialogBuilder.setMessage("Do you want to upload the image");
+//                            alertDialogBuilder.setPositiveButton("Ok",
+//                                    new DialogInterface.OnClickListener() {
+//
+//                                        @Override
+//                                        public void onClick(DialogInterface arg0, int arg1) {
+//
+//
+//                                            // Upload image to server
+//                                            progress = new ProgressDialog(getActivity());
+//                                            if (progress != null) {
+//                                                progress.setMessage("Uploading Company image ..Please Wait...");
+//                                                progress.setCancelable(false);
+//                                                progress.show();
+//                                            }
+//                                            new UploadImageTask(getActivity()) {
+//                                                @Override
+//                                                public void onPostExecute(String result) {
+//                                                    if (progress.isShowing()) {
+//                                                        progress.dismiss();
+//                                                        progress = null;
+//                                                    }
+//                                                    imageCompany.setImageBitmap(bitmap);
+//
+//                                                    if (result != null) {
+//
+//                                                        JSONObject json = null;
+//                                                        try {
+//                                                            json = new JSONObject(result);
+////                                                            company_photo = json.getString("photo");
+//                                                            company_photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+//
+//                                                            String link = json.getString("link");
+//                                                            SavePreferences(COMPANY_IMAGE, company_photo+link);
+//                                                            Log.e("company_photo :", "" + company_photo+link);
+//                                                            Log.e("link :", "" + link);
+//                                                        } catch (JSONException e) {
+//                                                            e.printStackTrace();
+//                                                        }
+//                                                    }
+//                                                }
+//                                            }.execute();
+//
+//
+//                                        }
+//                                    });
+//
+//                            alertDialogBuilder.setNegativeButton("cancel",
+//                                    new DialogInterface.OnClickListener() {
+//
+//                                        @Override
+//                                        public void onClick(DialogInterface arg0, int arg1) {
+//
+//                                        }
+//                                    });
+//                            AlertDialog alertDialog = alertDialogBuilder.create();
+//                            alertDialog.show();
+//
+//                        }
+//
+//
+//                    } else {
+//                        Uri selectedImage = data.getData();
+//                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+//                        Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+//                                filePathColumn, null, null, null);
+//                        cursor.moveToFirst();
+//
+//                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+//
+//                        if (currentImageView == imageProfile) {
+//                            picturePath = cursor.getString(columnIndex);
+//                            cursor.close();
+//                            Log.e("path :", "" + picturePath);
+//                            decodeFile(picturePath);
+//                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+//                            alertDialogBuilder.setMessage("Do you want to upload the image");
+//                            alertDialogBuilder.setPositiveButton("Ok",
+//                                    new DialogInterface.OnClickListener() {
+//
+//                                        @Override
+//                                        public void onClick(DialogInterface arg0, int arg1) {
+//
+//
+//                                            // Upload image to server
+//                                            progress = new ProgressDialog(getActivity());
+//                                            if (progress != null) {
+//                                                progress.setMessage("Uploading profile image ..Please Wait...");
+//                                                progress.setCancelable(false);
+//                                                progress.show();
+//                                            }
+//                                            new UploadImageTask(getActivity()) {
+//                                                @Override
+//                                                public void onPostExecute(String result) {
+//                                                    if (progress.isShowing()) {
+//                                                        progress.dismiss();
+//                                                        progress = null;
+//                                                    }
+//                                                    imageProfile.setImageBitmap(bitmap);
+//
+//                                                    if (result != null) {
+//
+//                                                        JSONObject json = null;
+//                                                        try {
+//                                                            json = new JSONObject(result);
+//                                                            photo = json.getString("photo");
+//                                                            photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+//
+//                                                            String link = json.getString("link");
+//                                                            SavePreferences(PROFILE_IMAGE, photo+link);
+//                                                            Log.e("photo :", "" + photo+link);
+//                                                        } catch (JSONException e) {
+//                                                            e.printStackTrace();
+//                                                        }
+//                                                    }
+//                                                }
+//                                            }.execute();
+//                                            Log.e("profile photo outside:", "" + photo);
+//                                        }
+//                                    });
+//
+//                            alertDialogBuilder.setNegativeButton("cancel",
+//                                    new DialogInterface.OnClickListener() {
+//
+//                                        @Override
+//                                        public void onClick(DialogInterface arg0, int arg1) {
+//
+//                                        }
+//                                    });
+//                            AlertDialog alertDialog = alertDialogBuilder.create();
+//                            alertDialog.show();
+//
+//                        }
+//
+//                        if (currentImageView == imageCompany) {
+//                            picturePath = cursor.getString(columnIndex);
+//                            cursor.close();
+//                            Log.e("path :", "" + picturePath);
+//                            decodeFile(picturePath);
+//                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+//                            alertDialogBuilder.setMessage("Do you want to upload the image");
+//                            alertDialogBuilder.setPositiveButton("Ok",
+//                                    new DialogInterface.OnClickListener() {
+//
+//                                        @Override
+//                                        public void onClick(DialogInterface arg0, int arg1) {
+//
+//
+//                                            // Upload image to server
+//                                            progress = new ProgressDialog(getActivity());
+//                                            if (progress != null) {
+//                                                progress.setMessage("Uploading company image ..Please Wait...");
+//                                                progress.setCancelable(false);
+//                                                progress.show();
+//                                            }
+//                                            new UploadImageTask(getActivity()) {
+//                                                @Override
+//                                                public void onPostExecute(String result) {
+//                                                    if (progress.isShowing()) {
+//                                                        progress.dismiss();
+//                                                        progress = null;
+//                                                    }
+//                                                    imageCompany.setImageBitmap(bitmap);
+//
+//                                                    if (result != null) {
+//
+//                                                        JSONObject json = null;
+//                                                        try {
+//                                                            json = new JSONObject(result);
+//                                                            company_photo = json.getString("photo");
+//                                                            company_photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+//
+//                                                            String link = json.getString("link");
+//                                                            SavePreferences(COMPANY_IMAGE, company_photo+link);
+//                                                            Log.e("company_photo :", "" + company_photo+link);
+//                                                            Log.e("link :", "" + link);
+//                                                        } catch (JSONException e) {
+//                                                            e.printStackTrace();
+//                                                        }
+//                                                    }
+//                                                }
+//                                            }.execute();
+//
+//                                        }
+//                                    });
+//
+//                            alertDialogBuilder.setNegativeButton("cancel",
+//                                    new DialogInterface.OnClickListener() {
+//
+//                                        @Override
+//                                        public void onClick(DialogInterface arg0, int arg1) {
+//
+//                                        }
+//                                    });
+//                            AlertDialog alertDialog = alertDialogBuilder.create();
+//                            alertDialog.show();
+//
+//                        }
+//                    }
+//                } else if (resultCode == getActivity().RESULT_CANCELED) {
+//                    // user cancelled Image capture
+//                    Toast.makeText(getActivity(),
+//                            "User cancelled image capture", Toast.LENGTH_SHORT)
+//                            .show();
+//                } else {
+//                    // failed to capture image
+//                    Toast.makeText(getActivity(),
+//                            "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
+//                            .show();
+//                }
+//            }
+//        }
+//
+//    }
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_CAMERA) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission is granted
-                openImageIntent();
+                selectImageOption();
             } else {
                 Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
             }
@@ -713,7 +1003,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         if (requestCode == PERMISSIONS_WRITE_EXTERNAL_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission is granted
-                openImageIntent();
+                selectImageOption();
             } else {
                 Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
             }
@@ -721,7 +1011,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         if (requestCode == PERMISSIONS_READ_EXTERNAL_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission is granted
-                openImageIntent();
+                selectImageOption();
             } else {
                 Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
             }
@@ -761,14 +1051,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             //setting profile picture
             case R.id.profilePic:
                 currentImageView = (ImageView) v;
-                openImageIntent();
+                selectImageOption();
 
                 break;
 
             //setting company picture
             case R.id.btn_pick:
                 currentImageView = (ImageView) v;
-                openImageIntent();
+                selectImageOption();
 
                 break;
 

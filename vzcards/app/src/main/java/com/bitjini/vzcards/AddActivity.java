@@ -40,6 +40,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.support.v4.app.Fragment;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -135,6 +137,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     private int mday;
     Button done1,done2, cancel,choose;
     View iHave;
+
+    Animation animScale;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,7 +153,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         txtDescription = (EditText) iHave.findViewById(R.id.desc);
         txtDate_validity = (TextView) iHave.findViewById(R.id.validity);
         item_image = (ImageView) iHave.findViewById(R.id.item_img);
-
+        animScale = AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
         txtDescription.setMovementMethod(new ScrollingMovementMethod());
 
         item_image.setImageResource(R.drawable.no_pic_placeholder_full);
@@ -856,6 +860,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
             //setting company picture
             case R.id.imgbtn:
+                v.startAnimation(animScale);
                 item = txtItem.getText().toString();
                 description = txtDescription.getText().toString();
                 date_validity = txtDate_validity.getText().toString();

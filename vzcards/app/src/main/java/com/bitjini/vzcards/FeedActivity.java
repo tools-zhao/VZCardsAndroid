@@ -142,7 +142,7 @@ FrameLayout layout_MainMenu;
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
-        System.out.println(" getting token from sharedpreference " + token_sharedPreference);
+//        System.out.println(" getting token from sharedpreference " + token_sharedPreference);
 
 
         // check if you are connected or not
@@ -267,27 +267,11 @@ FrameLayout layout_MainMenu;
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
-//                if(itemCount==totalItemCount)
-//                {
-//                    swipeRefreshLayout.post(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-////                                                    swipeRefreshLayout.setRefreshing(true);
-//                                                    refreshContent();
-//
-//                                                }
-//                                            }
-//                    );
-//                }
+
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
-//                Log.e("visibleItemCount",""+visibleItemCount);
-//                Log.e("lastIndexInScreen",""+firstVisibleItem);
-//                Log.e("totalItemCount",""+totalItemCount);
-
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
-
 
                     // It is time to load more items
                     isLoading = true;
@@ -383,7 +367,6 @@ FrameLayout layout_MainMenu;
 //                    String vz_id = feed.getString("vz_id");
 
 
-                    Log.e("item photo link2:", "" + item_photo);
                     if (question == isNeeds) {
                         isNeeds = question;
                     }
