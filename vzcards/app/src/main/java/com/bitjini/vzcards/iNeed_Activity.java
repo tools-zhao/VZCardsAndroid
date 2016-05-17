@@ -365,6 +365,22 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
             }
         }
+        if (requestCode == PERMISSIONS_WRITE_EXTERNAL_STORAGE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                selectImageOption();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (requestCode == PERMISSIONS_READ_EXTERNAL_STORAGE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                selectImageOption();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 

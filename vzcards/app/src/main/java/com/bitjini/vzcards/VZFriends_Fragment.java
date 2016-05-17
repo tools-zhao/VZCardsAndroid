@@ -223,20 +223,6 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 //                Log.e("list:",""+sync.phoneList12);
                 for (SelectUser list:sync.phoneList12)
                 {
-//
-//                    String phoneNumber;
-//                    phoneNumber=list.getPhone().replaceAll("[\\D]", "");
-//                    phoneNumber=phoneNumber.replaceFirst("^0+(?!$)", "");
-//                    // get the country code
-//                    SyncContacts syncContacts=new SyncContacts(getActivity());
-//                    String countryCode = syncContacts.GetCountryZipCode();
-//
-//
-//                    if(phoneNumber.length()== 10)
-//                    {
-//                        phoneNumber=countryCode+phoneNumber;
-//
-//                    }
                     if(phone.contains(list.getPhone()))
                        {
                           selectUser.setfName(list.getName());
