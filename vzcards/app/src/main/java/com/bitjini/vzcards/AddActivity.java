@@ -151,6 +151,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         item_image = (ImageView) iHave.findViewById(R.id.item_img);
 
         txtDescription.setMovementMethod(new ScrollingMovementMethod());
+
         item_image.setImageResource(R.drawable.no_pic_placeholder_full);
         outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
 
@@ -763,7 +764,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             txtItem.setText("");
             txtDate_validity.setText("");
             txtDescription.setText("");
-            item_image.setImageResource(R.drawable.no_pic_placeholder);
+            item_image.setImageResource(R.drawable.no_pic_placeholder_full);
             bitmap = null;
             item_photo="";
             Item_picturePath="";

@@ -97,7 +97,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
-        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
+//        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
 
         // the refresh listner. this would be called when the layout is pulled down
@@ -121,24 +121,15 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
 
         // refresh contents
-        listView.setVisibility(View.GONE);
 
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.setProgress(0);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override public void run() {
-                showContacts();
-                getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-                listView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-                adapter = new VZFriends_Adapter(selectUsers,getActivity());
-                listView.setAdapter(adapter);
-                listView.setTextFilterEnabled(true);
-                filter = adapter.getFilter();
+        getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
 
-            }
-        }, 5000);
+        adapter = new VZFriends_Adapter(selectUsers,getActivity());
+        listView.setAdapter(adapter);
+        listView.setTextFilterEnabled(true);
+        filter = adapter.getFilter();
+
 
 
         setupSearchView();
@@ -228,25 +219,25 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                 SelectUser selectUser = new SelectUser();
 
-//                SyncContacts sync=new SyncContacts(getActivity());
-//                Log.e("list:",""+sync.phoneList);
-                for (SelectUser list:phoneList)
+                SyncContacts sync=new SyncContacts(getActivity());
+//                Log.e("list:",""+sync.phoneList12);
+                for (SelectUser list:sync.phoneList12)
                 {
-
-                    String phoneNumber;
-                    phoneNumber=list.getPhone().replaceAll("[\\D]", "");
-                    phoneNumber=phoneNumber.replaceFirst("^0+(?!$)", "");
-                    // get the country code
-                    SyncContacts syncContacts=new SyncContacts(getActivity());
-                    String countryCode = syncContacts.GetCountryZipCode();
-
-
-                    if(phoneNumber.length()== 10)
-                    {
-                        phoneNumber=countryCode+phoneNumber;
-
-                    }
-                    if(phone.contains(phoneNumber))
+//
+//                    String phoneNumber;
+//                    phoneNumber=list.getPhone().replaceAll("[\\D]", "");
+//                    phoneNumber=phoneNumber.replaceFirst("^0+(?!$)", "");
+//                    // get the country code
+//                    SyncContacts syncContacts=new SyncContacts(getActivity());
+//                    String countryCode = syncContacts.GetCountryZipCode();
+//
+//
+//                    if(phoneNumber.length()== 10)
+//                    {
+//                        phoneNumber=countryCode+phoneNumber;
+//
+//                    }
+                    if(phone.contains(list.getPhone()))
                        {
                           selectUser.setfName(list.getName());
                      }
@@ -286,76 +277,9 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         }
     }
 
-    public void showContacts() {
-        // Check the SDK version and whether the permission is already granted or not.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
-            //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
-        } else {
-
-                    phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-
-            LoadContact loadContact = new LoadContact();
-
-            loadContact.execute();
 
 
 
-        }
-    }
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission is granted
-                showContacts();
-            } else {
-                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    // Load data on background
-    class LoadContact extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            // Get Contact list from Phone
-
-            if (phones != null) {
-                Log.e("count", "" + phones.getCount());
-                if (phones.getCount() == 0) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            Toast t = Toast.makeText(getActivity(), "No contact lists", Toast.LENGTH_LONG);
-                            t.show();
-                        }
-                    });
-                }
-
-                while (phones.moveToNext()) {
-
-                    String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                    String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-
-                    SelectUser selectUser = new SelectUser();
-                    selectUser.setName(name);
-                    selectUser.setPhone(phoneNumber);
-                    phoneList.add(selectUser);
-
-                }
-            } else {
-                Log.e("Cursor close 1", "----------------");
-            }
-            //phones.close();
-            return null;
-        }
-    }
 
     public void onRefresh() {
         // TODO Auto-generated method stub

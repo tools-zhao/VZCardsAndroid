@@ -62,18 +62,17 @@
         android:layout_below="@+id/Layout1"
         android:divider="#97e6ecf2"
         android:dividerHeight="5.0sp"
-        android:visibility="gone"
         android:layout_above="@+id/l8"></ListView>
-        <ProgressBar
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:id="@+id/progress1"
-        android:layout_gravity="center"
-        android:indeterminateDrawable="@drawable/progress_animation"
-        android:max="500"
-        android:progress="0"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        <!--<ProgressBar-->
+        <!--android:layout_width="40dp"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:id="@+id/progress1"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:indeterminateDrawable="@drawable/progress_animation"-->
+        <!--android:max="500"-->
+        <!--android:progress="0"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_centerHorizontal="true" />-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"

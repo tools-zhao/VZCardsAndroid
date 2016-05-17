@@ -468,7 +468,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
             txtItem.setText("");
             txtDate_validity.setText("");
             txtDescription.setText("");
-            item_image.setImageResource(R.drawable.no_pic_placeholder);
+            item_image.setImageResource(R.drawable.no_pic_placeholder_full);
             bitmap = null;
             item_photo="";
             Item_picturePath="";
