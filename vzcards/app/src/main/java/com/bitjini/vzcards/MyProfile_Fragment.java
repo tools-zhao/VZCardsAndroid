@@ -111,7 +111,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public static String photo="",company_photo="";
     public Bitmap bitmap;
     public static String picturePath;
-    public String profilePicturePath,companyPicturePath;
+    public String profilePicturePath="",companyPicturePath="";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -285,81 +285,49 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                     SavePreferences(TASKS, json2);
                     if(profilePicturePath.length()!=0 || companyPicturePath.length()!=0) {
+                        if(profilePicturePath.length()!=0) {
+                            try {
+                                picturePath = profilePicturePath;
+                                String res = new UploadImageTask(getActivity()).execute().get();
+                                JSONObject json = new JSONObject(res);
+                                photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
 
-                        progressDialog1 = new ProgressDialog(getActivity());
-                        if (progressDialog1 != null) {
-                            progressDialog1.setMessage("Saving user details..");
-                            progressDialog1.setCancelable(false);
-                            progressDialog1.show();
-                        }
-                        picturePath=profilePicturePath;
-                        new UploadImageTask(getActivity()) {
-                            @Override
-                            public void onPostExecute(String result) {
-                                if (progressDialog1.isShowing()) {
-                                    progressDialog1.dismiss();
-                                    progressDialog1 = null;
-                                    profilePicturePath = "";
-                                    picturePath="";
-
-
-                                }
-                                if (result != null) {
-                                    JSONObject json = null;
-                                    try {
-                                        json = new JSONObject(result);
-                                        photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
-
-                                        String link = json.getString("link");
-                                        SavePreferences(PROFILE_IMAGE, photo + link);
-                                        Log.e("photo :", "" + photo + link);
-
-
-                                        progressDialog1 = new ProgressDialog(getActivity());
-                                        if (progressDialog1 != null) {
-                                            progressDialog1.setMessage("Saving user details..");
-                                            progressDialog1.setCancelable(false);
-                                            progressDialog1.show();
-
-                                        }
-                                        picturePath=companyPicturePath;
-                                        new UploadImageTask(getActivity()) {
-                                            @Override
-                                            public void onPostExecute(String result) {
-                                                if (progressDialog1.isShowing()) {
-                                                    progressDialog1.dismiss();
-                                                    progressDialog1 = null;
-                                                    companyPicturePath = "";
-                                                    picturePath="";
-                                                }
-                                                if (result != null) {
-                                                    JSONObject json = null;
-                                                    try {
-                                                        json = new JSONObject(result);
-//                                                            company_photo = json.getString("photo");
-                                                        company_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
-
-                                                        String link = json.getString("link");
-                                                        SavePreferences(COMPANY_IMAGE, company_photo + link);
-                                                        Log.e("company_photo :", "" + company_photo + link);
-                                                        Log.e("link :", "" + link);
-                                                        new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
-
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }
-                                        }.execute();
-
-                                        new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
-
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
+                                String link = json.getString("link");
+                                SavePreferences(PROFILE_IMAGE, photo + link);
+                                Log.e("photo :", "" + photo + link);
+                                new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+//
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        }.execute();
+                        }
+                        if(companyPicturePath.length()!=0) {
+                            try {
+                                picturePath = companyPicturePath;
+                                String res = new UploadImageTask(getActivity()).execute().get();
+                                JSONObject json = new JSONObject(res);
+                                json = new JSONObject(res);
+//                                                            company_photo = json.getString("photo");
+                                company_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+
+                                String link = json.getString("link");
+                                SavePreferences(COMPANY_IMAGE, company_photo + link);
+                                Log.e("company_photo :", "" + company_photo + link);
+                                Log.e("link :", "" + link);
+                                new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+//
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
                     }
                     else {
