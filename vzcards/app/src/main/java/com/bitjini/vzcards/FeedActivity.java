@@ -305,7 +305,7 @@ FrameLayout layout_MainMenu;
 
                 listView.setVisibility(View.GONE);
 
-                swipeRefreshLayout.setRefreshing(true);
+//                swipeRefreshLayout.setRefreshing(true);
                 showContacts();
 
                 refreshContent();
@@ -721,6 +721,7 @@ FrameLayout layout_MainMenu;
             if (Integer.parseInt(data.getQuestion()) == 0) {
                 holder.question.setBackgroundResource(R.drawable.addimage);
                 holder.question.setText("has");
+                holder.question.setTextSize(14);
                 holder.viewLine.setBackgroundColor(Color.parseColor("#add58a"));
                 holder.referButtonGreen.setTag(position);
                 holder.referButtonGreen.setId(position);

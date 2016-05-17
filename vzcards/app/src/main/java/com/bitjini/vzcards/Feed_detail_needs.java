@@ -69,7 +69,7 @@ public class Feed_detail_needs extends Activity implements View.OnClickListener 
 //            new DownloadImagesTask(getActivity()).execute(item_photo);
         } else
         {
-            item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+            item_photo.setImageResource(R.drawable.no_pic_placeholder_full);
         }
 
         if(!photo.isEmpty())

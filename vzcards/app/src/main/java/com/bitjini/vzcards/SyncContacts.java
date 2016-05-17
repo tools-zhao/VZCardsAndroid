@@ -57,6 +57,7 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class SyncContacts extends AsyncTask<String, Void, String> {
     ArrayList<String > phoneArray=new ArrayList<>();
+    ArrayList<SelectUser> phoneList=new ArrayList<>();
 
     public ProgressDialog progress;
     public Cursor phones;
@@ -214,6 +215,8 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                 }
 
                 while (phones.moveToNext()) {
+                    String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
                     String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
                     phoneNumber=phoneNumber.replaceAll("[\\D]", "");
@@ -229,6 +232,11 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
                     phoneArray.add(phoneNumber);
 
+
+//                    SelectUser selectUser = new SelectUser();
+//                    selectUser.setName(name);
+//                    selectUser.setPhone(phoneNumber);
+//                    phoneList.add(selectUser);
 
                 }
             } else {

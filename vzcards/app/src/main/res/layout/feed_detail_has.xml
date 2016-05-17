@@ -60,8 +60,8 @@
         </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:background="#c3877980"
+        android:layout_height="190dp"
+        android:background="#7a877980"
         android:orientation="vertical"
         android:id="@+id/l2"
         android:layout_below="@+id/l1"
@@ -98,7 +98,7 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:gravity="center_horizontal"
@@ -109,7 +109,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter your Description"
+            android:minLines="1"
+            android:scrollbars = "vertical"
+            android:maxLines = "10"
             android:paddingTop="5dp"
+            android:maxHeight="140dp"
             android:paddingBottom="5dp"
             android:scrollbarAlwaysDrawVerticalTrack="true"
             android:id="@+id/description"

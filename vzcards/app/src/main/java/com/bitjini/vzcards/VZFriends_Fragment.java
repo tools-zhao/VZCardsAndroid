@@ -129,7 +129,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         new Handler().postDelayed(new Runnable() {
             @Override public void run() {
                 showContacts();
-                   getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+                getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
                 listView.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
                 adapter = new VZFriends_Adapter(selectUsers,getActivity());
@@ -137,9 +137,9 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 listView.setTextFilterEnabled(true);
                 filter = adapter.getFilter();
 
-
             }
         }, 5000);
+
 
         setupSearchView();
 
@@ -228,10 +228,13 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                 SelectUser selectUser = new SelectUser();
 
-                for (SelectUser s:phoneList)
+//                SyncContacts sync=new SyncContacts(getActivity());
+//                Log.e("list:",""+sync.phoneList);
+                for (SelectUser list:phoneList)
                 {
+
                     String phoneNumber;
-                    phoneNumber=s.getPhone().replaceAll("[\\D]", "");
+                    phoneNumber=list.getPhone().replaceAll("[\\D]", "");
                     phoneNumber=phoneNumber.replaceFirst("^0+(?!$)", "");
                     // get the country code
                     SyncContacts syncContacts=new SyncContacts(getActivity());
@@ -245,7 +248,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                     }
                     if(phone.contains(phoneNumber))
                        {
-                          selectUser.setfName(s.getName());
+                          selectUser.setfName(list.getName());
                      }
 
                 }
@@ -289,6 +292,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
         } else {
+
                     phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
             LoadContact loadContact = new LoadContact();
@@ -348,7 +352,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             } else {
                 Log.e("Cursor close 1", "----------------");
             }
-            phones.close();
+            //phones.close();
             return null;
         }
     }

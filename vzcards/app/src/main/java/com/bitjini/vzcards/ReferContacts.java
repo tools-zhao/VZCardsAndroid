@@ -19,6 +19,7 @@ import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,15 +40,14 @@ import java.util.ArrayList;
 public class ReferContacts extends Fragment implements SearchView.OnQueryTextListener {
 
     // ArrayList
-    ArrayList<SelectUser> phoneList = null;
+    ArrayList<SelectUser> phoneList = new ArrayList<>();
 
     // Contact List
     ListView listView;
     // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
-    Context context=null;
-    Activity _activity;
+    Context context;
     // Cursor to load contacts list
     Cursor phones=null, email;
     SearchView mSearchView;
@@ -140,6 +140,18 @@ return refer_contact;
                         e.printStackTrace();
                     }
 
+                    phoneNumber=phoneNumber.replaceAll("[\\D]", "");
+                    phoneNumber=phoneNumber.replaceFirst("^0+(?!$)", "");
+                    // get the country code
+
+                    String countryCode = GetCountryZipCode();
+
+
+                    if(phoneNumber.length()== 10)
+                    {
+                        phoneNumber=countryCode+phoneNumber;
+
+                    }
                     SelectUser selectUser = new SelectUser();
                     selectUser.setThumb(bit_thumb);
                     selectUser.setName(name);
@@ -150,7 +162,7 @@ return refer_contact;
             } else {
                 Log.e("Cursor close 1", "----------------");
             }
-            //phones.close();
+            phones.close();
             return null;
         }
 
@@ -225,7 +237,23 @@ return refer_contact;
 
         }
     }
+    public String GetCountryZipCode(){
+        String CountryID="";
+        String CountryZipCode="";
 
+        TelephonyManager manager = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        CountryID= manager.getSimCountryIso().toUpperCase();
+        String[] rl=getActivity().getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<rl.length;i++){
+            String[] g=rl[i].split(",");
+            if(g[1].trim().equals(CountryID.trim())){
+                CountryZipCode=g[0];
+                break;
+            }
+        }
+        return CountryZipCode;
+    }
     private void setupSearchView() {
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setOnQueryTextListener(this);
