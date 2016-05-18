@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -240,6 +241,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                     // Getting JSON Array node
                     JSONArray arr = jsonObject.getJSONArray("response");
 
+            Log.e("referrals",""+response);
                     // looping through All Contacts
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject c = arr.getJSONObject(i);
@@ -339,7 +341,8 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                             referalUsers.setDesc(description);
                             referalUsers.setItemName(itemName);
                             referalUsers.setItem_photo(item_photo);
-
+                            referalUsers.setRefQuestion(question);
+                            Log.e("ref question ",""+question);
                             // Connector details
                             referalUsers.setFname(fname);
                             referalUsers.setLname(lastname);
@@ -464,8 +467,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             TextView itemName = (TextView) v.findViewById(R.id.itemName);
             ImageView referredPhoto = (ImageView) v.findViewById(R.id.referdPhoto);
             ImageView photo = (ImageView) v.findViewById(R.id.photo);
-
-
+            View viewLine = (View) v.findViewById(R.id.viewLine);
             ReferalUsers cat = itemList.get(position);
 
             name.setText(cat.getFname() + " " + cat.getLname());
@@ -492,7 +494,14 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 } else {
                     referredPhoto.setImageResource(R.drawable.profile_pic_placeholder);
                 }
+                if (Integer.parseInt(cat.getRefQuestion()) == 1) {
 
+                    viewLine.setBackgroundColor(Color.parseColor("#f27166"));
+                }
+                if (Integer.parseInt(cat.getRefQuestion()) == 0) {
+
+                    viewLine.setBackgroundColor(Color.parseColor("#add58a"));
+                }
             } catch (ArrayIndexOutOfBoundsException ae) {
                 ae.printStackTrace();
 

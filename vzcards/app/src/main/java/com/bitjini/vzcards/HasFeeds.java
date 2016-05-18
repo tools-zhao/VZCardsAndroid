@@ -386,7 +386,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
 
                     holder.question.setBackgroundResource(R.drawable.addimage);
-                    holder.question.setText("has");
+                    holder.question.setText("Has");
                     holder.viewLine.setBackgroundColor(Color.parseColor("#add58a"));
 
                 }
@@ -448,7 +448,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             // check if it is needs change the color to red
             if (Integer.parseInt(dataFeeds_Has.getIsHas()) ==0) {
                 viewLine.setBackgroundColor(Color.parseColor("#add58a"));
-                question.setText("has");
+                question.setText("Has");
                 question.setBackgroundResource(R.drawable.addimage);
             }
 
@@ -464,7 +464,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             Log.e("questionHas",""+dataFeeds_Needs.getIsNeeds());
             if (Integer.parseInt(dataFeeds_Needs.getIsNeeds()) == 1) {
                 viewLine2.setBackgroundColor(Color.parseColor("#f27166"));
-                question2.setText("needs");
+                question2.setText("Need");
                 question2.setBackgroundResource(R.drawable.addimage_red);
             }
             name2.setText(dataFeeds_Needs.getFname());

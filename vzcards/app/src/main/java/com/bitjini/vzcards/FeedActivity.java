@@ -651,7 +651,7 @@ FrameLayout layout_MainMenu;
 
             if (Integer.parseInt(data.getQuestion()) == 1) {
                 holder.question.setBackgroundResource(R.drawable.addimage_red);
-                holder.question.setText("needs");
+                holder.question.setText("Need");
                 holder.viewLine.setBackgroundColor(Color.parseColor("#f27166"));
                 holder.referButtonRed.setTag(position);
                 holder.referButtonRed.setId(position);
@@ -703,7 +703,7 @@ FrameLayout layout_MainMenu;
 
             if (Integer.parseInt(data.getQuestion()) == 0) {
                 holder.question.setBackgroundResource(R.drawable.addimage);
-                holder.question.setText("has");
+                holder.question.setText("Has");
                 holder.question.setTextSize(14);
                 holder.viewLine.setBackgroundColor(Color.parseColor("#add58a"));
                 holder.referButtonGreen.setTag(position);
@@ -820,7 +820,7 @@ FrameLayout layout_MainMenu;
             // check if it is needs change the color to red
             if (Integer.parseInt(dataFeeds1.getIsNeeds()) == 1) {
                 viewLine.setBackgroundColor(Color.parseColor("#f27166"));
-                question.setText("needs");
+                question.setText("Need");
                 question.setBackgroundResource(R.drawable.addimage_red);
             }
 
@@ -858,7 +858,7 @@ FrameLayout layout_MainMenu;
             // check if it is has change the color to green
             if (Integer.parseInt(dataFeeds2.getIsHas()) == 0) {
                 viewLine2.setBackgroundColor(Color.parseColor("#add58a"));
-                question2.setText("has");
+                question2.setText("Has");
                 question2.setBackgroundResource(R.drawable.addimage);
             }
 

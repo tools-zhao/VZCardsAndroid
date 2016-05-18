@@ -38,7 +38,7 @@
         android:layout_height="match_parent"
         android:id="@+id/referralList"
         android:layout_below="@+id/Layout1"
-        android:divider="#97e6ecf2"
+        android:divider="#43c1d9f2"
         android:focusable="false"
         android:dividerHeight="5.0sp"
         android:layout_above="@+id/l8"
