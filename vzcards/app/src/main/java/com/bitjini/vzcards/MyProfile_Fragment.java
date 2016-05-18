@@ -295,8 +295,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                 String link = json.getString("link");
                                 SavePreferences(PROFILE_IMAGE, photo + link);
                                 Log.e("photo :", "" + photo + link);
-                                new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
-//
+
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             } catch (ExecutionException e) {
@@ -318,8 +317,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                 SavePreferences(COMPANY_IMAGE, company_photo + link);
                                 Log.e("company_photo :", "" + company_photo + link);
                                 Log.e("link :", "" + link);
-                                new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
-//
+
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             } catch (ExecutionException e) {
@@ -328,7 +326,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                 e.printStackTrace();
                             }
                         }
-
+                        new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+//
                     }
                     else {
                         new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
@@ -420,10 +419,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                             File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
-                            final String fname = "img_" + System.currentTimeMillis() + ".jpg";
-                          final File sdImageMainDirectory = new File(f, fname);
-//                           outputFileUri = Uri.fromFile(sdImageMainDirectory);
-                            mImageCaptureUri = Uri.fromFile(sdImageMainDirectory);
+                            mImageCaptureUri = Uri.fromFile(f);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
                             startActivityForResult(intent, CAMERA_CODE);
 

@@ -224,7 +224,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                         if (image_thumb != null) {
                             bit_thumb = MediaStore.Images.Media.getBitmap(resolver, Uri.parse(image_thumb));
                         } else {
-                            Log.e("No Image Thumb", "--------------");
+//                            Log.e("No Image Thumb", "--------------");
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
