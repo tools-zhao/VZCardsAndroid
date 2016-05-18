@@ -467,6 +467,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
             if (Integer.parseInt(dataFeeds_Has.getIsHas()) == 0) {
                 viewLine2.setBackgroundColor(Color.parseColor("#add58a"));
                 question2.setText("Has");
+
                 question2.setBackgroundResource(R.drawable.addimage);
             }
             name2.setText(dataFeeds_Has.getFname());

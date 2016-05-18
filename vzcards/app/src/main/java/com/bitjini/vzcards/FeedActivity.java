@@ -704,7 +704,7 @@ FrameLayout layout_MainMenu;
             if (Integer.parseInt(data.getQuestion()) == 0) {
                 holder.question.setBackgroundResource(R.drawable.addimage);
                 holder.question.setText("Has");
-                holder.question.setTextSize(14);
+                holder.question.setTextSize(10);
                 holder.viewLine.setBackgroundColor(Color.parseColor("#add58a"));
                 holder.referButtonGreen.setTag(position);
                 holder.referButtonGreen.setId(position);
