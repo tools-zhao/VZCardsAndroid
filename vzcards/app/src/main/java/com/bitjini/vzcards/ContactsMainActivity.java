@@ -171,7 +171,7 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
             adapter.notifyDataSetChanged();
             listView.setAdapter(adapter);
             listView.setTextFilterEnabled(true);
-           // place your adapter to a separate filter to remove pop up text
+//            place your adapter to a separate filter to remove pop up text
            filter = adapter.getFilter();
             setupSearchView();
 

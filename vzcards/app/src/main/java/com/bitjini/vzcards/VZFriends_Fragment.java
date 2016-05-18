@@ -339,11 +339,13 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     public boolean onQueryTextChange(String newText)
     {
 
-        if (TextUtils.isEmpty(newText)) {
-            listView.clearTextFilter();
-        } else {
-            listView.setFilterText(newText);
-        }
+//        if (TextUtils.isEmpty(newText)) {
+//            listView.clearTextFilter();
+//        } else {
+//            listView.setFilterText(newText);
+//        }
+        filter.filter(newText);
+
         return true;
     }
 

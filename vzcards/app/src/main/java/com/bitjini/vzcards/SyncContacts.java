@@ -68,7 +68,6 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
    Activity _activity;
     // Pop up
-    ContentResolver resolver;
 
     Context context;
 
@@ -195,6 +194,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         @Override
         protected Void doInBackground(Void... voids) {
 
+            ContentResolver resolver=context.getContentResolver();
 
             phones =context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
@@ -215,10 +215,20 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                 }
 
                 while (phones.moveToNext()) {
+                    Bitmap bit_thumb = null;
                     String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-
                     String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    String image_thumb = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
 
+                    try {
+                        if (image_thumb != null) {
+                            bit_thumb = MediaStore.Images.Media.getBitmap(resolver, Uri.parse(image_thumb));
+                        } else {
+                            Log.e("No Image Thumb", "--------------");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     phoneNumber=phoneNumber.replaceAll("[\\D]", "");
                     phoneNumber=phoneNumber.replaceFirst("^0+(?!$)", "");
                     // get the country code
@@ -234,6 +244,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
 
                     SelectUser selectUser = new SelectUser();
+                    selectUser.setThumb(bit_thumb);
                     selectUser.setName(name);
                     selectUser.setPhone(phoneNumber);
                     phoneList12.add(selectUser);
