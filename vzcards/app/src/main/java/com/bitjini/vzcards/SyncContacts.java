@@ -247,8 +247,24 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                     selectUser.setThumb(bit_thumb);
                     selectUser.setName(name);
                     selectUser.setPhone(phoneNumber);
-                    phoneList12.add(selectUser);
+                    int flag = 0;
+                    if(phoneList12.size() == 0){
+                        phoneList12.add(selectUser);
+                    }
+                    for(int i=0;i<phoneList12.size();i++){
 
+                        if(!phoneList12.get(i).getPhone().trim().equals(phoneNumber)){
+                            flag = 1;
+
+                        }else{
+                            flag =0;
+                            break;
+                        }
+
+                    }
+                    if(flag == 1){
+                        phoneList12.add(selectUser);
+                    }
 
 
                 }
@@ -256,7 +272,6 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             } else {
 //                Log.e("Cursor close 1", "----------------");
             }
-//            Log.e("Cursor close 1", "----------------"+phoneList12);
             return null;
         }
 
