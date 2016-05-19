@@ -17,6 +17,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -50,6 +51,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,6 +83,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
     public ProgressDialog progress;
 
+    Bitmap bitmapBackground=null;
     LinearLayout linearLayout1;
     ListView listView;
     EditTextAdapter editTextAdapter;
@@ -147,8 +150,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
 
         if(!photo.isEmpty()) {
-            Picasso.with(getApplicationContext()).load(photo).resize(180, 180).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
-
+            Picasso.with(getApplicationContext()).load(photo).resize(180, 180).placeholder(R.drawable.profile_pic_placeholder).into(target);
 //            imageProfile.setTag(photo);
 //            new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
         }
@@ -160,9 +162,9 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         }
 
 //
-//        Bitmap blurredBitmap = BlurBuilder.blur( getActivity(), originalBitmap );
-//
-//        view.setBackgroundDrawable( new BitmapDrawable( getResources(), blurredBitmap ) );
+        if(bitmapBackground!=null) {
+
+        }
         textViewName.setText(firstname);
         values = new ArrayList<String>();
         values.add(firstname);
@@ -192,7 +194,27 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
     }
 
+    private Target target = new Target() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            imageProfile.setImageBitmap(bitmap);
 
+            Bitmap blurredBitmap = BlurBuilder.blur(getApplicationContext(), bitmap);
+
+            linearLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), blurredBitmap));
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable drawable) {
+
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable drawable) {
+
+        }
+
+    };
 
     public void decodeFile(String filePath) {
         // First decode with inJustDecodeBounds=true to check dimensions

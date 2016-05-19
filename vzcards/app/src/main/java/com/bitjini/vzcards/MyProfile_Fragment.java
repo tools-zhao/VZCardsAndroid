@@ -13,6 +13,8 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -41,6 +44,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -103,6 +107,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     ArrayList<ListItem> adapterArrayList = new ArrayList<ListItem>();
     public ArrayList<ListItem> groupItem = new ArrayList<ListItem>();
 
+    LinearLayout linearLayout;
     VerifyScreen p = new VerifyScreen();
     Bitmap bm = null;
     String json, json2;
@@ -117,6 +122,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                              Bundle savedInstanceState) {
 
         profile = inflater.inflate(R.layout.profile_layout, container, false);
+        linearLayout=(LinearLayout)profile. findViewById(R.id.l2);
 
         editbtn = (Button) profile.findViewById(R.id.edit);
         listView = (ListView) profile.findViewById(R.id.profileList);
@@ -207,7 +213,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         if(!photo.isEmpty()) {
 
-            Picasso.with(getActivity()).load(photo).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+            Picasso.with(getActivity()).load(photo).placeholder(R.drawable.profile_pic_placeholder).into(target);
 //            if(PROFILE_IMAGE.length()==0) {
             SavePreferences(PROFILE_IMAGE, photo);
 //            }
@@ -378,8 +384,28 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     }
 
+    private Target target = new Target() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            imageProfile.setImageBitmap(bitmap);
 
-    // To retrive saved values in shared preference Now convert the JSON string back to your java object
+            Bitmap blurredBitmap = BlurBuilder.blur(getActivity(), bitmap);
+
+            linearLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), blurredBitmap));
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable drawable) {
+
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable drawable) {
+
+        }
+    };
+
+        // To retrive saved values in shared preference Now convert the JSON string back to your java object
 
     protected void LoadPreferences() {
 
