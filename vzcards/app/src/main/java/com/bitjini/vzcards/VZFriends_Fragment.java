@@ -93,11 +93,12 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     int totalPage=0;
     boolean isLoading=false;
 
+    int progressCount;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
-//        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
+        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
 
         // the refresh listner. this would be called when the layout is pulled down
@@ -122,8 +123,27 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
         // refresh contents
 
+        if(progressCount==0) {
+            listView.setVisibility(View.GONE);
+            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration(1000); //in milliseconds
+            animation.setRepeatCount(5);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
 
-        getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+//            refresh contents
+            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+
+            progressBar.clearAnimation();
+
+            progressBar.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
+        else {
+//            refresh contents
+            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+
+        }
 
         adapter = new VZFriends_Adapter(selectUsers,getActivity());
         listView.setAdapter(adapter);
@@ -187,13 +207,12 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
     public void getVzFrnds(String url)
     {
+        try {
+            progressCount=1;
 
-//            String received=new HttpAsyncTask(getActivity()).execute(url).get();
+            String received=new HttpAsyncTask(getActivity()).execute(url).get();
 
-            new HttpAsyncTask(getActivity()){
-                @Override
-                public void onPostExecute(String received){
-                    try{
+
                     JSONObject jsonObject = new JSONObject(received);
                     countOfFrnds=jsonObject.getInt("count");
                     Log.e("count of frnds",""+countOfFrnds);
@@ -260,11 +279,13 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }
-                }
-            }.execute(url);
-
+                } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
+
 
 
 
@@ -489,14 +510,14 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             }
             v = new ViewHolder();
             v.fname = (TextView) view.findViewById(R.id.name);
-
+            v.company=(TextView) view.findViewById(R.id.companyName);
             v.phone = (TextView) view.findViewById(R.id.number);
             v.imageView = (ImageView) view.findViewById(R.id.contactImage);
 
             final SelectUser data = (SelectUser) arrayList.get(i);
             v.fname.setText(data.getfName());
-
-            v.phone.setText(data.getSyncPhone());
+            v.company.setText(data.getCompany());
+//            v.phone.setText(data.getSyncPhone());
 
             //set Image if exxists
             try {
@@ -568,7 +589,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
         class ViewHolder {
             ImageView imageView;
-            TextView fname, phone;
+            TextView fname, phone, company;
         }
 
 

@@ -55,6 +55,7 @@
                         android:textColor="#ffffff"
                         android:layout_gravity="center"
                         android:text="Name"
+                        android:textStyle="bold"
                         android:layout_marginBottom="2dp"
                         android:textSize="20sp"
                         android:id="@id/name"
@@ -66,19 +67,18 @@
                     <com.bitjini.vzcards.RoundedImageView
                         android:layout_width="50dp"
                         android:layout_height="60dp"
-                        android:src="@drawable/phone"
-                        android:background="@drawable/drawable2"
+                        android:src="@drawable/call_btn"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="15dp"
                         android:id="@+id/btn_call"
-                        android:layout_marginTop="40dp"
-                        android:layout_marginBottom="20dp"/>
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentStart="true" />
 
                     <com.bitjini.vzcards.RoundedImageView
                         android:layout_width="200dp"
                         android:layout_height="fill_parent"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginLeft="20dp"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_toEndOf="@+id/btn_call"
@@ -89,14 +89,13 @@
                     <com.bitjini.vzcards.RoundedImageView
                         android:layout_width="50dp"
                         android:layout_height="60dp"
-                        android:layout_toEndOf="@+id/profilePic"
                         android:src="@drawable/com_logo"
                         android:layout_gravity="center"
                         android:layout_marginLeft="20dp"
                         android:id="@+id/btn_pick"
-                        android:layout_marginTop="40dp"
-                        android:layout_marginBottom="20dp"
-                        android:layout_marginRight="20dp"/>
+                        android:layout_marginRight="20dp"
+                        android:layout_alignTop="@+id/btn_call"
+                        android:layout_alignParentEnd="true" />
 
                     </RelativeLayout>
                 </LinearLayout>
