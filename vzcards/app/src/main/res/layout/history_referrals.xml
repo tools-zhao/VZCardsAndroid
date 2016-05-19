@@ -113,6 +113,16 @@
                     android:src="@drawable/profile_pic_placeholder"/>
 
             </LinearLayout>
+
             </LinearLayout>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:id="@+id/viewLine2"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@+id/linearLayout1"
+            android:background="#f27166"></View>
         </LinearLayout>
     </RelativeLayout>

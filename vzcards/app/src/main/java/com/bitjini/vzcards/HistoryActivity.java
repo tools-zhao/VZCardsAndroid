@@ -122,19 +122,35 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 //                Toast.makeText(getActivity(),"you clicked :"+position,Toast.LENGTH_LONG).show();
-
+                SelectUser data = (SelectUser) arrayList.get(position);
                 int height = 0;
                 View toolbar=(View) view.findViewById(R.id.toolbar);
+                View viewline=(View)view.findViewById(R.id.viewLine);
+
                 if (toolbar.getVisibility() == View.VISIBLE) {
                     MyCustomAnimation a = new MyCustomAnimation(toolbar, 500, MyCustomAnimation.COLLAPSE);
 
                     toolbar.startAnimation(a);
                     toolbar.setClickable(true);
+
+                    if (Integer.parseInt(data.getQuestion()) == 1) {
+
+                        viewline.setBackgroundColor(Color.parseColor("#f27166"));
+
+                    }
+                    if (Integer.parseInt(data.getQuestion()) == 0) {
+
+                        viewline.setBackgroundColor(Color.parseColor("#add58a"));
+
+                    }
+
                 } else {
                     MyCustomAnimation a = new MyCustomAnimation(toolbar, 500, MyCustomAnimation.EXPAND);
                     a.setHeight(height);
                     toolbar.startAnimation(a);
                     toolbar.setClickable(true);
+
+                    viewline.setBackgroundColor(Color.parseColor("#771d1e10"));
                 }
             }
         });
@@ -391,6 +407,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             v.txtDate = (TextView) view.findViewById(R.id.days);
             v.txtcount=(TextView) view.findViewById(R.id.refCount);
             v.btnRemove=(Button) view.findViewById(R.id.remove);
+            v.tickImage=(ImageView)view.findViewById(R.id.tick);
 
             v.viewLine=(View)view.findViewById(R.id.viewLine);
             v.item_photo = (ImageView) view.findViewById(R.id.feedImage);
@@ -498,6 +515,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             if (data.getConnections().length()==0) {
 //                Log.e("data.getConnection :",""+data.getConnections().length());
             }else{
+                v.tickImage.setImageResource(R.drawable.tickxx);
                 try {
                 JSONArray array = data.getConnections();
                 for (int i2 = 0; i2 < array.length(); i2++) {
@@ -546,11 +564,13 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     String lastname = connecter_details.getString("lastname");
                     String photo = connecter_details.getString("photo");
 
+                    String question=data.getQuestion();
                     SelectUser userConnectorDetails = new SelectUser();
                     userConnectorDetails.setfName(fname);
                     userConnectorDetails.setLname(lastname);
                     userConnectorDetails.setPhoto(photo);
 
+                    userConnectorDetails.setQuestion(question);
                     userConnectorDetails.setReferredFname(referedFname);
                     userConnectorDetails.setReferredLname(referedLname);
                     userConnectorDetails.setReferredPhoto(referedphoto);
@@ -591,7 +611,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 
         class ViewHolder {
-            ImageView item_photo;
+            ImageView item_photo,tickImage;
             TextView txtItem, txtDescription, txtDate ,txtcount;
             Button btnRemove;
             View viewLine;
@@ -640,6 +660,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 TextView itemName = (TextView) v.findViewById(R.id.itemName);
                 ImageView referredPhoto = (ImageView) v.findViewById(R.id.referdPhoto);
                 ImageView photo = (ImageView) v.findViewById(R.id.photo);
+                View viewline2=(View)v.findViewById(R.id.viewLine2);
 
 
                 SelectUser cat = itemList.get(position);
@@ -651,6 +672,16 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 name.setText(cat.getfName() + " " + cat.getLname());
                 referredName.setText(cat.getReferredFname() + " " + cat.getReferredLname());
 
+                if (Integer.parseInt(cat.getQuestion()) == 1) {
+
+                    viewline2.setBackgroundColor(Color.parseColor("#f27166"));
+
+                }
+                if (Integer.parseInt(cat.getQuestion()) == 0) {
+
+                    viewline2.setBackgroundColor(Color.parseColor("#add58a"));
+
+                }
                 try {
                     if (!cat.getPhoto().isEmpty()) {
 //                        photo.setTag(cat.getPhoto());

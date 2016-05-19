@@ -33,7 +33,7 @@
             android:adjustViewBounds="true"
             android:background="@drawable/no_pic_placeholder_with_border_800x800"/>
         />
-  <LinearLayout
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical">
@@ -47,32 +47,46 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="5dp"
                 android:textSize="17sp" />
-            <TextView
+
+
+
+      <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/days"
+                android:layout_below="@+id/itemName"
                 android:text="days"
                 android:layout_marginLeft="5dp"
                 android:textColor="#ff4960ff"/>
-      <RelativeLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical">
+
             <TextView
                 android:layout_width="150dp"
                 android:layout_height="20dp"
                 android:textSize="12sp"
                 android:text="Decription"
+                android:layout_below="@+id/days"
                 android:layout_marginLeft="5dp"
                 android:id="@+id/desc"
                 android:layout_marginTop="5dp"
                 />
+      <ImageView
+          android:layout_width="10dp"
+          android:layout_height="10dp"
+          android:id="@+id/tick"
+          android:layout_alignParentRight="true"
+          android:layout_toEndOf="@+id/days"
+          android:layout_gravity="right"
+          android:layout_marginTop="15dp"
+          android:layout_marginLeft="50dp"
+
+          android:layout_alignStart="@+id/remove" />
           <TextView
               android:layout_width="120dp"
               android:layout_height="15dp"
               android:layout_below="@+id/desc"
               android:layout_marginLeft="5dp"
               android:layout_marginTop="2dp"
+              android:text="0 referral"
               android:id="@+id/refCount"
               />
              <Button
@@ -81,17 +95,18 @@
                 android:textColor="#771d1e10"
                  android:layout_toRightOf="@+id/desc"
                  android:layout_alignParentRight="true"
-                 android:layout_marginTop="10dp"
+                 android:layout_marginTop="55dp"
                 android:textAllCaps="false"
                  android:layout_marginLeft="15dp"
                  android:id="@+id/remove"
+                 android:layout_toEndOf="@+id/refCount"
                  android:layout_marginRight="10dp"
                  android:layout_marginBottom="5dp"
                 android:shadowColor="#771d1e10"
                 android:background="@drawable/drawable_refer"
                 android:text="Remove"/>
         </RelativeLayout>
-  </LinearLayout>
+
     </LinearLayout>
     <View
         android:layout_width="fill_parent"
