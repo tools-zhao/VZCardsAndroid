@@ -16,6 +16,7 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -80,6 +81,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
     public ProgressDialog progress;
 
+    LinearLayout linearLayout1;
     ListView listView;
     EditTextAdapter editTextAdapter;
 
@@ -146,6 +148,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
         if(!photo.isEmpty()) {
             Picasso.with(getApplicationContext()).load(photo).resize(180, 180).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+
 //            imageProfile.setTag(photo);
 //            new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
         }
@@ -156,8 +159,11 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
         }
 
-
-        textViewName.setText(firstname+ " "+lastname);
+//
+//        Bitmap blurredBitmap = BlurBuilder.blur( getActivity(), originalBitmap );
+//
+//        view.setBackgroundDrawable( new BitmapDrawable( getResources(), blurredBitmap ) );
+        textViewName.setText(firstname);
         values = new ArrayList<String>();
         values.add(firstname);
         values.add(lastname);

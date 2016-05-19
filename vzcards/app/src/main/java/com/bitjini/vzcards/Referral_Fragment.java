@@ -463,6 +463,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 v = inflater.inflate(R.layout.referral, null);
             }
             TextView name = (TextView) v.findViewById(R.id.referralName);
+            TextView ref = (TextView) v.findViewById(R.id.ref);
             TextView referredName = (TextView) v.findViewById(R.id.referred);
             TextView itemName = (TextView) v.findViewById(R.id.itemName);
             ImageView referredPhoto = (ImageView) v.findViewById(R.id.referdPhoto);
@@ -475,7 +476,9 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             referredName.setText(cat.getReferredfName() + " " + cat.getReferredlName());
 //            Log.e("referred fname in item=",""+cat.getReferredfName());
 
-            itemName.setText("for " + cat.getItemName());
+
+
+            itemName.setText("For "+"\"" + cat.getItemName()+ "\"");
             try {
                 if (!cat.getPhoto().isEmpty()) {
 //                    photo.setTag(cat.getPhoto());
@@ -497,10 +500,12 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 if (Integer.parseInt(cat.getRefQuestion()) == 1) {
 
                     viewLine.setBackgroundColor(Color.parseColor("#f27166"));
+                    ref.setBackgroundResource(R.drawable.addimage_red);
                 }
                 if (Integer.parseInt(cat.getRefQuestion()) == 0) {
 
                     viewLine.setBackgroundColor(Color.parseColor("#add58a"));
+                    ref.setBackgroundResource(R.drawable.addimage);
                 }
             } catch (ArrayIndexOutOfBoundsException ae) {
                 ae.printStackTrace();
