@@ -498,6 +498,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                 profilePicturePath = outPutFile.getPath();
                                 Log.e("profilePicturePath :", "" + profilePicturePath);
                                 imageProfile.setImageBitmap(photo);
+                                Bitmap blurredBitmap = BlurBuilder.blur(getActivity(), photo);
+
+                                linearLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), blurredBitmap));
                             } else {
                                 Toast.makeText(getActivity(), "Error while save image", Toast.LENGTH_SHORT).show();
                             }

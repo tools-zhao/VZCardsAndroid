@@ -187,80 +187,83 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
     public void getVzFrnds(String url)
     {
-        try{
-            String received=new HttpAsyncTask(getActivity()).execute(url).get();
 
-            JSONObject jsonObject = new JSONObject(received);
-            countOfFrnds=jsonObject.getInt("count");
-            Log.e("count of frnds",""+countOfFrnds);
-            String response = jsonObject.getString("response");
+//            String received=new HttpAsyncTask(getActivity()).execute(url).get();
 
-            // Getting JSON Array node
-            JSONArray arr = jsonObject.getJSONArray("response");
+            new HttpAsyncTask(getActivity()){
+                @Override
+                public void onPostExecute(String received){
+                    try{
+                    JSONObject jsonObject = new JSONObject(received);
+                    countOfFrnds=jsonObject.getInt("count");
+                    Log.e("count of frnds",""+countOfFrnds);
+                    String response = jsonObject.getString("response");
 
-            // looping through All Contacts
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject c = arr.getJSONObject(i);
-                // Feed node is JSON Object
-                String phone = c.getString("phone");
+                    // Getting JSON Array node
+                    JSONArray arr = jsonObject.getJSONArray("response");
+
+                    // looping through All Contacts
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject c = arr.getJSONObject(i);
+                        // Feed node is JSON Object
+                        String phone = c.getString("phone");
 //                String firstname = c.getString("firstname");
 //                String lastname = c.getString("lastname");
-                String photo = c.getString("photo");
+                        String photo = c.getString("photo");
 
-                String company = c.getString("company");
-                String pin_code = c.getString("pin_code");
-                String industry = c.getString("industry");
-                String address1 = c.getString("address_line_1");
-                String address2 = c.getString("address_line_2");
-                String city = c.getString("city");
-                String company_photo = c.getString("company_photo");
-                String email = c.getString("email");
+                        String company = c.getString("company");
+                        String pin_code = c.getString("pin_code");
+                        String industry = c.getString("industry");
+                        String address1 = c.getString("address_line_1");
+                        String address2 = c.getString("address_line_2");
+                        String city = c.getString("city");
+                        String company_photo = c.getString("company_photo");
+                        String email = c.getString("email");
 
 
-                SelectUser selectUser = new SelectUser();
+                        SelectUser selectUser = new SelectUser();
 
-                SyncContacts sync=new SyncContacts(getActivity());
+                        SyncContacts sync=new SyncContacts(getActivity());
 //                Log.e("list:",""+sync.phoneList12);
-                for (SelectUser list:sync.phoneList12)
-                {
-                    if(phone.contains(list.getPhone()))
-                       {
-                          selectUser.setfName(list.getName());
-                     }
+                        for (SelectUser list:sync.phoneList12)
+                        {
+                            if(phone.contains(list.getPhone()))
+                            {
+                                selectUser.setfName(list.getName());
+                            }
 
-                }
-
-
-                selectUser.setSyncPhone(phone);
-                selectUser.setPhoto(photo);
-                selectUser.setEmail(email);
-                selectUser.setCompany(company);
-                selectUser.setPin_code(pin_code);
-                selectUser.setIndustry(industry);
-                selectUser.setAddress1(address1);
-                selectUser.setAddress2(address2);
-                selectUser.setCity(city);
-                selectUser.setComany_photo(company_photo);
+                        }
 
 
-                selectUsers.add(selectUser);
+                        selectUser.setSyncPhone(phone);
+                        selectUser.setPhoto(photo);
+                        selectUser.setEmail(email);
+                        selectUser.setCompany(company);
+                        selectUser.setPin_code(pin_code);
+                        selectUser.setIndustry(industry);
+                        selectUser.setAddress1(address1);
+                        selectUser.setAddress2(address2);
+                        selectUser.setCity(city);
+                        selectUser.setComany_photo(company_photo);
+
+
+                        selectUsers.add(selectUser);
 
 
 
 
-            }
+                    }
 
 
 //            Log.e(" received :", "" + response);
 
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                }
+            }.execute(url);
+
     }
 
 
