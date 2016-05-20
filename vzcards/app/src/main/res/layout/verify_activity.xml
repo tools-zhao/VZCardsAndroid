@@ -28,7 +28,7 @@
             android:layout_height="30dp"
             android:id="@+id/initial"
             android:layout_marginTop="30dp"
-            android:background="#81a3d4"
+            android:background="@color/colorPrimary"
             android:layout_marginLeft="70dp"
             android:text="91"
             android:textAllCaps="true"
