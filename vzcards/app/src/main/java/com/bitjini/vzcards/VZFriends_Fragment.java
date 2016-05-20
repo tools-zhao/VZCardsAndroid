@@ -122,31 +122,34 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
 
         // refresh contents
+//
+//        if(progressCount==0) {
+//            listView.setVisibility(View.GONE);
+//            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+//            animation.setDuration(1000); //in milliseconds
+//            animation.setRepeatCount(5);
+//            animation.setInterpolator(new DecelerateInterpolator());
+//            animation.start();
+//
+////            refresh contents
+//            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+//
+//            progressBar.clearAnimation();
+//
+//            progressBar.setVisibility(View.GONE);
+//            listView.setVisibility(View.VISIBLE);
+//        }
+//        else {
+////            refresh contents
+//            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+//
+//        }
 
-        if(progressCount==0) {
-            listView.setVisibility(View.GONE);
-            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-            animation.setDuration(1000); //in milliseconds
-            animation.setRepeatCount(5);
-            animation.setInterpolator(new DecelerateInterpolator());
-            animation.start();
-
-//            refresh contents
+        if(getActivity()!=null) {
             getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-
-            progressBar.clearAnimation();
-
-            progressBar.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
+            adapter = new VZFriends_Adapter(selectUsers, getActivity());
+            listView.setAdapter(adapter);
         }
-        else {
-//            refresh contents
-            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-
-        }
-
-        adapter = new VZFriends_Adapter(selectUsers,getActivity());
-        listView.setAdapter(adapter);
         listView.setTextFilterEnabled(true);
         filter = adapter.getFilter();
 
@@ -309,9 +312,11 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 countOfFrnds=0;
                 isLoading = false;
                 getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-                adapter = new VZFriends_Adapter(selectUsers,getActivity());
-                listView.setAdapter(adapter);
-                filter = adapter.getFilter();
+                if(getActivity()!=null) {
+                    adapter = new VZFriends_Adapter(selectUsers, getActivity());
+                    listView.setAdapter(adapter);
+                    filter = adapter.getFilter();
+                }
                 //do processing to get new data and set your listview's adapter, maybe  reinitialise the loaders you may be using or so
                 //when your data has finished loading, set the refresh state of the view to false
                 swipeRefreshLayout.setRefreshing(false);

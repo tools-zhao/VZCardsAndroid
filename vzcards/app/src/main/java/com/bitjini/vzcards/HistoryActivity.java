@@ -114,9 +114,11 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 
         getHistoryContents(HISTORY_URL + p.token_sharedPreference);
-        adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
+        if(getActivity()!=null) {
+            adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
-        listView.setAdapter(adapter);
+            listView.setAdapter(adapter);
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -297,10 +299,13 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 getHistoryContents(HISTORY_URL + p.token_sharedPreference);
 
 
-                adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
+                if(getActivity()!=null) {
+                    adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
-                listView.setAdapter(adapter);
-                listView.setVisibility(View.VISIBLE);
+                    listView.setAdapter(adapter);
+
+                    listView.setVisibility(View.VISIBLE);
+                }
                 //do processing to get new data and set your listview's adapter, maybe  reinitialise the loaders you may be using or so
                 //when your data has finished loading, set the refresh state of the view to false
                 swipeRefreshLayout.setRefreshing(false);
@@ -593,9 +598,10 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 ListView list = (ListView) view.findViewById(R.id.referralList);
 
 //                Log.e("arraylist :", "" + connectorDetails);
-
-              childAdapter = new MyClassAdapter(getActivity(), connectorDetails,R.layout.history_referrals);
-                list.setAdapter(childAdapter);
+                if(getActivity()!=null) {
+                    childAdapter = new MyClassAdapter(getActivity(), connectorDetails, R.layout.history_referrals);
+                    list.setAdapter(childAdapter);
+                }
                 Utility.setListViewHeightBasedOnChildren(list);
                 toolbar.setVisibility(View.GONE);
 

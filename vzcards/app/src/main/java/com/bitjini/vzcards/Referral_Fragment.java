@@ -114,14 +114,17 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 //        {
 //            list.setVisibility(View.VISIBLE);
 //            // refresh contents
-            getReferalContents(HISTORY_URL + p.token_sharedPreference);
+
 ////        }
 //
 //
 //
 //
-        listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
-        list.setAdapter(listAdapter);
+        if(getActivity()!=null) {
+            getReferalContents(HISTORY_URL + p.token_sharedPreference);
+            listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+            list.setAdapter(listAdapter);
+        }
 
         // Creating an item click listener, to open/close our toolbar for each item
 
@@ -409,8 +412,10 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 countOfFeeds=0;
                 isLoading = false;
                 getReferalContents(HISTORY_URL + p.token_sharedPreference);
-                CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
-                list.setAdapter(listAdapter);
+                if(getActivity()!=null) {
+                    CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+                    list.setAdapter(listAdapter);
+                }
 
                 //do processing to get new data and set your listview's adapter, maybe  reinitialise the loaders you may be using or so
                 //when your data has finished loading, set the refresh state of the view to false

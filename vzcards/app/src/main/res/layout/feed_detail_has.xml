@@ -11,6 +11,7 @@
 <RelativeLayout
      android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:splitMotionEvents="false"
     >
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"

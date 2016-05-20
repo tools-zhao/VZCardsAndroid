@@ -108,12 +108,14 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+
         vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
 
-        getFeedsContents(URL_GETLIST + token_sharedPreference);
-        adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
-        listView.setAdapter(adapter);
+        getFeedsContents(URL_GETLIST + p.token_sharedPreference);
+        if(getActivity()!=null) {
+            adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
+            listView.setAdapter(adapter);
+        }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -300,9 +302,10 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
                 countOfFeeds=0;
                 isLoading = false;
                 getFeedsContents(URL_GETLIST + token_sharedPreference );
-                adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
-                listView.setAdapter(adapter);
-
+                if(getActivity()!=null) {
+                    adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
+                    listView.setAdapter(adapter);
+                }
                 Log.e("feed size aft refresh",""+feedsArrayList.size());
                 swipeRefreshLayout.setRefreshing(false);
             }
@@ -562,7 +565,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         }
 
     }
-    private class HttpPostClass extends AsyncTask<String, Void, String> {
+    public class HttpPostClass extends AsyncTask<String, Void, String> {
 
         Context context;
 

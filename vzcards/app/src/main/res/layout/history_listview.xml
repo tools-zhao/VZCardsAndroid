@@ -65,7 +65,7 @@
         android:layout_gravity="bottom|right"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="15dp"
-        android:elevation="16dp"
+        android:elevation="4dp"
         />
 
 

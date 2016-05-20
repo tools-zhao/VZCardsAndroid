@@ -109,9 +109,10 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
        vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
 
         getFeedsContents(URL_GETLIST + token_sharedPreference);
-        adapter = new NeedFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
-        listView.setAdapter(adapter);
-
+        if(getActivity()!=null) {
+            adapter = new NeedFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
+            listView.setAdapter(adapter);
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -304,8 +305,10 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
                 countOfFeeds=0;
                 isLoading = false;
                 getFeedsContents(URL_GETLIST + token_sharedPreference );
-                adapter = new NeedFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
-                listView.setAdapter(adapter);
+                if(getActivity()!=null) {
+                    adapter = new NeedFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
+                    listView.setAdapter(adapter);
+                }
 
                 Log.e("feed size aft refresh",""+feedsArrayList.size());
                 swipeRefreshLayout.setRefreshing(false);

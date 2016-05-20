@@ -171,9 +171,10 @@ FrameLayout layout_MainMenu;
             // refresh contents
             getFeedsContents(URL_GETLIST + token_sharedPreference);
 
-
-        adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+        if(getActivity()!=null) {
+            adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
             listView.setAdapter(adapter);
+        }
 
 
 
@@ -455,8 +456,10 @@ FrameLayout layout_MainMenu;
                 isLoading = false;
                 getFeedsContents(URL_GETLIST + token_sharedPreference );
                 listView.setVisibility(View.VISIBLE);
-                adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
-                listView.setAdapter(adapter);
+                if(getActivity()!=null) {
+                    adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+                    listView.setAdapter(adapter);
+                }
 
                 Log.e("feed size aft refresh",""+feedsArrayList.size());
                 swipeRefreshLayout.setRefreshing(false);

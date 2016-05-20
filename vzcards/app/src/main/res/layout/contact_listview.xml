@@ -71,6 +71,7 @@
         android:indeterminateDrawable="@drawable/progress_animation"
         android:max="500"
         android:progress="0"
+            android:visibility="gone"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
     <LinearLayout
