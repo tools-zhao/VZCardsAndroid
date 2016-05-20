@@ -54,6 +54,16 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,6 +79,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -77,6 +88,7 @@ import java.util.concurrent.ExecutionException;
 public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
 
     VerifyScreen p=new VerifyScreen();
     String URL_GETLIST="http://vzcards-api.herokuapp.com/get_list/?access_token=";
@@ -88,7 +100,8 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
     String token_sharedPreference,vz_id;
     // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
-
+    String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
+    private ProgressDialog progress;
     ListView listView;
     public FeedsAdapter adapter;
     ViewHolder holder;
@@ -883,23 +896,24 @@ FrameLayout layout_MainMenu;
                 @Override
                 public void onClick(View view) {
                       // get the data from objects
-                    String ticket_id_1= dataFeeds1.getTicket_id();
-                    String ticket_id_2=dataFeeds2.getTicket_id();
-                    String phone1=dataFeeds1.getPhone();
-                    String phone2=dataFeeds2.getPhone();
-                    String connector_vz_id=dataFeeds1.getVz_id();
+                    ticket_id_1= dataFeeds1.getTicket_id();
+                    ticket_id_2=dataFeeds2.getTicket_id();
+                        phone_1=dataFeeds1.getPhone();
+                     phone_2=dataFeeds2.getPhone();
+                     connecter_vz_id=dataFeeds1.getVz_id();
 
                     // send data to Connect_2_Tickets
-                    Connect_2_Tickets connect = new Connect_2_Tickets();
+                    HttpPostClass connect = new HttpPostClass();
+                    connect.execute(URL_CONNECT + token_sharedPreference);
 
 
-                    Intent intent=new Intent(getActivity(),Connect_2_Tickets.class);
-                    intent.putExtra("ticket_id_1", ticket_id_1);
-                    intent.putExtra("phone1", phone1);
-                    intent.putExtra("connector_vz_id", connector_vz_id);
-                    intent.putExtra("phone2", phone2);
-                    intent.putExtra("ticket_id_2", ticket_id_2);
-                    startActivity(intent);
+//                    Intent intent=new Intent(getActivity(),Connect_2_Tickets.class);
+//                    intent.putExtra("ticket_id_1", ticket_id_1);
+//                    intent.putExtra("phone1", phone1);
+//                    intent.putExtra("connector_vz_id", connector_vz_id);
+//                    intent.putExtra("phone2", phone2);
+//                    intent.putExtra("ticket_id_2", ticket_id_2);
+//                    startActivity(intent);
 
                     pwindo.dismiss();
 
@@ -916,6 +930,93 @@ FrameLayout layout_MainMenu;
             e.printStackTrace();
         }
 
+    }
+    private class HttpPostClass extends AsyncTask<String, Void, String> {
+
+        Context context;
+
+
+        protected void onPreExecute() {
+            progress = new ProgressDialog(getActivity());
+            progress.setMessage("Connecting please wait....");
+            progress.show();
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            // params comes from the execute() call: params[0] is the url.
+            try {
+                return downloadUrl(urls[0]);
+            } catch (IOException e) {
+                return "Unable to download the requested page.";
+            }
+        }
+
+        private String downloadUrl(String urlString) throws IOException {
+            String response = null;
+            try {
+//                final TextView outputView = (TextView) findViewById(R.id.content);
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+
+                HttpClient client = new DefaultHttpClient();
+
+                HttpPost post = new HttpPost(urlString);
+
+                List<NameValuePair> params1 = new ArrayList<NameValuePair>();
+                params1.add(new BasicNameValuePair("connecter_vz_id", connecter_vz_id));
+                params1.add(new BasicNameValuePair("phone_1", phone_1));
+                params1.add(new BasicNameValuePair("ticket_id_1", ticket_id_1));
+                params1.add(new BasicNameValuePair("phone_2", phone_2));
+                params1.add(new BasicNameValuePair("ticket_id_2", ticket_id_2));
+                params1.add(new BasicNameValuePair("my_ticket", my_ticket));
+                params1.add(new BasicNameValuePair("reffered_ticket", reffered_ticket));
+                params1.add(new BasicNameValuePair("reffered_phone", reffered_phone));
+
+
+                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
+                post.setEntity(ent);
+                HttpResponse responsePOST = client.execute(post);
+                HttpEntity resEntity = responsePOST.getEntity();
+
+                if (resEntity != null) {
+                    response = EntityUtils.toString(resEntity);
+                    Log.i("RESPONSE", response);
+
+                }
+                StringBuilder sb = new StringBuilder();
+                try {
+                    BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
+                    String line = null;
+
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                System.out.println("finalResult " + sb.toString());
+                return sb.toString();
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+            progress.dismiss();
+            Toast.makeText(getActivity(), "Connected tickets", Toast.LENGTH_LONG).show();
+
+        }
     }
 
 
