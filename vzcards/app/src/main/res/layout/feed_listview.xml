@@ -36,11 +36,10 @@
         <!--android:gravity="center"-->
         <!--android:text="empty"-->
         <!--android:visibility="gone" />-->
-    <com.bitjini.vzcards.RoundedImageView
+    <ImageView
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:id="@+id/progress"
-        android:background="@drawable/ripple_effect"
         android:src="@drawable/refresh_btn"
         android:layout_gravity="bottom|right"
         android:layout_marginRight="15dp"

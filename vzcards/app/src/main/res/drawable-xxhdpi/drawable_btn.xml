@@ -2,16 +2,15 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
     <shape>
-        <solid android:color="#90cacaca" />
+        <!--<solid android:color="@color/prompt" />-->
 
         <stroke
             android:width="2dp"
-            android:color="#90cacaca" />
+            android:color="@color/prompt" />
 
         <corners
-            android:radius="10dp"
             android:bottomLeftRadius="1dp"
-            android:bottomRightRadius="0dp"
+            android:bottomRightRadius="15dp"
             android:topLeftRadius="1dp"
             android:topRightRadius="1dp" />
     </shape>

@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -241,6 +242,7 @@ public class VerifyScreen extends Activity {
                 CustomDialogClass cdd = new CustomDialogClass(VerifyScreen.this);
                 cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 cdd.setCanceledOnTouchOutside(false);
+            cdd.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 cdd.show();
 
         }

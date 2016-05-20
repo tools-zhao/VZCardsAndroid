@@ -104,14 +104,14 @@ FrameLayout layout_MainMenu;
     View footer;
     DataFeeds dataFeeds2 = new DataFeeds();
     DataFeeds dataFeeds1 = new DataFeeds();
-    RoundedImageView progressContainer;
+    ImageView progressContainer;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
         progressBar = (ProgressBar)feed.findViewById(R.id.progress1);
-        progressContainer = (RoundedImageView) feed.findViewById(R.id.progress);
+        progressContainer = (ImageView) feed.findViewById(R.id.progress);
 
         swipeRefreshLayout = (SwipeRefreshLayout) feed.findViewById(R.id.pullToRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);

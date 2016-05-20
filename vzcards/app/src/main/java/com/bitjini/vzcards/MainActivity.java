@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 //        progressBar = (ProgressBar)findViewById(R.id.progress1);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
-
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
          tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
 

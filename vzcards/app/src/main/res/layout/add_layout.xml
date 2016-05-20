@@ -50,7 +50,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="170dp"
             android:background="#7a877980"
             android:orientation="vertical"
             android:id="@+id/l1"
@@ -72,7 +72,7 @@
             android:id="@+id/addImage"
             android:layout_gravity="right"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="140dp"
             android:text="+AddImage"
             android:layout_alignParentRight="true"
             android:textAllCaps="false"
@@ -200,7 +200,7 @@
             android:src="@drawable/vzc_have_post_btn"
             android:layout_gravity="center"
             android:id="@+id/imgbtn"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:layout_below="@+id/l4"
             android:layout_centerHorizontal="true" />
 

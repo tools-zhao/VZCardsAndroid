@@ -133,12 +133,15 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
 
-
         textViewName = (TextView) profile.findViewById(R.id.name);
         //Picking Profile picture
         imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
         imageCompany = (ImageView) profile.findViewById(R.id.btn_pick);
-
+//        Bitmap icon = BitmapFactory.decodeResource(getActivity().getResources(),
+//                R.drawable.profile_pic_placeholder);
+//        Bitmap blurredBitmap = BlurBuilder.blur(getActivity(), icon);
+//
+//        linearLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), blurredBitmap));
         //image listeners
         imageCompany.setOnClickListener(this);
         imageProfile.setOnClickListener(this);
