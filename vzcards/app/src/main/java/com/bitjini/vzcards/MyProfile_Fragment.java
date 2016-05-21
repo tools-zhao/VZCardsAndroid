@@ -179,9 +179,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
         try {
+            String receivedData = null;
+            if(getActivity()!=null) {
 
-            String receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference).get();//cal to get profile data
-
+                 receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference).get();//cal to get profile data
+            }
             //Profile details
             if(receivedData!=null) {
                 JSONObject jsonObj = new JSONObject(receivedData);

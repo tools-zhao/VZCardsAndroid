@@ -411,8 +411,9 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 totalPage=0;
                 countOfFeeds=0;
                 isLoading = false;
-                getReferalContents(HISTORY_URL + p.token_sharedPreference);
                 if(getActivity()!=null) {
+                getReferalContents(HISTORY_URL + p.token_sharedPreference);
+
                     CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
                     list.setAdapter(listAdapter);
                 }

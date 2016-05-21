@@ -27,6 +27,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -570,7 +571,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
     }
 
-    public void onClick(View v) {
+    public void onClick(final View v) {
         switch (v.getId()) {
 
             //setting profile picture
@@ -588,11 +589,14 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
                 if( item.length()==0 || description.length()==0 || date_validity.length()==0)
                 {
-                    Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT).show();
+                    Toast toast = Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
 
                 }
                 else {
-
+                    Log.e("item_photo :", "" + Item_picturePath);
+                    Log.e("task item=",""+Item_picturePath +""+ Item_picturePath.length());
 
                     if (Item_picturePath.length() != 0) {
                         progressDialog = new ProgressDialog(getActivity());
@@ -621,6 +625,8 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                                         Log.e("link :", "" + link);
 
                                         new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+
+                                        v.clearAnimation();
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -637,9 +643,11 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                                     public void onClick(DialogInterface arg0, int arg1) {
 
                                         new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+
+                                        v.clearAnimation();
                                     }
                                 });
-                        alertDialogBuilder.setNegativeButton("cancel",
+                        alertDialogBuilder.setNegativeButton("No",
                                 new DialogInterface.OnClickListener() {
 
                                     @Override

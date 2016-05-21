@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:color="#add58a"
     tools:targetApi="lollipop">
+    <!--tools:targetApi="lollipop">-->
+    <!--android:color="#add58a"-->
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
             <solid android:color="#add58a"/>

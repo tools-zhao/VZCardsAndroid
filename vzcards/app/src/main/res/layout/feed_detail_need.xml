@@ -126,7 +126,6 @@
         android:layout_above="@+id/refer_contact"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_marginBottom="10dp"/>
     <Button
         android:layout_width="match_parent"
@@ -138,7 +137,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
         android:textColor="#f27166"
-        style="?android:attr/borderlessButtonStyle"
         android:id="@+id/refer_contact"/>
 
 

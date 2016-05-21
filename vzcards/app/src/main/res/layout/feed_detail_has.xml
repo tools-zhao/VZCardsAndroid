@@ -126,7 +126,6 @@
         android:text="Refer Tickets"
         android:background="@drawable/ripple_effect"
         android:textColor="#add58a"
-        style="?android:attr/borderlessButtonStyle"
          android:shadowColor="#ffff"
         android:id="@+id/refer_vzfrnd"
         android:layout_marginBottom="10dp"
@@ -142,7 +141,6 @@
         android:layout_marginRight="25dp"
         android:layout_alignParentBottom="true"
         android:textColor="#add58a"
-        style="?android:attr/borderlessButtonStyle"
         android:shadowColor="@color/white"
         android:layout_marginBottom="10dp"
         android:id="@+id/refer_contact"/>

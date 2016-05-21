@@ -36,7 +36,8 @@
   <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="vertical">
+      android:orientation="vertical"
+      android:layout_marginBottom="3dp">
             <TextView
                 android:layout_width="120dp"
                 android:layout_height="25dp"
@@ -87,6 +88,7 @@
               android:layout_marginLeft="5dp"
               android:layout_marginTop="2dp"
               android:text="0 referral"
+              android:layout_marginBottom="2dp"
               android:id="@+id/refCount"
               />
              <Button

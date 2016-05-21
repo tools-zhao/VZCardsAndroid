@@ -110,9 +110,9 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
 
         vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
-
-        getFeedsContents(URL_GETLIST + p.token_sharedPreference);
         if(getActivity()!=null) {
+        getFeedsContents(URL_GETLIST + p.token_sharedPreference);
+
             adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
             listView.setAdapter(adapter);
         }
@@ -301,8 +301,9 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
                 totalPage=0;
                 countOfFeeds=0;
                 isLoading = false;
-                getFeedsContents(URL_GETLIST + token_sharedPreference );
                 if(getActivity()!=null) {
+                getFeedsContents(URL_GETLIST + token_sharedPreference );
+
                     adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
                     listView.setAdapter(adapter);
                 }

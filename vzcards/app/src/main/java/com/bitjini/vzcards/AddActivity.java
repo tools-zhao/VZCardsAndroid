@@ -1,6 +1,8 @@
 package com.bitjini.vzcards;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -34,6 +36,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -125,7 +128,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     EditText txtItem, txtDescription;
     TextView txtDate_validity;
     ImageButton submit;
-    public static String Item_picturePath;
+    public static String Item_picturePath="";
     public String item_photo="", item="", description="", date_validity="", question = "";
     public ProgressDialog progress = null,progressDialog;
     public Bitmap output, bitmap;
@@ -678,7 +681,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
 
     }
-    public void onClick(View v) {
+    public void onClick(final View v) {
         switch (v.getId()) {
 
             //setting profile picture
@@ -689,6 +692,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             //setting company picture
             case R.id.imgbtn:
                 v.startAnimation(animScale);
+
                 item = txtItem.getText().toString();
                 description = txtDescription.getText().toString();
                 date_validity = txtDate_validity.getText().toString();
@@ -700,15 +704,17 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 {
                     Log.e("item=",""+item +""+ item.length());
 
-                    Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT).show();
+                    Toast toast = Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+
 
                 }
                 else {
-                    Log.e("item_photo :", "" + item_photo);
-                    Log.e("task item=",""+item +""+ item.length());
-                    Log.e("task item=",""+item +""+ item.length());
+                    Log.e("item_photo :", "" + Item_picturePath);
+                    Log.e("task item=",""+Item_picturePath +""+ Item_picturePath.length());
 
-                    if(Item_picturePath.length()!=0) {
+                    if (Item_picturePath.length() != 0) {
                         progressDialog = new ProgressDialog(getActivity());
                         if (progressDialog != null) {
                             progressDialog.setMessage("Collecting Data Please Wait...");
@@ -735,6 +741,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                         Log.e("link :", "" + link);
 
                                         new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+
+                                        v.clearAnimation();
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -752,6 +760,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                     public void onClick(DialogInterface arg0, int arg1) {
 
                                         new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+
+                                        v.clearAnimation();
                                     }
                                 });
                                         alertDialogBuilder.setNegativeButton("cancel",
@@ -769,9 +779,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
 
 
-
-
                                 }
+
                 break;
 //            case R.id.click:
 //                showDatePickerDialog(v);

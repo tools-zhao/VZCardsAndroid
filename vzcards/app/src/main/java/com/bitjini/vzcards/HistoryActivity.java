@@ -112,9 +112,9 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             Toast.makeText(getActivity(),"Check your Network Connectivity",Toast.LENGTH_LONG).show();
         }
 
-
-        getHistoryContents(HISTORY_URL + p.token_sharedPreference);
         if(getActivity()!=null) {
+        getHistoryContents(HISTORY_URL + p.token_sharedPreference);
+
             adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
             listView.setAdapter(adapter);
@@ -296,10 +296,11 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 totalPage=0;
                 countOfFeeds=0;
                 isLoading = false;
-                getHistoryContents(HISTORY_URL + p.token_sharedPreference);
 
 
                 if(getActivity()!=null) {
+                    getHistoryContents(HISTORY_URL + p.token_sharedPreference);
+
                     adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
                     listView.setAdapter(adapter);

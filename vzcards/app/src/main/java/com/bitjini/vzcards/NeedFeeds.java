@@ -107,9 +107,9 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
        vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
-
-        getFeedsContents(URL_GETLIST + token_sharedPreference);
         if(getActivity()!=null) {
+        getFeedsContents(URL_GETLIST + token_sharedPreference);
+
             adapter = new NeedFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
             listView.setAdapter(adapter);
         }
@@ -304,8 +304,9 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
                 totalPage=0;
                 countOfFeeds=0;
                 isLoading = false;
-                getFeedsContents(URL_GETLIST + token_sharedPreference );
                 if(getActivity()!=null) {
+                getFeedsContents(URL_GETLIST + token_sharedPreference );
+
                     adapter = new NeedFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
                     listView.setAdapter(adapter);
                 }
