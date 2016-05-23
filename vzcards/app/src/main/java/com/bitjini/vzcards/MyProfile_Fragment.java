@@ -111,7 +111,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     LinearLayout linearLayout;
     VerifyScreen p = new VerifyScreen();
     Bitmap bm = null;
-    String json, json2;
+    String json, json2,json3;
     public   String  firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "",
             city, pin_code = "";
     public static String photo="",company_photo="";
@@ -292,15 +292,22 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 } else if (clickCount == 1) {
 
                     editbtn.setText("Edit");
-
+                    cancelBtn.setVisibility(View.GONE);
                     imageCompany.setClickable(false);
                     imageProfile.setClickable(false);
 
                     editTextAdapter.actv(false);
                     json2 = new Gson().toJson(groupItem);// updated array
 
+                    data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
+                    json3=data.getString(TASKS, null);
+                    Log.e("json2",""+json2);
+                    Log.e("json3",""+json3);
+
                     SavePreferences(TASKS, json2);
-                    if(adapterArrayList!=groupItem) {
+                    assert json3 != null;
+                    if(json3.equals(json2)) {
+                    }else {
                         if (profilePicturePath.length() != 0 || companyPicturePath.length() != 0) {
                             if (profilePicturePath.length() != 0) {
                                 try {
