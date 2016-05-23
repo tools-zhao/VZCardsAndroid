@@ -61,7 +61,16 @@ public class Feed_detail_needs extends Activity implements View.OnClickListener 
         description.setText(desc);
         name.setText(profileName);
 
-
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentapiVersion >= android.os.Build.VERSION_CODES.LOLLIPOP){
+            // Do something for lollipop and above versions
+            referVZbtn.setBackgroundResource(R.drawable.ripple_effect_red);
+            referContactbtn.setBackgroundResource(R.drawable.ripple_effect_red);
+        } else{
+            // do something for phones running an SDK before lollipop
+            referVZbtn.setBackgroundResource(R.drawable.drawable_refer_red);
+            referContactbtn.setBackgroundResource(R.drawable.drawable_refer_red);
+        }
         if(!itemPic.isEmpty())
         {
             Picasso.with(getApplicationContext()).load(itemPic).into(item_photo);

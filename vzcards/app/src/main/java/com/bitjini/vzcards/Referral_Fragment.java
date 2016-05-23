@@ -125,7 +125,8 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
             list.setAdapter(listAdapter);
         }
-
+        // on configuration changes (screen rotation) we want fragment member variables to preserved
+        setRetainInstance(true);
         // Creating an item click listener, to open/close our toolbar for each item
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

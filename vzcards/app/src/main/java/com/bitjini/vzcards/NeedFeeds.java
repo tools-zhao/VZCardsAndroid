@@ -116,53 +116,59 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                                DataFeeds dataFeeds = feeds.get(i);
-                                                String title = dataFeeds.getItem();
-                                                String desc = dataFeeds.getDescription();
-                                                String name = dataFeeds.getFname();
-                                                String photo = dataFeeds.getPhoto();
-                                                String item_photo = dataFeeds.getItem_photo();
-                                                String ticket_id = dataFeeds.getTicket_id();
-                                                String phone1 = dataFeeds.getPhone();
-
-                                                Log.e("n ticketId=",""+ticket_id);
-
-                                                String question = dataFeeds.getQuestion();
+                                                try {
 
 
-                                                dataFeeds_Needs.setIsNeeds(dataFeeds.getIsNeeds());
-                                                dataFeeds_Needs.setFname(name);
-                                                dataFeeds_Needs.setItem(title);
-                                                dataFeeds_Needs.setQuestion(question);
-                                                dataFeeds_Needs.setPhoto(photo);
-                                                dataFeeds_Needs.setItem_photo(item_photo);
-                                                dataFeeds_Needs.setDescription(desc);
-                                                dataFeeds_Needs.setTicket_id(ticket_id);
-                                                dataFeeds_Needs.setVz_id(vz_id);
-                                                dataFeeds_Needs.setPhone(phone1);
+                                                    DataFeeds dataFeeds = feeds.get(i);
+                                                    String title = dataFeeds.getItem();
+                                                    String desc = dataFeeds.getDescription();
+                                                    String name = dataFeeds.getFname();
+                                                    String photo = dataFeeds.getPhoto();
+                                                    String item_photo = dataFeeds.getItem_photo();
+                                                    String ticket_id = dataFeeds.getTicket_id();
+                                                    String phone1 = dataFeeds.getPhone();
 
-                                                String itemHAs = getArguments().getString("titleHas");
-                                                String descHas = getArguments().getString("descHas");
-                                                String profileNameHas = getArguments().getString("nameHas");
-                                                String photoHas = getArguments().getString("photoHas");
-                                                String itemPicHas = getArguments().getString("item_photoHas");
-                                                String ticket_id_1Has = getArguments().getString("ticket_idHas");
-                                                String phone1Has = getArguments().getString("phone1Has");
-                                                String questionHas = getArguments().getString("questionHas");
+                                                    Log.e("n ticketId=", "" + ticket_id);
 
-                                                dataFeeds_Has.setIsHas(questionHas);
-                                                dataFeeds_Has.setFname(profileNameHas);
-                                                dataFeeds_Has.setItem(itemHAs);
-                                                dataFeeds_Has.setPhoto(photoHas);
-                                                dataFeeds_Has.setItem_photo(itemPicHas);
-                                                dataFeeds_Has.setDescription(descHas);
-                                                dataFeeds_Has.setTicket_id(ticket_id_1Has);
-                                                dataFeeds_Has.setPhone(phone1Has);
+                                                    String question = dataFeeds.getQuestion();
 
-                                                Log.e("h ticket_id=",""+ticket_id_1Has);
 
-                                                initiatePopupWindow();
+                                                    dataFeeds_Needs.setIsNeeds(dataFeeds.getIsNeeds());
+                                                    dataFeeds_Needs.setFname(name);
+                                                    dataFeeds_Needs.setItem(title);
+                                                    dataFeeds_Needs.setQuestion(question);
+                                                    dataFeeds_Needs.setPhoto(photo);
+                                                    dataFeeds_Needs.setItem_photo(item_photo);
+                                                    dataFeeds_Needs.setDescription(desc);
+                                                    dataFeeds_Needs.setTicket_id(ticket_id);
+                                                    dataFeeds_Needs.setVz_id(vz_id);
+                                                    dataFeeds_Needs.setPhone(phone1);
 
+                                                    String itemHAs = getArguments().getString("titleHas");
+                                                    String descHas = getArguments().getString("descHas");
+                                                    String profileNameHas = getArguments().getString("nameHas");
+                                                    String photoHas = getArguments().getString("photoHas");
+                                                    String itemPicHas = getArguments().getString("item_photoHas");
+                                                    String ticket_id_1Has = getArguments().getString("ticket_idHas");
+                                                    String phone1Has = getArguments().getString("phone1Has");
+                                                    String questionHas = getArguments().getString("questionHas");
+
+                                                    dataFeeds_Has.setIsHas(questionHas);
+                                                    dataFeeds_Has.setFname(profileNameHas);
+                                                    dataFeeds_Has.setItem(itemHAs);
+                                                    dataFeeds_Has.setPhoto(photoHas);
+                                                    dataFeeds_Has.setItem_photo(itemPicHas);
+                                                    dataFeeds_Has.setDescription(descHas);
+                                                    dataFeeds_Has.setTicket_id(ticket_id_1Has);
+                                                    dataFeeds_Has.setPhone(phone1Has);
+
+                                                    Log.e("h ticket_id=", "" + ticket_id_1Has);
+
+                                                    initiatePopupWindow();
+                                                }catch (IndexOutOfBoundsException e)
+                                                {
+                                                    e.printStackTrace();
+                                                }
 
 
                                             }

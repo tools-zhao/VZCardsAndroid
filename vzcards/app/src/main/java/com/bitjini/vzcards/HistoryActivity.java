@@ -205,7 +205,8 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                         refreshContent();
             }
         });
-
+        // on configuration changes (screen rotation) we want fragment member variables to preserved
+        setRetainInstance(true);
         return history;
     }
 

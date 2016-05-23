@@ -375,6 +375,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         vzfrndsbtn.setOnClickListener(this);
         referralbtn.setOnClickListener(this);
+
+        // on configuration changes (screen rotation) we want fragment member variables to preserved
+        setRetainInstance(true);
         return profile;
     }
 

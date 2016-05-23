@@ -86,14 +86,17 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
         mSearchView = (SearchView) refer_contact.findViewById(R.id.searchview);
 
 //        showContacts();
-        SyncContacts sync=new SyncContacts(getActivity());
+        if (getActivity() != null)
+        {
+            SyncContacts sync = new SyncContacts(getActivity());
 
-        adapter = new SelectUserAdapter(sync.phoneList12, getActivity());
-        adapter.notifyDataSetChanged();
+           adapter = new SelectUserAdapter(sync.phoneList12, getActivity());
+
         listView.setAdapter(adapter);
         listView.setTextFilterEnabled(true);
         // place your adapter to a separate filter to remove pop up text
         filter = adapter.getFilter();
+    }
         setupSearchView();
 
 //                // Select item on listclick
@@ -156,7 +159,8 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
         });
 
         listView.setFastScrollEnabled(true);
-
+        // on configuration changes (screen rotation) we want fragment member variables to preserved
+        setRetainInstance(true);
 
 return refer_contact;
 

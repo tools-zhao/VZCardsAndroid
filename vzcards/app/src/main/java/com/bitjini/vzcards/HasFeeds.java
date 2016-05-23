@@ -105,7 +105,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         LayoutInflater inflater2 = (LayoutInflater) super.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
-
+        getActivity();
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
 
@@ -116,6 +116,8 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
             listView.setAdapter(adapter);
         }
+        // on configuration changes (screen rotation) we want fragment member variables to preserved
+        setRetainInstance(true);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
