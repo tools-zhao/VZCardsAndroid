@@ -532,11 +532,11 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
                     if(array.length()>1)
                     {
-                        v.txtcount.setText(String.valueOf(array.length())+" referrals");
+                        v.txtcount.setText(String.valueOf(array.length())+" Referrals");
 
                     }else
                     {
-                        v.txtcount.setText(String.valueOf(array.length())+" referral");
+                        v.txtcount.setText(String.valueOf(array.length())+" Referral");
                     }
 
                     String referedFname="",referedLname="",referedphoto="";
@@ -832,28 +832,10 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         }
 
 
-   return elapsed +" "+time;
+   return "Added "+elapsed +" "+time;
 
 
 
     }
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        // TODO Auto-generated method stub
-//        super.onCreate(savedInstanceState);
-//
-//        Toast.makeText(getActivity(),
-//                "MyFragment.onCreate()",
-//                Toast.LENGTH_LONG).show();
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        // TODO Auto-generated method stub
-//        super.onPause();
-//
-//        Toast.makeText(getActivity(),
-//                "MyFragment.onPause()",
-//                Toast.LENGTH_LONG).show();
-//    }
+
     }

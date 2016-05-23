@@ -707,6 +707,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                     Toast toast = Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
+                    v.clearAnimation();
 
 
                 }

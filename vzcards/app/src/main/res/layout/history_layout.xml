@@ -23,7 +23,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:id="@+id/feedImage"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="7dp"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_alignParentTop="true"
@@ -87,7 +87,7 @@
               android:layout_below="@+id/desc"
               android:layout_marginLeft="5dp"
               android:layout_marginTop="2dp"
-              android:text="0 referral"
+              android:text="0 Referral"
               android:layout_marginBottom="2dp"
               android:id="@+id/refCount"
               />

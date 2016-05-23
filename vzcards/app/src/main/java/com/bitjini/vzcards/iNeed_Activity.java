@@ -592,6 +592,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                     Toast toast = Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
+                    v.clearAnimation();
 
                 }
                 else {
@@ -626,10 +627,11 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
                                         new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
 
-                                        v.clearAnimation();
+
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    v.clearAnimation();
                                 }
                             }
                         }.execute();

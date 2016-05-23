@@ -35,22 +35,25 @@
                 android:focusableInTouchMode="false"
                 android:layout_marginRight="5dp">
                 <com.bitjini.vzcards.RoundedImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
                     android:id="@+id/photo"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="2dp"
                     android:layout_marginLeft="8dp"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
-                    android:padding="3dp"
+                    android:padding="4dp"
                     android:clickable="false"
                     android:focusable="false"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
                     android:focusableInTouchMode="false"
                     android:background="@drawable/profile_pic_placeholder"/>
                 />
                 <LinearLayout
                     android:layout_width="130dp"
                     android:layout_height="70dp"
+                    android:layout_marginLeft="2dp"
                     android:orientation="vertical"
                     android:id="@+id/l2">
                     <TextView
@@ -73,7 +76,6 @@
                         android:clickable="false"
                         android:focusable="false"
                         android:gravity="center"
-                        android:layout_marginRight="6dp"
                         android:textSize="10sp"
                         android:focusableInTouchMode="false"
                         android:id="@+id/ref"
@@ -98,30 +100,35 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="186dp"
+                    android:layout_width="190dp"
                     android:layout_height="70dp"
                     android:orientation="horizontal">
                     <TextView
-                        android:layout_width="113dp"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:textSize="15sp"
                         android:id="@+id/referred"
                         android:clickable="false"
                         android:focusable="false"
+                        android:ellipsize="end"
+                        android:singleLine="true"
                         android:text="Veena Mawrakar"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginLeft="5dp"
                         android:focusableInTouchMode="false"
                         android:layout_marginTop="29dp"
+
                         />
                     <com.bitjini.vzcards.RoundedImageView
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:id="@+id/referdPhoto"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="20dp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:adjustViewBounds="true"
+                        android:layout_marginLeft="5dp"
+                        android:scaleType="fitXY"
                         android:layout_marginBottom="2dp"
-                        android:layout_marginRight="7dp"
                         android:focusableInTouchMode="false"
                         android:src="@drawable/profile_pic_placeholder"/>
 
