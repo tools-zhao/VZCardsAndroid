@@ -94,10 +94,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public Bitmap output;
     int clickCount = 0;
     //Declaring widgets
-    Button editbtn;
+    Button editbtn,cancelBtn;
     RadioButton profilebtn, vzfrndsbtn, referralbtn;
     TextView textViewName;
 
+    Context c;
     public ProgressDialog progress,progressDialog1;
 
     ListView listView;
@@ -125,6 +126,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         linearLayout=(LinearLayout)profile. findViewById(R.id.l2);
 
         editbtn = (Button) profile.findViewById(R.id.edit);
+        cancelBtn=(Button) profile.findViewById(R.id.cancel);
+        cancelBtn.setVisibility(View.GONE);
         listView = (ListView) profile.findViewById(R.id.profileList);
 
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
@@ -145,6 +148,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         //image listeners
         imageCompany.setOnClickListener(this);
         imageProfile.setOnClickListener(this);
+
+        cancelBtn.setOnClickListener(this);
 
         imageCompany.setClickable(false);
         imageProfile.setClickable(false);
@@ -274,7 +279,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 if (clickCount == 0) {
 
                     editbtn.setText("Save");
-
+                    cancelBtn.setVisibility(View.VISIBLE);
                     imageCompany.setClickable(true);
                     imageProfile.setClickable(true);
 
@@ -295,54 +300,55 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     json2 = new Gson().toJson(groupItem);// updated array
 
                     SavePreferences(TASKS, json2);
-                    if(profilePicturePath.length()!=0 || companyPicturePath.length()!=0) {
-                        if(profilePicturePath.length()!=0) {
-                            try {
-                                picturePath = profilePicturePath;
-                                String res = new UploadImageTask(getActivity()).execute().get();
-                                JSONObject json = new JSONObject(res);
-                                photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+                    if(adapterArrayList!=groupItem) {
+                        if (profilePicturePath.length() != 0 || companyPicturePath.length() != 0) {
+                            if (profilePicturePath.length() != 0) {
+                                try {
+                                    picturePath = profilePicturePath;
+                                    String res = new UploadImageTask(getActivity()).execute().get();
+                                    JSONObject json = new JSONObject(res);
+                                    photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
 
-                                String link = json.getString("link");
-                                SavePreferences(PROFILE_IMAGE, photo + link);
-                                Log.e("photo :", "" + photo + link);
+                                    String link = json.getString("link");
+                                    SavePreferences(PROFILE_IMAGE, photo + link);
+                                    Log.e("photo :", "" + photo + link);
 
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (ExecutionException e) {
-                                e.printStackTrace();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (ExecutionException e) {
+                                    e.printStackTrace();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                        if(companyPicturePath.length()!=0) {
-                            try {
-                                picturePath = companyPicturePath;
-                                String res = new UploadImageTask(getActivity()).execute().get();
-                                JSONObject json = new JSONObject(res);
-                                json = new JSONObject(res);
+                            if (companyPicturePath.length() != 0) {
+                                try {
+                                    picturePath = companyPicturePath;
+                                    String res = new UploadImageTask(getActivity()).execute().get();
+                                    JSONObject json = new JSONObject(res);
+                                    json = new JSONObject(res);
 //                                                            company_photo = json.getString("photo");
-                                company_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+                                    company_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
 
-                                String link = json.getString("link");
-                                SavePreferences(COMPANY_IMAGE, company_photo + link);
-                                Log.e("company_photo :", "" + company_photo + link);
-                                Log.e("link :", "" + link);
+                                    String link = json.getString("link");
+                                    SavePreferences(COMPANY_IMAGE, company_photo + link);
+                                    Log.e("company_photo :", "" + company_photo + link);
+                                    Log.e("link :", "" + link);
 
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (ExecutionException e) {
-                                e.printStackTrace();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (ExecutionException e) {
+                                    e.printStackTrace();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                        new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+                            new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
 //
-                    }
-                    else {
-                        new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+                        } else {
+                            new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
 
+                        }
                     }
                     editTextAdapter.notifyDataSetChanged();
 
@@ -998,7 +1004,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Permission is granted
                 selectImageOption();
             } else {
-                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Until you grant the permission,names cannot be displayed", Toast.LENGTH_SHORT).show();
             }
         }
         if (requestCode == PERMISSIONS_WRITE_EXTERNAL_STORAGE) {
@@ -1006,7 +1012,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Permission is granted
                 selectImageOption();
             } else {
-                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Until you grant the permission, names cannot be displayed", Toast.LENGTH_SHORT).show();
             }
         }
         if (requestCode == PERMISSIONS_READ_EXTERNAL_STORAGE) {
@@ -1014,7 +1020,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 // Permission is granted
                 selectImageOption();
             } else {
-                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Until you grant the permission,names cannot be displayed", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -1063,7 +1069,18 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                 break;
 
-            //redirecting to VZFriends_Fragment
+            case R.id.cancel:
+                Fragment newfragment1 = new MyProfile_Fragment();
+                // get the id of fragment
+                FrameLayout contentView1 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
+
+                // Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(contentView1.getId(), newfragment1)
+                        .commit();
+                break;
+                //redirecting to VZFriends_Fragment
             case R.id.vzfrnds:
                 Fragment newfragment = new VZFriends_Fragment();
                 // get the id of fragment

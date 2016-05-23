@@ -8,8 +8,8 @@
     <color name="default_color">#ffffff</color>
     <color name="pink">#f5a70b66</color>
     <color name="red">#c4cc0e27</color>
-
-
+    <color name="primaryRed">#f27166</color>
+    <color name="primaryGreen">#add58a</color>
     <color name="prompt">#5f8ac7</color>
     <color name="primary">#5e546b</color>
     <color name="primary_dark">#5e546b</color>

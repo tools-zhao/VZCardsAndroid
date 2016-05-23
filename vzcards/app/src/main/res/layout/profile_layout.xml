@@ -68,21 +68,40 @@
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/profilePic" />
                     </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
                     <Button
-                        android:layout_width="50dp"
+                        android:layout_width="60dp"
                         android:layout_height="25dp"
-                        android:text="Edit"
+                        android:text="EDIT"
                         android:id="@+id/edit"
                         android:elevation="2dp"
-                        android:layout_weight="1"
-                        android:layout_marginLeft="300dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="12dp"
                         android:layout_marginBottom="5dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_gravity="center_vertical"
+                        android:gravity="center"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginEnd="5dp"
+                        android:textColor="#ffffff"
+                        android:layout_alignParentEnd="true"
+                        android:background="@drawable/addimage"/>
+                    <Button
+                        android:layout_width="75dp"
+                        android:layout_height="25dp"
+                        android:text="Cancel"
+                        android:id="@+id/cancel"
+                        android:elevation="2dp"
+                        android:layout_weight="0.3"
+                        android:visibility="visible"
+                        android:layout_marginLeft="220dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:textColor="#ffffff"
-                        android:background="@drawable/drawable_edit"/>
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:background="@drawable/addimage_red" />
+                    </RelativeLayout>
                 </LinearLayout>
 
 

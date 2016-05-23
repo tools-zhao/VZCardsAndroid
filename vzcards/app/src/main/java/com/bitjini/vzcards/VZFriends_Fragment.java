@@ -229,8 +229,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                         JSONObject c = arr.getJSONObject(i);
                         // Feed node is JSON Object
                         String phone = c.getString("phone");
-//                String firstname = c.getString("firstname");
-//                String lastname = c.getString("lastname");
+                String firstname = c.getString("firstname");
+                String lastname = c.getString("lastname");
                         String photo = c.getString("photo");
 
                         String company = c.getString("company");
@@ -256,7 +256,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                         }
 
-
+                        selectUser.setFirstName(firstname);
+                        selectUser.setLastName(lastname);
                         selectUser.setSyncPhone(phone);
                         selectUser.setPhoto(photo);
                         selectUser.setEmail(email);
@@ -398,8 +399,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         SelectUser data = (SelectUser) parent.getItemAtPosition(position);
         Intent nextScreenIntent = new Intent(getActivity(), Friends_Profile.class);
 
-        nextScreenIntent.putExtra("fname", data.getfName());
-        nextScreenIntent.putExtra("lname", data.getLname());
+        nextScreenIntent.putExtra("fname", data.getFirstName());
+        nextScreenIntent.putExtra("lname", data.getLastName());
         nextScreenIntent.putExtra("photo", data.getPhoto());
         nextScreenIntent.putExtra("phone", data.getSyncPhone());
         nextScreenIntent.putExtra("company", data.getCompany());
