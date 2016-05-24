@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -113,15 +114,19 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 //        {
 //            list.setVisibility(View.VISIBLE);
 //            // refresh contents
-            getReferalContents(HISTORY_URL + p.token_sharedPreference);
+
 ////        }
 //
 //
 //
 //
-        listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
-        list.setAdapter(listAdapter);
-
+        if(getActivity()!=null) {
+            getReferalContents(HISTORY_URL + p.token_sharedPreference);
+            listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+            list.setAdapter(listAdapter);
+        }
+        // on configuration changes (screen rotation) we want fragment member variables to preserved
+        setRetainInstance(true);
         // Creating an item click listener, to open/close our toolbar for each item
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -240,6 +245,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                     // Getting JSON Array node
                     JSONArray arr = jsonObject.getJSONArray("response");
 
+            Log.e("referrals",""+response);
                     // looping through All Contacts
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject c = arr.getJSONObject(i);
@@ -339,7 +345,8 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                             referalUsers.setDesc(description);
                             referalUsers.setItemName(itemName);
                             referalUsers.setItem_photo(item_photo);
-
+                            referalUsers.setRefQuestion(question);
+                            Log.e("ref question ",""+question);
                             // Connector details
                             referalUsers.setFname(fname);
                             referalUsers.setLname(lastname);
@@ -405,9 +412,12 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 totalPage=0;
                 countOfFeeds=0;
                 isLoading = false;
+                if(getActivity()!=null) {
                 getReferalContents(HISTORY_URL + p.token_sharedPreference);
-                CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
-                list.setAdapter(listAdapter);
+
+                    CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+                    list.setAdapter(listAdapter);
+                }
 
                 //do processing to get new data and set your listview's adapter, maybe  reinitialise the loaders you may be using or so
                 //when your data has finished loading, set the refresh state of the view to false
@@ -460,12 +470,12 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 v = inflater.inflate(R.layout.referral, null);
             }
             TextView name = (TextView) v.findViewById(R.id.referralName);
+            TextView ref = (TextView) v.findViewById(R.id.ref);
             TextView referredName = (TextView) v.findViewById(R.id.referred);
             TextView itemName = (TextView) v.findViewById(R.id.itemName);
             ImageView referredPhoto = (ImageView) v.findViewById(R.id.referdPhoto);
             ImageView photo = (ImageView) v.findViewById(R.id.photo);
-
-
+            View viewLine = (View) v.findViewById(R.id.viewLine);
             ReferalUsers cat = itemList.get(position);
 
             name.setText(cat.getFname() + " " + cat.getLname());
@@ -473,7 +483,9 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             referredName.setText(cat.getReferredfName() + " " + cat.getReferredlName());
 //            Log.e("referred fname in item=",""+cat.getReferredfName());
 
-            itemName.setText("for " + cat.getItemName());
+
+
+            itemName.setText("For "+"\"" + cat.getItemName()+ "\"");
             try {
                 if (!cat.getPhoto().isEmpty()) {
 //                    photo.setTag(cat.getPhoto());
@@ -492,7 +504,16 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 } else {
                     referredPhoto.setImageResource(R.drawable.profile_pic_placeholder);
                 }
+                if (Integer.parseInt(cat.getRefQuestion()) == 1) {
 
+                    viewLine.setBackgroundColor(Color.parseColor("#f27166"));
+                    ref.setBackgroundResource(R.drawable.addimage_red);
+                }
+                if (Integer.parseInt(cat.getRefQuestion()) == 0) {
+
+                    viewLine.setBackgroundColor(Color.parseColor("#add58a"));
+                    ref.setBackgroundResource(R.drawable.addimage);
+                }
             } catch (ArrayIndexOutOfBoundsException ae) {
                 ae.printStackTrace();
 

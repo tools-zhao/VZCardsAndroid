@@ -171,58 +171,58 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
             adapter.notifyDataSetChanged();
             listView.setAdapter(adapter);
             listView.setTextFilterEnabled(true);
-           // place your adapter to a separate filter to remove pop up text
+//            place your adapter to a separate filter to remove pop up text
            filter = adapter.getFilter();
             setupSearchView();
 
-            // Select item on listclick
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    Bitmap image = null;
-                    SelectUser data = (SelectUser) parent.getItemAtPosition(position);
-
-                    String name = data.getName();
-                    String phoneNo = data.getPhone();
-                    image = data.getThumb();
-
-
-                    if (image== null) {
-
-                        Drawable d = getResources().getDrawable(R.drawable.simple_profile_placeholder1);
-                       ImageView contactimage = (ImageView) findViewById(R.id.contactImage);
-                        contactimage.setImageDrawable(d);
-                        contactimage.buildDrawingCache();
-                        image = contactimage.getDrawingCache();
-                    }
-
-                    //dynamically increase the size of the imageview
-                    int width = image.getWidth();
-                    int height = image.getHeight();
-                    int newWidth = 300;
-                    int newHeight = 240;
-                    float scaleWidth = ((float) newWidth) / width;
-                    float scaleHeight = ((float) newHeight) / height;
-                    Matrix matrix = new Matrix();
-                    matrix.postScale(scaleWidth, scaleHeight);
-                    Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix,true);
-
-                    //Passing data to nextscreen
-                    Intent nextScreenIntent = new Intent(getApplicationContext(), DisplayContact.class);
-                    nextScreenIntent.putExtra("name", name);
-                    nextScreenIntent.putExtra("phoneNo", phoneNo);
-
-                    Bundle extras = new Bundle();
-                    extras.putParcelable("photo", newbm);
-
-                    nextScreenIntent.putExtras(extras);
-
-
-                    Log.e("n", name + "." + phoneNo);
-                    startActivity(nextScreenIntent);
-                }
-            });
+//            // Select item on listclick
+//            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                    Bitmap image = null;
+//                    SelectUser data = (SelectUser) parent.getItemAtPosition(position);
+//
+//                    String name = data.getName();
+//                    String phoneNo = data.getPhone();
+//                    image = data.getThumb();
+//
+//
+//                    if (image== null) {
+//
+//                        Drawable d = getResources().getDrawable(R.drawable.simple_profile_placeholder1);
+//                       ImageView contactimage = (ImageView) findViewById(R.id.contactImage);
+//                        contactimage.setImageDrawable(d);
+//                        contactimage.buildDrawingCache();
+//                        image = contactimage.getDrawingCache();
+//                    }
+//
+//                    //dynamically increase the size of the imageview
+//                    int width = image.getWidth();
+//                    int height = image.getHeight();
+//                    int newWidth = 300;
+//                    int newHeight = 240;
+//                    float scaleWidth = ((float) newWidth) / width;
+//                    float scaleHeight = ((float) newHeight) / height;
+//                    Matrix matrix = new Matrix();
+//                    matrix.postScale(scaleWidth, scaleHeight);
+//                    Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix,true);
+//
+//                    //Passing data to nextscreen
+//                    Intent nextScreenIntent = new Intent(getApplicationContext(), DisplayContact.class);
+//                    nextScreenIntent.putExtra("name", name);
+//                    nextScreenIntent.putExtra("phoneNo", phoneNo);
+//
+//                    Bundle extras = new Bundle();
+//                    extras.putParcelable("photo", newbm);
+//
+//                    nextScreenIntent.putExtras(extras);
+//
+//
+//                    Log.e("n", name + "." + phoneNo);
+//                    startActivity(nextScreenIntent);
+//                }
+//            });
 
             listView.setFastScrollEnabled(true);
 

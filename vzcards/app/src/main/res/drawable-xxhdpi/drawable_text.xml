@@ -7,13 +7,14 @@
 
             <stroke
                 android:width="2dp"
-                android:color="#ffffff" />
+                android:color="@color/default_color" />
 
             <corners
                 android:bottomLeftRadius="10dp"
                 android:bottomRightRadius="10dp"
                 android:topLeftRadius="10dp"
                 android:topRightRadius="10dp" />
+
         </shape>
     </item>
 </selector>

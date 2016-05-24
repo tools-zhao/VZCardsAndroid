@@ -4,6 +4,7 @@ package com.bitjini.vzcards;
  * Created by bitjini on 11/4/16.
  */
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -16,7 +17,10 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -49,6 +53,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,6 +74,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
     View profile;
 
+    private static final int PERMISSIONS_REQUEST_CALL_CONTACTS = 100;
 
     ArrayList<String> label;
     ArrayList<String> values;
@@ -80,6 +86,8 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
     public ProgressDialog progress;
 
+    Bitmap bitmapBackground=null;
+    LinearLayout linearLayout1;
     ListView listView;
     EditTextAdapter editTextAdapter;
 
@@ -145,7 +153,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
 
         if(!photo.isEmpty()) {
-            Picasso.with(getApplicationContext()).load(photo).resize(180, 180).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+            Picasso.with(getApplicationContext()).load(photo).resize(180, 180).placeholder(R.drawable.profile_pic_placeholder).into(target);
 //            imageProfile.setTag(photo);
 //            new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
         }
@@ -156,8 +164,11 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
         }
 
+//
+        if(bitmapBackground!=null) {
 
-        textViewName.setText(firstname+ " "+lastname);
+        }
+        textViewName.setText(firstname+ " " +lastname);
         values = new ArrayList<String>();
         values.add(firstname);
         values.add(lastname);
@@ -186,7 +197,27 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
     }
 
+    private Target target = new Target() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            imageProfile.setImageBitmap(bitmap);
 
+            Bitmap blurredBitmap = BlurBuilder.blur(getApplicationContext(), bitmap);
+
+            linearLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), blurredBitmap));
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable drawable) {
+
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable drawable) {
+
+        }
+
+    };
 
     public void decodeFile(String filePath) {
         // First decode with inJustDecodeBounds=true to check dimensions
@@ -222,9 +253,14 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
             //setting profile picture
             case R.id.btn_call:
                 try{
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:"+ "+" +phone));
-                    startActivity(callIntent);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, PERMISSIONS_REQUEST_CALL_CONTACTS);
+                        //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+                    } else {
+                        Intent callIntent = new Intent(Intent.ACTION_CALL);
+                        callIntent.setData(Uri.parse("tel:" + "+" + phone));
+                        startActivity(callIntent);
+                    }
                 }
                 catch (android.content.ActivityNotFoundException ex)
                 {
@@ -328,6 +364,19 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
             return rowView;
         }
 
+    }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_CALL_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + "+" + phone));
+                startActivity(callIntent);
+            } else {
+                Toast.makeText(Friends_Profile.this, " No Permission", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }

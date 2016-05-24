@@ -1,10 +1,12 @@
 package com.bitjini.vzcards;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -24,14 +26,31 @@ import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -40,6 +59,9 @@ import java.util.concurrent.ExecutionException;
 public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     String URL_GETLIST="http://vzcards-api.herokuapp.com/get_list/?access_token=";
+    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
+    String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
+    private ProgressDialog progress;
     String token_sharedPreference;
     String vz_id;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -85,61 +107,68 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
        vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
-
+        if(getActivity()!=null) {
         getFeedsContents(URL_GETLIST + token_sharedPreference);
-        adapter = new NeedFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
-        listView.setAdapter(adapter);
 
+            adapter = new NeedFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
+            listView.setAdapter(adapter);
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                                DataFeeds dataFeeds = feeds.get(i);
-                                                String title = dataFeeds.getItem();
-                                                String desc = dataFeeds.getDescription();
-                                                String name = dataFeeds.getFname();
-                                                String photo = dataFeeds.getPhoto();
-                                                String item_photo = dataFeeds.getItem_photo();
-                                                String ticket_id = dataFeeds.getTicket_id();
-                                                String phone1 = dataFeeds.getPhone();
-
-                                                Log.e("n ticketId=",""+ticket_id);
-
-                                                String question = dataFeeds.getQuestion();
+                                                try {
 
 
-                                                dataFeeds_Needs.setIsNeeds(dataFeeds.getIsNeeds());
-                                                dataFeeds_Needs.setFname(name);
-                                                dataFeeds_Needs.setItem(title);
-                                                dataFeeds_Needs.setQuestion(question);
-                                                dataFeeds_Needs.setPhoto(photo);
-                                                dataFeeds_Needs.setItem_photo(item_photo);
-                                                dataFeeds_Needs.setDescription(desc);
-                                                dataFeeds_Needs.setTicket_id(ticket_id);
-                                                dataFeeds_Needs.setVz_id(vz_id);
-                                                dataFeeds_Needs.setPhone(phone1);
+                                                    DataFeeds dataFeeds = feeds.get(i);
+                                                    String title = dataFeeds.getItem();
+                                                    String desc = dataFeeds.getDescription();
+                                                    String name = dataFeeds.getFname();
+                                                    String photo = dataFeeds.getPhoto();
+                                                    String item_photo = dataFeeds.getItem_photo();
+                                                    String ticket_id = dataFeeds.getTicket_id();
+                                                    String phone1 = dataFeeds.getPhone();
 
-                                                String itemHAs = getArguments().getString("titleHas");
-                                                String descHas = getArguments().getString("descHas");
-                                                String profileNameHas = getArguments().getString("nameHas");
-                                                String photoHas = getArguments().getString("photoHas");
-                                                String itemPicHas = getArguments().getString("item_photoHas");
-                                                String ticket_id_1Has = getArguments().getString("ticket_idHas");
-                                                String phone1Has = getArguments().getString("phone1Has");
-                                                String questionHas = getArguments().getString("questionHas");
+                                                    Log.e("n ticketId=", "" + ticket_id);
 
-                                                dataFeeds_Has.setIsHas(questionHas);
-                                                dataFeeds_Has.setFname(profileNameHas);
-                                                dataFeeds_Has.setItem(itemHAs);
-                                                dataFeeds_Has.setPhoto(photoHas);
-                                                dataFeeds_Has.setItem_photo(itemPicHas);
-                                                dataFeeds_Has.setDescription(descHas);
-                                                dataFeeds_Has.setTicket_id(ticket_id_1Has);
-                                                dataFeeds_Has.setPhone(phone1Has);
+                                                    String question = dataFeeds.getQuestion();
 
-                                                Log.e("h ticket_id=",""+ticket_id_1Has);
 
-                                                initiatePopupWindow();
+                                                    dataFeeds_Needs.setIsNeeds(dataFeeds.getIsNeeds());
+                                                    dataFeeds_Needs.setFname(name);
+                                                    dataFeeds_Needs.setItem(title);
+                                                    dataFeeds_Needs.setQuestion(question);
+                                                    dataFeeds_Needs.setPhoto(photo);
+                                                    dataFeeds_Needs.setItem_photo(item_photo);
+                                                    dataFeeds_Needs.setDescription(desc);
+                                                    dataFeeds_Needs.setTicket_id(ticket_id);
+                                                    dataFeeds_Needs.setVz_id(vz_id);
+                                                    dataFeeds_Needs.setPhone(phone1);
 
+                                                    String itemHAs = getArguments().getString("titleHas");
+                                                    String descHas = getArguments().getString("descHas");
+                                                    String profileNameHas = getArguments().getString("nameHas");
+                                                    String photoHas = getArguments().getString("photoHas");
+                                                    String itemPicHas = getArguments().getString("item_photoHas");
+                                                    String ticket_id_1Has = getArguments().getString("ticket_idHas");
+                                                    String phone1Has = getArguments().getString("phone1Has");
+                                                    String questionHas = getArguments().getString("questionHas");
+
+                                                    dataFeeds_Has.setIsHas(questionHas);
+                                                    dataFeeds_Has.setFname(profileNameHas);
+                                                    dataFeeds_Has.setItem(itemHAs);
+                                                    dataFeeds_Has.setPhoto(photoHas);
+                                                    dataFeeds_Has.setItem_photo(itemPicHas);
+                                                    dataFeeds_Has.setDescription(descHas);
+                                                    dataFeeds_Has.setTicket_id(ticket_id_1Has);
+                                                    dataFeeds_Has.setPhone(phone1Has);
+
+                                                    Log.e("h ticket_id=", "" + ticket_id_1Has);
+
+                                                    initiatePopupWindow();
+                                                }catch (IndexOutOfBoundsException e)
+                                                {
+                                                    e.printStackTrace();
+                                                }
 
 
                                             }
@@ -281,9 +310,12 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
                 totalPage=0;
                 countOfFeeds=0;
                 isLoading = false;
+                if(getActivity()!=null) {
                 getFeedsContents(URL_GETLIST + token_sharedPreference );
-                adapter = new NeedFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
-                listView.setAdapter(adapter);
+
+                    adapter = new NeedFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
+                    listView.setAdapter(adapter);
+                }
 
                 Log.e("feed size aft refresh",""+feedsArrayList.size());
                 swipeRefreshLayout.setRefreshing(false);
@@ -388,7 +420,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
 
                 }
                 holder.question.setBackgroundResource(R.drawable.addimage_red);
-                holder.question.setText("needs");
+                holder.question.setText("Need");
                 holder.viewLine.setBackgroundColor(Color.parseColor("#f27166"));
 
 
@@ -450,7 +482,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
             // check if it is needs change the color to red
             if (Integer.parseInt(dataFeeds_Needs.getIsNeeds()) == 1) {
                 viewLine.setBackgroundColor(Color.parseColor("#f27166"));
-                question.setText("needs");
+                question.setText("Need");
                 question.setBackgroundResource(R.drawable.addimage_red);
             }
 
@@ -466,7 +498,8 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
             Log.e("questionHas",""+dataFeeds_Has.getIsHas());
             if (Integer.parseInt(dataFeeds_Has.getIsHas()) == 0) {
                 viewLine2.setBackgroundColor(Color.parseColor("#add58a"));
-                question2.setText("has");
+                question2.setText("Has");
+
                 question2.setBackgroundResource(R.drawable.addimage);
             }
             name2.setText(dataFeeds_Has.getFname());
@@ -513,23 +546,17 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
                 @Override
                 public void onClick(View view) {
                     // get the data from objects
-                    String ticket_id_1= dataFeeds_Needs.getTicket_id();
-                    String ticket_id_2=dataFeeds_Has.getTicket_id();
-                    String phone1=dataFeeds_Needs.getPhone();
-                    String phone2=dataFeeds_Has.getPhone();
-                    String connector_vz_id=dataFeeds_Needs.getVz_id();
-
-                    // send data to Connect_2_Tickets
-                    Connect_2_Tickets connect = new Connect_2_Tickets();
+                    ticket_id_1= dataFeeds_Needs.getTicket_id();
+                     ticket_id_2=dataFeeds_Has.getTicket_id();
+                     phone_1=dataFeeds_Needs.getPhone();
+                     phone_2=dataFeeds_Has.getPhone();
+                     connecter_vz_id=dataFeeds_Needs.getVz_id();
 
 
-                    Intent intent=new Intent(getActivity(),Connect_2_Tickets.class);
-                    intent.putExtra("ticket_id_1", ticket_id_1);
-                    intent.putExtra("phone1", phone1);
-                    intent.putExtra("connector_vz_id", connector_vz_id);
-                    intent.putExtra("phone2", phone2);
-                    intent.putExtra("ticket_id_2", ticket_id_2);
-                    startActivity(intent);
+                    HttpPostClass connect = new HttpPostClass();
+                    connect.execute(URL_CONNECT + token_sharedPreference);
+
+
 
                     pwindo.dismiss();
 
@@ -544,6 +571,94 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
         }
 
     }
+    private class HttpPostClass extends AsyncTask<String, Void, String> {
+
+        Context context;
+
+
+        protected void onPreExecute() {
+            progress = new ProgressDialog(getActivity());
+            progress.setMessage("Connecting please wait....");
+            progress.show();
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            // params comes from the execute() call: params[0] is the url.
+            try {
+                return downloadUrl(urls[0]);
+            } catch (IOException e) {
+                return "Unable to download the requested page.";
+            }
+        }
+
+        private String downloadUrl(String urlString) throws IOException {
+            String response = null;
+            try {
+//                final TextView outputView = (TextView) findViewById(R.id.content);
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+
+                HttpClient client = new DefaultHttpClient();
+
+                HttpPost post = new HttpPost(urlString);
+
+                List<NameValuePair> params1 = new ArrayList<NameValuePair>();
+                params1.add(new BasicNameValuePair("connecter_vz_id", connecter_vz_id));
+                params1.add(new BasicNameValuePair("phone_1", phone_1));
+                params1.add(new BasicNameValuePair("ticket_id_1", ticket_id_1));
+                params1.add(new BasicNameValuePair("phone_2", phone_2));
+                params1.add(new BasicNameValuePair("ticket_id_2", ticket_id_2));
+                params1.add(new BasicNameValuePair("my_ticket", my_ticket));
+                params1.add(new BasicNameValuePair("reffered_ticket", reffered_ticket));
+                params1.add(new BasicNameValuePair("reffered_phone", reffered_phone));
+
+
+                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
+                post.setEntity(ent);
+                HttpResponse responsePOST = client.execute(post);
+                HttpEntity resEntity = responsePOST.getEntity();
+
+                if (resEntity != null) {
+                    response = EntityUtils.toString(resEntity);
+                    Log.i("RESPONSE", response);
+
+                }
+                StringBuilder sb = new StringBuilder();
+                try {
+                    BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
+                    String line = null;
+
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                System.out.println("finalResult " + sb.toString());
+                return sb.toString();
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+            progress.dismiss();
+            Toast.makeText(getActivity(), "Connected tickets", Toast.LENGTH_LONG).show();
+
+        }
+    }
+
 }
 
 

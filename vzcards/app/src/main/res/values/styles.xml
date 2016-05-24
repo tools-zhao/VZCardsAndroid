@@ -4,6 +4,8 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <!-- Customize your theme here. -->
+        <item name="android:windowEnableSplitTouch">false</item>
+        <item name="android:splitMotionEvents">false</item>
         <item name="windowActionBar">false</item>
         <item name="tabIndicatorHeight">2dp</item>
         <!--<item name="logo" align="center">@drawable/navbar_logo</item>-->

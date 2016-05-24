@@ -50,8 +50,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:background="#877980"
+            android:layout_height="170dp"
+            android:background="#7a877980"
             android:orientation="vertical"
             android:id="@+id/l1"
             android:weightSum="1"
@@ -62,9 +62,9 @@
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-
+                android:paddingTop="60dp"
+                android:paddingBottom="60dp"
                 android:src="@drawable/no_pic_placeholder"/>
-
         </LinearLayout>
         <Button
             android:layout_width="85dp"
@@ -72,7 +72,7 @@
             android:id="@+id/addImage"
             android:layout_gravity="right"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="140dp"
             android:text="+AddImage"
             android:layout_alignParentRight="true"
             android:textAllCaps="false"
@@ -139,6 +139,9 @@
                 android:id="@+id/desc"
                 android:layout_gravity="center"
                 android:textSize="15sp"
+                android:maxLines="8"
+                android:minLines="1"
+                android:scrollbars="vertical"
                 android:background="@drawable/text_drawable"
                 />
             <Button
@@ -197,8 +200,9 @@
             android:src="@drawable/vzc_have_post_btn"
             android:layout_gravity="center"
             android:id="@+id/imgbtn"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/l4"
+            android:layout_marginTop="15dp"
+            android:layout_above="@+id/l8"
+            android:layout_marginBottom="10dp"
             android:layout_centerHorizontal="true" />
 
 

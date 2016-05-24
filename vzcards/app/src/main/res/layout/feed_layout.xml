@@ -39,7 +39,7 @@
             android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="27dp"
+                android:layout_height="25dp"
                 android:text=" Name "
                 android:layout_marginTop="5dp"
                 android:id="@+id/feedName"
@@ -48,11 +48,13 @@
                 android:layout_marginLeft="7dp"
                 android:textSize="16sp" />
             <TextView
-                android:layout_width="38dp"
-                android:layout_height="18dp"
+                android:layout_width="40dp"
+                android:layout_height="16dp"
                 android:id="@+id/selectionText"
                 android:layout_marginLeft="5dp"
-                android:text="needs"
+                android:text="Has"
+                android:gravity="center"
+                android:textSize="10sp"
                 android:padding="2dp"
                 android:layout_marginTop="1dp"
                 android:textColor="#ffffff"
@@ -81,7 +83,6 @@
                 android:layout_gravity="right"
                 android:layout_marginRight="12dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="2dp"
                 android:id="@+id/profilePic"
                 android:scaleType="fitStart"
                 android:adjustViewBounds="true"

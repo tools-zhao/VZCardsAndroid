@@ -8,6 +8,7 @@
     android:background="?android:attr/colorBackground">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:splitMotionEvents="false"
     android:layout_height="match_parent">
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
@@ -57,8 +58,8 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:background="#c3877980"
+        android:layout_height="190dp"
+        android:background="#7a877980"
         android:orientation="vertical"
         android:id="@+id/l2"
         android:layout_below="@+id/l1"
@@ -95,7 +96,7 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:gravity="center_horizontal"
@@ -108,6 +109,9 @@
             android:hint="Enter your Description"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
+            android:maxLines="8"
+            android:minLines="1"
+            android:scrollbars="vertical"
             android:scrollbarAlwaysDrawVerticalTrack="true"
             android:id="@+id/description"
             android:gravity="center"/>
@@ -116,8 +120,8 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="Refer Tickets"
-        android:background="@drawable/ripple_effect_red"
-        android:textColor="#f27166"
+        android:background="@drawable/addimage_red"
+        android:textColor="@color/white"
         android:id="@+id/refer_vzfrnd"
         android:layout_above="@+id/refer_contact"
         android:layout_marginLeft="25dp"
@@ -128,12 +132,12 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="Refer Phonebook Contact"
-        android:background="@drawable/ripple_effect_red"
+        android:background="@drawable/addimage_red"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
-        android:textColor="#f27166"
+        android:textColor="@color/white"
         style="?android:attr/borderlessButtonStyle"
         android:id="@+id/refer_contact"/>
 

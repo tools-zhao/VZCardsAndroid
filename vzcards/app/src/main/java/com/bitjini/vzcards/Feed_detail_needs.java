@@ -61,7 +61,16 @@ public class Feed_detail_needs extends Activity implements View.OnClickListener 
         description.setText(desc);
         name.setText(profileName);
 
-
+//        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+//        if (currentapiVersion >= android.os.Build.VERSION_CODES.LOLLIPOP){
+//            // Do something for lollipop and above versions
+//            referVZbtn.setBackgroundResource(R.drawable.ripple_effect_red);
+//            referContactbtn.setBackgroundResource(R.drawable.ripple_effect_red);
+//        } else{
+//            // do something for phones running an SDK before lollipop
+//            referVZbtn.setBackgroundResource(R.drawable.addimage_red);
+//            referContactbtn.setBackgroundResource(R.drawable.addimage_red);
+//        }
         if(!itemPic.isEmpty())
         {
             Picasso.with(getApplicationContext()).load(itemPic).into(item_photo);
@@ -69,7 +78,7 @@ public class Feed_detail_needs extends Activity implements View.OnClickListener 
 //            new DownloadImagesTask(getActivity()).execute(item_photo);
         } else
         {
-            item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+            item_photo.setImageResource(R.drawable.no_pic_placeholder_full);
         }
 
         if(!photo.isEmpty())

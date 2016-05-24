@@ -65,7 +65,7 @@
                 <TextView
                     android:layout_width="70dp"
                     android:layout_height="25dp"
-                    android:text="referred"
+                    android:text="Referred"
                     android:gravity="right"
                     android:clickable="false"
                     android:focusable="false"
@@ -88,31 +88,48 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_marginLeft="0dp">
+                android:layout_width="190dp"
+                android:layout_height="70dp"
+                android:orientation="horizontal">
                 <TextView
-                    android:layout_width="115dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
                     android:textSize="15sp"
                     android:id="@+id/referred"
                     android:clickable="false"
                     android:focusable="false"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="Veena Mawrakar"
+                    android:layout_marginLeft="5dp"
                     android:focusableInTouchMode="false"
                     android:layout_marginTop="35dp"
+
                     />
                 <com.bitjini.vzcards.RoundedImageView
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:id="@+id/referdPhoto"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="20dp"
                     android:clickable="false"
                     android:focusable="false"
+                    android:adjustViewBounds="true"
+                    android:layout_marginLeft="5dp"
+                    android:scaleType="fitXY"
+                    android:layout_marginBottom="2dp"
                     android:focusableInTouchMode="false"
                     android:src="@drawable/profile_pic_placeholder"/>
 
             </LinearLayout>
             </LinearLayout>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:id="@+id/viewLine2"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@+id/linearLayout1"
+            android:background="#f27166"></View>
         </LinearLayout>
     </RelativeLayout>

@@ -3,10 +3,12 @@ package com.bitjini.vzcards;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,20 +31,38 @@ import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
  * Created by bitjini on 9/5/16.
  */
 public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
 
     String URL_GETLIST="http://vzcards-api.herokuapp.com/get_list/?access_token=";
     String token_sharedPreference;
@@ -51,7 +71,8 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     ListView listView;
     View footer;
     FrameLayout layout_MainMenu;
-
+    String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
+    private ProgressDialog progress;
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
 
 
@@ -84,15 +105,19 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         LayoutInflater inflater2 = (LayoutInflater) super.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
-
+        getActivity();
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
-        vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
 
-        getFeedsContents(URL_GETLIST + token_sharedPreference);
-        adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
-        listView.setAdapter(adapter);
+        vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
+        if(getActivity()!=null) {
+        getFeedsContents(URL_GETLIST + p.token_sharedPreference);
+
+            adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
+            listView.setAdapter(adapter);
+        }
+        // on configuration changes (screen rotation) we want fragment member variables to preserved
+        setRetainInstance(true);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -278,10 +303,12 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
                 totalPage=0;
                 countOfFeeds=0;
                 isLoading = false;
+                if(getActivity()!=null) {
                 getFeedsContents(URL_GETLIST + token_sharedPreference );
-                adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
-                listView.setAdapter(adapter);
 
+                    adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
+                    listView.setAdapter(adapter);
+                }
                 Log.e("feed size aft refresh",""+feedsArrayList.size());
                 swipeRefreshLayout.setRefreshing(false);
             }
@@ -332,11 +359,12 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     public class HasFeedsAdapter extends ArrayAdapter<DataFeeds> {
 
         Context context;
-
+        int textViewResourceId;
         public HasFeedsAdapter(Context context, int textViewResourceId, ArrayList<DataFeeds> items) {
             super(context, textViewResourceId, items);
             this.context = context;
             feedsArrayList = items;
+            this.textViewResourceId=textViewResourceId;
 
         }
 
@@ -386,7 +414,8 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
 
                     holder.question.setBackgroundResource(R.drawable.addimage);
-                    holder.question.setText("has");
+                    holder.question.setText("Has");
+                holder.question.setTextSize(10);
                     holder.viewLine.setBackgroundColor(Color.parseColor("#add58a"));
 
                 }
@@ -448,7 +477,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             // check if it is needs change the color to red
             if (Integer.parseInt(dataFeeds_Has.getIsHas()) ==0) {
                 viewLine.setBackgroundColor(Color.parseColor("#add58a"));
-                question.setText("has");
+                question.setText("Has");
                 question.setBackgroundResource(R.drawable.addimage);
             }
 
@@ -464,7 +493,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             Log.e("questionHas",""+dataFeeds_Needs.getIsNeeds());
             if (Integer.parseInt(dataFeeds_Needs.getIsNeeds()) == 1) {
                 viewLine2.setBackgroundColor(Color.parseColor("#f27166"));
-                question2.setText("needs");
+                question2.setText("Need");
                 question2.setBackgroundResource(R.drawable.addimage_red);
             }
             name2.setText(dataFeeds_Needs.getFname());
@@ -514,23 +543,14 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
                 @Override
                 public void onClick(View view) {
                     // get the data from objects
-                    String ticket_id_1= dataFeeds_Has.getTicket_id();
-                    String ticket_id_2=dataFeeds_Needs.getTicket_id();
-                    String phone1=dataFeeds_Has.getPhone();
-                    String phone2=dataFeeds_Needs.getPhone();
-                    String connector_vz_id=dataFeeds_Has.getVz_id();
+                     ticket_id_1= dataFeeds_Has.getTicket_id();
+                     ticket_id_2=dataFeeds_Needs.getTicket_id();
+                     phone_1=dataFeeds_Has.getPhone();
+                     phone_2=dataFeeds_Needs.getPhone();
+                     connecter_vz_id=dataFeeds_Has.getVz_id();
 
-                    // send data to Connect_2_Tickets
-                    Connect_2_Tickets connect = new Connect_2_Tickets();
-
-
-                    Intent intent=new Intent(getActivity(),Connect_2_Tickets.class);
-                    intent.putExtra("ticket_id_1", ticket_id_1);
-                    intent.putExtra("phone1", phone1);
-                    intent.putExtra("connector_vz_id", connector_vz_id);
-                    intent.putExtra("phone2", phone2);
-                    intent.putExtra("ticket_id_2", ticket_id_2);
-                    startActivity(intent);
+                    HttpPostClass connect = new HttpPostClass();
+                    connect.execute(URL_CONNECT + token_sharedPreference);
 
                     pwindo.dismiss();
 
@@ -548,6 +568,94 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         }
 
     }
+    public class HttpPostClass extends AsyncTask<String, Void, String> {
+
+        Context context;
+
+
+        protected void onPreExecute() {
+            progress = new ProgressDialog(getActivity());
+            progress.setMessage("Connecting please wait....");
+            progress.show();
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            // params comes from the execute() call: params[0] is the url.
+            try {
+                return downloadUrl(urls[0]);
+            } catch (IOException e) {
+                return "Unable to download the requested page.";
+            }
+        }
+
+        private String downloadUrl(String urlString) throws IOException {
+            String response = null;
+            try {
+//                final TextView outputView = (TextView) findViewById(R.id.content);
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+
+                HttpClient client = new DefaultHttpClient();
+
+                HttpPost post = new HttpPost(urlString);
+
+                List<NameValuePair> params1 = new ArrayList<NameValuePair>();
+                params1.add(new BasicNameValuePair("connecter_vz_id", connecter_vz_id));
+                params1.add(new BasicNameValuePair("phone_1", phone_1));
+                params1.add(new BasicNameValuePair("ticket_id_1", ticket_id_1));
+                params1.add(new BasicNameValuePair("phone_2", phone_2));
+                params1.add(new BasicNameValuePair("ticket_id_2", ticket_id_2));
+                params1.add(new BasicNameValuePair("my_ticket", my_ticket));
+                params1.add(new BasicNameValuePair("reffered_ticket", reffered_ticket));
+                params1.add(new BasicNameValuePair("reffered_phone", reffered_phone));
+
+
+                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
+                post.setEntity(ent);
+                HttpResponse responsePOST = client.execute(post);
+                HttpEntity resEntity = responsePOST.getEntity();
+
+                if (resEntity != null) {
+                    response = EntityUtils.toString(resEntity);
+                    Log.i("RESPONSE", response);
+
+                }
+                StringBuilder sb = new StringBuilder();
+                try {
+                    BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
+                    String line = null;
+
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                System.out.println("finalResult " + sb.toString());
+                return sb.toString();
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+            progress.dismiss();
+            Toast.makeText(getActivity(), "Connected tickets", Toast.LENGTH_LONG).show();
+
+        }
+    }
+
 
 }
 
