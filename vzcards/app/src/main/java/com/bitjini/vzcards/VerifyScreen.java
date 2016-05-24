@@ -14,6 +14,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -102,7 +103,12 @@ public class VerifyScreen extends Activity {
             @Override
             public void onClick(View view) {
                 if(editTextPhoneNo.getText().toString().length()==10){
+                    InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (getCurrentFocus() != null){
+                        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
                     sendPostRequest(view);
+
 
                 }
                 else {

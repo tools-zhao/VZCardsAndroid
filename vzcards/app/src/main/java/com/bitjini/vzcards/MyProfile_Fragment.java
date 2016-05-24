@@ -30,6 +30,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -290,7 +291,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     clickCount = 1;
 
                 } else if (clickCount == 1) {
-
+                    // to hide keypad
+                    InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (getActivity().getCurrentFocus() != null){
+                        inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
                     editbtn.setText("Edit");
                     cancelBtn.setVisibility(View.GONE);
                     imageCompany.setClickable(false);
@@ -301,12 +306,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
                     data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
                     json3=data.getString(TASKS, null);
-                    Log.e("json2",""+json2);
-                    Log.e("json3",""+json3);
 
                     SavePreferences(TASKS, json2);
+                    // check if any changes done if yes make an api call
+
                     assert json3 != null;
-                    if(json3.equals(json2)) {
+                    if(json3.equals(json2) && profilePicturePath.length() == 0 && companyPicturePath.length() == 0 ) {
                     }else {
                         if (profilePicturePath.length() != 0 || companyPicturePath.length() != 0) {
                             if (profilePicturePath.length() != 0) {
@@ -646,364 +651,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         }
         return null;
     }
-//    private void openImageIntent() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
-//        } else {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//                getActivity().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_WRITE_EXTERNAL_STORAGE);
-//            } else {
-//                // Determine Uri of camera image to save.
-//                final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
-//                root.mkdir();
-//                final String fname = "img_" + System.currentTimeMillis() + ".jpg";
-//                final File sdImageMainDirectory = new File(root, fname);
-//                outputFileUri = Uri.fromFile(sdImageMainDirectory);
-//
-//                // Camera.
-//                final List<Intent> cameraIntents = new ArrayList<Intent>();
-//                final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                final PackageManager packageManager = getActivity().getPackageManager();
-//                final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-//                for (ResolveInfo res : listCam) {
-//                    final String packageName = res.activityInfo.packageName;
-//                    final Intent intent = new Intent(captureIntent);
-//                    intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-//                    intent.setPackage(packageName);
-//                    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-//                    cameraIntents.add(intent);
-//                }
-//
-//                //FileSystem
-//                final Intent galleryIntent = new Intent();
-//                galleryIntent.setType("image/");
-//                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-//
-//                // Chooser of filesystem options.
-//                final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
-//                // Add the camera options.
-//                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
-//                startActivityForResult(chooserIntent, SELECT_PHOTO);
-//            }
-//        }
-//    }
-//
-//
-//
-//
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (resultCode == getActivity().RESULT_OK) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//                getActivity().requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_READ_EXTERNAL_STORAGE);
-//            } else {
-//                if (requestCode == SELECT_PHOTO) {
-//                    final boolean isCamera;
-//
-//                    if (data == null) {
-//                        isCamera = true;
-//                    } else {
-//                        final String action = data.getAction();
-//                        if (action == null) {
-//                            isCamera = false;
-//                        } else {
-//                            isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
-//                        }
-//                    }
-//
-//                    Uri selectedImageUri;
-//                    if (isCamera) {
-//
-//                        selectedImageUri = outputFileUri;
-//
-//                        if (currentImageView == imageProfile) {
-//                            picturePath = selectedImageUri.getPath();
-//                            Log.e("path :", "" + picturePath);
-//                            decodeFile(picturePath);
-//
-//                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-//                            alertDialogBuilder.setMessage("Do you want to upload the image");
-//                            alertDialogBuilder.setPositiveButton("Ok",
-//                                    new DialogInterface.OnClickListener() {
-//
-//                                        @Override
-//                                        public void onClick(DialogInterface arg0, int arg1) {
-//
-//                                            // Upload image to server
-//                                            progress = new ProgressDialog(getActivity());
-//                                            if (progress != null) {
-//                                                progress.setMessage("Uploading image ..Please Wait...");
-//                                                progress.setCancelable(false);
-//                                                progress.show();
-//                                            }
-//                                            new UploadImageTask(getActivity()) {
-//                                                @Override
-//                                                public void onPostExecute(String result) {
-//                                                    if (progress.isShowing()) {
-//                                                        progress.dismiss();
-//                                                        progress = null;
-//                                                    }
-//
-//                                                    imageProfile.setImageBitmap(bitmap);
-//                                                    if (result != null) {
-//
-//                                                        JSONObject json = null;
-//                                                        try {
-//                                                            json = new JSONObject(result);
-////                                                            photo = json.getString("photo");
-//                                                            photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
-//
-//                                                            String link = json.getString("link");
-//                                                            SavePreferences(PROFILE_IMAGE, photo+link);
-//                                                            Log.e("photo :", "" + photo+link);
-//                                                        } catch (JSONException e) {
-//                                                            e.printStackTrace();
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }.execute();
-//                                            Log.e("profile photo outside:", "" + photo);
-//
-//                                        }
-//
-//                                    });
-//
-//                            alertDialogBuilder.setNegativeButton("cancel",
-//                                    new DialogInterface.OnClickListener() {
-//
-//                                        @Override
-//                                        public void onClick(DialogInterface arg0, int arg1) {
-//
-//                                        }
-//                                    });
-//                            AlertDialog alertDialog = alertDialogBuilder.create();
-//                            alertDialog.show();
-//
-//                        }
-//
-//
-//                        if (currentImageView == imageCompany) {
-//                            picturePath = selectedImageUri.getPath();
-//                            Log.e("path :", "" + picturePath);
-//                            decodeFile(picturePath);
-//////            v.imageView.setImageDrawable(roundedImage);
-////                        currentImageView.setImageBitmap(bitmap);
-//                            // create an alert dialog box
-//                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-//                            alertDialogBuilder.setMessage("Do you want to upload the image");
-//                            alertDialogBuilder.setPositiveButton("Ok",
-//                                    new DialogInterface.OnClickListener() {
-//
-//                                        @Override
-//                                        public void onClick(DialogInterface arg0, int arg1) {
-//
-//
-//                                            // Upload image to server
-//                                            progress = new ProgressDialog(getActivity());
-//                                            if (progress != null) {
-//                                                progress.setMessage("Uploading Company image ..Please Wait...");
-//                                                progress.setCancelable(false);
-//                                                progress.show();
-//                                            }
-//                                            new UploadImageTask(getActivity()) {
-//                                                @Override
-//                                                public void onPostExecute(String result) {
-//                                                    if (progress.isShowing()) {
-//                                                        progress.dismiss();
-//                                                        progress = null;
-//                                                    }
-//                                                    imageCompany.setImageBitmap(bitmap);
-//
-//                                                    if (result != null) {
-//
-//                                                        JSONObject json = null;
-//                                                        try {
-//                                                            json = new JSONObject(result);
-////                                                            company_photo = json.getString("photo");
-//                                                            company_photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
-//
-//                                                            String link = json.getString("link");
-//                                                            SavePreferences(COMPANY_IMAGE, company_photo+link);
-//                                                            Log.e("company_photo :", "" + company_photo+link);
-//                                                            Log.e("link :", "" + link);
-//                                                        } catch (JSONException e) {
-//                                                            e.printStackTrace();
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }.execute();
-//
-//
-//                                        }
-//                                    });
-//
-//                            alertDialogBuilder.setNegativeButton("cancel",
-//                                    new DialogInterface.OnClickListener() {
-//
-//                                        @Override
-//                                        public void onClick(DialogInterface arg0, int arg1) {
-//
-//                                        }
-//                                    });
-//                            AlertDialog alertDialog = alertDialogBuilder.create();
-//                            alertDialog.show();
-//
-//                        }
-//
-//
-//                    } else {
-//                        Uri selectedImage = data.getData();
-//                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-//                        Cursor cursor = getActivity().getContentResolver().query(selectedImage,
-//                                filePathColumn, null, null, null);
-//                        cursor.moveToFirst();
-//
-//                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//
-//                        if (currentImageView == imageProfile) {
-//                            picturePath = cursor.getString(columnIndex);
-//                            cursor.close();
-//                            Log.e("path :", "" + picturePath);
-//                            decodeFile(picturePath);
-//                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-//                            alertDialogBuilder.setMessage("Do you want to upload the image");
-//                            alertDialogBuilder.setPositiveButton("Ok",
-//                                    new DialogInterface.OnClickListener() {
-//
-//                                        @Override
-//                                        public void onClick(DialogInterface arg0, int arg1) {
-//
-//
-//                                            // Upload image to server
-//                                            progress = new ProgressDialog(getActivity());
-//                                            if (progress != null) {
-//                                                progress.setMessage("Uploading profile image ..Please Wait...");
-//                                                progress.setCancelable(false);
-//                                                progress.show();
-//                                            }
-//                                            new UploadImageTask(getActivity()) {
-//                                                @Override
-//                                                public void onPostExecute(String result) {
-//                                                    if (progress.isShowing()) {
-//                                                        progress.dismiss();
-//                                                        progress = null;
-//                                                    }
-//                                                    imageProfile.setImageBitmap(bitmap);
-//
-//                                                    if (result != null) {
-//
-//                                                        JSONObject json = null;
-//                                                        try {
-//                                                            json = new JSONObject(result);
-//                                                            photo = json.getString("photo");
-//                                                            photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
-//
-//                                                            String link = json.getString("link");
-//                                                            SavePreferences(PROFILE_IMAGE, photo+link);
-//                                                            Log.e("photo :", "" + photo+link);
-//                                                        } catch (JSONException e) {
-//                                                            e.printStackTrace();
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }.execute();
-//                                            Log.e("profile photo outside:", "" + photo);
-//                                        }
-//                                    });
-//
-//                            alertDialogBuilder.setNegativeButton("cancel",
-//                                    new DialogInterface.OnClickListener() {
-//
-//                                        @Override
-//                                        public void onClick(DialogInterface arg0, int arg1) {
-//
-//                                        }
-//                                    });
-//                            AlertDialog alertDialog = alertDialogBuilder.create();
-//                            alertDialog.show();
-//
-//                        }
-//
-//                        if (currentImageView == imageCompany) {
-//                            picturePath = cursor.getString(columnIndex);
-//                            cursor.close();
-//                            Log.e("path :", "" + picturePath);
-//                            decodeFile(picturePath);
-//                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-//                            alertDialogBuilder.setMessage("Do you want to upload the image");
-//                            alertDialogBuilder.setPositiveButton("Ok",
-//                                    new DialogInterface.OnClickListener() {
-//
-//                                        @Override
-//                                        public void onClick(DialogInterface arg0, int arg1) {
-//
-//
-//                                            // Upload image to server
-//                                            progress = new ProgressDialog(getActivity());
-//                                            if (progress != null) {
-//                                                progress.setMessage("Uploading company image ..Please Wait...");
-//                                                progress.setCancelable(false);
-//                                                progress.show();
-//                                            }
-//                                            new UploadImageTask(getActivity()) {
-//                                                @Override
-//                                                public void onPostExecute(String result) {
-//                                                    if (progress.isShowing()) {
-//                                                        progress.dismiss();
-//                                                        progress = null;
-//                                                    }
-//                                                    imageCompany.setImageBitmap(bitmap);
-//
-//                                                    if (result != null) {
-//
-//                                                        JSONObject json = null;
-//                                                        try {
-//                                                            json = new JSONObject(result);
-//                                                            company_photo = json.getString("photo");
-//                                                            company_photo="http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
-//
-//                                                            String link = json.getString("link");
-//                                                            SavePreferences(COMPANY_IMAGE, company_photo+link);
-//                                                            Log.e("company_photo :", "" + company_photo+link);
-//                                                            Log.e("link :", "" + link);
-//                                                        } catch (JSONException e) {
-//                                                            e.printStackTrace();
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }.execute();
-//
-//                                        }
-//                                    });
-//
-//                            alertDialogBuilder.setNegativeButton("cancel",
-//                                    new DialogInterface.OnClickListener() {
-//
-//                                        @Override
-//                                        public void onClick(DialogInterface arg0, int arg1) {
-//
-//                                        }
-//                                    });
-//                            AlertDialog alertDialog = alertDialogBuilder.create();
-//                            alertDialog.show();
-//
-//                        }
-//                    }
-//                } else if (resultCode == getActivity().RESULT_CANCELED) {
-//                    // user cancelled Image capture
-//                    Toast.makeText(getActivity(),
-//                            "User cancelled image capture", Toast.LENGTH_SHORT)
-//                            .show();
-//                } else {
-//                    // failed to capture image
-//                    Toast.makeText(getActivity(),
-//                            "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
-//                            .show();
-//                }
-//            }
-//        }
-//
-//    }
+
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_CAMERA) {
@@ -1077,6 +725,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 break;
 
             case R.id.cancel:
+                // to hide keypad
+
                 Fragment newfragment1 = new MyProfile_Fragment();
                 // get the id of fragment
                 FrameLayout contentView1 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
@@ -1086,6 +736,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 fragmentManager.beginTransaction()
                         .replace(contentView1.getId(), newfragment1)
                         .commit();
+
+                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getActivity().getCurrentFocus() != null){
+                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
                 break;
                 //redirecting to VZFriends_Fragment
             case R.id.vzfrnds:
