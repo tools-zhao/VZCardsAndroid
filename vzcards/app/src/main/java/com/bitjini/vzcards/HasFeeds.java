@@ -108,7 +108,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         getActivity();
         VerifyScreen p = new VerifyScreen();
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-
+        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
         if(getActivity()!=null) {
         getFeedsContents(URL_GETLIST + p.token_sharedPreference);
@@ -549,8 +549,10 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
                      phone_2=dataFeeds_Needs.getPhone();
                      connecter_vz_id=dataFeeds_Has.getVz_id();
 
+                    Log.e("token=",""+token_sharedPreference);
                     HttpPostClass connect = new HttpPostClass();
                     connect.execute(URL_CONNECT + token_sharedPreference);
+
 
                     pwindo.dismiss();
 
