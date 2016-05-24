@@ -654,7 +654,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
                                     @Override
                                     public void onClick(DialogInterface arg0, int arg1) {
-
+                                        v.clearAnimation();
                                     }
                                 });
                         AlertDialog alertDialog = alertDialogBuilder.create();
