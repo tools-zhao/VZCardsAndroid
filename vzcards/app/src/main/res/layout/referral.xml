@@ -149,7 +149,7 @@
             <!--***********************-->
 
             <LinearLayout android:id="@+id/toolbar"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
                 android:orientation="vertical">
@@ -190,7 +190,8 @@
                         android:layout_height="30dp"
                         android:text="call"
                         android:layout_weight="0.9"
-                        android:background="@drawable/call"
+                        android:background="@drawable/drawable_refer"
+                        android:textColor="@drawable/refer_text"
                         android:layout_below="@+id/textView1"
                         android:id="@+id/btnCall"
                         android:textSize="15sp"
@@ -203,7 +204,8 @@
                         android:textSize="15sp"
                         android:layout_marginLeft="5dp"
                         android:id="@+id/btnVzCard"
-                        android:background="@drawable/call"
+                        android:background="@drawable/drawable_refer"
+                        android:textColor="@drawable/refer_text"
                         android:layout_marginRight="10dp"
 
                         android:layout_below="@+id/btn"/>
