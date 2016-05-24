@@ -1,5 +1,5 @@
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/vzfrnds_list_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,19 +33,21 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#5f8ac7"
+        android:layout_below="@+id/toolbar"
         android:orientation="vertical"
         android:id="@+id/Layout1"
         >
         <SearchView
             android:layout_width="300dp"
-            android:layout_height="35dp"
-            android:paddingTop="5dp"
+            android:layout_height="39dp"
+            android:paddingTop="-22dp"
+            android:textAlignment="center"
             android:background="@drawable/drawable_text"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="9dp"
             android:id="@+id/searchview"
-            android:textAlignment="center"
-            android:gravity="center_horizontal"></SearchView>
+            android:gravity="bottom"></SearchView>
         <TextView
             android:layout_width="300dp"
             android:layout_height="30dp"

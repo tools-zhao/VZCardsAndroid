@@ -1,5 +1,5 @@
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/vzfrnds_list_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,21 +22,43 @@
         <!--android:layout_below="@+id/searchView"-->
         <!--android:layout_centerHorizontal="true"-->
         <!--android:id="@+id/resultText"/>-->
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:id="@+id/toolbar"
+            android:background="?attr/colorPrimary"
+            android:elevation="6dp"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            <ImageView
+                android:layout_width="130dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/navbarlogo2x"
+                android:layout_gravity="center"/>
+        </android.support.v7.widget.Toolbar>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="#5f8ac7"
             android:orientation="vertical"
+            android:layout_below="@+id/toolbar"
             android:id="@+id/Layout1">
             <SearchView
                 android:layout_width="300dp"
-                android:layout_height="35dp"
-                android:padding="0dp"
+                android:layout_height="39dp"
+                android:paddingTop="-22dp"
+                android:textAlignment="center"
                 android:background="@drawable/drawable_text"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="9dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="9dp"
                 android:id="@+id/searchview"
-                android:gravity="center_vertical"></SearchView>
+                android:gravity="bottom"></SearchView>
             <TextView
                 android:layout_width="300dp"
                 android:layout_height="30dp"
