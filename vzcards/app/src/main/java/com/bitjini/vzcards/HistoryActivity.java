@@ -605,12 +605,12 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     childAdapter = new MyClassAdapter(getActivity(), connectorDetails, R.layout.history_referrals);
                     list.setAdapter(childAdapter);
                     if (Integer.parseInt(data.getQuestion()) == 0) {
-                        v.viewLine.setBackgroundColor(Color.parseColor("#add58a")); //Green
+                        v.viewline2.setBackgroundColor(Color.parseColor("#add58a")); //Green
 
                     }
                     // check if it is has change the color to red=1
                     if (Integer.parseInt(data.getQuestion()) == 1) {
-                        v.viewLine.setBackgroundColor(Color.parseColor("#f27166"));// Red
+                        v.viewline2.setBackgroundColor(Color.parseColor("#f27166"));// Red
 
                     }
                 }
