@@ -147,6 +147,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/referralList"
             android:visibility="visible"
+
             android:background="@drawable/drawable_text"
             android:layout_below="@+id/Layout1"
             android:focusable="false"></ListView>

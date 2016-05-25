@@ -359,8 +359,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         if(!photo.isEmpty()) {
 
-            Picasso.with(getActivity()).load(photo).centerCrop().resize(200,200).placeholder(R.drawable.profile_pic_placeholder).into(target);
-            Picasso.with(getActivity()).load(photo).centerCrop().resize(250,250).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+            Picasso.with(getActivity()).load(photo).centerCrop().resize(200,200).into(target);
+            Picasso.with(getActivity()).load(photo).centerCrop().resize(300,300).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
 
             Log.e(" Photo on Received ",""+photo);
 

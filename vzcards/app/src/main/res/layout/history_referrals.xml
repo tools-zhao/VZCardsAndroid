@@ -15,20 +15,18 @@
         android:descendantFocusability="blocksDescendants"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
         android:layout_height="fill_parent">
         <LinearLayout
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:orientation="horizontal"
             android:clickable="false"
             android:descendantFocusability="blocksDescendants"
             android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_marginRight="10dp">
+            android:focusableInTouchMode="false">
             <com.bitjini.vzcards.RoundedImageView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
