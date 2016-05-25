@@ -67,8 +67,17 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
         connector_vz_id = intent.getStringExtra("connector_vz_idHas");
 
 
-
-        Log.e("photo url ", "" + photo);
+//        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+//        if (currentapiVersion >= android.os.Build.VERSION_CODES.LOLLIPOP){
+//            // Do something for lollipop and above versions
+//            referVZbtn.setBackgroundResource(R.drawable.ripple_effect);
+//            referContactbtn.setBackgroundResource(R.drawable.ripple_effect);
+//        } else{
+//            // do something for phones running an SDK before lollipop
+//            referVZbtn.setBackgroundResource(R.drawable.addimage);
+//            referContactbtn.setBackgroundResource(R.drawable.addimage);
+//        }
+//        Log.e("photo url ", "" + photo);
         title.setText(item);
         description.setText(desc);
         name.setText(profileName);
@@ -80,7 +89,7 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
 //            new DownloadImagesTask(getActivity()).execute(item_photo);
         } else
         {
-            item_photo.setImageResource(R.drawable.no_pic_placeholder_with_border_800x800);
+            item_photo.setImageResource(R.drawable.no_pic_placeholder_full);
         }
 
         if(!photo.isEmpty())

@@ -14,10 +14,10 @@ android {
 
     defaultConfig {
         applicationId "com.bitjini.vzcards"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 23
-        versionCode 1g
-        versionName "1.0.5"
+        versionCode 1
+        versionName "1.0.9"
 
         // Add the following two lines
         renderscriptTargetApi 18

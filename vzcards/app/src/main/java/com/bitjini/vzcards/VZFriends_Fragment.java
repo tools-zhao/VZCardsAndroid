@@ -1,15 +1,23 @@
 package com.bitjini.vzcards;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SyncContext;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -56,12 +64,16 @@ import java.util.concurrent.ExecutionException;
 public class VZFriends_Fragment extends Fragment implements View.OnClickListener,SearchView.OnQueryTextListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     String VZFRIENDS_URL = "http://vzcards-api.herokuapp.com/get_my_friends/?access_token=";
+
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+
     VerifyScreen p = new VerifyScreen();
 
     Context c;
     View v;
     // ArrayList
     ArrayList<SelectUser> selectUsers = new ArrayList<SelectUser>();
+    ArrayList<SelectUser> phoneList = new ArrayList<SelectUser>();
     VZFriends_Adapter adapter;
     List<SelectUser> temp;
     // Contact List
@@ -75,18 +87,18 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     ContentResolver resolver;
     ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
-
     View footer;
     int countOfFrnds=0;
     int currentPage=1;
     int totalPage=0;
     boolean isLoading=false;
 
+    int progressCount;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
-//        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
 
         // the refresh listner. this would be called when the layout is pulled down
@@ -106,15 +118,46 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
 //        displayText = (TextView) findViewById(R.id.resultText);
 
-        // refresh contents
-        getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-        adapter = new VZFriends_Adapter(selectUsers,getActivity());
-        listView.setAdapter(adapter);
 
+
+
+        // refresh contents
+//
+//        if(progressCount==0) {
+//            listView.setVisibility(View.GONE);
+//            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+//            animation.setDuration(1000); //in milliseconds
+//            animation.setRepeatCount(5);
+//            animation.setInterpolator(new DecelerateInterpolator());
+//            animation.start();
+//
+////            refresh contents
+//            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+//
+//            progressBar.clearAnimation();
+//
+//            progressBar.setVisibility(View.GONE);
+//            listView.setVisibility(View.VISIBLE);
+//        }
+//        else {
+////            refresh contents
+//            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+//
+//        }
+
+        if(getActivity()!=null) {
+            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+            adapter = new VZFriends_Adapter(selectUsers, getActivity());
+            listView.setAdapter(adapter);
+        }
         listView.setTextFilterEnabled(true);
+        filter = adapter.getFilter();
+
+
+
         setupSearchView();
 
-        filter = adapter.getFilter();
+
         listView.setFastScrollEnabled(true);
         listView.setOnItemClickListener(this);
 
@@ -164,65 +207,91 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         return vzfrnds;
 
     }
+
     public void getVzFrnds(String url)
     {
-        try{
+        try {
+            progressCount=1;
+
             String received=new HttpAsyncTask(getActivity()).execute(url).get();
 
-            JSONObject jsonObject = new JSONObject(received);
-            countOfFrnds=jsonObject.getInt("count");
-            Log.e("count of frnds",""+countOfFrnds);
-            String response = jsonObject.getString("response");
 
-            // Getting JSON Array node
-            JSONArray arr = jsonObject.getJSONArray("response");
+                    JSONObject jsonObject = new JSONObject(received);
+                    countOfFrnds=jsonObject.getInt("count");
+                    Log.e("count of frnds",""+countOfFrnds);
+                    String response = jsonObject.getString("response");
 
-            // looping through All Contacts
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject c = arr.getJSONObject(i);
-                // Feed node is JSON Object
-                String phone = c.getString("phone");
+                    // Getting JSON Array node
+                    JSONArray arr = jsonObject.getJSONArray("response");
+
+                    // looping through All Contacts
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject c = arr.getJSONObject(i);
+                        // Feed node is JSON Object
+                        String phone = c.getString("phone");
                 String firstname = c.getString("firstname");
                 String lastname = c.getString("lastname");
-                String photo = c.getString("photo");
+                        String photo = c.getString("photo");
 
-                String company = c.getString("company");
-                String pin_code = c.getString("pin_code");
-                String industry = c.getString("industry");
-                String address1 = c.getString("address_line_1");
-                String address2 = c.getString("address_line_2");
-                String city = c.getString("city");
-                String company_photo = c.getString("company_photo");
-                String email = c.getString("email");
+                        String company = c.getString("company");
+                        String pin_code = c.getString("pin_code");
+                        String industry = c.getString("industry");
+                        String address1 = c.getString("address_line_1");
+                        String address2 = c.getString("address_line_2");
+                        String city = c.getString("city");
+                        String company_photo = c.getString("company_photo");
+                        String email = c.getString("email");
 
-                SelectUser selectUser = new SelectUser();
-                selectUser.setfName(firstname);
-                selectUser.setLname(lastname);
-                selectUser.setPhone(phone);
-                selectUser.setPhoto(photo);
-                selectUser.setEmail(email);
-                selectUser.setCompany(company);
-                selectUser.setPin_code(pin_code);
-                selectUser.setIndustry(industry);
-                selectUser.setAddress1(address1);
-                selectUser.setAddress2(address2);
-                selectUser.setCity(city);
-                selectUser.setComany_photo(company_photo);
-                selectUsers.add(selectUser);
-            }
+
+                        SelectUser selectUser = new SelectUser();
+
+                        SyncContacts sync=new SyncContacts(getActivity());
+//                Log.e("list:",""+sync.phoneList12);
+                        for (SelectUser list:sync.phoneList12)
+                        {
+                            if(phone.contains(list.getPhone()))
+                            {
+                                selectUser.setfName(list.getName());
+                            }
+
+                        }
+
+                        selectUser.setFirstName(firstname);
+                        selectUser.setLastName(lastname);
+                        selectUser.setSyncPhone(phone);
+                        selectUser.setPhoto(photo);
+                        selectUser.setEmail(email);
+                        selectUser.setCompany(company);
+                        selectUser.setPin_code(pin_code);
+                        selectUser.setIndustry(industry);
+                        selectUser.setAddress1(address1);
+                        selectUser.setAddress2(address2);
+                        selectUser.setCity(city);
+                        selectUser.setComany_photo(company_photo);
+
+
+                        selectUsers.add(selectUser);
+
+
+
+
+                    }
 
 
 //            Log.e(" received :", "" + response);
 
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
     }
+
+
+
 
 
 
@@ -244,9 +313,11 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 countOfFrnds=0;
                 isLoading = false;
                 getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-                adapter = new VZFriends_Adapter(selectUsers,getActivity());
-                listView.setAdapter(adapter);
-                filter = adapter.getFilter();
+                if(getActivity()!=null) {
+                    adapter = new VZFriends_Adapter(selectUsers, getActivity());
+                    listView.setAdapter(adapter);
+                    filter = adapter.getFilter();
+                }
                 //do processing to get new data and set your listview's adapter, maybe  reinitialise the loaders you may be using or so
                 //when your data has finished loading, set the refresh state of the view to false
                 swipeRefreshLayout.setRefreshing(false);
@@ -298,11 +369,13 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     public boolean onQueryTextChange(String newText)
     {
 
-        if (TextUtils.isEmpty(newText)) {
-            listView.clearTextFilter();
-        } else {
-            listView.setFilterText(newText);
-        }
+//        if (TextUtils.isEmpty(newText)) {
+//            listView.clearTextFilter();
+//        } else {
+//            listView.setFilterText(newText);
+//        }
+        filter.filter(newText);
+
         return true;
     }
 
@@ -326,10 +399,10 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         SelectUser data = (SelectUser) parent.getItemAtPosition(position);
         Intent nextScreenIntent = new Intent(getActivity(), Friends_Profile.class);
 
-        nextScreenIntent.putExtra("fname", data.getfName());
-        nextScreenIntent.putExtra("lname", data.getLname());
+        nextScreenIntent.putExtra("fname", data.getFirstName());
+        nextScreenIntent.putExtra("lname", data.getLastName());
         nextScreenIntent.putExtra("photo", data.getPhoto());
-        nextScreenIntent.putExtra("phone", data.getPhone());
+        nextScreenIntent.putExtra("phone", data.getSyncPhone());
         nextScreenIntent.putExtra("company", data.getCompany());
         nextScreenIntent.putExtra("pin_code", data.getPin_code());
         nextScreenIntent.putExtra("industry", data.getIndustry());
@@ -443,19 +516,19 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             }
             v = new ViewHolder();
             v.fname = (TextView) view.findViewById(R.id.name);
-
+            v.company=(TextView) view.findViewById(R.id.companyName);
             v.phone = (TextView) view.findViewById(R.id.number);
             v.imageView = (ImageView) view.findViewById(R.id.contactImage);
 
             final SelectUser data = (SelectUser) arrayList.get(i);
-            v.fname.setText(data.getfName() + " " + data.getLname());
-
-            v.phone.setText(data.getPhone());
+            v.fname.setText(data.getfName());
+            v.company.setText(data.getCompany());
+//            v.phone.setText(data.getSyncPhone());
 
             //set Image if exxists
             try {
                 if (!data.getPhoto().isEmpty()) {
-                    Picasso.with(_c).load(data.getPhoto()).placeholder(R.drawable.progress_animation).into(v.imageView);
+                    Picasso.with(_c).load(data.getPhoto()).centerCrop().resize(150,150).placeholder(R.drawable.progress_animation).into(v.imageView);
 //                v.imageView.setTag(data.getPhoto());
 //                new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
 
@@ -522,7 +595,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
         class ViewHolder {
             ImageView imageView;
-            TextView fname, phone;
+            TextView fname, phone, company;
         }
 
 

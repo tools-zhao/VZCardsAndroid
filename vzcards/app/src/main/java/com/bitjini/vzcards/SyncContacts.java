@@ -57,6 +57,7 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class SyncContacts extends AsyncTask<String, Void, String> {
     ArrayList<String > phoneArray=new ArrayList<>();
+    public static  ArrayList<SelectUser>  phoneList12=new ArrayList<>();
 
     public ProgressDialog progress;
     public Cursor phones;
@@ -67,7 +68,6 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
    Activity _activity;
     // Pop up
-    ContentResolver resolver;
 
     Context context;
 
@@ -77,13 +77,6 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         this.context = context;
     }
 
-//    protected void onPreExecute() {
-//
-//        progress = new ProgressDialog(this.context);
-//       progress.setMessage("Synchronizing your contacts please wait...");
-//       progress.setCancelable(false);
-//        progress.show();
-//    }
     @Override
     protected String doInBackground(String... urls) {
         // params comes from the execute() call: params[0] is the url.
@@ -146,7 +139,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                         rd.close();
 
 
-                        Log.e(" contact list Response", "" + response.toString());
+//                        Log.e(" contact list Response", "" + response.toString());
 
 
 
@@ -189,14 +182,6 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
         return result.toString();
     }
-//    public void onPostExecute(String result)
-//    {
-//        if(progress.isShowing())
-//        {
-//            progress.dismiss();
-//            progress=null;
-//        }
-//    }
 
     // Load data on background
     class LoadContact extends AsyncTask<Void, Void, Void> {
@@ -209,6 +194,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         @Override
         protected Void doInBackground(Void... voids) {
 
+            ContentResolver resolver=context.getContentResolver();
 
             phones =context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
@@ -229,54 +215,83 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                 }
 
                 while (phones.moveToNext()) {
+                    Bitmap bit_thumb = null;
+                    String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                     String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    String image_thumb = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
 
+                    try {
+                        if (image_thumb != null) {
+                            bit_thumb = MediaStore.Images.Media.getBitmap(resolver, Uri.parse(image_thumb));
+                        } else {
+//                            Log.e("No Image Thumb", "--------------");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     phoneNumber=phoneNumber.replaceAll("[\\D]", "");
                     phoneNumber=phoneNumber.replaceFirst("^0+(?!$)", "");
                     // get the country code
                     String countryCode = GetCountryZipCode();
 
-//                    Log.e(" phone number :",""+phoneNumber);
-                    SelectUser selectUser = new SelectUser();
-
                     if(phoneNumber.length()== 10)
                     {
                         phoneNumber=countryCode+phoneNumber;
-//                        Log.e(" phone No.countrycode:",""+phoneNumber);
 
                     }
 
                     phoneArray.add(phoneNumber);
 
-//                    for (String s:phoneArray) {
-//                        Log.e(" phone arrays:", "" + s);
-//                    }
+
+                    SelectUser selectUser = new SelectUser();
+                    selectUser.setThumb(bit_thumb);
+                    selectUser.setName(name);
+                    selectUser.setPhone(phoneNumber);
+                    int flag = 0;
+                    if(phoneList12.size() == 0){
+                        phoneList12.add(selectUser);
+                    }
+                    for(int i=0;i<phoneList12.size();i++){
+
+                        if(!phoneList12.get(i).getPhone().trim().equals(phoneNumber)){
+                            flag = 1;
+
+                        }else{
+                            flag =0;
+                            break;
+                        }
+
+                    }
+                    if(flag == 1){
+                        phoneList12.add(selectUser);
+                    }
+
 
                 }
+                phones.close();
             } else {
 //                Log.e("Cursor close 1", "----------------");
             }
-            //phones.close();
             return null;
         }
-            public String GetCountryZipCode(){
-            String CountryID="";
-            String CountryZipCode="";
 
-            TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            //getNetworkCountryIso
-            CountryID= manager.getSimCountryIso().toUpperCase();
-            String[] rl=context.getResources().getStringArray(R.array.CountryCodes);
-            for(int i=0;i<rl.length;i++){
-                String[] g=rl[i].split(",");
-                if(g[1].trim().equals(CountryID.trim())){
-                    CountryZipCode=g[0];
-                    break;
-                }
-            }
-            return CountryZipCode;
-        }
     }
+    public String GetCountryZipCode(){
+        String CountryID="";
+        String CountryZipCode="";
 
+        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        CountryID= manager.getSimCountryIso().toUpperCase();
+        String[] rl=context.getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<rl.length;i++){
+            String[] g=rl[i].split(",");
+            if(g[1].trim().equals(CountryID.trim())){
+                CountryZipCode=g[0];
+                break;
+            }
+        }
+        return CountryZipCode;
+    }
 }
 

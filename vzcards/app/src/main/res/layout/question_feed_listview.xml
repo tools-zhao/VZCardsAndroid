@@ -30,7 +30,7 @@
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pullToRefresh"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -38,11 +38,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/feedList"
-            android:divider="#97e6ecf2"
-            android:dividerHeight="5.0sp"
+            android:divider="#43c1d9f2"
+            android:dividerHeight="2.0sp"
             android:layout_above="@+id/l8"
-            android:layout_marginTop="12dp"
-
+            android:layout_marginTop="5dp"
             android:choiceMode="multipleChoice"
             android:listSelector="@drawable/list_item_selector"></ListView>
 

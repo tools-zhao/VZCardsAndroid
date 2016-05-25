@@ -25,7 +25,9 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -65,6 +67,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -80,6 +84,11 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
     public static final String URL_CREATE_TICKET = "http://vzcards-api.herokuapp.com/ticket_create/?access_token=";
 
+    private static final int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
+
+    private Button btn_select_image;
+    private Uri mImageCaptureUri;
+    private File outPutFile = null;
     private final int SELECT_PHOTO = 1;
     private Uri outputFileUri;
     private static final int PERMISSIONS_REQUEST_CAMERA = 105;
@@ -114,8 +123,12 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         txtDate_validity=(TextView) iNeed.findViewById(R.id.validity);
         item_image=(ImageView) iNeed.findViewById(R.id.item_img);
         submit=(ImageButton) iNeed.findViewById(R.id.imgbtn);
+        txtDescription.setMovementMethod(new ScrollingMovementMethod());
+
+        item_image.setImageResource(R.drawable.no_pic_placeholder_full);
 
         animScale = AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
+        outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
 
         main_layout=(RelativeLayout) iNeed.findViewById(R.id.main_layout);
         displayImage_layout=(RelativeLayout) iNeed.findViewById(R.id.displayLayout);
@@ -168,200 +181,211 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
         return iNeed;
     }
-    public void openImageIntent() {
+    private void selectImageOption() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
-        } else {
+        }
+        else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 getActivity().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_WRITE_EXTERNAL_STORAGE);
             } else {
-                // Determine Uri of camera image to save.
-                final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
-                root.mkdir();
-                final String fname = "img_" + System.currentTimeMillis() + ".jpg";
-                final File sdImageMainDirectory = new File(root, fname);
-                outputFileUri = Uri.fromFile(sdImageMainDirectory);
+                final CharSequence[] items = { "Capture Photo", "Choose from Gallery", "Cancel" };
 
-                // Camera.
-                final List<Intent> cameraIntents = new ArrayList<Intent>();
-                final Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                final PackageManager packageManager = getActivity().getPackageManager();
-                final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-                for (ResolveInfo res : listCam) {
-                    final String packageName = res.activityInfo.packageName;
-                    final Intent intent = new Intent(captureIntent);
-                    intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                    intent.setPackage(packageName);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-                    cameraIntents.add(intent);
-                }
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+                builder.setTitle("Add Photo!");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
 
-                //FileSystem
-                final Intent galleryIntent = new Intent();
-                galleryIntent.setType("image/");
-                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                        if (items[item].equals("Capture Photo")) {
 
-                // Chooser of filesystem options.
-                final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
-                // Add the camera options.
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
-                startActivityForResult(chooserIntent, SELECT_PHOTO);
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
+                            mImageCaptureUri = Uri.fromFile(f);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+                            startActivityForResult(intent, CAMERA_CODE);
+
+                        } else if (items[item].equals("Choose from Gallery")) {
+
+                            Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(i, GALLERY_CODE);
+
+                        } else if (items[item].equals("Cancel")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
             }
         }
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == getActivity().RESULT_OK) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                getActivity().requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_READ_EXTERNAL_STORAGE);
-            } else {
-                if (requestCode == SELECT_PHOTO) {
-                    final boolean isCamera;
+        super.onActivityResult(requestCode, resultCode, data);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            getActivity().requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_READ_EXTERNAL_STORAGE);
+        } else {
+            if (resultCode != Activity.RESULT_CANCELED) {
+                if (requestCode == GALLERY_CODE && resultCode == Activity.RESULT_OK && data != null) {
 
-                    if (data == null) {
-                        isCamera = true;
-                    } else {
-                        final String action = data.getAction();
-                        if (action == null) {
-                            isCamera = false;
+                    mImageCaptureUri = data.getData();
+                    System.out.println("Gallery Image URI : " + mImageCaptureUri);
+                    CropingIMG();
+
+                } else if (requestCode == CAMERA_CODE && resultCode == Activity.RESULT_OK) {
+
+                    System.out.println("Camera Image URI : " + mImageCaptureUri);
+                    CropingIMG();
+                } else if (requestCode == CROPING_CODE) {
+
+                    try {
+                        if (outPutFile.exists()) {
+                            Bitmap photo = decodeFile(outPutFile);
+                            Item_picturePath = outPutFile.getPath();
+                            Log.e("path :", "" + Item_picturePath);
+                            item_image.setImageBitmap(photo);
                         } else {
-                            isCamera = action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+                            Toast.makeText(getActivity(), "Error while save image", Toast.LENGTH_SHORT).show();
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-                    Uri selectedImageUri;
-                    if (isCamera) {
-
-                        selectedImageUri = outputFileUri;
-
-
-                        Item_picturePath = selectedImageUri.getPath();
-                        Log.e("path :", "" + Item_picturePath);
-
-                        decodeFile(Item_picturePath);
-
-                        displayImage_layout.setVisibility(View.VISIBLE);
-                        main_layout.setVisibility(View.GONE);
-                        showImage.setImageBitmap(bitmap);
-                        choose.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                main_layout.setVisibility(View.VISIBLE);
-                                displayImage_layout.setVisibility(View.GONE);
-                                item_image.setImageBitmap(bitmap);
-
-
-                            }
-                        });
-                        cancel.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                main_layout.setVisibility(View.VISIBLE);
-                                displayImage_layout.setVisibility(View.GONE);
-
-                            }
-                        });
-
-                    } else {
-                        Uri selectedImage = data.getData();
-                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                        Cursor cursor = getActivity().getContentResolver().query(selectedImage,
-                                filePathColumn, null, null, null);
-                        cursor.moveToFirst();
-
-                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-
-                        Item_picturePath = cursor.getString(columnIndex);
-                        cursor.close();
-                        Log.e("path :", "" + Item_picturePath);
-
-                        decodeFile(Item_picturePath);
-
-                        displayImage_layout.setVisibility(View.VISIBLE);
-                        main_layout.setVisibility(View.GONE);
-                        showImage.setImageBitmap(bitmap);
-
-                        choose.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                main_layout.setVisibility(View.VISIBLE);
-                                displayImage_layout.setVisibility(View.GONE);
-                                item_image.setImageBitmap(bitmap);
-                            }
-                        });
-                        cancel.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                main_layout.setVisibility(View.VISIBLE);
-                                displayImage_layout.setVisibility(View.GONE);
-
-
-                            }
-                        });
-
-
-                    }
-                } else if (resultCode == getActivity().RESULT_CANCELED) {
-                    // user cancelled Image capture
-                    Toast.makeText(getActivity(),
-                            "User cancelled image capture", Toast.LENGTH_SHORT)
-                            .show();
-                } else {
-                    // failed to capture image
-                    Toast.makeText(getActivity(),
-                            "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
-                            .show();
                 }
             }
         }
 
+    }
+
+    private void CropingIMG() {
+
+        final ArrayList<CropOption> cropOptions = new ArrayList<CropOption>();
+
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setType("image/*");
+
+        List<ResolveInfo> list = getActivity().getPackageManager().queryIntentActivities( intent, 0 );
+        int size = list.size();
+        if (size == 0) {
+            Toast.makeText(getActivity(), "Cann't find image croping app", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            intent.setData(mImageCaptureUri);
+            intent.putExtra("outputX", 512);
+            intent.putExtra("outputY", 512);
+            intent.putExtra("aspectX", 1);
+            intent.putExtra("aspectY", 1);
+            intent.putExtra("scale", true);
+
+            //TODO: don't use return-data tag because it's not return large image data and crash not given any message
+//            intent.putExtra("return-data", true);
+
+//            Create output file here
+            if(outPutFile!=null) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outPutFile));
+            }
+            if (size == 1) {
+                Intent i   = new Intent(intent);
+                ResolveInfo res = list.get(0);
+
+                i.setComponent( new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+
+                startActivityForResult(i, CROPING_CODE);
+            } else {
+                for (ResolveInfo res : list) {
+                    final CropOption co = new CropOption();
+
+                    co.title  = getActivity().getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
+                    co.icon  =getActivity(). getPackageManager().getApplicationIcon(res.activityInfo.applicationInfo);
+                    co.appIntent= new Intent(intent);
+                    co.appIntent.setComponent( new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                    cropOptions.add(co);
+                }
+
+                CropingOptionAdapter adapter = new CropingOptionAdapter(getActivity(), cropOptions);
+
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+                builder.setTitle("Choose Croping App");
+                builder.setCancelable(false);
+                builder.setAdapter( adapter, new DialogInterface.OnClickListener() {
+                    public void onClick( DialogInterface dialog, int item ) {
+                        startActivityForResult( cropOptions.get(item).appIntent, CROPING_CODE);
+                    }
+                });
+
+                builder.setOnCancelListener( new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel( DialogInterface dialog ) {
+
+                        if (mImageCaptureUri != null ) {
+                            getActivity().getContentResolver().delete(mImageCaptureUri, null, null );
+                            mImageCaptureUri = null;
+                        }
+                    }
+                } );
+
+                android.app.AlertDialog alert = builder.create();
+                alert.show();
+            }
+        }
+    }
+
+    private Bitmap decodeFile(File f) {
+        try {
+            // decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            // Find the correct scale value. It should be the power of 2.
+            final int REQUIRED_SIZE = 512;
+            int width_tmp = o.outWidth, height_tmp = o.outHeight;
+            int scale = 1;
+            while (true) {
+                if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE)
+                    break;
+                width_tmp /= 2;
+                height_tmp /= 2;
+                scale *= 2;
+            }
+
+            // decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (FileNotFoundException e) {
+        }
+        return null;
     }
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_CAMERA) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission is granted
-                openImageIntent();
+                selectImageOption();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (requestCode == PERMISSIONS_WRITE_EXTERNAL_STORAGE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                selectImageOption();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (requestCode == PERMISSIONS_READ_EXTERNAL_STORAGE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                selectImageOption();
             } else {
                 Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
             }
         }
     }
-    public void decodeFile(String filePath) {
-        // Decode image size
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, o);
 
-        // The new size we want to scale to
-        final int REQUIRED_SIZE = 1024;
-
-        // Find the correct scale value. It should be the power of 2.
-        int width_tmp = o.outWidth, height_tmp = o.outHeight;
-        int scale = 1;
-        while (true) {
-            if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
-                break;
-            width_tmp /= 2;
-            height_tmp /= 2;
-            scale *= 2;
-        }
-
-        // Decode with inSampleSize
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        bitmap = BitmapFactory.decodeFile(filePath, o2);
-
-
-    }
 
     class INeed_Task extends AsyncTask<String, Void, String> {
 
@@ -463,7 +487,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
             txtItem.setText("");
             txtDate_validity.setText("");
             txtDescription.setText("");
-            item_image.setImageResource(R.drawable.no_pic_placeholder);
+            item_image.setImageResource(R.drawable.no_pic_placeholder_full);
             bitmap = null;
             item_photo="";
             Item_picturePath="";
@@ -547,12 +571,12 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
     }
 
-    public void onClick(View v) {
+    public void onClick(final View v) {
         switch (v.getId()) {
 
             //setting profile picture
             case R.id.addImage:
-                openImageIntent();
+               selectImageOption();
                 break;
 
             //setting company picture
@@ -565,11 +589,15 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
                 if( item.length()==0 || description.length()==0 || date_validity.length()==0)
                 {
-                    Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT).show();
+                    Toast toast = Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    v.clearAnimation();
 
                 }
                 else {
-
+                    Log.e("item_photo :", "" + Item_picturePath);
+                    Log.e("task item=",""+Item_picturePath +""+ Item_picturePath.length());
 
                     if (Item_picturePath.length() != 0) {
                         progressDialog = new ProgressDialog(getActivity());
@@ -598,9 +626,12 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                                         Log.e("link :", "" + link);
 
                                         new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+
+
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    v.clearAnimation();
                                 }
                             }
                         }.execute();
@@ -614,14 +645,16 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                                     public void onClick(DialogInterface arg0, int arg1) {
 
                                         new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+
+                                        v.clearAnimation();
                                     }
                                 });
-                        alertDialogBuilder.setNegativeButton("cancel",
+                        alertDialogBuilder.setNegativeButton("No",
                                 new DialogInterface.OnClickListener() {
 
                                     @Override
                                     public void onClick(DialogInterface arg0, int arg1) {
-
+                                        v.clearAnimation();
                                     }
                                 });
                         AlertDialog alertDialog = alertDialogBuilder.create();

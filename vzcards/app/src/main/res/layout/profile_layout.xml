@@ -20,92 +20,97 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent">
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="280dp"
                     android:background="#434951"
-                    android:id="@+id/l1"
-                    android:gravity="center_horizontal">
+                    android:id="@+id/l2"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_below="@+id/l1">
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:id="@+id/name"
+                        android:gravity="center"
+                        android:textStyle="bold"
                         android:layout_marginTop="5dp"
-                        android:textColor="#ffffff"
-                        android:layout_gravity="center"
+                        android:textColor="#fcfbfb"
                         android:text="Name"
-                        android:textSize="20sp"
-                        android:gravity="left"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:background="#434951"
-                    android:id="@+id/l2"
-                    android:weightSum="3"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal"
-                    android:layout_below="@+id/l1"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true">
-
-
+                        android:textSize="20sp"/>
+                    <RelativeLayout
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="211dp">
 
                     <com.bitjini.vzcards.RoundedImageView
-                        android:layout_width="0dp"
+                        android:layout_width="200dp"
                         android:layout_height="fill_parent"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="40dp"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="80dp"
                         android:layout_marginTop="5dp"
                         android:layout_weight="1.8"
                         android:id="@+id/profilePic"
-                        android:src="@drawable/profile_pic_placeholder"/>
+                        android:src="@drawable/profile_pic_placeholder"
+                        android:layout_alignParentBottom="true" />
 
                     <com.bitjini.vzcards.RoundedImageView
-                        android:layout_width="0dp"
+                        android:layout_width="50dp"
                         android:layout_height="60dp"
                         android:src="@drawable/com_logo"
                         android:layout_gravity="center"
                         android:layout_marginLeft="20dp"
                         android:id="@+id/btn_pick"
-                        android:layout_marginBottom="20dp"
                         android:layout_marginRight="20dp"
-                        android:layout_weight="0.6"/>
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:background="#434951"
-                    android:id="@+id/l3"
-                    android:weightSum="1"
-                    android:layout_below="@+id/l2"
-                    android:gravity="right">
+                        android:layout_weight="0.6"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/profilePic" />
+                    </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:splitMotionEvents="false">
                     <Button
-                        android:layout_width="0dp"
+                        android:layout_width="60dp"
                         android:layout_height="25dp"
                         android:text="Edit"
                         android:id="@+id/edit"
                         android:elevation="2dp"
                         android:layout_weight="1"
-                        android:layout_marginLeft="250dp"
                         android:layout_marginRight="15dp"
+                        android:layout_marginBottom="3dp"
                         android:layout_alignParentRight="true"
                         android:layout_gravity="center_vertical"
+                        android:layout_alignParentEnd="true"
                         android:gravity="center"
                         android:textColor="#ffffff"
                         android:background="@drawable/drawable_edit"/>
+                    <Button
+                        android:layout_width="75dp"
+                        android:layout_height="25dp"
+                        android:text="Cancel"
+                        android:id="@+id/cancel"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginBottom="3dp"
+                        android:elevation="2dp"
+                        android:layout_weight="0.3"
+                        android:visibility="visible"
+                        android:layout_marginLeft="200dp"
+                        android:gravity="center"
+                        android:textColor="#ffffff"
+                        android:background="@drawable/addimage_red" />
+                    </RelativeLayout>
                 </LinearLayout>
+
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_below="@+id/l3"
+                    android:layout_below="@+id/l2"
 
                     >
 
@@ -125,7 +130,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="#5f8ac7"
+            android:background="@color/colorPrimary"
             android:layout_marginBottom="0dp"
             android:id="@+id/l8"
             android:layout_alignParentBottom="true"

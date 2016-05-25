@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="300dp"
-   android:layout_height="140dp"
+   android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
     android:background="@drawable/drawable3">
 
     <TextView
@@ -9,10 +10,10 @@
         android:layout_height="30dp"
         android:id="@+id/text1"
         android:text="ENTER OTP"
-        android:layout_marginLeft="102dp"
-        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
         android:textSize="15sp"
-        android:textColor="#ffff"/>
+        android:textColor="@color/default_color"/>
     <EditText
         android:layout_width="200dp"
         android:layout_height="35dp"
@@ -27,7 +28,7 @@
         android:layout_height="1dp"
         android:layout_below="@+id/linearLayout1"
         android:layout_marginTop="15dp"
-        android:background="#060606"></View>
+        android:background="@color/default_color"></View>
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="50dp"
@@ -38,29 +39,32 @@
         android:layout_height="50dp"
         android:text="Ok"
         android:id="@+id/btnOK"
-        android:background="@drawable/drawable_btn"
+        android:background="@drawable/drawable_ok"
         android:layout_gravity="center"
+        android:textColor="@color/default_color"
         android:layout_marginLeft="0dp"/>
         <View
             android:layout_width="1dp"
             android:layout_height="50dp"
-            android:background="#060606" />
+            android:background="@color/default_color" />
         <Button
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:text="Resend"
             android:id="@+id/btnResend"
-            android:background="@drawable/drawable_btn"
+            android:textColor="@color/default_color"
+            android:background="@drawable/drawable_resend"
             android:layout_gravity="center"/>
         <View
             android:layout_width="1dp"
             android:layout_height="50dp"
-            android:background="#060606" />
+            android:background="@color/default_color" />
         <Button
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:text="Cancel"
             android:id="@+id/btnCancel"
+            android:textColor="@color/default_color"
             android:background="@drawable/drawable_btn"
             android:layout_gravity="center"/>
 

@@ -32,8 +32,9 @@
             android:layout_marginLeft="70dp"
             android:text="91"
             android:textAllCaps="true"
-            android:paddingTop="5dp"
-            android:gravity="center"
+            android:textSize="16sp"
+            android:paddingTop="6dp"
+            android:gravity="right"
             android:textColor="#ffffff"
             />
         <TextView
@@ -44,6 +45,7 @@
             android:layout_below="@+id/initial"
             android:textAllCaps="true"
             android:gravity="right"
+            android:paddingLeft="5dp"
             android:layout_alignLeft="@+id/initial"
             android:layout_alignStart="@+id/initial" />
         <EditText

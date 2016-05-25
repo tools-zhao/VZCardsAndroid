@@ -22,7 +22,7 @@
         <shape android:shape="rectangle"  >
             <stroke  android:width="0.9dp"
                 android:color="#f9f8f8"/>
-            <solid android:color="#5f8ac7"/>
+            <solid android:color="@color/colorPrimary"/>
             <padding android:left="5dp"
                 android:top="5dp"
                 android:right="5dp"
