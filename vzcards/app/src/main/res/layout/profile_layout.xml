@@ -100,7 +100,7 @@
                         android:layout_marginLeft="200dp"
                         android:gravity="center"
                         android:textColor="#ffffff"
-                        android:background="@drawable/drawable_cancel" />
+                        android:background="@drawable/addimage_red" />
                     </RelativeLayout>
                 </LinearLayout>
 

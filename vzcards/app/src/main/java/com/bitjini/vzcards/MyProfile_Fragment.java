@@ -13,6 +13,7 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -122,7 +123,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+// on configuration changes (screen rotation) we want fragment member variables to preserved
+        setRetainInstance(true);
         profile = inflater.inflate(R.layout.profile_layout, container, false);
         linearLayout=(LinearLayout)profile. findViewById(R.id.l2);
 
@@ -183,95 +185,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         label.add("Pin_code");
         // Making http get request to load profile details
 
+        getProfileDetails();
 
-        try {
-            String receivedData = null;
-            if(getActivity()!=null) {
-
-                 receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference).get();//cal to get profile data
-            }
-            //Profile details
-            if(receivedData!=null) {
-                JSONObject jsonObj = new JSONObject(receivedData);
-
-                firstname = jsonObj.getString("firstname");
-                lastname = jsonObj.getString("lastname");
-                email = jsonObj.getString("email");
-                industry = jsonObj.getString("industry");
-                company = jsonObj.getString("company");
-                address_line_1 = jsonObj.getString("address_line_1");
-                address_line_2 = jsonObj.getString("address_line_2");
-                city = jsonObj.getString("city");
-                pin_code = jsonObj.getString("pin_code");
-                photo= jsonObj.getString("photo");
-                company_photo=jsonObj.getString("company_photo");
-
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        Log.e(" Photo Received ",""+photo);
-        Log.e(" company_photoReceived",""+company_photo);
-
-//
-
-
-        if(!photo.isEmpty()) {
-
-            Picasso.with(getActivity()).load(photo).placeholder(R.drawable.profile_pic_placeholder).into(target);
-//            if(PROFILE_IMAGE.length()==0) {
-            SavePreferences(PROFILE_IMAGE, photo);
-//            }
-//            imageProfile.setTag(photo);
-//                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
-
-        } else  {
-            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
-            //            new DownloadImagesTask(getActivity()).execute(holder.photo);
-
-        }
-
-
-
-        if(!company_photo.isEmpty()) {
-            Picasso.with(getActivity()).load(company_photo).placeholder(R.drawable.com_logo).into(imageCompany);
-//            if(COMPANY_IMAGE.length()==0) {
-                SavePreferences(COMPANY_IMAGE, company_photo);
-//            }
-//            imageCompany.setTag(company_photo);
-//            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
-        }else  {
-            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
-            //            new DownloadImagesTask(getActivity()).execute(holder.photo);
-
-        }
-
-
-        textViewName.setText(firstname+ " "+lastname);
-        values = new ArrayList<String>();
-        values.add(firstname);
-        values.add(lastname);
-        values.add(email);
-        values.add(p.phone_sharedPreference);
-        values.add(industry);
-        values.add(company);
-        values.add(address_line_1);
-        values.add(address_line_2);
-        values.add(city);
-        values.add(pin_code);
-
-        for (int i = 0; i < label.size(); i++) {
-            ListItem item = new ListItem();
-            item.setLabel(label.get(i));
-            item.setValue(values.get(i));
-            arrayList.add(item);
-        }
 
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -280,6 +195,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 if (clickCount == 0) {
 
                     editbtn.setText("Save");
+                    editbtn.setBackgroundResource(R.drawable.addimage);
                     cancelBtn.setVisibility(View.VISIBLE);
                     imageCompany.setClickable(true);
                     imageProfile.setClickable(true);
@@ -356,9 +272,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                 }
                             }
                             new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+                            getProfileDetails();
 //
                         } else {
                             new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+                            getProfileDetails();
 
                         }
                     }
@@ -399,6 +317,102 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         return profile;
     }
 
+    public void getProfileDetails()
+    {
+        try {
+            String receivedData = null;
+
+
+                receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference).get();//cal to get profile data
+
+            //Profile details
+            if(receivedData!=null) {
+                JSONObject jsonObj = new JSONObject(receivedData);
+
+                firstname = jsonObj.getString("firstname");
+                lastname = jsonObj.getString("lastname");
+                email = jsonObj.getString("email");
+                industry = jsonObj.getString("industry");
+                company = jsonObj.getString("company");
+                address_line_1 = jsonObj.getString("address_line_1");
+                address_line_2 = jsonObj.getString("address_line_2");
+                city = jsonObj.getString("city");
+                pin_code = jsonObj.getString("pin_code");
+                photo= jsonObj.getString("photo");
+                company_photo=jsonObj.getString("company_photo");
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        Log.e(" Photo Received ",""+photo);
+        Log.e(" company_photoReceived",""+company_photo);
+
+//
+
+
+        if(!photo.isEmpty()) {
+
+            Picasso.with(getActivity()).load(photo).centerCrop().resize(200,200).placeholder(R.drawable.profile_pic_placeholder).into(target);
+
+            Log.e(" Photo on Received ",""+photo);
+
+//            if(PROFILE_IMAGE.length()==0) {
+            SavePreferences(PROFILE_IMAGE, photo);
+//            }
+//            imageProfile.setTag(photo);
+//                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
+
+        } else  {
+            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
+            //            new DownloadImagesTask(getActivity()).execute(holder.photo);
+
+        }
+
+
+
+        if(!company_photo.isEmpty()) {
+            Picasso.with(getActivity()).load(company_photo).placeholder(R.drawable.com_logo).into(imageCompany);
+            Log.e(" company_photoReceived",""+company_photo);
+//            if(COMPANY_IMAGE.length()==0) {
+            SavePreferences(COMPANY_IMAGE, company_photo);
+//            }
+//            imageCompany.setTag(company_photo);
+//            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
+        }else  {
+            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
+            //            new DownloadImagesTask(getActivity()).execute(holder.photo);
+
+        }
+
+
+        textViewName.setText(firstname+ " "+lastname);
+        values = new ArrayList<String>();
+        values.add(firstname);
+        values.add(lastname);
+        values.add(email);
+        values.add(p.phone_sharedPreference);
+        values.add(industry);
+        values.add(company);
+        values.add(address_line_1);
+        values.add(address_line_2);
+        values.add(city);
+        values.add(pin_code);
+
+        for (int i = 0; i < label.size(); i++) {
+            ListItem item = new ListItem();
+            item.setLabel(label.get(i));
+            item.setValue(values.get(i));
+            arrayList.add(item);
+        }
+
+    }
     protected void SavePreferences(String key, String value) {
 // TODO Auto-generated method stub
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
@@ -413,11 +427,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     private Target target = new Target() {
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            imageProfile.setImageBitmap(bitmap);
+
+             imageProfile.setImageBitmap(bitmap);
+
 
             Bitmap blurredBitmap = BlurBuilder.blur(getActivity(), bitmap);
 
-            linearLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), blurredBitmap));
+            linearLayout.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+
         }
 
         @Override
@@ -727,6 +744,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             case R.id.cancel:
                 // to hide keypad
 
+//                setRetainInstance(true);
                 Fragment newfragment1 = new MyProfile_Fragment();
                 // get the id of fragment
                 FrameLayout contentView1 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
@@ -737,10 +755,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                         .replace(contentView1.getId(), newfragment1)
                         .commit();
 
-                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (getActivity().getCurrentFocus() != null){
-                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                }
+//               gment image is blank
                 break;
                 //redirecting to VZFriends_Fragment
             case R.id.vzfrnds:
