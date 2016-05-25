@@ -490,14 +490,14 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 if (!cat.getPhoto().isEmpty()) {
 //                    photo.setTag(cat.getPhoto());
 //                    new DownloadImagesTask(_c).execute(photo);// Download item_photo from AsynTask
-                    Picasso.with(_c).load(cat.getPhoto()).resize(250, 250).into(photo);
+                    Picasso.with(_c).load(cat.getPhoto()).resize(150, 150).into(photo);
 
 
                 } else {
                     photo.setImageResource(R.drawable.profile_pic_placeholder);
                 }
                 if (!cat.getReferedPhoto().isEmpty()) {
-                    Picasso.with(_c).load(cat.getReferedPhoto()).resize(250, 250).into(referredPhoto);
+                    Picasso.with(_c).load(cat.getReferedPhoto()).resize(150, 150).into(referredPhoto);
 //                    referredPhoto.setTag(cat.getReferedPhoto());
 //                    new DownloadImagesTask(_c).execute(referredPhoto);// Download item_photo from AsynTask
 

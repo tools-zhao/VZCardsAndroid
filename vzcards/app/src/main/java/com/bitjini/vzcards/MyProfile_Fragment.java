@@ -360,6 +360,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         if(!photo.isEmpty()) {
 
             Picasso.with(getActivity()).load(photo).centerCrop().resize(200,200).placeholder(R.drawable.profile_pic_placeholder).into(target);
+            Picasso.with(getActivity()).load(photo).centerCrop().resize(250,250).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
 
             Log.e(" Photo on Received ",""+photo);
 
@@ -378,16 +379,15 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
         if(!company_photo.isEmpty()) {
-            Picasso.with(getActivity()).load(company_photo).placeholder(R.drawable.com_logo).into(imageCompany);
+            Picasso.with(getActivity()).load(company_photo).centerCrop().resize(200,200).into(imageCompany);
             Log.e(" company_photoReceived",""+company_photo);
-//            if(COMPANY_IMAGE.length()==0) {
+
             SavePreferences(COMPANY_IMAGE, company_photo);
-//            }
+
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
         }else  {
-            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
-            //            new DownloadImagesTask(getActivity()).execute(holder.photo);
+            imageCompany.setImageResource(R.drawable.com_logo);
 
         }
 
@@ -428,7 +428,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
 
-             imageProfile.setImageBitmap(bitmap);
+//             imageProfile.setImageBitmap(bitmap);
 
 
             Bitmap blurredBitmap = BlurBuilder.blur(getActivity(), bitmap);
