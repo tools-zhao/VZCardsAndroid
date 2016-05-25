@@ -417,6 +417,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             v.tickImage=(ImageView)view.findViewById(R.id.tick);
 
             v.viewLine=(View)view.findViewById(R.id.viewLine);
+            v.viewline2=(View)view.findViewById(R.id.viewLine2);
             v.item_photo = (ImageView) view.findViewById(R.id.feedImage);
 
             final SelectUser data = (SelectUser) arrayList.get(i);
@@ -445,7 +446,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 //                    v.item_photo.setTag(data.getItem_photo());
 //                    new DownloadImageProgress(_c).execute(String.valueOf(v.item_photo));// Download item_photo from AsynTask
-                    Picasso.with(_c).load(data.getItem_photo()).resize(250, 250).placeholder(R.drawable.progress_animation).into( v.item_photo);
+                    Picasso.with(_c).load(data.getItem_photo()).resize(200, 200).placeholder(R.drawable.progress_animation).into( v.item_photo);
                 }
 
             } catch (ArrayIndexOutOfBoundsException ae) {
@@ -603,6 +604,15 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 if(getActivity()!=null) {
                     childAdapter = new MyClassAdapter(getActivity(), connectorDetails, R.layout.history_referrals);
                     list.setAdapter(childAdapter);
+                    if (Integer.parseInt(data.getQuestion()) == 0) {
+                        v.viewLine.setBackgroundColor(Color.parseColor("#add58a")); //Green
+
+                    }
+                    // check if it is has change the color to red=1
+                    if (Integer.parseInt(data.getQuestion()) == 1) {
+                        v.viewLine.setBackgroundColor(Color.parseColor("#f27166"));// Red
+
+                    }
                 }
                 Utility.setListViewHeightBasedOnChildren(list);
                 toolbar.setVisibility(View.GONE);
@@ -622,7 +632,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             ImageView item_photo,tickImage;
             TextView txtItem, txtDescription, txtDate ,txtcount;
             Button btnRemove;
-            View viewLine;
+            View viewLine,viewline2;
         }
 
         public class MyClassAdapter extends BaseAdapter {
@@ -668,7 +678,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 TextView itemName = (TextView) v.findViewById(R.id.itemName);
                 ImageView referredPhoto = (ImageView) v.findViewById(R.id.referdPhoto);
                 ImageView photo = (ImageView) v.findViewById(R.id.photo);
-                View viewline2=(View)v.findViewById(R.id.viewLine2);
+
 
 
                 SelectUser cat = itemList.get(position);
@@ -680,21 +690,12 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 name.setText(cat.getfName() + " " + cat.getLname());
                 referredName.setText(cat.getReferredFname() + " " + cat.getReferredLname());
 
-                if (Integer.parseInt(cat.getQuestion()) == 1) {
 
-                    viewline2.setBackgroundColor(Color.parseColor("#f27166"));
-
-                }
-                if (Integer.parseInt(cat.getQuestion()) == 0) {
-
-                    viewline2.setBackgroundColor(Color.parseColor("#add58a"));
-
-                }
                 try {
                     if (!cat.getPhoto().isEmpty()) {
 //                        photo.setTag(cat.getPhoto());
 //                        new DownloadImagesTask(getActivity()).execute(photo);// Download item_photo from AsynTask
-                        Picasso.with(_c).load(cat.getPhoto()).placeholder(R.drawable.progress_animation).into( photo);
+                        Picasso.with(_c).load(cat.getPhoto()).centerCrop().resize(150,150).placeholder(R.drawable.progress_animation).into( photo);
 
 
                     } else {
@@ -702,7 +703,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     }
                     if (!cat.getReferredPhoto().isEmpty()) {
 
-                        Picasso.with(_c).load(cat.getReferredPhoto()).placeholder(R.drawable.progress_animation).into(referredPhoto);
+                        Picasso.with(_c).load(cat.getReferredPhoto()).centerCrop().resize(150,150).placeholder(R.drawable.progress_animation).into(referredPhoto);
 //                        referredPhoto.setTag(cat.getReferredPhoto());
 //                        new DownloadImagesTask(getActivity()).execute(referredPhoto);// Download item_photo from AsynTask
 

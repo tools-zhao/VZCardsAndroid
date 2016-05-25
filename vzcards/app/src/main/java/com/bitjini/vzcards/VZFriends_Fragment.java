@@ -528,7 +528,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             //set Image if exxists
             try {
                 if (!data.getPhoto().isEmpty()) {
-                    Picasso.with(_c).load(data.getPhoto()).placeholder(R.drawable.progress_animation).into(v.imageView);
+                    Picasso.with(_c).load(data.getPhoto()).centerCrop().resize(150,150).placeholder(R.drawable.progress_animation).into(v.imageView);
 //                v.imageView.setTag(data.getPhoto());
 //                new DownloadImagesTask(_c).execute(v.imageView);// Download item_photo from AsynTask
 

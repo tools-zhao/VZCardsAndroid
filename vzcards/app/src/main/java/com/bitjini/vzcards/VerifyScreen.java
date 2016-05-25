@@ -159,6 +159,7 @@ public class VerifyScreen extends Activity {
         protected void onPreExecute() {
             progress = new ProgressDialog(this.context);
             progress.setMessage("Loading");
+            progress.setCancelable(false);
             progress.show();
         }
         @Override

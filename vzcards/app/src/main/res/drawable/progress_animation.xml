@@ -5,3 +5,4 @@
     android:drawable="@drawable/transperentprogress1"
     android:pivotX="50%"
     android:pivotY="50%" />
+

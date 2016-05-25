@@ -651,7 +651,7 @@ FrameLayout layout_MainMenu;
 //            holder.item_photo.setTag(String.valueOf(data.getItem_photo()));
           if(!data.getItem_photo().isEmpty())
             {
-                Picasso.with(context).load(data.getItem_photo()).placeholder(R.drawable.no_pic_placeholder_with_border_800x800).into(holder.item_photo);
+                Picasso.with(context).load(data.getItem_photo()).centerCrop().resize(200,200).placeholder(R.drawable.no_pic_placeholder_with_border_800x800).into(holder.item_photo);
                 //            new DownloadImagesTask(getActivity()).execute(holder.item_photo);
             } else
           {
@@ -661,7 +661,7 @@ FrameLayout layout_MainMenu;
             if(!data.getPhoto().isEmpty())
             {
 
-            Picasso.with(context).load(data.getPhoto()).placeholder(R.drawable.profile_pic_placeholder).into(holder.photo);}
+            Picasso.with(context).load(data.getPhoto()).centerCrop().resize(200,200).placeholder(R.drawable.profile_pic_placeholder).into(holder.photo);}
             else  {
                 holder.photo.setImageResource(R.drawable.profile_pic_placeholder);
                 //            new DownloadImagesTask(getActivity()).execute(holder.photo);
@@ -821,7 +821,7 @@ FrameLayout layout_MainMenu;
 
             if(!dataFeeds1.getItem_photo().isEmpty()) {
 //            item_photo.setTag(dataFeeds1.getItem_photo());
-                Picasso.with(getActivity()).load(dataFeeds1.getItem_photo()).into(item_photo);
+                Picasso.with(getActivity()).load(dataFeeds1.getItem_photo()).centerCrop().resize(200,200).into(item_photo);
 //            new DownloadImagesTask(getActivity()).execute(item_photo); // Download item_photo from AsynTask
             }else
             {
@@ -829,7 +829,7 @@ FrameLayout layout_MainMenu;
             }
             if(!dataFeeds1.getPhoto().isEmpty()) {
 //            photo.setTag(dataFeeds1.getPhoto());
-                Picasso.with(getActivity()).load(dataFeeds1.getPhoto()).into(photo);
+                Picasso.with(getActivity()).load(dataFeeds1.getPhoto()).centerCrop().resize(150,150).into(photo);
 //            new DownloadImagesTask(getActivity()).execute(photo);// Download photo from AsynTask
             }  else
                 {
@@ -856,7 +856,7 @@ FrameLayout layout_MainMenu;
 
             if(!dataFeeds2.getItem_photo().isEmpty()){
 //            item_photo2.setTag(dataFeeds2.getItem_photo());
-            Picasso.with(getActivity()).load(dataFeeds2.getItem_photo()).into(item_photo2);
+            Picasso.with(getActivity()).load(dataFeeds2.getItem_photo()).centerCrop().resize(200,200).into(item_photo2);
 
 //            new DownloadImagesTask(getActivity()).execute(item_photo2);// Download item_photo from AsynTask
             }else
@@ -866,7 +866,7 @@ FrameLayout layout_MainMenu;
 
                 if(!dataFeeds2.getPhoto().isEmpty()) {
 //                    photo2.setTag(dataFeeds2.getPhoto());
-                    Picasso.with(getActivity()).load(dataFeeds2.getPhoto()).into(photo2);
+                    Picasso.with(getActivity()).load(dataFeeds2.getPhoto()).centerCrop().resize(150,150).into(photo2);
 
 //            new DownloadImagesTask(getActivity()).execute(photo2);// Download photo from AsynTask
                 }
