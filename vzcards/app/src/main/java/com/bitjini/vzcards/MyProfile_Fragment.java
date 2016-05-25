@@ -213,6 +213,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                         inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     }
                     editbtn.setText("Edit");
+                    editbtn.setBackgroundResource(R.drawable.drawable_edit);
                     cancelBtn.setVisibility(View.GONE);
                     imageCompany.setClickable(false);
                     imageProfile.setClickable(false);
@@ -233,21 +234,24 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                             if (profilePicturePath.length() != 0) {
                                 try {
                                     picturePath = profilePicturePath;
-                                    String res = new UploadImageTask(getActivity()).execute().get();
-                                    JSONObject json = new JSONObject(res);
-                                    photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+                                    String result = new UploadImageTask(getActivity()).execute().get();
+                                                JSONObject json = new JSONObject(result);
+                                                photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
 
-                                    String link = json.getString("link");
-                                    SavePreferences(PROFILE_IMAGE, photo + link);
-                                    Log.e("photo :", "" + photo + link);
+                                                String link = json.getString("link");
+                                                SavePreferences(PROFILE_IMAGE, photo + link);
+                                                Log.e("photo :", "" + photo + link);
 
-                                } catch (InterruptedException e) {
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 } catch (ExecutionException e) {
                                     e.printStackTrace();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
                                 }
+
+
                             }
                             if (companyPicturePath.length() != 0) {
                                 try {
@@ -272,7 +276,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                 }
                             }
                             new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
-                            getProfileDetails();
+                            if(!json2.equals(json3)) {
+                                getProfileDetails();
+                            }
 //
                         } else {
                             new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
@@ -360,7 +366,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         if(!photo.isEmpty()) {
 
             Picasso.with(getActivity()).load(photo).centerCrop().resize(200,200).into(target);
-            Picasso.with(getActivity()).load(photo).centerCrop().resize(300,300).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+            Picasso.with(getActivity()).load(photo).centerCrop().resize(400,400).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
 
             Log.e(" Photo on Received ",""+photo);
 
