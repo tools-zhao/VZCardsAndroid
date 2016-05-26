@@ -127,6 +127,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 // on configuration changes (screen rotation) we want fragment member variables to preserved
         setRetainInstance(true);
         profile = inflater.inflate(R.layout.profile_layout, container, false);
+        TextView textView=(TextView)profile.findViewById(R.id.emptytext);
+        textView.setText("");
+        textView.setVisibility(View.GONE);
         linearLayout=(LinearLayout)profile. findViewById(R.id.l2);
 
         editbtn = (Button) profile.findViewById(R.id.edit);
