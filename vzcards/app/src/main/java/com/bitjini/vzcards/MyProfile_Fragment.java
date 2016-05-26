@@ -237,7 +237,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                     picturePath = profilePicturePath;
                                    progress = new ProgressDialog(getActivity());
                                     if (progress != null) {
-                                        progress.setMessage("Collecting Data Please Wait...");
+                                        progress.setMessage("Saving user details...");
                                         progress.setCancelable(false);
                                         progress.show();
                                     }

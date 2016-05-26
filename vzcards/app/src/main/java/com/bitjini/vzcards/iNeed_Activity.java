@@ -501,75 +501,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     }
 
 
-    class UploadImageTask extends AsyncTask<Void, Void, String> {
-        VerifyScreen p=new VerifyScreen();
-        Context context;
 
-        MyProfile_Fragment pr=new MyProfile_Fragment();
-
-        Activity activity;
-
-        public UploadImageTask(Context c) {
-            this.context = c;
-
-        }
-
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-
-                Log.e(" web url :",""+pr.URL_UPLOAD_IMAGE);
-                File sourceFile_profile = new File(Item_picturePath );
-                Log.e("picturePath :", "" +Item_picturePath);
-
-
-                Bitmap bmp = BitmapFactory.decodeFile(Item_picturePath);
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                bmp.compress(Bitmap.CompressFormat.JPEG, 70, bos);
-
-                ContentBody foto =new ByteArrayBody(bos.toByteArray(), "filename");
-
-                HttpClient httpclient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(pr.URL_UPLOAD_IMAGE);
-
-                String boundary = "-------------" + System.currentTimeMillis();
-
-                httpPost.setHeader("Content-Type", "multipart/form-data; boundary="+boundary);
-
-                HttpEntity entity = MultipartEntityBuilder.create()
-                        .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-                        .setBoundary(boundary)
-                        .addPart("photo", foto)
-                        .build();
-
-                httpPost.setEntity(entity);
-
-
-                HttpResponse response = httpclient.execute(httpPost);
-
-                String responseBody = EntityUtils.toString(response.getEntity());
-                Log.v(" HTTP Response", responseBody);
-                return responseBody;
-
-            }
-            catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                // something went wrong. connection with the server error
-                e.printStackTrace();
-            }catch (Throwable t) {
-                t.printStackTrace(); }
-
-            return null;
-        }
-
-
-    }
 
     public void onClick(final View v) {
         switch (v.getId()) {
@@ -634,7 +566,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                                     v.clearAnimation();
                                 }
                             }
-                        }.execute();
+                        }.execute(Item_picturePath);
                     } else {
                         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                         alertDialogBuilder.setMessage("Post data without uploading image");
