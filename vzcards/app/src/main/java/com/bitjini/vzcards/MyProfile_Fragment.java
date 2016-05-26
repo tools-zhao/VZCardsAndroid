@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -232,55 +233,68 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     }else {
                         if (profilePicturePath.length() != 0 || companyPicturePath.length() != 0) {
                             if (profilePicturePath.length() != 0) {
-                                try {
+
                                     picturePath = profilePicturePath;
-                                    String result = new UploadImageTask(getActivity()).execute().get();
-                                                JSONObject json = new JSONObject(result);
-                                                photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+                                   progress = new ProgressDialog(getActivity());
+                                    if (progress != null) {
+                                        progress.setMessage("Collecting Data Please Wait...");
+                                        progress.setCancelable(false);
+                                        progress.show();
+                                    }
+//                                            String result = new UploadImageTask(getActivity()).execute().get();
+                                new UploadImageTask(getActivity()) {
 
-                                                String link = json.getString("link");
-                                                SavePreferences(PROFILE_IMAGE, photo + link);
-                                                Log.e("photo :", "" + photo + link);
+                                    @Override
+                                    public void onPostExecute(String result) {
+                                        if (progress.isShowing() && progress!=null) {
+                                            progress.dismiss();
+                                            progress = null;
+//                                            profilePicturePath="";
 
+                                        }
 
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (ExecutionException e) {
-                                    e.printStackTrace();
-                                }
+                                        try
+                                        { if(result!=null) {
+                                            JSONObject json = new JSONObject(result);
+                                            photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+
+                                            String link = json.getString("link");
+                                            SavePreferences(PROFILE_IMAGE, photo + link);
+                                            Log.e("photo :", "" + photo + link);
+                                            if(companyPicturePath.length()==0) {
+                                                new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+                                                if (!json2.equals(json3)) {
+                                                    getProfileDetails();
+                                                }
+                                                else {
+                                                    uploadCompanyImage();
+                                                }
+                                            }
+                                        }
+
+                                        } catch (JSONException e)
+                                        {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                }.execute(profilePicturePath);
 
 
                             }
                             if (companyPicturePath.length() != 0) {
-                                try {
-                                    picturePath = companyPicturePath;
-                                    String res = new UploadImageTask(getActivity()).execute().get();
-                                    JSONObject json = new JSONObject(res);
-                                    json = new JSONObject(res);
-//                                                            company_photo = json.getString("photo");
-                                    company_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
 
-                                    String link = json.getString("link");
-                                    SavePreferences(COMPANY_IMAGE, company_photo + link);
-                                    Log.e("company_photo :", "" + company_photo + link);
-                                    Log.e("link :", "" + link);
+//                                    picturePath = companyPicturePath;
+                                uploadCompanyImage();
 
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (ExecutionException e) {
-                                    e.printStackTrace();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+
                             }
-                            new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
-                            if(!json2.equals(json3)) {
-                                getProfileDetails();
-                            }
+
+
 //
                         } else {
+
+
                             new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
                             getProfileDetails();
 
@@ -290,6 +304,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
                     clickCount = 0;
+                    companyPicturePath="";profilePicturePath="";
 
                 }
 
@@ -323,6 +338,39 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         return profile;
     }
 
+    public void uploadCompanyImage()
+    {
+
+//                                                String res = new UploadImageTask(getActivity()).execute().get();
+           new UploadImageTask(getActivity()) {
+
+            @Override
+            public void onPostExecute(String result) {
+
+
+                try {
+                    if(result!=null) {
+                        JSONObject json = new JSONObject(result);
+//                                                            company_photo = json.getString("photo");
+                        company_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+
+                        String link = json.getString("link");
+                        SavePreferences(COMPANY_IMAGE, company_photo + link);
+
+                        Log.e("link :", "" + link);
+
+                            new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+                            if (!json2.equals(json3)) {
+                                getProfileDetails();
+
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute(companyPicturePath);
+    }
     public void getProfileDetails()
     {
         try {

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
@@ -21,6 +22,7 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -54,7 +56,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import java.util.HashMap;
 
-public class UploadImageTask extends AsyncTask<Void, Void, String> {
+public class UploadImageTask extends AsyncTask<String, Void, String> {
     MyProfile_Fragment pr=new MyProfile_Fragment();
     VerifyScreen p=new VerifyScreen();
     Context context;
@@ -69,16 +71,22 @@ public class UploadImageTask extends AsyncTask<Void, Void, String> {
 
 
     @Override
-    protected String doInBackground(Void... params) {
+    protected String doInBackground(String... params) {
         try {
 
-           Log.e(" web url :",""+webAddressToPost);
-            File sourceFile_profile = new File(pr.picturePath );
-            Log.e("picturePath :", "" +pr.picturePath);
+            String picturePath=params[0];
+            Log.e(" web url :",""+pr.URL_UPLOAD_IMAGE);
+            File sourceFile_profile = new File(picturePath );
+            Log.e("picturePath :", "" +picturePath);
 
+            Bitmap bmp = BitmapFactory.decodeFile(picturePath);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 70, bos);
+
+            ContentBody foto =new ByteArrayBody(bos.toByteArray(), "filename");
 
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(webAddressToPost);
+            HttpPost httpPost = new HttpPost(pr.URL_UPLOAD_IMAGE);
 
             String boundary = "-------------" + System.currentTimeMillis();
 
@@ -87,10 +95,11 @@ public class UploadImageTask extends AsyncTask<Void, Void, String> {
             HttpEntity entity = MultipartEntityBuilder.create()
                     .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                     .setBoundary(boundary)
-                    .addPart("photo", new FileBody(sourceFile_profile))
+                    .addPart("photo", foto)
                     .build();
 
             httpPost.setEntity(entity);
+
 
 
             HttpResponse response = httpclient.execute(httpPost);
