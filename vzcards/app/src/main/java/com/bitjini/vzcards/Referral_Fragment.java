@@ -60,16 +60,20 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
     int progressCount=0;
     boolean isLoading=false;
     View footer;
-
+    View referral;
     int count=0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View referral = inflater.inflate(R.layout.list_referal_activity, container, false);
+         referral = inflater.inflate(R.layout.list_referal_activity, container, false);
+        TextView textView=(TextView)referral.findViewById(R.id.emptytext);
+        textView.setText("");
+        textView.setVisibility(View.GONE);
+
         RelativeLayout linearLayout = (RelativeLayout) referral.findViewById(R.id.parent);
         linearLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
-//        progressBar = (ProgressBar) referral.findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) referral.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) referral.findViewById(R.id.pullToRefresh);
 
         // the refresh listner. this would be called when the layout is pulled down
@@ -96,32 +100,35 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
         // Populate our list with groups and it's children
         // Creating the list adapter and populating the list
+// if(savedInstanceState==null) {
+     list.setVisibility(View.GONE);
+     progressBar.setVisibility(View.VISIBLE);
+     progressBar.setProgress(0);
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+        animation.setDuration(3000); //in milliseconds
+        animation.setRepeatCount(5);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.start();
+//        new Handler().postDelayed(new Runnable() {
 //
-//        if(count==0) {
-//            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-//            animation.setDuration(1000); //in milliseconds
-//            animation.setRepeatCount(5);
-//            animation.setInterpolator(new DecelerateInterpolator());
-//            animation.start();
-//             // refresh contents
-//            getReferalContents(HISTORY_URL + p.token_sharedPreference);
-//
-//            progressBar.clearAnimation();
-//            progressBar.setVisibility(View.GONE);
-//            list.setVisibility(View.VISIBLE);
-//        }
-//        else
-//        {
-//            list.setVisibility(View.VISIBLE);
-//            // refresh contents
+//            @Override public void run() {
+        new HttpAsyncTask(getActivity()) {
+            @Override
+            public void onPostExecute(String result) {
+                super.onPostExecute(result);
+                progressBar.clearAnimation();
 
-////        }
-//
-//
-//
-//
-        if(getActivity()!=null) {
+                progressBar.setVisibility(View.GONE);
+                list.setVisibility(View.VISIBLE);
+            }
+        }.execute(HISTORY_URL + p.token_sharedPreference);
+
             getReferalContents(HISTORY_URL + p.token_sharedPreference);
+
+
+        if(getActivity()!=null) {
+//            list.setVisibility(View.VISIBLE);
+//            getReferalContents(HISTORY_URL + p.token_sharedPreference);
             listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
             list.setAdapter(listAdapter);
         }
@@ -168,19 +175,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
-//                int itemCount=0;
-//                if(itemCount==totalItemCount)
-//                {
-//                    swipeRefreshLayout.post(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-////                                                    swipeRefreshLayout.setRefreshing(true);
-//                                                    refreshContent();
-//
-//                                                }
-//                                            }
-//                    );
-//                }
+
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
@@ -490,14 +485,14 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 if (!cat.getPhoto().isEmpty()) {
 //                    photo.setTag(cat.getPhoto());
 //                    new DownloadImagesTask(_c).execute(photo);// Download item_photo from AsynTask
-                    Picasso.with(_c).load(cat.getPhoto()).resize(150, 150).into(photo);
+                    Picasso.with(_c).load(cat.getPhoto()).centerCrop().resize(150, 150).into(photo);
 
 
                 } else {
                     photo.setImageResource(R.drawable.profile_pic_placeholder);
                 }
                 if (!cat.getReferedPhoto().isEmpty()) {
-                    Picasso.with(_c).load(cat.getReferedPhoto()).resize(150, 150).into(referredPhoto);
+                    Picasso.with(_c).load(cat.getReferedPhoto()).centerCrop().resize(150, 150).into(referredPhoto);
 //                    referredPhoto.setTag(cat.getReferedPhoto());
 //                    new DownloadImagesTask(_c).execute(referredPhoto);// Download item_photo from AsynTask
 
@@ -617,7 +612,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             case R.id.profilebtn:
                 Fragment profilefragment = new MyProfile_Fragment();
                 // get the id of fragment
-                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.referral_frame);
+                FrameLayout contentView = (FrameLayout) referral.findViewById(R.id.referral_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
@@ -630,7 +625,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             case R.id.vzfrnds:
                 Fragment newfragment = new VZFriends_Fragment();
                 // get the id of fragment
-                FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.referral_frame);
+                FrameLayout contentView2 = (FrameLayout) referral.findViewById(R.id.referral_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
@@ -647,4 +642,5 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
 
     }
+
 }

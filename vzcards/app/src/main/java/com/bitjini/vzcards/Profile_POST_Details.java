@@ -36,17 +36,17 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
     private Context context;
     MyProfile_Fragment pr = new MyProfile_Fragment();
     VerifyScreen p = new VerifyScreen();
-
+    ProgressDialog progress;
     public Profile_POST_Details(Context c) {
         this.context = c;
     }
 
     protected void onPreExecute() {
 
-        pr.progress = new ProgressDialog(this.context);
-        pr.progress.setMessage("Saving user details..");
-        pr.progress.setCancelable(false);
-        pr.progress.show();
+       progress = new ProgressDialog(this.context);
+      progress.setMessage("Saving user details..");
+        progress.setCancelable(false);
+       progress.show();
     }
 
     @Override
@@ -167,7 +167,10 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
 
     protected void onPostExecute(String result) {
-        pr.progress.dismiss();
+        if(progress.isShowing() && progress!=null) {
+            progress.dismiss();
+            progress=null;
+        }
         Toast.makeText(context, "Profile is updated ", Toast.LENGTH_LONG).show();
         if (result != null) {
             Log.e("Post response =", "" + result.toString());

@@ -55,6 +55,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -92,12 +93,15 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     int currentPage=1;
     int totalPage=0;
     boolean isLoading=false;
-
-    int progressCount;
+    View vzfrnds;
+    int progressCount=0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
+         vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
+        TextView textView=(TextView)vzfrnds.findViewById(R.id.emptytext);
+        textView.setText("");
+        textView.setVisibility(View.GONE);
         getActivity();
         progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
@@ -117,37 +121,33 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
         mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
-//        displayText = (TextView) findViewById(R.id.resultText);
+
+            listView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(0);
+            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration(2000); //in milliseconds
+            animation.setRepeatCount(5);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
+        new HttpAsyncTask(getActivity()) {
+            @Override
+            public void onPostExecute(String result) {
+                super.onPostExecute(result);
 
 
+                progressBar.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
+            }
 
 
-        // refresh contents
-//
-//        if(progressCount==0) {
-//            listView.setVisibility(View.GONE);
-//            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-//            animation.setDuration(1000); //in milliseconds
-//            animation.setRepeatCount(5);
-//            animation.setInterpolator(new DecelerateInterpolator());
-//            animation.start();
-//
-////            refresh contents
-//            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-//
-//            progressBar.clearAnimation();
-//
-//            progressBar.setVisibility(View.GONE);
-//            listView.setVisibility(View.VISIBLE);
-//        }
-//        else {
-////            refresh contents
-//            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-//
-//        }
+        }.execute(VZFRIENDS_URL + p.token_sharedPreference);
+
+            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+
 
         if(getActivity()!=null) {
-            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+
             adapter = new VZFriends_Adapter(selectUsers, getActivity());
             listView.setAdapter(adapter);
         }
@@ -601,4 +601,5 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
 
     }
+
 }

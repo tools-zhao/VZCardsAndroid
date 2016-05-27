@@ -422,51 +422,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             }
         }
     }
-    public Bitmap BITMAP_RESIZER(Bitmap bitmap,int newWidth,int newHeight) {
-        Bitmap scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
 
-        float ratioX = newWidth / (float) bitmap.getWidth();
-        float ratioY = newHeight /(float) bitmap.getHeight();
-        float middleX = newWidth/ 2.0f;
-        float middleY = newHeight / 2.0f;
-
-        Matrix scaleMatrix = new Matrix();
-        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
-
-        Canvas canvas = new Canvas(scaledBitmap);
-        canvas.setMatrix(scaleMatrix);
-        canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() /2, middleY - bitmap.getHeight()/2 , new Paint(Paint.FILTER_BITMAP_FLAG));
-
-        return scaledBitmap;
-
-    }
-    public void decodeFile(String filePath) {
-        // Decode image size
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, o);
-
-        // The new size we want to scale to
-        final int REQUIRED_SIZE = 1024;
-
-        // Find the correct scale value. It should be the power of 2.
-        int width_tmp = o.outWidth, height_tmp = o.outHeight;
-        int scale = 1;
-        while (true) {
-            if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
-                break;
-            width_tmp /= 2;
-            height_tmp /= 2;
-            scale *= 2;
-        }
-
-        // Decode with inSampleSize
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        bitmap = BitmapFactory.decodeFile(filePath, o2);
-
-
-    }
 
     class INeed_Task extends AsyncTask<String, Void, String> {
 
@@ -613,74 +569,6 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     }
 
 
-    class UploadImageTask extends AsyncTask<Void, Void, String> {
-        VerifyScreen p = new VerifyScreen();
-        Context context;
-
-        MyProfile_Fragment pr = new MyProfile_Fragment();
-
-        Activity activity;
-
-        public UploadImageTask(Context c) {
-            this.context = c;
-
-        }
-
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-
-                Log.e(" web url :",""+pr.URL_UPLOAD_IMAGE);
-                File sourceFile_profile = new File(Item_picturePath );
-                Log.e("picturePath :", "" +Item_picturePath);
-
-                Bitmap bmp = BitmapFactory.decodeFile(Item_picturePath);
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                bmp.compress(Bitmap.CompressFormat.JPEG, 70, bos);
-
-                ContentBody foto =new ByteArrayBody(bos.toByteArray(), "filename");
-
-                HttpClient httpclient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(pr.URL_UPLOAD_IMAGE);
-
-                String boundary = "-------------" + System.currentTimeMillis();
-
-                httpPost.setHeader("Content-Type", "multipart/form-data; boundary="+boundary);
-
-                HttpEntity entity = MultipartEntityBuilder.create()
-                        .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-                        .setBoundary(boundary)
-                        .addPart("photo", foto)
-                        .build();
-
-                httpPost.setEntity(entity);
-
-
-                HttpResponse response = httpclient.execute(httpPost);
-
-                String responseBody = EntityUtils.toString(response.getEntity());
-                Log.v(" HTTP Response", responseBody);
-                return responseBody;
-
-            }
-            catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                // something went wrong. connection with the server error
-                e.printStackTrace();
-            }catch (Throwable t) {
-                t.printStackTrace(); }
-
-            return null;
-        }
-
-
-    }
     public void onClick(final View v) {
         switch (v.getId()) {
 
@@ -729,6 +617,9 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                     progressDialog.dismiss();
                                     progressDialog = null;
                                     Item_picturePath="";
+                                    File f = new File(outPutFile.getPath());
+
+                                    if (f.exists()) f.delete();
                                 }
                                 if (result != null) {
                                     JSONObject json = null;
@@ -749,7 +640,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                     }
                                 }
                             }
-                        }.execute();
+                        }.execute(Item_picturePath);
                     }
                     else {
                         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
