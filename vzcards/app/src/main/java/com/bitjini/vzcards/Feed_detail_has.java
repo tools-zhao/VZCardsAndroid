@@ -36,10 +36,11 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
     Button referVZbtn, referContactbtn;
 
     String ticket_id_1, phone1, connector_vz_id;
+
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-  setContentView(R.layout.feed_detail_has);
+         setContentView(R.layout.feed_detail_has);
 
 
         title = (TextView)findViewById(R.id.title);

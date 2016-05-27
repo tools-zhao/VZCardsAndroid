@@ -115,13 +115,12 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         c = vzfrnds.getContext();
 
 
-//            resolver = c.getContentResolver();
         listView = (ListView)vzfrnds.findViewById(R.id.contactList);
         LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
         mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
-
+        if(getActivity()!=null) {
             listView.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(0);
@@ -146,7 +145,6 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
 
 
-        if(getActivity()!=null) {
 
             adapter = new VZFriends_Adapter(selectUsers, getActivity());
             listView.setAdapter(adapter);

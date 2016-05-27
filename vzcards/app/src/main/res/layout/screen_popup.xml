@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
    android:background="#80FFFFFF"
     android:baselineAligned="false"
     android:descendantFocusability="blocksDescendants">
@@ -13,7 +13,7 @@
         android:layout_height="90dp"
         android:id="@+id/linearLayout1"
         android:background="#ffffff"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
@@ -177,26 +177,32 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
+    android:layout_marginBottom="12dp"
     android:orientation="horizontal"
+    android:weightSum="2"
     android:layout_below="@+id/viewLine2"
     android:gravity="center_horizontal"
     android:id="@+id/linearLayout">
 
     <Button
         android:id="@+id/btn_Ok_popup"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="30dp"
         android:text="Refer"
+        android:layout_weight="0.9"
+        android:layout_marginLeft="50dp"
         android:layout_gravity="center"
         android:background="@drawable/drawable_refer"
         android:layout_alignTop="@+id/linearLayout"/>
 
     <Button
         android:id="@+id/btn_close_popup"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="30dp"
         android:text="Close"
+        android:layout_weight="0.9"
         android:layout_marginLeft="10dp"
+        android:layout_marginRight="50dp"
         android:layout_centerHorizontal="true"
         android:background="@drawable/drawable_refer"
         android:layout_toLeftOf="@+id/btn_Ok_popup"

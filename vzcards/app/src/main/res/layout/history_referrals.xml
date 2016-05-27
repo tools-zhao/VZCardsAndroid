@@ -53,6 +53,8 @@
                     android:layout_marginLeft="5dp"
                     android:textSize="15sp"
                     android:clickable="false"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
                     android:textAllCaps="false"
