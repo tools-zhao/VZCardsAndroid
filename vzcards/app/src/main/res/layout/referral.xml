@@ -36,7 +36,7 @@
                 android:layout_marginRight="5dp">
                 <com.bitjini.vzcards.RoundedImageView
                     android:layout_width="45dp"
-                    android:layout_height="46dp"
+                    android:layout_height="45dp"
                     android:id="@+id/photo"
                     android:layout_marginTop="3dp"
                     android:layout_marginLeft="6dp"
@@ -128,7 +128,7 @@
                         />
                     <com.bitjini.vzcards.RoundedImageView
                         android:layout_width="45dp"
-                        android:layout_height="46dp"
+                        android:layout_height="45dp"
                         android:id="@+id/referdPhoto"
                         android:layout_marginTop="18dp"
                         android:clickable="false"

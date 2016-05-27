@@ -105,20 +105,27 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
      progressBar.setVisibility(View.VISIBLE);
      progressBar.setProgress(0);
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-        animation.setDuration(8000); //in milliseconds
+        animation.setDuration(2000); //in milliseconds
         animation.setRepeatCount(5);
         animation.setInterpolator(new DecelerateInterpolator());
         animation.start();
 //        new Handler().postDelayed(new Runnable() {
 //
 //            @Override public void run() {
-
-            getReferalContents(HISTORY_URL + p.token_sharedPreference);
-
-            progressBar.clearAnimation();
+        new HttpAsyncTask(getActivity()) {
+            @Override
+            public void onPostExecute(String result) {
+                super.onPostExecute(result);
+                progressBar.clearAnimation();
 
                 progressBar.setVisibility(View.GONE);
                 list.setVisibility(View.VISIBLE);
+            }
+        }.execute(HISTORY_URL + p.token_sharedPreference);
+
+            getReferalContents(HISTORY_URL + p.token_sharedPreference);
+
+
 //            }
 //        }, 2000);
 //
@@ -504,14 +511,14 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 if (!cat.getPhoto().isEmpty()) {
 //                    photo.setTag(cat.getPhoto());
 //                    new DownloadImagesTask(_c).execute(photo);// Download item_photo from AsynTask
-                    Picasso.with(_c).load(cat.getPhoto()).resize(150, 150).into(photo);
+                    Picasso.with(_c).load(cat.getPhoto()).centerCrop().resize(150, 150).into(photo);
 
 
                 } else {
                     photo.setImageResource(R.drawable.profile_pic_placeholder);
                 }
                 if (!cat.getReferedPhoto().isEmpty()) {
-                    Picasso.with(_c).load(cat.getReferedPhoto()).resize(150, 150).into(referredPhoto);
+                    Picasso.with(_c).load(cat.getReferedPhoto()).centerCrop().resize(150, 150).into(referredPhoto);
 //                    referredPhoto.setTag(cat.getReferedPhoto());
 //                    new DownloadImagesTask(_c).execute(referredPhoto);// Download item_photo from AsynTask
 

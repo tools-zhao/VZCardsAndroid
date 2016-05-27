@@ -121,45 +121,30 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
         mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
-//        displayText = (TextView) findViewById(R.id.resultText);
 
-        // refresh contents
-//
-
-//        if(progressCount==0){
-//            Handler handler=new Handler();
             listView.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(0);
             ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-            animation.setDuration(8000); //in milliseconds
+            animation.setDuration(2000); //in milliseconds
             animation.setRepeatCount(5);
             animation.setInterpolator(new DecelerateInterpolator());
             animation.start();
-//            handler.postDelayed(new Runnable() {
-//
-//                @Override public void run() {
-//
-//
-////           refresh contents
+        new HttpAsyncTask(getActivity()) {
+            @Override
+            public void onPostExecute(String result) {
+                super.onPostExecute(result);
+
+
+                progressBar.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
+            }
+
+
+        }.execute(VZFRIENDS_URL + p.token_sharedPreference);
+
             getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
 
-            progressBar.clearAnimation();
-
-            progressBar.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
-//
-//                }
-//            }, 2000);
-//
-//        }
-//
-//        else {
-
-//            refresh contents
-//            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-
-//        }
 
         if(getActivity()!=null) {
 

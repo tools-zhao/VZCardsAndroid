@@ -243,6 +243,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                         progress.setMessage("Saving user details...");
                                         progress.setCancelable(false);
                                         progress.show();
+
                                     }
 //                                            String result = new UploadImageTask(getActivity()).execute().get();
                                 new UploadImageTask(getActivity()) {
@@ -253,6 +254,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                             progress.dismiss();
                                             progress = null;
 //                                            profilePicturePath="";
+                                            File f = new File(outPutFile.getPath());
+
+                                            if (f.exists()) f.delete();
 
                                         }
 
@@ -309,6 +313,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     clickCount = 0;
                     companyPicturePath="";profilePicturePath="";
 
+
                 }
 
             }
@@ -350,7 +355,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             @Override
             public void onPostExecute(String result) {
 
+                File f = new File(companyPicturePath);
 
+                if (f.exists()) f.delete();
                 try {
                     if(result!=null) {
                         JSONObject json = new JSONObject(result);
