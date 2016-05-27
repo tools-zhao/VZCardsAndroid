@@ -73,7 +73,7 @@ public class Feed_detail_needs extends Activity implements View.OnClickListener 
 //        }
         if(!itemPic.isEmpty())
         {
-            Picasso.with(getApplicationContext()).load(itemPic).into(item_photo);
+            Picasso.with(getApplicationContext()).load(itemPic).resize(480,350).into(item_photo);
 //            item_photo.setTag(itemPic);
 //            new DownloadImagesTask(getActivity()).execute(item_photo);
         } else

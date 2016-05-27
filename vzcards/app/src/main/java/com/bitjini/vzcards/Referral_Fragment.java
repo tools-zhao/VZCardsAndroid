@@ -102,30 +102,23 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
         // Creating the list adapter and populating the list
 // if(savedInstanceState==null) {
         if(getActivity()!=null) {
-     list.setVisibility(View.GONE);
-     progressBar.setVisibility(View.VISIBLE);
-     progressBar.setProgress(0);
-        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-        animation.setDuration(3000); //in milliseconds
-        animation.setRepeatCount(5);
-        animation.setInterpolator(new DecelerateInterpolator());
-        animation.start();
+            list.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(0);
+            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+            animation.setDuration(3000); //in milliseconds
+            animation.setRepeatCount(5);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
 //        new Handler().postDelayed(new Runnable() {
 //
 //            @Override public void run() {
-        new HttpAsyncTask(getActivity()) {
-            @Override
-            public void onPostExecute(String result) {
-                super.onPostExecute(result);
-                progressBar.clearAnimation();
-
-                progressBar.setVisibility(View.GONE);
-                list.setVisibility(View.VISIBLE);
-            }
-        }.execute(HISTORY_URL + p.token_sharedPreference);
-
             getReferalContents(HISTORY_URL + p.token_sharedPreference);
 
+            progressBar.clearAnimation();
+
+            progressBar.setVisibility(View.GONE);
+            list.setVisibility(View.VISIBLE);
 
 
 //            list.setVisibility(View.VISIBLE);

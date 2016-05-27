@@ -85,7 +85,7 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
 
         if(!itemPic.isEmpty())
         {
-            Picasso.with(getApplicationContext()).load(itemPic).into(item_photo);
+            Picasso.with(getApplicationContext()).load(itemPic).resize(500,350).into(item_photo);
 //            item_photo.setTag(itemPic);
 //            new DownloadImagesTask(getActivity()).execute(item_photo);
         } else

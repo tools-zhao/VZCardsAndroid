@@ -129,26 +129,16 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             animation.setRepeatCount(5);
             animation.setInterpolator(new DecelerateInterpolator());
             animation.start();
-        new HttpAsyncTask(getActivity()) {
-            @Override
-            public void onPostExecute(String result) {
-                super.onPostExecute(result);
-
-
-                progressBar.setVisibility(View.GONE);
-                listView.setVisibility(View.VISIBLE);
-            }
-
-
-        }.execute(VZFRIENDS_URL + p.token_sharedPreference);
-
             getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
 
 
+            progressBar.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
+            }
 
             adapter = new VZFriends_Adapter(selectUsers, getActivity());
             listView.setAdapter(adapter);
-        }
+
         listView.setTextFilterEnabled(true);
         filter = adapter.getFilter();
 
