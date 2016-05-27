@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +49,8 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
         name = (TextView) findViewById(R.id.name);
         profilePhoto = (ImageView) findViewById(R.id.profilePic);
         item_photo = (ImageView) findViewById(R.id.item_photo);
-
+        // to make the textview scroll
+        description.setMovementMethod(new ScrollingMovementMethod());
         referVZbtn = (Button) findViewById(R.id.refer_vzfrnd);
         referContactbtn = (Button) findViewById(R.id.refer_contact);
 

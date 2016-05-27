@@ -87,7 +87,9 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View needFeeds = inflater.inflate(R.layout.question_feed_listview, container, false);
-
+        TextView textView=(TextView)needFeeds.findViewById(R.id.emptytext);
+        textView.setText("");
+        textView.setVisibility(View.GONE);
         swipeRefreshLayout = (SwipeRefreshLayout) needFeeds.findViewById(R.id.pullToRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 

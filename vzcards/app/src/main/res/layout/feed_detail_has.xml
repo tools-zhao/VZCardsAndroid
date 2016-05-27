@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/feed_detail_has_Frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
     android:layout_marginTop="-2dp"
+    android:splitMotionEvents="false"
     android:background="?android:attr/colorBackground">
 
-<RelativeLayout
-     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:splitMotionEvents="false"
-    >
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -32,6 +28,7 @@
             android:src="@drawable/navbarlogo2x"
             android:layout_gravity="center"/>
     </android.support.v7.widget.Toolbar>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="52dp"
@@ -59,13 +56,16 @@
             android:gravity="center_vertical"
             android:textColor="#ffff"/>
         </LinearLayout>
+
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="210dp"
-        android:background="#7a877980"
+        android:background="#B6B7B8"
         android:orientation="vertical"
         android:id="@+id/l2"
-        android:layout_below="@+id/l1"
         android:gravity="center_horizontal">
         <ImageView
             android:layout_width="match_parent"
@@ -77,6 +77,17 @@
             android:adjustViewBounds="true"
             android:id="@+id/item_photo"
             android:src="@drawable/no_pic_placeholder"/></LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/l2"
+        android:layout_above="@+id/lin"
+        android:id="@+id/scrollView">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relative"
+            android:layout_marginBottom="10dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -111,28 +122,34 @@
             android:layout_height="wrap_content"
             android:hint="Enter your Description"
             android:minLines="1"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
             android:scrollbars = "vertical"
-            android:maxLines = "10"
-            android:paddingTop="5dp"
-            android:maxHeight="140dp"
-            android:paddingBottom="5dp"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
             android:id="@+id/description"
-            android:gravity="center"/>
+            android:gravity="top|center"/>
     </LinearLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/lin"
+    android:background="?android:attr/colorBackground"
+    android:layout_alignParentBottom="true">
     <Button
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="Refer Tickets"
         android:background="@drawable/addimage"
         android:textColor="@color/white"
-         android:shadowColor="#ffff"
+        android:shadowColor="#ffff"
         android:id="@+id/refer_vzfrnd"
-        android:layout_marginBottom="10dp"
         style="?android:attr/borderlessButtonStyle"
-        android:layout_above="@+id/refer_contact"
         android:layout_marginLeft="25dp"
-        android:layout_marginRight="25dp" />
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="5dp" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -140,13 +157,11 @@
         android:background="@drawable/addimage"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
-        android:layout_alignParentBottom="true"
         android:textColor="@color/white"
         style="?android:attr/borderlessButtonStyle"
         android:shadowColor="@color/white"
         android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
         android:id="@+id/refer_contact"/>
-
-
-</RelativeLayout>
-    </FrameLayout>
+    </LinearLayout>
+ </RelativeLayout>

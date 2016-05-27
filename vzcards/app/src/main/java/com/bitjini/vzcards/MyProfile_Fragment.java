@@ -551,8 +551,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                         if (items[item].equals("Capture Photo")) {
 
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
-                            mImageCaptureUri = Uri.fromFile(f);
+//                            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
+                            final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
+                            root.mkdir();
+                            final String fname = "img_" + System.currentTimeMillis() + ".jpg";
+                            final File sdImageMainDirectory = new File(root, fname);
+                            mImageCaptureUri = Uri.fromFile(sdImageMainDirectory);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
                             startActivityForResult(intent, CAMERA_CODE);
 
@@ -811,12 +815,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //                setRetainInstance(true);
                 Fragment newfragment1 = new MyProfile_Fragment();
                 // get the id of fragment
-                FrameLayout contentView1 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
+//                FrameLayout contentView1 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .replace(contentView1.getId(), newfragment1)
+                        .replace(R.id.profile_frame, newfragment1)
                         .commit();
 
 //               gment image is blank
@@ -825,12 +829,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             case R.id.vzfrnds:
                 Fragment newfragment = new VZFriends_Fragment();
                 // get the id of fragment
-                FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
+//                FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager1 = getFragmentManager();
                 fragmentManager1.beginTransaction()
-                        .replace(contentView2.getId(), newfragment)
+                        .replace(R.id.profile_frame, newfragment)
                         .commit();
                 break;
 
@@ -838,12 +842,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             case R.id.referralbtn:
                 Fragment fragment = new Referral_Fragment();
                 // get the id of fragment
-                FrameLayout contentView3 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
+//                FrameLayout contentView3 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
                 fragmentManager2.beginTransaction()
-                        .replace(contentView3.getId(), fragment)
+                        .replace(R.id.profile_frame, fragment)
                         .commit();
 
 

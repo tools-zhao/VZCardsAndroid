@@ -86,19 +86,15 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
     private static final int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
 
-    private Button btn_select_image;
     private Uri mImageCaptureUri;
     private File outPutFile = null;
-    private final int SELECT_PHOTO = 1;
-    private Uri outputFileUri;
     private static final int PERMISSIONS_REQUEST_CAMERA = 105;
     private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 106;
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 107;
 
 
     Button havebtn;
-    ImageButton btnCander;
-    public ImageView item_image,showImage;;
+    public ImageView item_image;;
     Button addImage;
     EditText txtItem,txtDescription;
     TextView txtDate_validity;
@@ -109,8 +105,8 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     public Bitmap bitmap=null;
 
     VerifyScreen p = new VerifyScreen();
-    RelativeLayout main_layout,displayImage_layout;
-    Button done1,done2, cancel,choose;
+    RelativeLayout main_layout;
+    Button done1,done2, cancel;
     Animation animScale;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -131,10 +127,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
 
         main_layout=(RelativeLayout) iNeed.findViewById(R.id.main_layout);
-        displayImage_layout=(RelativeLayout) iNeed.findViewById(R.id.displayLayout);
 
-        showImage=(ImageView)iNeed.findViewById(R.id.showImage);
-        choose=(Button)iNeed.findViewById(R.id.choose);
         cancel=(Button) iNeed.findViewById(R.id.cancel);
 
          havebtn = (Button) iNeed.findViewById(R.id.ihave);
@@ -152,13 +145,12 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
         havebtn.setOnClickListener(this);
 
-        txtDate_validity.setOnTouchListener(new View.OnTouchListener() {
+        txtDate_validity.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
+            public void onClick(View v) {
                 showDatePickerDialog(v);
-                return false;
             }
+
         });
       txtItem.setOnTouchListener(new View.OnTouchListener() {
           @Override
@@ -200,8 +192,12 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                         if (items[item].equals("Capture Photo")) {
 
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
-                            mImageCaptureUri = Uri.fromFile(f);
+//                            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
+                            final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
+                            root.mkdir();
+                            final String fname = "img_" + System.currentTimeMillis() + ".jpg";
+                            final File sdImageMainDirectory = new File(root, fname);
+                            mImageCaptureUri = Uri.fromFile(sdImageMainDirectory);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
                             startActivityForResult(intent, CAMERA_CODE);
 
@@ -624,12 +620,12 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
                 Fragment haveFragment = new AddActivity();
                 // get the id of fragment
-                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ineed_frame);
+//                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ineed_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .replace(contentView.getId(), haveFragment)
+                        .replace(R.id.ineed_frame, haveFragment)
                         .commit();
                 break;
 
