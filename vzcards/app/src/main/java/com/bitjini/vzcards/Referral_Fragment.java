@@ -101,6 +101,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
         // Populate our list with groups and it's children
         // Creating the list adapter and populating the list
 // if(savedInstanceState==null) {
+        if(getActivity()!=null) {
      list.setVisibility(View.GONE);
      progressBar.setVisibility(View.VISIBLE);
      progressBar.setProgress(0);
@@ -126,7 +127,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             getReferalContents(HISTORY_URL + p.token_sharedPreference);
 
 
-        if(getActivity()!=null) {
+
 //            list.setVisibility(View.VISIBLE);
 //            getReferalContents(HISTORY_URL + p.token_sharedPreference);
             listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
