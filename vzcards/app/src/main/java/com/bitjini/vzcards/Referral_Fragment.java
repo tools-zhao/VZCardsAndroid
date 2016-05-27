@@ -105,7 +105,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
      progressBar.setVisibility(View.VISIBLE);
      progressBar.setProgress(0);
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-        animation.setDuration(2000); //in milliseconds
+        animation.setDuration(3000); //in milliseconds
         animation.setRepeatCount(5);
         animation.setInterpolator(new DecelerateInterpolator());
         animation.start();
@@ -126,20 +126,6 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             getReferalContents(HISTORY_URL + p.token_sharedPreference);
 
 
-//            }
-//        }, 2000);
-//
-// }
-//        else
-//        {
-//            list.setVisibility(View.VISIBLE);
-//            // refresh contents
-//            getReferalContents(HISTORY_URL + p.token_sharedPreference);
-//        }
-//
-//
-//
-//
         if(getActivity()!=null) {
 //            list.setVisibility(View.VISIBLE);
 //            getReferalContents(HISTORY_URL + p.token_sharedPreference);
@@ -189,19 +175,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
-//                int itemCount=0;
-//                if(itemCount==totalItemCount)
-//                {
-//                    swipeRefreshLayout.post(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-////                                                    swipeRefreshLayout.setRefreshing(true);
-//                                                    refreshContent();
-//
-//                                                }
-//                                            }
-//                    );
-//                }
+
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 

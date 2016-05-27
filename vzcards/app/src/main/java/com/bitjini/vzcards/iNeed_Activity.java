@@ -545,6 +545,9 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                                     progressDialog.dismiss();
                                     progressDialog = null;
                                     Item_picturePath = "";
+                                    File f = new File(outPutFile.getPath());
+
+                                    if (f.exists()) f.delete();
                                 }
                                 if (result != null) {
                                     JSONObject json = null;

@@ -422,51 +422,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             }
         }
     }
-    public Bitmap BITMAP_RESIZER(Bitmap bitmap,int newWidth,int newHeight) {
-        Bitmap scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
 
-        float ratioX = newWidth / (float) bitmap.getWidth();
-        float ratioY = newHeight /(float) bitmap.getHeight();
-        float middleX = newWidth/ 2.0f;
-        float middleY = newHeight / 2.0f;
-
-        Matrix scaleMatrix = new Matrix();
-        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
-
-        Canvas canvas = new Canvas(scaledBitmap);
-        canvas.setMatrix(scaleMatrix);
-        canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() /2, middleY - bitmap.getHeight()/2 , new Paint(Paint.FILTER_BITMAP_FLAG));
-
-        return scaledBitmap;
-
-    }
-    public void decodeFile(String filePath) {
-        // Decode image size
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, o);
-
-        // The new size we want to scale to
-        final int REQUIRED_SIZE = 1024;
-
-        // Find the correct scale value. It should be the power of 2.
-        int width_tmp = o.outWidth, height_tmp = o.outHeight;
-        int scale = 1;
-        while (true) {
-            if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
-                break;
-            width_tmp /= 2;
-            height_tmp /= 2;
-            scale *= 2;
-        }
-
-        // Decode with inSampleSize
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        bitmap = BitmapFactory.decodeFile(filePath, o2);
-
-
-    }
 
     class INeed_Task extends AsyncTask<String, Void, String> {
 
@@ -661,6 +617,9 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                     progressDialog.dismiss();
                                     progressDialog = null;
                                     Item_picturePath="";
+                                    File f = new File(outPutFile.getPath());
+
+                                    if (f.exists()) f.delete();
                                 }
                                 if (result != null) {
                                     JSONObject json = null;
