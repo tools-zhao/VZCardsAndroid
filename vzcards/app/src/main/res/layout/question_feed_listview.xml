@@ -49,7 +49,18 @@
             android:choiceMode="multipleChoice"
             android:listSelector="@drawable/list_item_selector"></ListView>
 
-
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/progress1"
+        android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/progress_animation"
+        android:max="500"
+        android:progress="0"
+        android:visibility="gone"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </FrameLayout>

@@ -133,15 +133,15 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
 
             progressBar.setVisibility(View.GONE);
-                listView.setVisibility(View.VISIBLE);
-            }
+            listView.setVisibility(View.VISIBLE);
+
 
             adapter = new VZFriends_Adapter(selectUsers, getActivity());
             listView.setAdapter(adapter);
 
-        listView.setTextFilterEnabled(true);
-        filter = adapter.getFilter();
-
+            listView.setTextFilterEnabled(true);
+            filter = adapter.getFilter();
+        }
 
 
         setupSearchView();

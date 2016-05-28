@@ -1,5 +1,6 @@
 package com.bitjini.vzcards;
 
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,6 +30,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -75,7 +78,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     private ProgressDialog progress;
     ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
 
-
+    ProgressBar progressBar;
     DataFeeds dataFeeds_Has = new DataFeeds();
     DataFeeds dataFeeds_Needs = new DataFeeds();
 
@@ -93,6 +96,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         TextView textView=(TextView)needFeeds.findViewById(R.id.emptytext);
         textView.setText("");
         textView.setVisibility(View.GONE);
+        progressBar = (ProgressBar) needFeeds.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) needFeeds.findViewById(R.id.pullToRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
@@ -112,9 +116,26 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
-        if(getActivity()!=null) {
-        getFeedsContents(URL_GETLIST + p.token_sharedPreference);
 
+//            listView.setVisibility(View.GONE);
+//            progressBar.setVisibility(View.VISIBLE);
+//            progressBar.setProgress(0);
+//            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+//            animation.setDuration(1000); //in milliseconds
+//            animation.setRepeatCount(3);
+//            animation.setInterpolator(new DecelerateInterpolator());
+//            animation.start();
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+
+                getFeedsContents(URL_GETLIST + token_sharedPreference);
+//                progressBar.setVisibility(View.GONE);
+//                listView.setVisibility(View.VISIBLE);
+//
+//            }
+//        }, 5000);
+        if(getActivity()!=null) {
             adapter = new HasFeedsAdapter(getActivity(), R.layout.question_feeds, feedsArrayList);
             listView.setAdapter(adapter);
         }
