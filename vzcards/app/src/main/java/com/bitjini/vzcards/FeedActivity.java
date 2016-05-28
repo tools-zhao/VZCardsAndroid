@@ -321,7 +321,7 @@ FrameLayout layout_MainMenu;
 
             progressCount = 1;
 
-           String received =  new HttpAsyncTask().execute(url).get();
+           String received =  new HttpAsyncTask(getActivity()).execute(url).get();
 
             int status=0;
             JSONObject jsonObj = new JSONObject(received);
@@ -539,61 +539,7 @@ FrameLayout layout_MainMenu;
             }
         }
     }
-    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
-        @Override
-        protected String doInBackground(String... urls) {
-
-            // params comes from the execute() call: params[0] is the url.
-            try {
-                return downloadUrl(urls[0]);
-            } catch (IOException e) {
-                return "Unable to download the requested page.";
-            }
-        }
-
-        private String downloadUrl(String urlString) throws IOException {
-            InputStream is = null;
-            try {
-                URL url = new URL(urlString);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                // Starts the query
-                conn.connect();
-                int responseCode = conn.getResponseCode();
-                is = conn.getInputStream();
-                String contentAsString = convertStreamToString(is);
-                return contentAsString;
-            } finally {
-                if (is != null) {
-                    is.close();
-                }
-            }
-        }
-
-        private String convertStreamToString(InputStream is) throws UnsupportedEncodingException {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 8);
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return sb.toString();
-        }
-    }
 
     static class ViewHolder {
         public TextView name, question, item;
