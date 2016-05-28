@@ -104,7 +104,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     TextView textViewName;
 
     Context c;
-    public ProgressDialog progress,progressDialog1;
+    public ProgressDialog progress,progress1,progressDialog1;
 
     ListView listView;
     EditTextAdapter editTextAdapter;
@@ -138,7 +138,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         cancelBtn=(Button) profile.findViewById(R.id.cancel);
         cancelBtn.setVisibility(View.GONE);
         listView = (ListView) profile.findViewById(R.id.profileList);
-        listView.setOnScrollListener(new MyScrollListener());
+//        listView.setOnScrollListener(new MyScrollListener());
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         p.phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
@@ -149,11 +149,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         //Picking Profile picture
         imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
         imageCompany = (ImageView) profile.findViewById(R.id.btn_pick);
-//        Bitmap icon = BitmapFactory.decodeResource(getActivity().getResources(),
-//                R.drawable.profile_pic_placeholder);
-//        Bitmap blurredBitmap = BlurBuilder.blur(getActivity(), icon);
-//
-//        linearLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), blurredBitmap));
+
         //image listeners
         imageCompany.setOnClickListener(this);
         imageProfile.setOnClickListener(this);
@@ -303,9 +299,24 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //
                         } else {
 
+                            progress1 = new ProgressDialog(getActivity());
+                            if (progress1 != null) {
+                                progress1.setMessage("Saving user details...");
+                                progress1.setCancelable(false);
+                                progress1.show();
 
-                            new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
-                            getProfileDetails();
+                            }
+                            new Profile_POST_Details(getActivity()) {
+                                @Override
+                                public void onPostExecute(String result) {
+                                    if (progress1.isShowing() && progress1!=null) {
+                                        progress1.dismiss();
+                                        progress1 = null;}
+                                    Toast.makeText(getActivity(), "Profile is updated ", Toast.LENGTH_LONG).show();
+                                    getProfileDetails();
+                                }
+                            }.execute(URL_PROFILE_UPDATE);
+
 
                         }
                     }
@@ -985,23 +996,5 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             }
         }
     }
-    protected class MyScrollListener implements AbsListView.OnScrollListener {
 
-        @Override
-        public void onScroll(AbsListView view, int firstVisibleItem,
-                             int visibleItemCount, int totalItemCount) {
-            // do nothing
-        }
-
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-            if (SCROLL_STATE_TOUCH_SCROLL == scrollState) {
-                View currentFocus = getActivity().getCurrentFocus();
-                if (currentFocus != null) {
-                    currentFocus.clearFocus();
-                }
-            }
-        }
-
-    }
 }

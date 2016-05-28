@@ -41,13 +41,13 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
         this.context = c;
     }
 
-    protected void onPreExecute() {
-
-       progress = new ProgressDialog(this.context);
-      progress.setMessage("Saving user details..");
-        progress.setCancelable(false);
-       progress.show();
-    }
+//    protected void onPreExecute() {
+//
+//       progress = new ProgressDialog(this.context);
+//      progress.setMessage("Saving user details..");
+//        progress.setCancelable(false);
+//       progress.show();
+//    }
 
     @Override
     protected String doInBackground(String... urls) {
@@ -166,30 +166,30 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
     }
 
 
-    protected void onPostExecute(String result) {
-        if(progress.isShowing() && progress!=null) {
-            progress.dismiss();
-            progress=null;
-        }
-        Toast.makeText(context, "Profile is updated ", Toast.LENGTH_LONG).show();
-        if (result != null) {
-            Log.e("Post response =", "" + result.toString());
-            try {
-                JSONObject res = new JSONObject(result.toString());
-
-                String firstname = res.getString("firstname");
-                String photo = res.getString("photo");
-                String companyphoto = res.getString("company_photo");
-                Log.e("firstname generated =", "" + firstname);
-                Log.e("photo generated =", "" + photo);
-                Log.e("company pic generated =", "" + companyphoto);
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-    }
+//    protected void onPostExecute(String result) {
+////        if(progress.isShowing() && progress!=null) {
+////            progress.dismiss();
+////            progress=null;
+////        }
+//        Toast.makeText(context, "Profile is updated ", Toast.LENGTH_LONG).show();
+//        if (result != null) {
+//            Log.e("Post response =", "" + result.toString());
+//            try {
+//                JSONObject res = new JSONObject(result.toString());
+//
+//                String firstname = res.getString("firstname");
+//                String photo = res.getString("photo");
+//                String companyphoto = res.getString("company_photo");
+//                Log.e("firstname generated =", "" + firstname);
+//                Log.e("photo generated =", "" + photo);
+//                Log.e("company pic generated =", "" + companyphoto);
+//
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//
+//    }
 }
