@@ -627,10 +627,11 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
                                         new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
 
-                                        v.clearAnimation();
+
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    v.clearAnimation();
                                 }
                             }
                         }.execute(Item_picturePath);

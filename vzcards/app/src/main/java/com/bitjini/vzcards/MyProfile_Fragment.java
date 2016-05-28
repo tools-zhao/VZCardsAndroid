@@ -32,7 +32,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -136,7 +138,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         cancelBtn=(Button) profile.findViewById(R.id.cancel);
         cancelBtn.setVisibility(View.GONE);
         listView = (ListView) profile.findViewById(R.id.profileList);
-
+        listView.setOnScrollListener(new MyScrollListener());
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         p.phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
@@ -930,12 +932,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             if (convertView == null) {
                 // Not recycled, inflate a new view
                 LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                rowView = li.inflate(R.layout.profile_listitems, null);
+                rowView = li.inflate(R.layout.profile_listitems, parent,false);
 
                 rowView.setTag(holder);
             }
             holder.textView = (TextView) rowView.findViewById(R.id.labels);
             holder.editText = (EditText) rowView.findViewById(R.id.values1);
+            ViewParent parent2 =  holder.editText .getParent();
+            parent.clearChildFocus(  holder.editText );
             ViewHolder holder = (ViewHolder) rowView.getTag();
             // Remove any existing TextWatcher that will be keyed to the wrong ListItem
             if (holder.textWatcher != null)
@@ -981,5 +985,23 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             }
         }
     }
+    protected class MyScrollListener implements AbsListView.OnScrollListener {
 
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem,
+                             int visibleItemCount, int totalItemCount) {
+            // do nothing
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            if (SCROLL_STATE_TOUCH_SCROLL == scrollState) {
+                View currentFocus = getActivity().getCurrentFocus();
+                if (currentFocus != null) {
+                    currentFocus.clearFocus();
+                }
+            }
+        }
+
+    }
 }
