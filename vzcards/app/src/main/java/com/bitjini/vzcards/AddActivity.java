@@ -430,16 +430,16 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
         }
 
-//        protected void onPreExecute() {
-//
-//
-//            progress = new ProgressDialog(this.context);
-//            if(progress!=null) {
-//                progress.setMessage("Sending...");
-//                progress.setCancelable(false);
-//                progress.show();
-//            }
-//        }
+        protected void onPreExecute() {
+
+
+            progress = new ProgressDialog(this.context);
+            if(progress!=null) {
+                progress.setMessage("Sending...");
+                progress.setCancelable(false);
+                progress.show();
+            }
+        }
 
         @Override
         protected String doInBackground(String... urls) {
@@ -624,15 +624,13 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 //
                                         Log.e("item_photo :", "" + item_photo);
                                         Log.e("link :", "" + link);
-                                        progress = new ProgressDialog(this.context);
 
                                         new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
 
-
+                                        v.clearAnimation();
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
-                                    v.clearAnimation();
                                 }
                             }
                         }.execute(Item_picturePath);
