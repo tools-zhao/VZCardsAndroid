@@ -198,6 +198,8 @@
         android:layout_weight="0.7"
         android:layout_marginLeft="50dp"
         android:layout_gravity="center"
+
+        style="?android:attr/borderlessButtonStyle"
         android:background="@drawable/drawable_refer"
         android:layout_alignTop="@+id/linearLayout"/>
 
@@ -207,6 +209,8 @@
         android:layout_height="30dp"
         android:text="Close"
         android:layout_weight="0.7"
+
+        style="?android:attr/borderlessButtonStyle"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="50dp"
         android:layout_centerHorizontal="true"

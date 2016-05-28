@@ -207,6 +207,8 @@
                         android:textColor="@drawable/refer_text"
                         android:layout_below="@+id/textView1"
                         android:id="@+id/btnCall"
+
+                        style="?android:attr/borderlessButtonStyle"
                         android:textSize="12sp"
                         android:gravity="center"/>
                     <Button
@@ -221,6 +223,7 @@
                         android:textColor="@drawable/refer_text"
                         android:layout_marginRight="10dp"
 
+                        style="?android:attr/borderlessButtonStyle"
                         android:layout_below="@+id/btn"/>
                 </LinearLayout>
                 <View

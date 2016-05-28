@@ -39,7 +39,7 @@
       android:layout_marginBottom="3dp">
             <TextView
                 android:layout_width="120dp"
-                android:layout_height="25dp"
+                android:layout_height="wrap_content"
                 android:text="House "
                 android:id="@+id/itemName"
                 android:layout_toRightOf="@+id/image1"
@@ -64,6 +64,8 @@
                 android:layout_height="20dp"
                 android:textSize="12sp"
                 android:text="Decription"
+                android:ellipsize="marquee"
+                android:singleLine="true"
                 android:layout_below="@+id/itemName"
                 android:layout_marginLeft="5dp"
                 android:id="@+id/desc"
@@ -104,6 +106,8 @@
                  android:layout_marginRight="10dp"
                  android:layout_marginBottom="5dp"
                 android:shadowColor="#771d1e10"
+
+                 style="?android:attr/borderlessButtonStyle"
                 android:background="@drawable/drawable_refer"
                 android:text="Remove"/>
         </RelativeLayout>

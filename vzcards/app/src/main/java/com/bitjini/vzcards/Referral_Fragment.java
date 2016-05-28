@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.LauncherActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,12 +29,14 @@ import android.support.v4.app.FragmentManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -49,7 +52,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
     private static final int PERMISSIONS_REQUEST_CALL_CONTACTS = 100;
 
     MyProfile_Fragment pr = new MyProfile_Fragment();
-    ArrayList<ReferalUsers> groupItem = new ArrayList<ReferalUsers>();
+   ArrayList<ReferalUsers> groupItem = new ArrayList<ReferalUsers>();
     Button vzfrnds, profilebtn, referralbtn;
     ListView list;
     ProgressBar progressBar;
@@ -63,15 +66,31 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
     View footer;
     View referral;
     int count=0;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // keep the fragment and all its data across screen rotation
-        setRetainInstance(true);
-        Log.e("save","");
-
-    }
+//
+////    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        // keep the fragment and all its data across screen rotation
+//        if(savedInstanceState!=null) {
+//
+//            //Restore the fragment's state here
+//            Gson gson = new Gson();
+//            String json = savedInstanceState.getString("MyString");
+////        Log.e("Load json shared prefs ", "" + json);
+//
+//            Type type = new TypeToken<ArrayList<LauncherActivity.ListItem>>() {
+//            }.getType();
+//            groupItem = gson.fromJson(json, type);
+//            listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+//            list.setAdapter(listAdapter);
+//            Toast.makeText(getActivity(),"save",Toast.LENGTH_LONG).show();
+//        }
+//        else
+//        {
+//            Toast.makeText(getActivity(),"NO",Toast.LENGTH_LONG).show();
+//        }
+//
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -111,7 +130,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
         // Populate our list with groups and it's children
         // Creating the list adapter and populating the list
-// if(savedInstanceState==null) {
+ if(savedInstanceState==null) {
      list.setVisibility(View.GONE);
      progressBar.setVisibility(View.VISIBLE);
      progressBar.setProgress(0);
@@ -123,23 +142,24 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 //        new Handler().postDelayed(new Runnable() {
 //
 //            @Override public void run() {
-        new HttpAsyncTask(getActivity()) {
-            @Override
-            public void onPostExecute(String result) {
-                super.onPostExecute(result);
+//        new HttpAsyncTask(getActivity()) {
+//            @Override
+//            public void onPostExecute(String result) {
+//                super.onPostExecute(result);
+     getReferalContents(HISTORY_URL + p.token_sharedPreference);
                 progressBar.clearAnimation();
 
                 progressBar.setVisibility(View.GONE);
                 list.setVisibility(View.VISIBLE);
-            }
-        }.execute(HISTORY_URL + p.token_sharedPreference);
+//            }
+//        }.execute(HISTORY_URL + p.token_sharedPreference);
 
-            getReferalContents(HISTORY_URL + p.token_sharedPreference);
+
 
 
 //            }
 //        }, 2000);
-//
+
 // }
 //        else
 //        {
@@ -151,12 +171,13 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 //
 //
 //
-        if(getActivity()!=null) {
+     if (getActivity() != null) {
 //            list.setVisibility(View.VISIBLE);
 //            getReferalContents(HISTORY_URL + p.token_sharedPreference);
-            listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
-            list.setAdapter(listAdapter);
-        }
+         listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+         list.setAdapter(listAdapter);
+     }
+ }
         // on configuration changes (screen rotation) we want fragment member variables to preserved
         setRetainInstance(true);
         // Creating an item click listener, to open/close our toolbar for each item
@@ -200,19 +221,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 }
                 swipeRefreshLayout.setEnabled(enable);
                 Log.i("Main",totalItemCount+"");
-//                int itemCount=0;
-//                if(itemCount==totalItemCount)
-//                {
-//                    swipeRefreshLayout.post(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-////                                                    swipeRefreshLayout.setRefreshing(true);
-//                                                    refreshContent();
-//
-//                                                }
-//                                            }
-//                    );
-//                }
+
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
@@ -670,6 +679,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                         .replace(contentView2.getId(), newfragment)
                         .commit();
 
+
                 break;
 
 
@@ -679,15 +689,33 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
 
     }
-    public void onSaveInstanceState(Bundle outState)
-    {
-       String json2 = new Gson().toJson(groupItem);// updated array
-
-       outState.putString("MyString", json2);
-        Log.e(" saving",""+json2);
-        // etc.
-        super.onSaveInstanceState(outState);
-        // Save countries into bundle
-    }
+//    public void onSaveInstanceState(Bundle outState)
+//    {
+//        super.onSaveInstanceState(outState);
+//       String json2 = new Gson().toJson(groupItem);// updated array
+//
+//       outState.putString("MyString", json2);
+//        Log.e(" saving",""+json2);
+//        // etc.
+//
+//        // Save countries into bundle
+//    }
+////    @Override
+////    public void onActivityCreated(Bundle savedInstanceState) {
+////        super.onActivityCreated(savedInstanceState);
+////
+////        if (savedInstanceState != null) {
+////            //Restore the fragment's state here
+////            Gson gson = new Gson();
+////            String json = savedInstanceState.getString("MyString");
+//////        Log.e("Load json shared prefs ", "" + json);
+////
+////            Type type = new TypeToken<ArrayList<LauncherActivity.ListItem>>() {
+////            }.getType();
+////            groupItem = gson.fromJson(json, type);
+////            listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+////            list.setAdapter(listAdapter);
+////        }
+////    }
 
 }
