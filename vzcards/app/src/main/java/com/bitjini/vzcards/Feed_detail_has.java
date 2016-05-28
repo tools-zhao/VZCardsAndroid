@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,10 +37,11 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
     Button referVZbtn, referContactbtn;
 
     String ticket_id_1, phone1, connector_vz_id;
+
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-  setContentView(R.layout.feed_detail_has);
+         setContentView(R.layout.feed_detail_has);
 
 
         title = (TextView)findViewById(R.id.title);
@@ -47,7 +49,8 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
         name = (TextView) findViewById(R.id.name);
         profilePhoto = (ImageView) findViewById(R.id.profilePic);
         item_photo = (ImageView) findViewById(R.id.item_photo);
-
+        // to make the textview scroll
+        description.setMovementMethod(new ScrollingMovementMethod());
         referVZbtn = (Button) findViewById(R.id.refer_vzfrnd);
         referContactbtn = (Button) findViewById(R.id.refer_contact);
 
@@ -84,7 +87,7 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
 
         if(!itemPic.isEmpty())
         {
-            Picasso.with(getApplicationContext()).load(itemPic).into(item_photo);
+            Picasso.with(getApplicationContext()).load(itemPic).resize(500,350).into(item_photo);
 //            item_photo.setTag(itemPic);
 //            new DownloadImagesTask(getActivity()).execute(item_photo);
         } else

@@ -44,12 +44,19 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by bitjini on 16/2/16.
@@ -216,12 +223,16 @@ return refer_contact;
             try {
 //                final TextView outputView = (TextView) findViewById(R.id.content);
                 URL url = new URL(urlString);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-
-                HttpClient client = new DefaultHttpClient();
-
-                HttpPost post = new HttpPost(urlString);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+//
+//                HttpClient client = new DefaultHttpClient();
+//
+//                HttpPost post = new HttpPost(urlString);
 
                 List<NameValuePair> params1 = new ArrayList<NameValuePair>();
                 params1.add(new BasicNameValuePair("connecter_vz_id", connecter_vz_id));
@@ -234,34 +245,34 @@ return refer_contact;
                 params1.add(new BasicNameValuePair("reffered_phone", reffered_phone));
 
 
-                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
-                post.setEntity(ent);
-                HttpResponse responsePOST = client.execute(post);
-                HttpEntity resEntity = responsePOST.getEntity();
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(getQuery(params1));
+                writer.flush();
+                writer.close();
+                os.close();
 
-                if (resEntity != null) {
-                    response = EntityUtils.toString(resEntity);
-                    Log.i("RESPONSE", response);
+                conn.connect();
 
-                }
-                StringBuilder sb = new StringBuilder();
-                try {
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
-                    String line = null;
 
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
+                int responseCode = conn.getResponseCode();
+
+                Log.e("res code", "" + responseCode);
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
+                    String line;
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line = br.readLine()) != null) {
+                        response += line;
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } else {
+                    response = "";
+
                 }
+                System.out.println("finalResult " + response);
 
-
-                System.out.println("finalResult " + sb.toString());
-                return sb.toString();
+                // return response
+                return response;
 
 
             } catch (Exception e) {
@@ -270,6 +281,24 @@ return refer_contact;
 
             return null;
         }
+        private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
+            StringBuilder result = new StringBuilder();
+            boolean first = true;
+
+            for (NameValuePair pair : params) {
+                if (first)
+                    first = false;
+                else
+                    result.append("&");
+
+                result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+                result.append("=");
+                result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+            }
+
+            return result.toString();
+        }
+
 
         protected void onPostExecute(String result) {
             progress.dismiss();

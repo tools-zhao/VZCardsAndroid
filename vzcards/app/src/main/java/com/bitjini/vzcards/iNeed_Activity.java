@@ -65,17 +65,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by bitjini on 18/12/15.
@@ -86,19 +94,15 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
     private static final int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
 
-    private Button btn_select_image;
     private Uri mImageCaptureUri;
     private File outPutFile = null;
-    private final int SELECT_PHOTO = 1;
-    private Uri outputFileUri;
     private static final int PERMISSIONS_REQUEST_CAMERA = 105;
     private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 106;
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 107;
 
 
     Button havebtn;
-    ImageButton btnCander;
-    public ImageView item_image,showImage;;
+    public ImageView item_image;;
     Button addImage;
     EditText txtItem,txtDescription;
     TextView txtDate_validity;
@@ -109,8 +113,8 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     public Bitmap bitmap=null;
 
     VerifyScreen p = new VerifyScreen();
-    RelativeLayout main_layout,displayImage_layout;
-    Button done1,done2, cancel,choose;
+    RelativeLayout main_layout;
+    Button done1,done2, cancel;
     Animation animScale;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -131,10 +135,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
 
         main_layout=(RelativeLayout) iNeed.findViewById(R.id.main_layout);
-        displayImage_layout=(RelativeLayout) iNeed.findViewById(R.id.displayLayout);
 
-        showImage=(ImageView)iNeed.findViewById(R.id.showImage);
-        choose=(Button)iNeed.findViewById(R.id.choose);
         cancel=(Button) iNeed.findViewById(R.id.cancel);
 
          havebtn = (Button) iNeed.findViewById(R.id.ihave);
@@ -152,13 +153,12 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
         havebtn.setOnClickListener(this);
 
-        txtDate_validity.setOnTouchListener(new View.OnTouchListener() {
+        txtDate_validity.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
+            public void onClick(View v) {
                 showDatePickerDialog(v);
-                return false;
             }
+
         });
       txtItem.setOnTouchListener(new View.OnTouchListener() {
           @Override
@@ -200,8 +200,12 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                         if (items[item].equals("Capture Photo")) {
 
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
-                            mImageCaptureUri = Uri.fromFile(f);
+//                            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
+                            final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
+                            root.mkdir();
+                            final String fname = "img_" + System.currentTimeMillis() + ".jpg";
+                            final File sdImageMainDirectory = new File(root, fname);
+                            mImageCaptureUri = Uri.fromFile(sdImageMainDirectory);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
                             startActivityForResult(intent, CAMERA_CODE);
 
@@ -418,9 +422,17 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
             String response = null;
             Log.e(" web url",""+postURL);
-            HttpClient client = new DefaultHttpClient();
+//            HttpClient client = new DefaultHttpClient();
+//
+//            HttpPost post = new HttpPost(postURL);
 
-            HttpPost post = new HttpPost(postURL);
+            URL url = new URL(postURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
 
 
 
@@ -441,35 +453,35 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                 params.add(new BasicNameValuePair("date_validity", date_validity));
 
                 // encode post data in url format
-                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params, HTTP.UTF_8);
-                post.setEntity(ent);
-                HttpResponse responsePOST = client.execute(post);
-                HttpEntity resEntity = responsePOST.getEntity();
-                if (resEntity != null) {
-                    // storing the response
-                    response=EntityUtils.toString(resEntity);
-                    Log.i("RESPONSE Ineed", response);
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(getQuery(params));
+                writer.flush();
+                writer.close();
+                os.close();
 
-                }
-                StringBuilder sb = new StringBuilder();
-                try {
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
-                    String line = null;
+                conn.connect();
 
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
+
+                int responseCode = conn.getResponseCode();
+
+                Log.e("res code", "" + responseCode);
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
+                    String line;
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line = br.readLine()) != null) {
+                        response += line;
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } else {
+                    response = "";
+
                 }
+                System.out.println("finalResult " + response);
 
-
-                System.out.println("finalResult " + sb.toString());
                 // return response
                 return response;
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -477,6 +489,24 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
             return null;
         }
+        private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
+            StringBuilder result = new StringBuilder();
+            boolean first = true;
+
+            for (NameValuePair pair : params) {
+                if (first)
+                    first = false;
+                else
+                    result.append("&");
+
+                result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+                result.append("=");
+                result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+            }
+
+            return result.toString();
+        }
+
 
         @Override
         public void onPostExecute(String result) {
@@ -624,12 +654,12 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
                 Fragment haveFragment = new AddActivity();
                 // get the id of fragment
-                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ineed_frame);
+//                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ineed_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .replace(contentView.getId(), haveFragment)
+                        .replace(R.id.ineed_frame, haveFragment)
                         .commit();
                 break;
 

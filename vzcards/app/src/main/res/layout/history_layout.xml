@@ -39,7 +39,7 @@
       android:layout_marginBottom="3dp">
             <TextView
                 android:layout_width="120dp"
-                android:layout_height="25dp"
+                android:layout_height="wrap_content"
                 android:text="House "
                 android:id="@+id/itemName"
                 android:layout_toRightOf="@+id/image1"
@@ -54,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/days"
-                android:layout_below="@+id/itemName"
+                android:layout_below="@+id/refCount"
                 android:text="days"
                 android:layout_marginLeft="5dp"
                 android:textColor="#ff4960ff"/>
@@ -64,7 +64,9 @@
                 android:layout_height="20dp"
                 android:textSize="12sp"
                 android:text="Decription"
-                android:layout_below="@+id/days"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:layout_below="@+id/itemName"
                 android:layout_marginLeft="5dp"
                 android:id="@+id/desc"
                 android:layout_marginTop="5dp"
@@ -76,7 +78,7 @@
           android:layout_alignParentRight="true"
           android:layout_toEndOf="@+id/days"
           android:layout_gravity="right"
-          android:layout_marginTop="15dp"
+          android:layout_marginTop="10dp"
           android:layout_marginLeft="50dp"
 
           android:layout_alignStart="@+id/remove" />
@@ -85,9 +87,9 @@
               android:layout_height="15dp"
               android:layout_below="@+id/desc"
               android:layout_marginLeft="5dp"
-              android:layout_marginTop="2dp"
+              android:layout_marginTop="1dp"
               android:text="0 Referral"
-              android:layout_marginBottom="2dp"
+              android:layout_marginBottom="3dp"
               android:id="@+id/refCount"
               />
              <Button
@@ -104,6 +106,8 @@
                  android:layout_marginRight="10dp"
                  android:layout_marginBottom="5dp"
                 android:shadowColor="#771d1e10"
+
+                 style="?android:attr/borderlessButtonStyle"
                 android:background="@drawable/drawable_refer"
                 android:text="Remove"/>
         </RelativeLayout>

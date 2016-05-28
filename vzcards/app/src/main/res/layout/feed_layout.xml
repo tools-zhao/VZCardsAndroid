@@ -55,7 +55,6 @@
                 android:text="Has"
                 android:gravity="center"
                 android:textSize="10sp"
-                android:padding="2dp"
                 android:layout_marginTop="1dp"
                 android:textColor="#ffffff"
                 android:background="@drawable/addimage_red"/>
@@ -114,6 +113,7 @@
                 android:textSize="10sp"
                 android:checked="false"
                 android:layout_marginRight="2dp"
+                style="?android:attr/borderlessButtonStyle"
              android:background="@drawable/drawable_refer"
                 android:text="Refer"
                 android:button="@null"

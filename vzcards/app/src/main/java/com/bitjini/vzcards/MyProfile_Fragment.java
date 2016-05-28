@@ -32,7 +32,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -102,7 +104,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     TextView textViewName;
 
     Context c;
-    public ProgressDialog progress,progressDialog1;
+    public ProgressDialog progress,progress1,progressDialog1;
 
     ListView listView;
     EditTextAdapter editTextAdapter;
@@ -136,7 +138,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         cancelBtn=(Button) profile.findViewById(R.id.cancel);
         cancelBtn.setVisibility(View.GONE);
         listView = (ListView) profile.findViewById(R.id.profileList);
-
+//        listView.setOnScrollListener(new MyScrollListener());
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
         p.phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
@@ -147,11 +149,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         //Picking Profile picture
         imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
         imageCompany = (ImageView) profile.findViewById(R.id.btn_pick);
-//        Bitmap icon = BitmapFactory.decodeResource(getActivity().getResources(),
-//                R.drawable.profile_pic_placeholder);
-//        Bitmap blurredBitmap = BlurBuilder.blur(getActivity(), icon);
-//
-//        linearLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), blurredBitmap));
+
         //image listeners
         imageCompany.setOnClickListener(this);
         imageProfile.setOnClickListener(this);
@@ -301,9 +299,24 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //
                         } else {
 
+                            progress1 = new ProgressDialog(getActivity());
+                            if (progress1 != null) {
+                                progress1.setMessage("Saving user details...");
+                                progress1.setCancelable(false);
+                                progress1.show();
 
-                            new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
-                            getProfileDetails();
+                            }
+                            new Profile_POST_Details(getActivity()) {
+                                @Override
+                                public void onPostExecute(String result) {
+                                    if (progress1.isShowing() && progress1!=null) {
+                                        progress1.dismiss();
+                                        progress1 = null;}
+                                    Toast.makeText(getActivity(), "Profile is updated ", Toast.LENGTH_LONG).show();
+                                    getProfileDetails();
+                                }
+                            }.execute(URL_PROFILE_UPDATE);
+
 
                         }
                     }
@@ -551,8 +564,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                         if (items[item].equals("Capture Photo")) {
 
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
-                            mImageCaptureUri = Uri.fromFile(f);
+//                            File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
+                            final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
+                            root.mkdir();
+                            final String fname = "img_" + System.currentTimeMillis() + ".jpg";
+                            final File sdImageMainDirectory = new File(root, fname);
+                            mImageCaptureUri = Uri.fromFile(sdImageMainDirectory);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
                             startActivityForResult(intent, CAMERA_CODE);
 
@@ -811,12 +828,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //                setRetainInstance(true);
                 Fragment newfragment1 = new MyProfile_Fragment();
                 // get the id of fragment
-                FrameLayout contentView1 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
+//                FrameLayout contentView1 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .replace(contentView1.getId(), newfragment1)
+                        .replace(R.id.profile_frame, newfragment1)
                         .commit();
 
 //               gment image is blank
@@ -825,12 +842,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             case R.id.vzfrnds:
                 Fragment newfragment = new VZFriends_Fragment();
                 // get the id of fragment
-                FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
+//                FrameLayout contentView2 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager1 = getFragmentManager();
                 fragmentManager1.beginTransaction()
-                        .replace(contentView2.getId(), newfragment)
+                        .replace(R.id.profile_frame, newfragment)
                         .commit();
                 break;
 
@@ -838,12 +855,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             case R.id.referralbtn:
                 Fragment fragment = new Referral_Fragment();
                 // get the id of fragment
-                FrameLayout contentView3 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
+//                FrameLayout contentView3 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
                 fragmentManager2.beginTransaction()
-                        .replace(contentView3.getId(), fragment)
+                        .replace(R.id.profile_frame, fragment)
                         .commit();
 
 
@@ -926,12 +943,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             if (convertView == null) {
                 // Not recycled, inflate a new view
                 LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                rowView = li.inflate(R.layout.profile_listitems, null);
+                rowView = li.inflate(R.layout.profile_listitems, parent,false);
 
                 rowView.setTag(holder);
             }
             holder.textView = (TextView) rowView.findViewById(R.id.labels);
             holder.editText = (EditText) rowView.findViewById(R.id.values1);
+            ViewParent parent2 =  holder.editText .getParent();
+            parent.clearChildFocus(  holder.editText );
             ViewHolder holder = (ViewHolder) rowView.getTag();
             // Remove any existing TextWatcher that will be keyed to the wrong ListItem
             if (holder.textWatcher != null)

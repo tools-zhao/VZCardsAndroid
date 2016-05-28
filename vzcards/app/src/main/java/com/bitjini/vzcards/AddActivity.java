@@ -109,20 +109,15 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     public static final String URL_CREATE_TICKET = "http://vzcards-api.herokuapp.com/ticket_create/?access_token=";
     private static final int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
 
-    private Button btn_select_image;
     private Uri mImageCaptureUri;
     private File outPutFile = null;
 
 
-    private final int SELECT_PHOTO = 1;
-    private Uri outputFileUri;
     private static final int PERMISSIONS_REQUEST_CAMERA =197;
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 198;
     private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 199;
 
-    RelativeLayout main_layout,displayImage_layout;
-    Button havebtn;
-    public ImageView  showImage;
+    RelativeLayout main_layout;
     public ImageView item_image;
     Button addImage;
     EditText txtItem, txtDescription;
@@ -131,14 +126,11 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     public static String Item_picturePath="";
     public String item_photo="", item="", description="", date_validity="", question = "";
     public ProgressDialog progress = null,progressDialog;
-    public Bitmap output, bitmap;
-    ImageButton btnCander;
+    public Bitmap  bitmap;
+
     VerifyScreen p = new VerifyScreen();
-    static final int DATE_DIALOG_ID = 999;
-    private int myear;
-    private int mmonth;
-    private int mday;
-    Button done1,done2, cancel,choose;
+
+    Button done1,done2, cancel;
     View iHave;
 
     Animation animScale;
@@ -163,10 +155,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
 
         main_layout=(RelativeLayout) iHave.findViewById(R.id.main_layout);
-       displayImage_layout=(RelativeLayout) iHave.findViewById(R.id.displayLayout);
 
-      showImage=(ImageView)iHave.findViewById(R.id.showImage);
-        choose=(Button)iHave.findViewById(R.id.choose);
         cancel=(Button) iHave.findViewById(R.id.cancel);
 
 //        btnCander = (ImageButton) iHave.findViewById(R.id.click);
@@ -183,12 +172,12 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
         Button iNeed = (Button) iHave.findViewById(R.id.ineed);
 
-        txtDate_validity.setOnTouchListener(new View.OnTouchListener() {
+        txtDate_validity.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View v) {
                 showDatePickerDialog(v);
-                return false;
             }
+
         });
         txtItem.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -235,8 +224,12 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 if (items[item].equals("Capture Photo")) {
 
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
-                    mImageCaptureUri = Uri.fromFile(f);
+//                    File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
+                    final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
+                    root.mkdir();
+                    final String fname = "img_" + System.currentTimeMillis() + ".jpg";
+                    final File sdImageMainDirectory = new File(root, fname);
+                    mImageCaptureUri = Uri.fromFile(sdImageMainDirectory);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
                     startActivityForResult(intent, CAMERA_CODE);
 
@@ -699,12 +692,12 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             case R.id.ineed:
                 Fragment needFragment = new iNeed_Activity();
                 // get the id of fragment
-                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ihave_frame);
+//                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ihave_frame);
 
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .replace(contentView.getId(), needFragment)
+                        .replace(R.id.ihave_frame, needFragment)
                         .commit();
                 break;
 

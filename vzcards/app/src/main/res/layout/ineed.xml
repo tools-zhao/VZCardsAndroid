@@ -1,53 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ineed_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         android:layout_width="match_parent"
-        android:background="#43c1d9f2"
-        android:visibility="gone"
-        android:id="@+id/displayLayout"
         android:layout_height="match_parent">
-        <ImageView
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="2dp"
-            android:id="@+id/showImage"
-            android:src="@drawable/no_pic_placeholder"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/choose"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginBottom="10dp"
-            android:text="Choose"
-            android:background="@drawable/drawable_refer"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="10dp"
-            android:text="Cancel"
-            android:id="@+id/cancel"
-            android:background="@drawable/drawable_refer"
-            />
-    </RelativeLayout>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:background="#43c1d9f2"
-
-        android:id="@+id/main_layout"
-        android:layout_height="match_parent">
+            android:background="#43c1d9f2"
+            android:visibility="visible"
+            android:paddingBottom="20dp"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/main_layout"
+            android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="170dp"
+            android:layout_height="190dp"
             android:background="#7a877980"
             android:orientation="vertical"
             android:id="@+id/l1"
@@ -79,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/text_drawable"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
@@ -120,7 +91,7 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/text_drawable"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
@@ -162,7 +133,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/text_drawable"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
@@ -181,6 +152,8 @@
             android:id="@+id/validity"
             android:layout_gravity="center"></TextView>
 
+
+
     </RelativeLayout>
     <!--<ImageButton-->
         <!--android:layout_width="40dp"-->
@@ -191,16 +164,18 @@
         <!--android:id="@+id/click"-->
         <!--android:layout_above="@+id/imgbtn"-->
         <!--android:layout_alignEnd="@+id/l3" />-->
-    <ImageButton
-        android:layout_width="100dp"
-        android:layout_height="25dp"
-        android:src="@drawable/vzc_need_post_btn"
-        android:layout_gravity="center"
-        android:id="@+id/imgbtn"
-        android:layout_marginTop="15dp"
-        android:layout_above="@+id/l8"
-        android:layout_marginBottom="10dp"
-        android:layout_centerHorizontal="true" />
+        <ImageButton
+            android:layout_width="100dp"
+            android:layout_height="25dp"
+            android:src="@drawable/vzc_need_post_btn"
+            android:layout_gravity="center"
+            android:id="@+id/imgbtn"
+            android:layout_below="@+id/l4"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="25dp"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+    </ScrollView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -258,4 +233,3 @@
     </LinearLayout>
 
 </RelativeLayout>
-</FrameLayout>
