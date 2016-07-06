@@ -87,8 +87,8 @@ import java.util.concurrent.ExecutionException;
  */
 public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    String SYNC_CONTACT_URL="http://vzcards-api.herokuapp.com/sync/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
+    String SYNC_CONTACT_URL="http://staging-vzcards-api.herokuapp.com/sync/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
+    String URL_CONNECT = "http://staging-vzcards-api.herokuapp.com/connect/?access_token=";
 
     VerifyScreen p=new VerifyScreen();
     String URL_GETLIST="http://vzcards-api.herokuapp.com/get_list/?access_token=";
@@ -484,7 +484,7 @@ FrameLayout layout_MainMenu;
                     Log.e("currentpage=", "" + currentPage);
 
 
-                    getFeedsContents("http://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference + "&page=" + currentPage);
+                    getFeedsContents("http://staging-vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference + "&page=" + currentPage);
 
                   // Notify the ListView of data changed
                     adapter.notifyDataSetChanged();

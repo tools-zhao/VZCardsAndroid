@@ -48,9 +48,9 @@ import java.util.Locale;
  */
 public class VerifyScreen extends Activity {
 
-    String URL_REGISTER = "http://vzcards-api.herokuapp.com/user_register/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-    String URL_VERIFY = "http://vzcards-api.herokuapp.com/verify/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-    String URL_RESEND="http://vzcards-api.herokuapp.com/send_again/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    String URL_REGISTER = "http://staging-vzcards-api.herokuapp.com/user_register/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
+    String URL_VERIFY = "http://staging-vzcards-api.herokuapp.com/verify/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
+    String URL_RESEND="http://staging-vzcards-api.herokuapp.com/send_again/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
     public static String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
 
     public static final String VZCARD_PREFS = "MySharedPref";
@@ -63,7 +63,7 @@ public class VerifyScreen extends Activity {
     private ProgressDialog progress;
     private EditText editTextPhoneNo, editTextOTP;
     String company_photo, photo, firstname, lastname, email;
-    String industry, company, address_line_1, address_line_2, city, pin_code;
+    String industry, company, address_line_1, address_line_2, city, pin_code,title;
     public String otp, phone;
     private Button btn;
 
@@ -189,6 +189,7 @@ public class VerifyScreen extends Activity {
                 address_line_2 = "";
                 city = "";
                 pin_code = "";
+                title="";
                 List<NameValuePair> params1 = new ArrayList<NameValuePair>();
                 params1.add(new BasicNameValuePair("company_photo", company_photo));
                 params1.add(new BasicNameValuePair("photo", photo));
@@ -202,6 +203,7 @@ public class VerifyScreen extends Activity {
                 params1.add(new BasicNameValuePair("address_line_2", address_line_2));
                 params1.add(new BasicNameValuePair("city", city));
                 params1.add(new BasicNameValuePair("pin_code", pin_code));
+                params1.add(new BasicNameValuePair("title", title));
 
 
                 UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);

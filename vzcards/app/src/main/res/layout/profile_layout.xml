@@ -112,7 +112,7 @@
 
                     <ListView
                         android:layout_width="match_parent"
-                        android:layout_height="650dp"
+                        android:layout_height="660dp"
                         android:id="@+id/profileList"
                         android:layout_below="@+id/Layout1"
                         android:divider="#97e6ecf2"

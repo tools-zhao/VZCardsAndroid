@@ -61,7 +61,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener, FABProgressListener {
 
-    String HISTORY_URL = "http://vzcards-api.herokuapp.com/history/?access_token=";
+    String HISTORY_URL = "http://staging-vzcards-api.herokuapp.com/history/?access_token=";
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayList<SelectUser> arrayList = new ArrayList<>();
     MyClassAdapter childAdapter;
@@ -329,7 +329,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
             Log.e("currentpage=",""+currentPage);
 
-            getHistoryContents("http://vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+            getHistoryContents("http://staging-vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
 
 //            // Notify the ListView of data changed
 //
@@ -502,7 +502,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                                                 Toast.makeText(getActivity(),"Delete Failure",Toast.LENGTH_LONG).show();
                                             }
                                        }
-                                    }.execute("https://vzcards-api.herokuapp.com/remove_ticket/ticket_id="+ticketId+"?access_token="+ p.token_sharedPreference);
+                                    }.execute("http://staging-vzcards-api.herokuapp.com/remove_ticket/ticket_id="+ticketId+"?access_token="+ p.token_sharedPreference);
 
                                 }
                             });

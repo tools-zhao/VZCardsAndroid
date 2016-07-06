@@ -67,9 +67,9 @@ import java.util.concurrent.ExecutionException;
  */
 public class MyProfile_Fragment extends Fragment implements View.OnClickListener {
 
-    public static final String URL_PROFILE_UPDATE = "http://vzcards-api.herokuapp.com/my_profile/update/?access_token=";
-    public static final String URL_GET_PROFILE = "http://vzcards-api.herokuapp.com/my_profile/?access_token=";
-    public static final String URL_UPLOAD_IMAGE = "http://vzcards-api.herokuapp.com/upload_image/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    public static final String URL_PROFILE_UPDATE = "http://staging-vzcards-api.herokuapp.com/my_profile/update/?access_token=";
+    public static final String URL_GET_PROFILE = "http://staging-vzcards-api.herokuapp.com/my_profile/?access_token=";
+    public static final String URL_UPLOAD_IMAGE = "http://staging-vzcards-api.herokuapp.com/upload_image/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
     public static final String MY_PROFILE_PREFERENCES = "mypref.txt";
     public static final String PROFILE_IMAGE="profile";
     public static final String COMPANY_IMAGE="company";
@@ -118,7 +118,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     Bitmap bm = null;
     String json, json2,json3;
     public   String  firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "",
-            city, pin_code = "";
+            city, pin_code = "",title="";
     public static String photo="",company_photo="";
     public Bitmap bitmap;
     public static String picturePath;
@@ -177,14 +177,15 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         label = new ArrayList<String>();
         label.add("Firstname");
         label.add("Lastname");
+        label.add("title");
         label.add("Email");
         label.add("Phone");
-        label.add("Industry");
+        label.add("What do you do?");
         label.add("Company");
         label.add("Address_line_1");
-        label.add("Address_line_2");
         label.add("City");
         label.add("Pin_code");
+
         // Making http get request to load profile details
 
         getProfileDetails();
@@ -415,6 +416,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 address_line_2 = jsonObj.getString("address_line_2");
                 city = jsonObj.getString("city");
                 pin_code = jsonObj.getString("pin_code");
+                title = jsonObj.getString("title");
                 photo= jsonObj.getString("photo");
                 company_photo=jsonObj.getString("company_photo");
 
@@ -473,14 +475,15 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         values = new ArrayList<String>();
         values.add(firstname);
         values.add(lastname);
+        values.add(title);
         values.add(email);
         values.add(p.phone_sharedPreference);
         values.add(industry);
         values.add(company);
         values.add(address_line_1);
-        values.add(address_line_2);
         values.add(city);
         values.add(pin_code);
+
 
         for (int i = 0; i < label.size(); i++) {
             ListItem item = new ListItem();

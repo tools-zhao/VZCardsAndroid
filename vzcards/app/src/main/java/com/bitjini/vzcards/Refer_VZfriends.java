@@ -44,8 +44,8 @@ import java.util.concurrent.ExecutionException;
  */
 public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextListener, AdapterView.OnItemClickListener {
 
-    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
-    String VZFRIENDS_URL = "http://vzcards-api.herokuapp.com/get_my_friends/?access_token=";
+    String URL_CONNECT = "http://staging-vzcards-api.herokuapp.com/connect/?access_token=";
+    String VZFRIENDS_URL = "http://staging-vzcards-api.herokuapp.com/get_my_friends/?access_token=";
     public String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
 
     String token_sharedPreference;
