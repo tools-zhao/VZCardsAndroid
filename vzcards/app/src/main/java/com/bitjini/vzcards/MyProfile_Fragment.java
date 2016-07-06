@@ -182,7 +182,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         label.add("Phone");
         label.add("What do you do?");
         label.add("Company");
-        label.add("Address_line_1");
+        label.add("Address");
         label.add("City");
         label.add("Pin_code");
 
