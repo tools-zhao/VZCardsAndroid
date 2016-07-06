@@ -91,7 +91,7 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
     String URL_CONNECT = "http://staging-vzcards-api.herokuapp.com/connect/?access_token=";
 
     VerifyScreen p=new VerifyScreen();
-    String URL_GETLIST="http://vzcards-api.herokuapp.com/get_list/?access_token=";
+    String URL_GETLIST="http://staging-vzcards-api.herokuapp.com/get_list/?access_token=";
     ProgressBar progressBar,progressBar2;
     private SwipeRefreshLayout swipeRefreshLayout;
     public Cursor phones;

@@ -177,11 +177,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         label = new ArrayList<String>();
         label.add("Firstname");
         label.add("Lastname");
-        label.add("title");
-        label.add("Email");
-        label.add("Phone");
         label.add("What do you do?");
-        label.add("Company");
+        label.add("Email");
         label.add("Address");
         label.add("City");
         label.add("Pin_code");
@@ -475,11 +472,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         values = new ArrayList<String>();
         values.add(firstname);
         values.add(lastname);
-        values.add(title);
+        values.add(industry);  // contains value for what do you do?
         values.add(email);
-        values.add(p.phone_sharedPreference);
-        values.add(industry);
-        values.add(company);
         values.add(address_line_1);
         values.add(city);
         values.add(pin_code);

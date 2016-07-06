@@ -12,7 +12,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp">
             <TextView
-                android:layout_width="100dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fname:"
                 android:paddingTop="2dp"
@@ -30,6 +30,7 @@
                 android:paddingBottom="2dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
+                android:paddingLeft="2dp"
                 android:id="@+id/values1"
                 android:inputType="textPostalAddress"
                 android:background="@drawable/edit_text_border"
