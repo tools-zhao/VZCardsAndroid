@@ -125,12 +125,9 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         label = new ArrayList<String>();
         label.add("Firstname");
         label.add("Lastname");
+        label.add("What do you do?");
         label.add("Email");
-        label.add("Phone");
-        label.add("Industry");
-        label.add("Company");
-        label.add("Address_line_1");
-        label.add("Address_line_2");
+        label.add("Address");
         label.add("City");
         label.add("Pin_code");
         // Making http get request to load profile details
@@ -172,12 +169,9 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         values = new ArrayList<String>();
         values.add(firstname);
         values.add(lastname);
+        values.add(industry);  // contains value for what do you do?
         values.add(email);
-        values.add(phone);
-        values.add(industry);
-        values.add(company);
         values.add(address_line_1);
-        values.add(address_line_2);
         values.add(city);
         values.add(pin_code);
 

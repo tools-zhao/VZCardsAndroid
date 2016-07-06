@@ -5,9 +5,10 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:scaleType="centerCrop"
+
+        android:layout_width="33dp"
+        android:layout_height="35dp"
+        android:scaleType="fitCenter"
         android:id="@+id/icon"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>

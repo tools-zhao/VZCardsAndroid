@@ -102,25 +102,24 @@
 
 
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_below="@+id/l2"
-
-                    >
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="vertical"-->
+                    <!--android:layout_below="@+id/l2"-->
+                    <!--&gt;-->
 
                     <ListView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/profileList"
-                        android:layout_below="@+id/Layout1"
-                        android:divider="#43c1d9f2"
+                        android:layout_below="@+id/l2"
                         android:descendantFocusability="afterDescendants"
-                        android:dividerHeight="5.0sp"
-                        android:layout_above="@+id/l8"></ListView>
+                        android:dividerHeight="-3.0sp"
+                        android:layout_above="@+id/l8"
+                        android:layout_marginBottom="10dp"></ListView>
 
-                </LinearLayout>
+                <!--</LinearLayout>-->
             </RelativeLayout>
 
 

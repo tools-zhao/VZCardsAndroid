@@ -512,7 +512,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             final SelectUser data = (SelectUser) arrayList.get(i);
             v.fname.setText(data.getfName());
             v.company.setText(data.getCompany());
-//            v.phone.setText(data.getSyncPhone());
+            v.phone.setText(data.getSyncPhone());
 
             //set Image if exxists
             try {
