@@ -786,6 +786,7 @@ FrameLayout layout_MainMenu;
             if (Integer.parseInt(dataFeeds1.getIsNeeds()) == 1) {
                 viewLine.setBackgroundColor(Color.parseColor("#f27166"));
                 question.setText("Need");
+                holder.question.setTextSize(12);
                 question.setBackgroundResource(R.drawable.addimage_red);
             }
 
@@ -824,6 +825,7 @@ FrameLayout layout_MainMenu;
             if (Integer.parseInt(dataFeeds2.getIsHas()) == 0) {
                 viewLine2.setBackgroundColor(Color.parseColor("#add58a"));
                 question2.setText("Has");
+                holder.question.setTextSize(12);
                 question2.setBackgroundResource(R.drawable.addimage);
             }
 

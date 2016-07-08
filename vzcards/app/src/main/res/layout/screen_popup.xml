@@ -39,6 +39,7 @@
                 android:layout_width="120dp"
                 android:layout_height="30dp"
                 android:text=" Name "
+                android:paddingTop="8dp"
                 android:id="@+id/feedName"
                 android:layout_toRightOf="@+id/image1"
                 android:layout_alignTop="@id/image1"
@@ -46,7 +47,8 @@
                 android:textSize="14sp" />
             <TextView
                 android:layout_width="50dp"
-                android:layout_height="20dp"
+                android:layout_height="18dp"
+                android:textSize="12sp"
                 android:id="@+id/selectionText"
                 android:layout_marginLeft="5dp"
                 android:text="needs"
@@ -123,6 +125,7 @@
                 android:layout_width="120dp"
                 android:layout_height="30dp"
                 android:text=" Name "
+                android:paddingTop="8dp"
                 android:id="@+id/feedName2"
                 android:layout_toRightOf="@+id/image1"
                 android:layout_alignTop="@id/image1"
@@ -130,11 +133,12 @@
                 android:textSize="14sp" />
             <TextView
                 android:layout_width="50dp"
-                android:layout_height="20dp"
+                android:layout_height="18dp"
                 android:id="@+id/selectionText2"
                 android:layout_marginLeft="5dp"
                 android:text="needs"
                 android:gravity="center"
+                android:textSize="12sp"
                 android:textColor="#ffffff"
                 android:background="@drawable/addimage_red"/>
             <TextView

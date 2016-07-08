@@ -107,6 +107,7 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             String address_line_2 = "";
             String city = "";
             String pin_code = "";
+            String title = "";
             String vz_id = p.vz_id_sharedPreference;
 
 
@@ -118,13 +119,14 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
             firstname = jsonArray.getJSONObject(0).getString("value");
             lastname = jsonArray.getJSONObject(1).getString("value");
-            email = jsonArray.getJSONObject(2).getString("value");
-            industry = jsonArray.getJSONObject(4).getString("value");
-            company = jsonArray.getJSONObject(5).getString("value");
-            address_line_1 = jsonArray.getJSONObject(6).getString("value");
-            address_line_2 = jsonArray.getJSONObject(7).getString("value");
-            city = jsonArray.getJSONObject(8).getString("value");
-            pin_code = jsonArray.getJSONObject(9).getString("value");
+            industry = jsonArray.getJSONObject(2).getString("value");
+            email = jsonArray.getJSONObject(3).getString("value");
+            address_line_1 = jsonArray.getJSONObject(4).getString("value");
+            city = jsonArray.getJSONObject(5).getString("value");
+            pin_code = jsonArray.getJSONObject(6).getString("value");
+//            title = jsonArray.getJSONObject(10).getString("value");
+//            company = jsonArray.getJSONObject(5).getString("value");
+//            address_line_2 = jsonArray.getJSONObject(7).getString("value");
 
             List<NameValuePair> params1 = new ArrayList<NameValuePair>();
 
@@ -142,6 +144,7 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             params1.add(new BasicNameValuePair("city", city));
             params1.add(new BasicNameValuePair("pin_code", pin_code));
             params1.add(new BasicNameValuePair("vz_id", vz_id));
+            params1.add(new BasicNameValuePair("title", title));
 
 
             // encode post data in url format

@@ -116,10 +116,11 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     RelativeLayout main_layout;
     Button done1,done2, cancel;
     Animation animScale;
+    View view;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View iNeed = inflater.inflate(R.layout.ineed, container, false);
+        View  iNeed = inflater.inflate(R.layout.ineed, container, false);
 
         addImage=(Button) iNeed.findViewById(R.id.addImage);
         txtItem=(EditText) iNeed.findViewById(R.id.ask);
@@ -391,6 +392,141 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     }
 
 
+    public void onClick(final View v) {
+        view=v;
+        switch (view.getId()) {
+
+            //setting profile picture
+            case R.id.addImage:
+                selectImageOption();
+                break;
+
+            //setting company picture
+            case R.id.imgbtn:
+                v.startAnimation(animScale);
+                item= txtItem.getText().toString();
+                description= txtDescription.getText().toString();
+                date_validity=txtDate_validity.getText().toString();
+                question="1";
+
+                if( item.length()==0 || description.length()==0 || date_validity.length()==0)
+                {
+                    Toast toast = Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    view.clearAnimation();
+
+                }
+                else {
+                    Log.e("item_photo :", "" + Item_picturePath);
+                    Log.e("task item=",""+Item_picturePath +""+ Item_picturePath.length());
+
+                    if (Item_picturePath.length() != 0) {
+                        progressDialog = new ProgressDialog(getActivity());
+                        if (progressDialog != null) {
+                            progressDialog.setMessage("Collecting Data Please Wait...");
+                            progressDialog.setCancelable(false);
+                            progressDialog.show();
+                        }
+                        new UploadImageTask(getActivity()) {
+                            @Override
+                            public void onPostExecute(String result) {
+                                if (progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                    progressDialog = null;
+                                    Item_picturePath = "";
+                                    File f = new File(outPutFile.getPath());
+
+                                    if (f.exists()) f.delete();
+                                }
+                                if (result != null) {
+                                    JSONObject json = null;
+                                    try {
+                                        json = new JSONObject(result);
+//
+                                        String link = json.getString("link");
+                                        item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/" + link;
+//
+                                        Log.e("item_photo :", "" + item_photo);
+                                        Log.e("link :", "" + link);
+
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+//                                    v.clearAnimation();
+                                }
+                            }
+                        }.execute(Item_picturePath);
+                    } else {
+                        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                        alertDialogBuilder.setMessage("Post data without uploading image");
+                        alertDialogBuilder.setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+
+//                                        v.clearAnimation();
+                                    }
+                                });
+                        alertDialogBuilder.setNegativeButton("No",
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                        view.clearAnimation();
+                                    }
+                                });
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
+
+                    }
+                }
+
+                break;
+
+
+            case R.id.done:
+                txtItem.setCursorVisible(false);
+                InputMethodManager inputManager2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getActivity().getCurrentFocus() != null){
+                    inputManager2.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                done1.setVisibility(View.GONE);
+                done2.setVisibility(View.GONE);
+
+                break;
+            case R.id.done2:
+                done1.setVisibility(View.GONE);
+                txtDescription.setCursorVisible(false);
+                InputMethodManager inputManager1 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (getActivity().getCurrentFocus() != null){
+                    inputManager1.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                done2.setVisibility(View.GONE);
+                break;
+            case R.id.ihave:
+
+                Fragment haveFragment = new AddActivity();
+                // get the id of fragment
+//                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ineed_frame);
+
+                // Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.ineed_frame, haveFragment)
+                        .commit();
+                break;
+
+        }
+    }
+
+
     class INeed_Task extends AsyncTask<String, Void, String> {
 
         Context context;
@@ -522,7 +658,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
             item_photo="";
             Item_picturePath="";
             Toast.makeText(getActivity(),"Your Data is posted ",Toast.LENGTH_LONG).show();
-
+            view.clearAnimation();
             if (result != null) {
                 Log.e(" result :", "" + result);
             }
@@ -531,140 +667,6 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     }
 
 
-
-
-    public void onClick(final View v) {
-        switch (v.getId()) {
-
-            //setting profile picture
-            case R.id.addImage:
-               selectImageOption();
-                break;
-
-            //setting company picture
-            case R.id.imgbtn:
-                v.startAnimation(animScale);
-                item= txtItem.getText().toString();
-                description= txtDescription.getText().toString();
-                date_validity=txtDate_validity.getText().toString();
-                question="1";
-
-                if( item.length()==0 || description.length()==0 || date_validity.length()==0)
-                {
-                    Toast toast = Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                    v.clearAnimation();
-
-                }
-                else {
-                    Log.e("item_photo :", "" + Item_picturePath);
-                    Log.e("task item=",""+Item_picturePath +""+ Item_picturePath.length());
-
-                    if (Item_picturePath.length() != 0) {
-                        progressDialog = new ProgressDialog(getActivity());
-                        if (progressDialog != null) {
-                            progressDialog.setMessage("Collecting Data Please Wait...");
-                            progressDialog.setCancelable(false);
-                            progressDialog.show();
-                        }
-                        new UploadImageTask(getActivity()) {
-                            @Override
-                            public void onPostExecute(String result) {
-                                if (progressDialog.isShowing()) {
-                                    progressDialog.dismiss();
-                                    progressDialog = null;
-                                    Item_picturePath = "";
-                                    File f = new File(outPutFile.getPath());
-
-                                    if (f.exists()) f.delete();
-                                }
-                                if (result != null) {
-                                    JSONObject json = null;
-                                    try {
-                                        json = new JSONObject(result);
-//
-                                        String link = json.getString("link");
-                                        item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/" + link;
-//
-                                        Log.e("item_photo :", "" + item_photo);
-                                        Log.e("link :", "" + link);
-
-                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
-
-
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                    v.clearAnimation();
-                                }
-                            }
-                        }.execute(Item_picturePath);
-                    } else {
-                        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                        alertDialogBuilder.setMessage("Post data without uploading image");
-                        alertDialogBuilder.setPositiveButton("Yes",
-                                new DialogInterface.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-
-                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
-
-                                        v.clearAnimation();
-                                    }
-                                });
-                        alertDialogBuilder.setNegativeButton("No",
-                                new DialogInterface.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-                                        v.clearAnimation();
-                                    }
-                                });
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-                        alertDialog.show();
-
-                    }
-                }
-
-                break;
-
-
-            case R.id.done:
-                txtItem.setCursorVisible(false);
-                InputMethodManager inputManager2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (getActivity().getCurrentFocus() != null){
-                    inputManager2.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                }
-                done1.setVisibility(View.GONE);
-                done2.setVisibility(View.GONE);
-
-                break;
-            case R.id.done2:
-                done1.setVisibility(View.GONE);
-                txtDescription.setCursorVisible(false);
-                InputMethodManager inputManager1 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (getActivity().getCurrentFocus() != null){
-                    inputManager1.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                }
-                done2.setVisibility(View.GONE);
-                break;
-            case R.id.ihave:
-
-                Fragment haveFragment = new AddActivity();
-                // get the id of fragment
-//                FrameLayout contentView = (FrameLayout) getActivity().findViewById(R.id.ineed_frame);
-
-                // Insert the fragment by replacing any existing fragment
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.ineed_frame, haveFragment)
-                        .commit();
-                break;
-
-        }
-    }
 
 
     public void showDatePickerDialog(View v) {

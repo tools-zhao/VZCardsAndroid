@@ -265,6 +265,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                             SavePreferences(PROFILE_IMAGE, photo + link);
                                             Log.e("photo :", "" + photo + link);
                                             if(companyPicturePath.length()==0) {
+
+                                                // calling profile post details
+
                                                 new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
                                                 if (!json2.equals(json3)) {
                                                     getProfileDetails();

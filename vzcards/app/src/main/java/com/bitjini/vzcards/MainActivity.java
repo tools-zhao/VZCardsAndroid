@@ -71,29 +71,32 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 //
 //
 //        });
-//        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_vz_profile));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_vz_profile));
+
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.feeds_drawable));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.add_drawable));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.history_drawable));
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            if (tab != null) tab.setCustomView(R.layout.view_home_tab);
+        }
+//        View view1 = getLayoutInflater().inflate(R.layout.custom_tab, null);
+//        view1.findViewById(R.id.icon).setBackgroundResource(R.drawable.my_vz_profile);
+//        tabLayout.addTab(tabLayout.newTab().setCustomView(view1));
 //
-//        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.feeds_drawable));
-//        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.add_drawable));
-//        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.history_drawable));
-
-        View view1 = getLayoutInflater().inflate(R.layout.custom_tab, null);
-        view1.findViewById(R.id.icon).setBackgroundResource(R.drawable.my_vz_profile);
-        tabLayout.addTab(tabLayout.newTab().setCustomView(view1));
-
-
-        View view2 = getLayoutInflater().inflate(R.layout.custom_tab, null);
-        view2.findViewById(R.id.icon).setBackgroundResource(R.drawable.feeds_drawable);
-        tabLayout.addTab(tabLayout.newTab().setCustomView(view2));
-
-
-        View view3 = getLayoutInflater().inflate(R.layout.custom_tab, null);
-        view3.findViewById(R.id.icon).setBackgroundResource(R.drawable.add_drawable);
-        tabLayout.addTab(tabLayout.newTab().setCustomView(view3));
-
-        View view4 = getLayoutInflater().inflate(R.layout.custom_tab, null);
-        view4.findViewById(R.id.icon).setBackgroundResource(R.drawable.history_drawable);
-        tabLayout.addTab(tabLayout.newTab().setCustomView(view4));
+//
+//        View view2 = getLayoutInflater().inflate(R.layout.custom_tab, null);
+//        view2.findViewById(R.id.icon).setBackgroundResource(R.drawable.feeds_drawable);
+//        tabLayout.addTab(tabLayout.newTab().setCustomView(view2));
+//
+//
+//        View view3 = getLayoutInflater().inflate(R.layout.custom_tab, null);
+//        view3.findViewById(R.id.icon).setBackgroundResource(R.drawable.add_drawable);
+//        tabLayout.addTab(tabLayout.newTab().setCustomView(view3));
+//
+//        View view4 = getLayoutInflater().inflate(R.layout.custom_tab, null);
+//        view4.findViewById(R.id.icon).setBackgroundResource(R.drawable.history_drawable);
+//        tabLayout.addTab(tabLayout.newTab().setCustomView(view4));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         viewPager = (ViewPager) findViewById(R.id.viewPager);
