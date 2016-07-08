@@ -28,8 +28,6 @@ import android.widget.ProgressBar;
  */
 public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
 
-    ImageButton progressContainer;
-    ProgressBar progressBar;
    public TabLayout tabLayout;
      ViewPager viewPager;
      TabPagerAdapter adapter;
@@ -38,39 +36,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     {
         super.onCreate(savedInsatnceState);
         setContentView(R.layout.viewpager_activty);
-//        progressContainer = (ImageButton)findViewById(R.id.progress);
-//        progressBar = (ProgressBar)findViewById(R.id.progress1);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
          tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
 
-//        progressContainer.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                progressContainer.setVisibility(View.GONE);
-//
-//                progressBar.setVisibility(View.VISIBLE);
-//                progressBar.setProgress(0);
-//
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override public void run() {
-//
-//
-//                        // refresh contents
-//                        adapter.notifyDataSetChanged();
-//
-//
-//                        progressBar.setVisibility(View.GONE);
-//                        progressContainer.setVisibility(View.VISIBLE);
-//                    }
-//                }, 5000);
-//
-//            }
-//
-//
-//        });
+
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.my_vz_profile));
 
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.feeds_drawable));
@@ -80,23 +50,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             if (tab != null) tab.setCustomView(R.layout.view_home_tab);
         }
-//        View view1 = getLayoutInflater().inflate(R.layout.custom_tab, null);
-//        view1.findViewById(R.id.icon).setBackgroundResource(R.drawable.my_vz_profile);
-//        tabLayout.addTab(tabLayout.newTab().setCustomView(view1));
-//
-//
-//        View view2 = getLayoutInflater().inflate(R.layout.custom_tab, null);
-//        view2.findViewById(R.id.icon).setBackgroundResource(R.drawable.feeds_drawable);
-//        tabLayout.addTab(tabLayout.newTab().setCustomView(view2));
-//
-//
-//        View view3 = getLayoutInflater().inflate(R.layout.custom_tab, null);
-//        view3.findViewById(R.id.icon).setBackgroundResource(R.drawable.add_drawable);
-//        tabLayout.addTab(tabLayout.newTab().setCustomView(view3));
-//
-//        View view4 = getLayoutInflater().inflate(R.layout.custom_tab, null);
-//        view4.findViewById(R.id.icon).setBackgroundResource(R.drawable.history_drawable);
-//        tabLayout.addTab(tabLayout.newTab().setCustomView(view4));
+
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -132,23 +86,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         int page=1;
         viewPager.setCurrentItem(page);}
 
-//    @Override
-//    public CharSequence getPageTitle(int position) {
-//        // Generate title based on item position
-//        // return tabTitles[position];
-//
-//        // getDrawable(int i) is deprecated, use getDrawable(int i, Theme theme) for min SDK >=21
-//        // or ContextCompat.getDrawable(Context context, int id) if you want support for older versions.
-//        // Drawable image = context.getResources().getDrawable(iconIds[position], context.getTheme());
-//        // Drawable image = context.getResources().getDrawable(imageResId[position]);
-//
-//        Drawable image = ContextCompat.getDrawable(context, imageResId[position]);
-//        image.setBounds(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
-//        SpannableString sb = new SpannableString(" ");
-//        ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BOTTOM);
-//        sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        return sb;
-//    }
+
 
 
     @Override
