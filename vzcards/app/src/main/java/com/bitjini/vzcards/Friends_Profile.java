@@ -129,7 +129,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         label.add("Email");
         label.add("Address");
         label.add("City");
-        label.add("Pin_code");
+        label.add("Pin code");
         // Making http get request to load profile details
 
         Intent intent=getIntent();
