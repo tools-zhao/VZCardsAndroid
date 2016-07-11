@@ -45,7 +45,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class Referral_Fragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-    String HISTORY_URL = "http://staging-vzcards-api.herokuapp.com/history/?access_token=";
+    String HISTORY_URL = "https://vzcards-api.herokuapp.com/history/?access_token=";
     VerifyScreen p = new VerifyScreen();
     private SwipeRefreshLayout swipeRefreshLayout;
     // Request code for READ_CONTACTS. It can be any number > 0.
@@ -255,7 +255,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
             Log.e("currentpage=",""+currentPage);
 
-            getReferalContents("http://staging-vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+            getReferalContents("https://vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
 
 //            // Notify the ListView of data changed
 //

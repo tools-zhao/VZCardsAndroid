@@ -62,7 +62,7 @@ import javax.net.ssl.HttpsURLConnection;
  * Created by bitjini on 16/2/16.
  */
 public class ReferContacts extends Fragment implements SearchView.OnQueryTextListener {
-    String URL_CONNECT = "http://staging-vzcards-api.herokuapp.com/connect/?access_token=";
+    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
 
     // ArrayList
     ArrayList<SelectUser> phoneList = new ArrayList<>();

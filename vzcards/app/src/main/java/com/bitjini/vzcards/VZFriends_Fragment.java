@@ -64,7 +64,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class VZFriends_Fragment extends Fragment implements View.OnClickListener,SearchView.OnQueryTextListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-    String VZFRIENDS_URL = "http://staging-vzcards-api.herokuapp.com/get_my_friends/?access_token=";
+    String VZFRIENDS_URL = "https://vzcards-api.herokuapp.com/get_my_friends/?access_token=";
 
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
@@ -328,7 +328,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                     Log.e("currentpage=",""+currentPage);
 
-                    getVzFrnds("http://vzcards-api.herokuapp.com/get_my_friends/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+                    getVzFrnds("https://vzcards-api.herokuapp.com/get_my_friends/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
 
 //            // Notify the ListView of data changed
 //

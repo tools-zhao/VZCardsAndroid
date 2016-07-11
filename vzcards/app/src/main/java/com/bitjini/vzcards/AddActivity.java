@@ -106,7 +106,7 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class AddActivity extends Fragment implements View.OnClickListener {
 
-    public static final String URL_CREATE_TICKET = "http://staging-vzcards-api.herokuapp.com/ticket_create/?access_token=";
+    public static final String URL_CREATE_TICKET = "https://vzcards-api.herokuapp.com/ticket_create/?access_token=";
     private static final int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
 
     private Uri mImageCaptureUri;

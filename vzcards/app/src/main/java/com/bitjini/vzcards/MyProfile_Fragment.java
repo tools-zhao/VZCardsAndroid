@@ -67,9 +67,9 @@ import java.util.concurrent.ExecutionException;
  */
 public class MyProfile_Fragment extends Fragment implements View.OnClickListener {
 
-    public static final String URL_PROFILE_UPDATE = "http://staging-vzcards-api.herokuapp.com/my_profile/update/?access_token=";
-    public static final String URL_GET_PROFILE = "http://staging-vzcards-api.herokuapp.com/my_profile/?access_token=";
-    public static final String URL_UPLOAD_IMAGE = "http://staging-vzcards-api.herokuapp.com/upload_image/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
+    public static final String URL_PROFILE_UPDATE = "https://vzcards-api.herokuapp.com/my_profile/update/?access_token=";
+    public static final String URL_GET_PROFILE = "https://vzcards-api.herokuapp.com/my_profile/?access_token=";
+    public static final String URL_UPLOAD_IMAGE = "https://vzcards-api.herokuapp.com/upload_image/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
     public static final String MY_PROFILE_PREFERENCES = "mypref.txt";
     public static final String PROFILE_IMAGE="profile";
     public static final String COMPANY_IMAGE="company";

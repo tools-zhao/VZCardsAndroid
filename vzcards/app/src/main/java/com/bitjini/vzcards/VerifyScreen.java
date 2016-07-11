@@ -48,9 +48,9 @@ import java.util.Locale;
  */
 public class VerifyScreen extends Activity {
 
-    String URL_REGISTER = "http://staging-vzcards-api.herokuapp.com/user_register/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
-    String URL_VERIFY = "http://staging-vzcards-api.herokuapp.com/verify/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
-    String URL_RESEND="http://staging-vzcards-api.herokuapp.com/send_again/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
+    String URL_REGISTER = "https://vzcards-api.herokuapp.com/user_register/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    String URL_VERIFY = "https://vzcards-api.herokuapp.com/verify/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    String URL_RESEND="https://vzcards-api.herokuapp.com/send_again/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
     public static String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
 
     public static final String VZCARD_PREFS = "MySharedPref";
