@@ -209,7 +209,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                     countOfFrnds=jsonObject.getInt("count");
                     Log.e("count of frnds",""+countOfFrnds);
                     String response = jsonObject.getString("response");
-
+                   Log.e("response of frnds",""+response);
                     // Getting JSON Array node
                     JSONArray arr = jsonObject.getJSONArray("response");
 
@@ -228,6 +228,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                         String address1 = c.getString("address_line_1");
                         String address2 = c.getString("address_line_2");
                         String city = c.getString("city");
+                        String title = c.getString("title");
                         String company_photo = c.getString("company_photo");
                         String email = c.getString("email");
 
@@ -256,6 +257,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                         selectUser.setAddress1(address1);
                         selectUser.setAddress2(address2);
                         selectUser.setCity(city);
+                        selectUser.setTitle(title);
                         selectUser.setComany_photo(company_photo);
 
 
@@ -400,6 +402,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         nextScreenIntent.putExtra("city", data.getCity());
         nextScreenIntent.putExtra("company_photo", data.getComany_photo());
         nextScreenIntent.putExtra("email", data.getEmail());
+        nextScreenIntent.putExtra("title",data.getTitle());
         startActivity(nextScreenIntent);
         getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 

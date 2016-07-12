@@ -99,7 +99,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
     Bitmap bm = null;
     String json, json2;
     public   String  firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "",
-            city, pin_code = "",phone="";
+            city, pin_code = "",phone="",title="";
     public static String photo="",company_photo="";
     public Bitmap bitmap;
     public static String picturePath;
@@ -146,6 +146,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         city =  intent.getStringExtra("city");
         pin_code =intent.getStringExtra("pin_code");
         photo=  intent.getStringExtra("photo");
+        title=intent.getStringExtra("title");
         company_photo= intent.getStringExtra("company_photo");
 
 
@@ -169,7 +170,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         values = new ArrayList<String>();
         values.add(firstname);
         values.add(lastname);
-        values.add(industry);  // contains value for what do you do?
+        values.add(title);  // contains value for what do you do?
         values.add(email);
         values.add(address_line_1);
         values.add(city);

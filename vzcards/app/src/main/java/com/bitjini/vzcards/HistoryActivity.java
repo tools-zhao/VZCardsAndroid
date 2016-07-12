@@ -25,7 +25,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.jorgecastilloprz.listeners.FABProgressListener;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.squareup.picasso.Picasso;
@@ -48,7 +47,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by VEENA on 12/7/2015.
  */
-public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener, FABProgressListener {
+public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     String HISTORY_URL = "https://vzcards-api.herokuapp.com/history/?access_token=";
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -337,12 +336,6 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
     }
 
-    @Override
-    public void onFABProgressAnimationEnd() {
-//        Snackbar.make(fabProgressCircle, R.string.cloud_upload_complete, Snackbar.LENGTH_LONG)
-//                .setAction("Action", null)
-//                .show();
-    }
     public boolean isConnected() {
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

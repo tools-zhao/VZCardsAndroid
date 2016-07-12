@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#214a83</color>
     <color name="colorAccent">#7c2363d1</color>
 
+    <color name="white">#ffff</color>
     <color name="pressed_color">#4d90fe</color>
     <color name="default_color">#ffffff</color>
     <color name="pink">#f5a70b66</color>

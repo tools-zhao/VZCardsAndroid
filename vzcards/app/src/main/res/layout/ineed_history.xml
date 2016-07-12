@@ -15,7 +15,6 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:id="@+id/l1"
-        android:layout_below="@id/l0"
         android:layout_gravity="center_horizontal">
     <TextView
         android:layout_width="match_parent"

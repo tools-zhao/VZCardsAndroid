@@ -298,7 +298,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                             JSONObject c2 = arr2.getJSONObject(i2);
 
                             String referedFname = "", referedLname = "", refphoto = "", phone = "", company = "", pin_code = "", industry = "",
-                                    address1 = "", address2 = "", city = "", company_photo = "", email = "";
+                                    address1 = "", address2 = "", city = "", company_photo = "", email = "",title="";
                             String refQuestion="",refDescription ="",refTicket_id = "",refItemName ="",
                             refDate_validity = "",refVz_id = "",refItem_photo = "",refDate_created = "";
 
@@ -321,6 +321,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                                 address1 = reffered_phone_details.getString("address_line_1");
                                 address2 = reffered_phone_details.getString("address_line_2");
                                 city = reffered_phone_details.getString("city");
+                                title=reffered_phone_details.getString("title");
                                 company_photo = reffered_phone_details.getString("company_photo");
                                 email = reffered_phone_details.getString("email");
 
@@ -335,6 +336,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                                 city = "";
                                 company_photo = "";
                                 email = "";
+                                title="";
 
 //                                Log.e("json reffered_ticket 3=", "" + referedFname);
 //                                Log.e("json reffered_phone_ 3=", "" + phone);
@@ -405,6 +407,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                             referalUsers.setAddress1(address1);
                             referalUsers.setAddress2(address2);
                             referalUsers.setCity(city);
+                            referalUsers.setTitle(title);
                             referalUsers.setComany_photo(company_photo);
                             // Referred ticket details
 
@@ -617,6 +620,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                     nextScreenIntent.putExtra("address1", data.getAddress1());
                     nextScreenIntent.putExtra("address2", data.getAddress2());
                     nextScreenIntent.putExtra("city", data.getCity());
+                    nextScreenIntent.putExtra("title", data.getTitle());
                     nextScreenIntent.putExtra("company_photo", data.getComany_photo());
                     startActivity(nextScreenIntent);
 

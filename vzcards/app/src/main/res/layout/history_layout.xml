@@ -42,7 +42,6 @@
                 android:layout_height="wrap_content"
                 android:text="House "
                 android:id="@+id/itemName"
-                android:layout_toRightOf="@+id/image1"
                android:layout_gravity="top"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="5dp"

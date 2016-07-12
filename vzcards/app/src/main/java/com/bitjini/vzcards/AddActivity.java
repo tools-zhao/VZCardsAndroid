@@ -113,7 +113,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     private File outPutFile = null;
 
 
-    private static final int PERMISSIONS_REQUEST_CAMERA =197;
+    private static final int PERMISSIONS_REQUEST_CAMERA = 197;
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 198;
     private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 199;
 
@@ -121,19 +121,20 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     public ImageView item_image;
     Button addImage;
     EditText txtItem, txtDescription;
-    TextView txtDate_validity;
+    public static TextView txtDate_validity;
     ImageButton submit;
-    public static String Item_picturePath="";
-    public String item_photo="", item="", description="", date_validity="", question = "";
-    public ProgressDialog progress = null,progressDialog;
-    public Bitmap  bitmap;
+    public static String Item_picturePath = "";
+    public String item_photo = "", item = "", description = "", date_validity = "", question = "";
+    public ProgressDialog progress = null, progressDialog;
+    public Bitmap bitmap;
 
     VerifyScreen p = new VerifyScreen();
 
-    Button done1,done2, cancel;
+    Button done1, done2, cancel;
     View view;
 
     Animation animScale;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,7 +143,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View  iHave = inflater.inflate(R.layout.add_layout, container, false);
+        View iHave = inflater.inflate(R.layout.add_layout, container, false);
         addImage = (Button) iHave.findViewById(R.id.addImage);
         txtItem = (EditText) iHave.findViewById(R.id.ask);
         txtDescription = (EditText) iHave.findViewById(R.id.desc);
@@ -154,9 +155,9 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         item_image.setImageResource(R.drawable.no_pic_placeholder_full);
         outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), "temp.jpg");
 
-        main_layout=(RelativeLayout) iHave.findViewById(R.id.main_layout);
+        main_layout = (RelativeLayout) iHave.findViewById(R.id.main_layout);
 
-        cancel=(Button) iHave.findViewById(R.id.cancel);
+        cancel = (Button) iHave.findViewById(R.id.cancel);
 
 //        btnCander = (ImageButton) iHave.findViewById(R.id.click);
 
@@ -200,50 +201,49 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         done2.setOnClickListener(this);
 
 
-
         iNeed.setOnClickListener(this);
 
         return iHave;
     }
+
     private void selectImageOption() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
-        }
-        else {
+        } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 getActivity().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_WRITE_EXTERNAL_STORAGE);
             } else {
-        final CharSequence[] items = { "Capture Photo", "Choose from Gallery", "Cancel" };
+                final CharSequence[] items = {"Capture Photo", "Choose from Gallery", "Cancel"};
 
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
-        builder.setTitle("Add Photo!");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+                builder.setTitle("Add Photo!");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
 
-                if (items[item].equals("Capture Photo")) {
+                        if (items[item].equals("Capture Photo")) {
 
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //                    File f = new File(android.os.Environment.getExternalStorageDirectory(), "temp1.jpg");
-                    final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
-                    root.mkdir();
-                    final String fname = "img_" + System.currentTimeMillis() + ".jpg";
-                    final File sdImageMainDirectory = new File(root, fname);
-                    mImageCaptureUri = Uri.fromFile(sdImageMainDirectory);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-                    startActivityForResult(intent, CAMERA_CODE);
+                            final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "amfb" + File.separator);
+                            root.mkdir();
+                            final String fname = "img_" + System.currentTimeMillis() + ".jpg";
+                            final File sdImageMainDirectory = new File(root, fname);
+                            mImageCaptureUri = Uri.fromFile(sdImageMainDirectory);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+                            startActivityForResult(intent, CAMERA_CODE);
 
-                } else if (items[item].equals("Choose from Gallery")) {
+                        } else if (items[item].equals("Choose from Gallery")) {
 
-                    Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(i, GALLERY_CODE);
+                            Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(i, GALLERY_CODE);
 
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
-                }
-            }
-        });
-        builder.show();
+                        } else if (items[item].equals("Cancel")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
             }
         }
     }
@@ -257,30 +257,30 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 getActivity().requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_READ_EXTERNAL_STORAGE);
             } else {
 
-                    if (requestCode == GALLERY_CODE && resultCode == Activity.RESULT_OK && data != null) {
+                if (requestCode == GALLERY_CODE && resultCode == Activity.RESULT_OK && data != null) {
 
-                        mImageCaptureUri = data.getData();
-                        System.out.println("Gallery Image URI : " + mImageCaptureUri);
-                        CropingIMG();
+                    mImageCaptureUri = data.getData();
+                    System.out.println("Gallery Image URI : " + mImageCaptureUri);
+                    CropingIMG();
 
-                    } else if (requestCode == CAMERA_CODE && resultCode == Activity.RESULT_OK) {
+                } else if (requestCode == CAMERA_CODE && resultCode == Activity.RESULT_OK) {
 
-                        System.out.println("Camera Image URI : " + mImageCaptureUri);
-                        CropingIMG();
-                    } else if (requestCode == CROPING_CODE) {
+                    System.out.println("Camera Image URI : " + mImageCaptureUri);
+                    CropingIMG();
+                } else if (requestCode == CROPING_CODE) {
 
-                        try {
-                            if (outPutFile.exists()) {
-                                Bitmap photo = decodeFile(outPutFile);
-                                Item_picturePath = outPutFile.getPath();
-                                Log.e("path :", "" + Item_picturePath);
-                                item_image.setImageBitmap(photo);
-                            } else {
-                                Toast.makeText(getActivity(), "Error while save image", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    try {
+                        if (outPutFile.exists()) {
+                            Bitmap photo = decodeFile(outPutFile);
+                            Item_picturePath = outPutFile.getPath();
+                            Log.e("path :", "" + Item_picturePath);
+                            item_image.setImageBitmap(photo);
+                        } else {
+                            Toast.makeText(getActivity(), "Error while save image", Toast.LENGTH_SHORT).show();
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                 }
             }
@@ -294,7 +294,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setType("image/*");
 
-        List<ResolveInfo> list = getActivity().getPackageManager().queryIntentActivities( intent, 0 );
+        List<ResolveInfo> list = getActivity().getPackageManager().queryIntentActivities(intent, 0);
         int size = list.size();
         if (size == 0) {
             Toast.makeText(getActivity(), "Cann't find image croping app", Toast.LENGTH_SHORT).show();
@@ -311,24 +311,24 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 //            intent.putExtra("return-data", true);
 
 //            Create output file here
-            if(outPutFile!=null) {
+            if (outPutFile != null) {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outPutFile));
             }
             if (size == 1) {
-                Intent i   = new Intent(intent);
+                Intent i = new Intent(intent);
                 ResolveInfo res = list.get(0);
 
-                i.setComponent( new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
 
                 startActivityForResult(i, CROPING_CODE);
             } else {
                 for (ResolveInfo res : list) {
                     final CropOption co = new CropOption();
 
-                    co.title  = getActivity().getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
-                    co.icon  =getActivity(). getPackageManager().getApplicationIcon(res.activityInfo.applicationInfo);
-                    co.appIntent= new Intent(intent);
-                    co.appIntent.setComponent( new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                    co.title = getActivity().getPackageManager().getApplicationLabel(res.activityInfo.applicationInfo);
+                    co.icon = getActivity().getPackageManager().getApplicationIcon(res.activityInfo.applicationInfo);
+                    co.appIntent = new Intent(intent);
+                    co.appIntent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
                     cropOptions.add(co);
                 }
 
@@ -337,22 +337,22 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
                 builder.setTitle("Choose Croping App");
                 builder.setCancelable(false);
-                builder.setAdapter( adapter, new DialogInterface.OnClickListener() {
-                    public void onClick( DialogInterface dialog, int item ) {
-                        startActivityForResult( cropOptions.get(item).appIntent, CROPING_CODE);
+                builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        startActivityForResult(cropOptions.get(item).appIntent, CROPING_CODE);
                     }
                 });
 
-                builder.setOnCancelListener( new DialogInterface.OnCancelListener() {
+                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
-                    public void onCancel( DialogInterface dialog ) {
+                    public void onCancel(DialogInterface dialog) {
 
-                        if (mImageCaptureUri != null ) {
-                            getActivity().getContentResolver().delete(mImageCaptureUri, null, null );
+                        if (mImageCaptureUri != null) {
+                            getActivity().getContentResolver().delete(mImageCaptureUri, null, null);
                             mImageCaptureUri = null;
                         }
                     }
-                } );
+                });
 
                 android.app.AlertDialog alert = builder.create();
                 alert.show();
@@ -417,10 +417,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
     }
 
 
-
-
     public void onClick(final View v) {
-        view=v;
+        view = v;
         switch (view.getId()) {
 
             //setting profile picture
@@ -438,21 +436,19 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 question = "0";
 
 
-                Log.e("item=",""+item +""+ item.length());
-                if( item.length()==0 || description.length()==0 || date_validity.length()==0)
-                {
-                    Log.e("item=",""+item +""+ item.length());
+                Log.e("item=", "" + item + "" + item.length());
+                if (item.length() == 0 || description.length() == 0 || date_validity.length() == 0) {
+                    Log.e("item=", "" + item + "" + item.length());
 
-                    Toast toast = Toast.makeText(getActivity(),"Enter details",Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getActivity(), "Enter details", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                     view.clearAnimation();
 
 
-                }
-                else {
+                } else {
                     Log.e("item_photo :", "" + Item_picturePath);
-                    Log.e("task item=",""+Item_picturePath +""+ Item_picturePath.length());
+                    Log.e("task item=", "" + Item_picturePath + "" + Item_picturePath.length());
 
                     if (Item_picturePath.length() != 0) {
                         progressDialog = new ProgressDialog(getActivity());
@@ -467,7 +463,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                 if (progressDialog.isShowing()) {
                                     progressDialog.dismiss();
                                     progressDialog = null;
-                                    Item_picturePath="";
+                                    Item_picturePath = "";
                                     File f = new File(outPutFile.getPath());
 
                                     if (f.exists()) f.delete();
@@ -492,8 +488,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                 }
                             }
                         }.execute(Item_picturePath);
-                    }
-                    else {
+                    } else {
                         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                         alertDialogBuilder.setMessage("Post data without uploading image");
                         alertDialogBuilder.setPositiveButton("Yes",
@@ -507,22 +502,21 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 //                                        v.clearAnimation();
                                     }
                                 });
-                                        alertDialogBuilder.setNegativeButton("No",
-                                                new DialogInterface.OnClickListener() {
+                        alertDialogBuilder.setNegativeButton("No",
+                                new DialogInterface.OnClickListener() {
 
-                                                    @Override
-                                                    public void onClick(DialogInterface arg0, int arg1) {
-                                                        view.clearAnimation();
-                                                    }
-                                                });
-                                        AlertDialog alertDialog = alertDialogBuilder.create();
-                                        alertDialog.show();
-
+                                    @Override
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                        view.clearAnimation();
                                     }
+                                });
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
+
+                    }
 
 
-
-                                }
+                }
 
                 break;
 //            case R.id.click:
@@ -532,7 +526,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             case R.id.done:
                 txtItem.setCursorVisible(false);
                 InputMethodManager inputManager2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (getActivity().getCurrentFocus() != null){
+                if (getActivity().getCurrentFocus() != null) {
                     inputManager2.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
                 done1.setVisibility(View.GONE);
@@ -542,7 +536,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                 done1.setVisibility(View.GONE);
                 txtDescription.setCursorVisible(false);
                 InputMethodManager inputManager1 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (getActivity().getCurrentFocus() != null){
+                if (getActivity().getCurrentFocus() != null) {
                     inputManager1.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
                 done2.setVisibility(View.GONE);
@@ -561,6 +555,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
         }
     }
+
     class INeed_Task extends AsyncTask<String, Void, String> {
 
         Context context;
@@ -578,7 +573,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
 
             progress = new ProgressDialog(this.context);
-            if(progress!=null) {
+            if (progress != null) {
                 progress.setMessage("Sending...");
                 progress.setCancelable(false);
                 progress.show();
@@ -685,7 +680,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
         @Override
         public void onPostExecute(String result) {
-            if (progress.isShowing() && progress!=null) {
+            if (progress.isShowing() && progress != null) {
                 progress.dismiss();
                 progress = null;
             }
@@ -694,8 +689,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             txtDescription.setText("");
             item_image.setImageResource(R.drawable.no_pic_placeholder_full);
             bitmap = null;
-            item_photo="";
-            Item_picturePath="";
+            item_photo = "";
+            Item_picturePath = "";
             view.clearAnimation();
             Toast.makeText(getActivity(), "Your Data is posted ", Toast.LENGTH_LONG).show();
 
@@ -713,13 +708,45 @@ public class AddActivity extends Fragment implements View.OnClickListener {
         newFragent.show(getActivity().getFragmentManager(), "datePicker");
     }
 
+    private void scaleImage(ImageView view) {
+        Drawable drawing = view.getDrawable();
+        if (drawing == null) {
+            return;
+        }
+        Bitmap bitmap = ((BitmapDrawable) drawing).getBitmap();
 
-    public class DatePickerDialog1 extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int bounding_x = ((View) view.getParent()).getWidth();//EXPECTED WIDTH
+        int bounding_y = ((View) view.getParent()).getHeight();//EXPECTED HEIGHT
+
+        float xScale = ((float) bounding_x) / width;
+        float yScale = ((float) bounding_y) / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(xScale, yScale);
+
+        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+        width = scaledBitmap.getWidth();
+        height = scaledBitmap.getHeight();
+        BitmapDrawable result = new BitmapDrawable(getActivity().getResources(), scaledBitmap);
+
+        view.setImageDrawable(result);
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+        params.width = width;
+        params.height = height;
+        view.setLayoutParams(params);
+    }
+
+
+  public static   class DatePickerDialog1 extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
 
         private int myear;
         private int mmonth;
         private int mday;
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
@@ -727,12 +754,12 @@ public class AddActivity extends Fragment implements View.OnClickListener {
 
             myear = c.get(Calendar.YEAR);
             mmonth = c.get(Calendar.MONTH);
-            mday= c.get(Calendar.DAY_OF_MONTH);
+            mday = c.get(Calendar.DAY_OF_MONTH);
 
 
-            Date newDate=c.getTime();
-            Log.e("new date :",""+newDate);
-            DatePickerDialog da=new DatePickerDialog(getActivity(), this, myear, mmonth, mday);
+            Date newDate = c.getTime();
+            Log.e("new date :", "" + newDate);
+            DatePickerDialog da = new DatePickerDialog(getActivity(), this, myear, mmonth, mday);
             da.getDatePicker().setMinDate(c.getTime().getTime());
             // Create a new instance of DatePickerDialog and return it
             return da;
@@ -764,37 +791,8 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             txtDate_validity.setText(year + "-" + formattedMonth + "-" + formattedDayOfMonth);
         }
     }
-    private void scaleImage(ImageView view)
-    {
-        Drawable drawing = view.getDrawable();
-        if (drawing == null) {
-            return;
-        }
-        Bitmap bitmap = ((BitmapDrawable)drawing).getBitmap();
-
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        int bounding_x = ((View)view.getParent()).getWidth();//EXPECTED WIDTH
-        int bounding_y = ((View)view.getParent()).getHeight();//EXPECTED HEIGHT
-
-        float xScale = ((float) bounding_x) / width;
-        float yScale = ((float) bounding_y) / height;
-
-        Matrix matrix = new Matrix();
-        matrix.postScale(xScale, yScale);
-
-        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
-        width = scaledBitmap.getWidth();
-        height = scaledBitmap.getHeight();
-        BitmapDrawable result = new BitmapDrawable(getActivity().getResources(), scaledBitmap);
-
-        view.setImageDrawable(result);
-
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
-        params.width = width;
-        params.height = height;
-        view.setLayoutParams(params);
-    }
 }
+
+
 
 
