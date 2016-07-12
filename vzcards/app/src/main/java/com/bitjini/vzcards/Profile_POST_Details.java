@@ -119,7 +119,7 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
             firstname = jsonArray.getJSONObject(0).getString("value");
             lastname = jsonArray.getJSONObject(1).getString("value");
-            industry = jsonArray.getJSONObject(2).getString("value");
+            title = jsonArray.getJSONObject(2).getString("value");
             email = jsonArray.getJSONObject(3).getString("value");
             address_line_1 = jsonArray.getJSONObject(4).getString("value");
             city = jsonArray.getJSONObject(5).getString("value");

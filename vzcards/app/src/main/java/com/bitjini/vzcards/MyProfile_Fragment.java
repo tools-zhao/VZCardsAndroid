@@ -475,7 +475,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         values = new ArrayList<String>();
         values.add(firstname);
         values.add(lastname);
-        values.add(industry);  // contains value for what do you do?
+        values.add(title);  // contains value for what do you do?
         values.add(email);
         values.add(address_line_1);
         values.add(city);
