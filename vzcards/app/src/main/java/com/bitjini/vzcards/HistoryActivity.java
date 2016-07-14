@@ -484,7 +484,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                                                 Toast.makeText(getActivity(),"Delete Failure",Toast.LENGTH_LONG).show();
                                             }
                                        }
-                                    }.execute("http://staging-vzcards-api.herokuapp.com/remove_ticket/ticket_id="+ticketId+"?access_token="+ p.token_sharedPreference);
+                                    }.execute("http://vzcards-api.herokuapp.com/remove_ticket/ticket_id="+ticketId+"?access_token="+ p.token_sharedPreference);
 
                                 }
                             });
