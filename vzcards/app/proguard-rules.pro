@@ -17,3 +17,12 @@
 #}
 
 
+-keepattributes SourceFile,LineNumberTable
+-keep class com.parse.*{ *; }
+-dontwarn com.parse.**
+-dontwarn com.squareup.picasso.**
+-dontwarn org.apache.commons.**
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.**
+-keep class org.joda.convert.**
+-dontwarn org.joda.convert.**

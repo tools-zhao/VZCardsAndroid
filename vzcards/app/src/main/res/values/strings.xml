@@ -5,6 +5,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <string name="search"><font size="12">Search</font></string>
     <string name="cloud_upload_complete">Refreshed</string>
 
     <string-array name="CountryCodes" >

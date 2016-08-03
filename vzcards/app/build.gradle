@@ -3,7 +3,14 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 24
     buildToolsVersion '23.0.3'
-
+    signingConfigs {
+        config {
+            keyAlias 'AndroidKey'
+            keyPassword 'B!tjini'
+            storeFile file('/home/bitjini/AndroidStudioProjects/AndroidKeystore/keystore2.release.jks')
+            storePassword 'B!tjini123'
+        }
+    }
         packagingOptions {
             exclude 'META-INF/DEPENDENCIES'
             exclude 'META-INF/NOTICE'
@@ -27,6 +34,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
 }
@@ -35,10 +43,11 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support:design:24.0.0'
-    compile files('libs/gson-2.2.2.jar')
+    compile 'com.google.code.gson:gson:2.4'
     compile 'com.google.android.gms:play-services-appindexing:9.2.0'
     compile files('libs/picasso-2.5.2.jar')
-    compile files('libs/joda-time-2.0.jar')
+    compile 'joda-time:joda-time:2.9.4'
+//    compile files('libs/joda-time-2.0.jar')
     compile files('libs/httpclient-4.5.jar')
     compile files('libs/httpcore-4.3.jar')
     compile files('libs/httpmime-4.3.jar')

@@ -107,6 +107,7 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
     ViewHolder holder;
 FrameLayout layout_MainMenu;
 
+    TextView emptyMsg;
     int countOfFeeds=0;
     int currentPage=1;
     int totalPage=0;
@@ -126,6 +127,7 @@ FrameLayout layout_MainMenu;
         progressBar = (ProgressBar)feed.findViewById(R.id.progress1);
         progressContainer = (ImageView) feed.findViewById(R.id.progress);
 
+        emptyMsg=(TextView) feed.findViewById(R.id.emptyFeeds);
         swipeRefreshLayout = (SwipeRefreshLayout) feed.findViewById(R.id.pullToRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
@@ -368,8 +370,13 @@ FrameLayout layout_MainMenu;
                 countOfFeeds = jsonObj.getInt("count");
                 if (countOfFeeds == 0) {
 
+                    emptyMsg.setVisibility(View.VISIBLE);
+                    emptyMsg.setText("Hey, there are no feeds for you.\nPlease invite friends & \"Add\" ticket");
+                    listView.setVisibility(View.GONE);
 
                 } else {
+                    emptyMsg.setVisibility(View.GONE);
+                    listView.setVisibility(View.VISIBLE);
                     Log.e("countOfFeeds", "" + countOfFeeds);
                     JSONArray arr = jsonObj.getJSONArray("response");
 

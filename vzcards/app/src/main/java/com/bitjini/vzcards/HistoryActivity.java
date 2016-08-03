@@ -71,12 +71,12 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     int progressCount=0;
     boolean isLoading=false;
      int itemCount=0;
-
+    TextView emptyMsg;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View history = inflater.inflate(R.layout.history_listview, container, false);
-
+        emptyMsg=(TextView) history.findViewById(R.id.emptyFeeds);
           progressContainer = (ImageView) history.findViewById(R.id.progress);
 //        progressBar = (ProgressBar)history.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) history.findViewById(R.id.pullToRefresh);
@@ -209,6 +209,16 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             JSONObject jsonObject = new JSONObject(result);
 
                 countOfFeeds = jsonObject.getInt("count");
+            if(countOfFeeds==0)
+            {
+                emptyMsg.setVisibility(View.VISIBLE);
+                emptyMsg.setText( "Hey, you have not added any tickets.\nPlease \"Add\" tickets.");
+                listView.setVisibility(View.GONE);
+
+            }else {
+                emptyMsg.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
+
                 String response = jsonObject.getString("response");
                 // Getting JSON Array node
                 JSONArray arr = jsonObject.getJSONArray("response");
@@ -250,7 +260,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 
                 }
-
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

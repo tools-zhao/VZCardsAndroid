@@ -67,9 +67,9 @@
             <TextView
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="5dp"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="2dp"
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_weight="1.0"
                 android:textSize="15sp"
                 android:id="@+id/number"/>
@@ -88,6 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="1.1dp"
             android:background="#5f8ac7"
+            android:layout_marginTop="2dp"
             android:layout_below="@+id/linearLayout"></View>
 
 
