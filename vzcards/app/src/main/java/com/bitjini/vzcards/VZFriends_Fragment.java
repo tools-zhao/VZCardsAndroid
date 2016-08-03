@@ -95,6 +95,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     boolean isLoading=false;
     View vzfrnds;
     int progressCount=0;
+
+    Button inviteButton;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -105,6 +107,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         getActivity();
         progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
+        inviteButton=(Button)vzfrnds.findViewById(R.id.invite);
 
         // the refresh listner. this would be called when the layout is pulled down
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -149,6 +152,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
         listView.setFastScrollEnabled(true);
         listView.setOnItemClickListener(this);
+        inviteButton.setOnClickListener(this);
 
         // to avoid triggering of swipe to refresh on scrolling of listview
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -455,6 +459,17 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
 
                 break;
+            case R.id.invite:
+                Fragment inviteContacts = new InviteContacts();
+
+                // get the id of fragment
+                FrameLayout contentView3 = (FrameLayout) getActivity().findViewById(R.id.vzfrnds_list_frame);
+
+                // Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager2 = getFragmentManager();
+                fragmentManager2.beginTransaction()
+                        .replace(contentView3.getId(), inviteContacts)
+                        .commit();
             default:
                 break;
         }

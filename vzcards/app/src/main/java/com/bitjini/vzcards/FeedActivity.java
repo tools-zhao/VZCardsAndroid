@@ -366,54 +366,59 @@ FrameLayout layout_MainMenu;
 
                 // Getting JSON Array node
                 countOfFeeds = jsonObj.getInt("count");
-                Log.e("countOfFeeds", "" + countOfFeeds);
-                JSONArray arr = jsonObj.getJSONArray("response");
+                if (countOfFeeds == 0) {
 
-                // looping through All Contacts
-                for (int i = 0; i < arr.length(); i++) {
-                    JSONObject c = arr.getJSONObject(i);
-                    // Feed node is JSON Object
-                    JSONObject feed = c.getJSONObject("feed");
 
-                    String item = feed.getString("item");
-                    String question = feed.getString("question");
-                    String item_photo = feed.getString("item_photo");
-                    String description = feed.getString("description");
-                    String ticket_id = feed.getString("ticket_id");
-                    String isNeeds = "1", isHas = "0";
+                } else {
+                    Log.e("countOfFeeds", "" + countOfFeeds);
+                    JSONArray arr = jsonObj.getJSONArray("response");
+
+                    // looping through All Contacts
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject c = arr.getJSONObject(i);
+                        // Feed node is JSON Object
+                        JSONObject feed = c.getJSONObject("feed");
+
+                        String item = feed.getString("item");
+                        String question = feed.getString("question");
+                        String item_photo = feed.getString("item_photo");
+                        String description = feed.getString("description");
+                        String ticket_id = feed.getString("ticket_id");
+                        String isNeeds = "1", isHas = "0";
 //                    String vz_id = feed.getString("vz_id");
 
 
-                    if (question == isNeeds) {
-                        isNeeds = question;
+                        if (question == isNeeds) {
+                            isNeeds = question;
+                        }
+                        if (question == isHas) {
+                            isHas = question;
+                        }
+                        // user_details node is JSON Object
+                        JSONObject user_detail = c.getJSONObject("user_details");
+
+                        String firstname = user_detail.getString("firstname");
+                        String photo = user_detail.getString("photo");
+
+                        String phone = user_detail.getString("phone");
+
+                        DataFeeds dataFeeds = new DataFeeds();
+
+                        dataFeeds.setFname(firstname);
+                        dataFeeds.setItem(item);
+                        dataFeeds.setQuestion(question);
+                        dataFeeds.setPhoto(photo);
+                        dataFeeds.setItem_photo(item_photo);
+                        dataFeeds.setDescription(description);
+                        dataFeeds.setIsHas(isHas);
+                        dataFeeds.setIsNeeds(isNeeds);
+                        dataFeeds.setTicket_id(ticket_id);
+                        dataFeeds.setVz_id(vz_id);
+                        dataFeeds.setPhone(phone);
+
+                        feedsArrayList.add(dataFeeds);
+
                     }
-                    if (question == isHas) {
-                        isHas = question;
-                    }
-                    // user_details node is JSON Object
-                    JSONObject user_detail = c.getJSONObject("user_details");
-
-                    String firstname = user_detail.getString("firstname");
-                    String photo = user_detail.getString("photo");
-
-                    String phone = user_detail.getString("phone");
-
-                    DataFeeds dataFeeds = new DataFeeds();
-
-                    dataFeeds.setFname(firstname);
-                    dataFeeds.setItem(item);
-                    dataFeeds.setQuestion(question);
-                    dataFeeds.setPhoto(photo);
-                    dataFeeds.setItem_photo(item_photo);
-                    dataFeeds.setDescription(description);
-                    dataFeeds.setIsHas(isHas);
-                    dataFeeds.setIsNeeds(isNeeds);
-                    dataFeeds.setTicket_id(ticket_id);
-                    dataFeeds.setVz_id(vz_id);
-                    dataFeeds.setPhone(phone);
-
-                    feedsArrayList.add(dataFeeds);
-
                 }
             }
 
