@@ -182,7 +182,7 @@ public class Connect_2_Tickets extends Activity {
         }
         protected void onPostExecute(String result) {
             progress.dismiss();
-            Toast.makeText(Connect_2_Tickets.this, "Connected tickets", Toast.LENGTH_LONG).show();
+            Toast.makeText(Connect_2_Tickets.this, "Tickets Connected ", Toast.LENGTH_LONG).show();
             finish();
 //            if (result != null) {
 //                Log.e("valid =", "" + result.toString());

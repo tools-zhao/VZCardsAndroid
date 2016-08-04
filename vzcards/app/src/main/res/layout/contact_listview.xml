@@ -51,9 +51,8 @@
             android:text="Invite"/>
         <SearchView
             android:layout_width="300dp"
-            android:layout_height="30dp"
+            android:layout_height="35dp"
             android:textAlignment="gravity"
-            android:queryHint="@string/search"
             android:queryBackground="@android:color/transparent"
             android:background="@drawable/drawable_text"
             android:layout_gravity="center_horizontal"
@@ -61,6 +60,8 @@
             android:layout_marginBottom="9dp"
             android:id="@+id/searchview"
             android:gravity="center"></SearchView>
+
+        <!--android:queryHint="@string/search"-->
         <TextView
             android:layout_width="300dp"
             android:layout_height="30dp"

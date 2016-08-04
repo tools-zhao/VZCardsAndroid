@@ -295,6 +295,7 @@ public class InviteContacts extends Fragment implements SearchView.OnQueryTextLi
                 progress.dismiss();
                 progress = null;
             }
+            Toast.makeText(getActivity(), "Invitation sent", Toast.LENGTH_LONG).show();
             Log.e("result=",""+result);
         }
     }
