@@ -74,8 +74,8 @@
                         android:textAllCaps="false"
                         android:layout_marginTop="5dp" />
                     <TextView
-                        android:layout_width="50dp"
-                        android:layout_height="15dp"
+                        android:layout_width="52dp"
+                        android:layout_height="18dp"
                         android:text="Referred"
                         android:clickable="false"
                         android:focusable="false"

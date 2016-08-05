@@ -73,7 +73,7 @@
                         >
                     <Button
                         android:layout_width="60dp"
-                        android:layout_height="25dp"
+                        android:layout_height="26dp"
                         android:text="Edit"
 
                         android:id="@+id/edit"
@@ -90,7 +90,7 @@
                         android:background="@drawable/drawable_edit"/>
                     <Button
                         android:layout_width="75dp"
-                        android:layout_height="25dp"
+                        android:layout_height="26dp"
                         android:text="Cancel"
                         android:id="@+id/cancel"
                         android:layout_marginRight="15dp"
