@@ -253,8 +253,10 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                     SyncContacts sync = new SyncContacts(getActivity());
 //                Log.e("list:",""+sync.phoneList12);
                     for (SelectUser list : sync.phoneList12) {
+
                         if (phone.contains(list.getPhone())) {
                             selectUser.setfName(list.getName());
+                            Log.e("list name",""+list.getfName());
                         }
 
                     }
@@ -536,6 +538,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
             final SelectUser data = (SelectUser) arrayList.get(i);
             v.fname.setText(data.getfName());
+            Log.e("name=",""+data.getfName());
 //            v.company.setText(data.getCompany());
             v.phone.setText(data.getSyncPhone());
 
