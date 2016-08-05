@@ -254,7 +254,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 //                Log.e("list:",""+sync.phoneList12);
                     for (SelectUser list : sync.phoneList12) {
 
-                        if (phone.contains(list.getPhone())) {
+                        if (phone.equals(list.getPhone())) {
                             selectUser.setfName(list.getName());
                             Log.e("list name",""+list.getfName());
                         }
