@@ -543,6 +543,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
             Button callBtn = (Button) v.findViewById(R.id.btnCall);
             Button vzCardBtn = (Button) v.findViewById(R.id.btnVzCard);
              vzCardBtn.setTag(position);
+            callBtn.setTag(position);
             callBtn.setOnClickListener(this);
             vzCardBtn.setOnClickListener(this);
 
@@ -552,16 +553,17 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
         public void onClick(View view) {
 //            ReferalUsers cat=itemList.get(position);
-            int position = 0;
-            if(view.getTag()!=null)
-            {
-                position=(Integer)view.getTag();
-            }
+
+//            if(view.getTag()!=null)
+//            {
+            int position =(Integer)view.getTag();
+//            }
             ReferalUsers data=itemList.get(position);
             switch (view.getId()) {
                 case R.id.btnCall:
                     try {
                        CallPhone(data.getPhone());
+                        Log.e("ref call phone",""+data.getPhone()+" "+position);
                     } catch (android.content.ActivityNotFoundException ex) {
                         Toast.makeText(_c, "your Activity is not found", Toast.LENGTH_LONG).show();
                     }
