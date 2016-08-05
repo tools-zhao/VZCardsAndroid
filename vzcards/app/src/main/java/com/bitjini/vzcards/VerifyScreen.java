@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -67,7 +68,8 @@ public class VerifyScreen extends Activity {
     public String otp, phone;
     private Button btn;
 
-    TextView  textViewCountryCode, textViewCountryPrefix;
+    TextView  textViewCountryCode;
+    EditText textViewCountryPrefix;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,15 +91,24 @@ public class VerifyScreen extends Activity {
         String countryZipCode = GetCountryZipCode();
 
         editTextPhoneNo = (EditText) findViewById(R.id.phoneNo);
-        textViewCountryPrefix=(TextView)findViewById(R.id.initial);
+        textViewCountryPrefix=(EditText)findViewById(R.id.initial);
         textViewCountryCode=(TextView)findViewById(R.id.countryCode);
 
         btn = (Button) findViewById(R.id.verify);
         // set the country code to textview
-        textViewCountryCode.setText(countryCode);
-        textViewCountryPrefix.setText(countryZipCode);
 
+//        textViewCountryPrefix.setText("+"+countryZipCode);
+//        textViewCountryCode.setText(countryCode);
+//        textViewCountryPrefix.setText("+"+countryZipCode);
 
+        editTextPhoneNo.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                String countryCode1=GetCountryIdCode();
+                textViewCountryCode.setText(countryCode1);
+                return false;
+            }
+        });
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +136,7 @@ public class VerifyScreen extends Activity {
 
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         //getNetworkCountryIso
-        CountryID= manager.getSimCountryIso().toUpperCase();
+        CountryID=manager.getSimCountryIso().toUpperCase();
         String[] rl=getResources().getStringArray(R.array.CountryCodes);
         for(int i=0;i<rl.length;i++){
             String[] g=rl[i].split(",");
@@ -135,6 +146,23 @@ public class VerifyScreen extends Activity {
             }
         }
         return CountryZipCode;
+    }
+    public String GetCountryIdCode(){
+        String CountryID="";
+        String CountryZipCode="";
+
+        TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        CountryZipCode= textViewCountryPrefix.getText().toString().replaceAll("[\\D]", "");
+        String[] rl=getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<rl.length;i++){
+            String[] g=rl[i].split(",");
+            if(g[0].equals(CountryZipCode)){
+                CountryID=g[1];
+                break;
+            }
+        }
+        return CountryID;
     }
     // method to call AsyncTask PostClass for registration
     public void sendPostRequest(View View) {
@@ -182,7 +210,7 @@ public class VerifyScreen extends Activity {
                 firstname = "";
                 lastname = "";
                 email = "";
-                phone = textViewCountryPrefix.getText()+editTextPhoneNo.getText().toString();
+                phone = textViewCountryPrefix.getText().toString().replaceAll("[\\D]", "")+editTextPhoneNo.getText().toString();
                 industry = "";
                 company = "";
                 address_line_1 = "";
