@@ -249,10 +249,10 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                         if (progress.isShowing() && progress!=null) {
                                             progress.dismiss();
                                             progress = null;
-//                                            profilePicturePath="";
-                                            File f = new File(outPutFile.getPath());
-
-                                            if (f.exists()) f.delete();
+                                            profilePicturePath="";
+//                                            File f = new File(outPutFile.getPath());
+//
+//                                            if (f.exists()) f.delete();
 
                                         }
 
@@ -269,12 +269,13 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                                 // calling profile post details
 
                                                 new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+                                                Toast.makeText(getActivity(), "Profile is updated ", Toast.LENGTH_LONG).show();
                                                 if (!json2.equals(json3)) {
                                                     getProfileDetails();
                                                 }
-                                                else {
-                                                    uploadCompanyImage();
-                                                }
+
+                                            }else {
+                                                uploadCompanyImage();
                                             }
                                         }
 
@@ -291,6 +292,13 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                             if (companyPicturePath.length() != 0) {
 
 //                                    picturePath = companyPicturePath;
+                                progressDialog1 = new ProgressDialog(getActivity());
+                                if (progressDialog1 != null) {
+                                    progressDialog1.setMessage("Saving user details...");
+                                    progressDialog1.setCancelable(false);
+                                    progressDialog1.show();
+
+                                }
                                 uploadCompanyImage();
 
 
@@ -368,10 +376,19 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
             @Override
             public void onPostExecute(String result) {
+                if (progressDialog1.isShowing() && progressDialog1!=null) {
+                    progressDialog1.dismiss();
+                    progressDialog1 = null;
+                    companyPicturePath="";
+//                                            File f = new File(outPutFile.getPath());
+//
+//                                            if (f.exists()) f.delete();
 
-                File f = new File(companyPicturePath);
+                }
 
-                if (f.exists()) f.delete();
+//                File f = new File(companyPicturePath);
+//
+//                if (f.exists()) f.delete();
                 try {
                     if(result!=null) {
                         JSONObject json = new JSONObject(result);
@@ -384,6 +401,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                         Log.e("link :", "" + link);
 
                             new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+                        Toast.makeText(getActivity(), "Profile is updated ", Toast.LENGTH_LONG).show();
                             if (!json2.equals(json3)) {
                                 getProfileDetails();
 
