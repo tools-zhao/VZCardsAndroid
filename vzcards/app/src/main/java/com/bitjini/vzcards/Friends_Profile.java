@@ -151,13 +151,13 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
 
         if(!photo.isEmpty()) {
-            Picasso.with(getApplicationContext()).load(photo).resize(180, 180).placeholder(R.drawable.profile_pic_placeholder).into(target);
+            Picasso.with(getApplicationContext()).load(photo).resize(400, 400).placeholder(R.drawable.profile_pic_placeholder).into(target);
 //            imageProfile.setTag(photo);
 //            new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
         }
 
         if(!company_photo.isEmpty()) {
-            Picasso.with(getApplicationContext()).load(company_photo).resize(70, 70).placeholder(R.drawable.com_logo).into(imageCompany);
+            Picasso.with(getApplicationContext()).load(company_photo).resize(250, 260).placeholder(R.drawable.com_logo).into(imageCompany);
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
         }
