@@ -173,15 +173,18 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         Log.e("width=",""+width/2);
         textViewName.setTextColor(Color.WHITE);
         textViewName.setLayoutParams(textParams);
+
         RelativeLayout.LayoutParams paramImage2 = new RelativeLayout.LayoutParams(width/2, width/3);
         paramImage2.leftMargin=width/2;
         imageCompany.setLayoutParams(paramImage2);
         imageCompany.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
         RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/2, width/6);
         paramImage3.leftMargin=width/2;
         paramImage3.topMargin=((width/2)-(width/6));
         editbtn.setLayoutParams(paramImage3);
         editbtn.setBackgroundColor(R.color.primary);
+
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -216,10 +219,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     cancelBtn.setVisibility(View.GONE);
                     imageCompany.setClickable(false);
                     imageProfile.setClickable(false);
+
                     editTextAdapter.actv(false);
                     json2 = new Gson().toJson(groupItem);// updated array
+
+                    Log.e("js=",""+json2);
                     data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
                     json3=data.getString(TASKS, null);
+
                     SavePreferences(TASKS, json2);
                     // check if any changes done if yes make an api call
                     assert json3 != null;
