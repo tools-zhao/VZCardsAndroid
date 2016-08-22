@@ -20,9 +20,10 @@
     <color name="fab_ripple">#7891ff</color>
     <color name="fab_orange_dark">#f97910</color>
     <color name="fab_orange_bright">#ffb54c</color>
-    <color name="disabled_gray">#CCC</color>
+    <color name="disabled_gray">#bccccccc</color>
     <color name="gray_backgrounds">#f0ecf0</color>
     <color name="header_gray_background">#EEEEEE</color>
     <color name="subheader_gray_button">#F5F5F5</color>
     <color name="green">#009688</color>
+    <color name="callgreen">#0db72f</color>
 </resources>

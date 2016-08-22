@@ -200,9 +200,14 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
     public void getHistoryContents(String url)
     {
-        try{
+
             count=1;
-            String result = new HttpAsyncTask(getActivity()).execute(url).get();
+            new HttpAsyncTask(getActivity()) {
+
+                @Override
+                public void onPostExecute(String result) {
+
+                    try {
             Log.e("received History", "" + result);
 
 
@@ -263,12 +268,10 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+                        e.printStackTrace();
+                    }
+                }
+            }.execute(url);
 
 
     }
