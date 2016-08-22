@@ -190,6 +190,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             public void onClick(View view) {
                 if (clickCount == 0) {
                     editbtn.setText("Save");
+                    editbtn.setBackgroundColor(R.color.primaryGreen);
                     cancelBtn.setVisibility(View.VISIBLE);
                     RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/4, width/6);
                     paramImage3.leftMargin=(3*(width/4));
@@ -223,7 +224,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     editTextAdapter.actv(false);
                     json2 = new Gson().toJson(groupItem);// updated array
 
-                    Log.e("js=",""+json2);
+
+                    Log.e("arr",""+json2);
                     data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
                     json3=data.getString(TASKS, null);
 
@@ -371,66 +373,71 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     }
     public void getProfileDetails()
     {
-        try {
+
             String receivedData = null;
-            receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference).get();//cal to get profile data
-            //Profile details
-            if(receivedData!=null) {
-                JSONObject jsonObj = new JSONObject(receivedData);
-                firstname = jsonObj.getString("firstname");
-                lastname = jsonObj.getString("lastname");
-                email = jsonObj.getString("email");
-                industry = jsonObj.getString("industry");
-                company = jsonObj.getString("company");
-                address_line_1 = jsonObj.getString("address_line_1");
-                address_line_2 = jsonObj.getString("address_line_2");
-                city = jsonObj.getString("city");
-                pin_code = jsonObj.getString("pin_code");
-                title = jsonObj.getString("title");
-                photo= jsonObj.getString("photo");
-                company_photo=jsonObj.getString("company_photo");
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        Log.e(" Photo Received ",""+photo);
-        Log.e(" company_photoReceived",""+company_photo);
+            new Get_Profile_AsyncTask() {
+
+                @Override
+                public void onPostExecute(String received) {
+                    try {
+
+                        if (received != null) {
+                                JSONObject jsonObj = new JSONObject(received);
+                                firstname = jsonObj.getString("firstname");
+                                lastname = jsonObj.getString("lastname");
+                                email = jsonObj.getString("email");
+                                industry = jsonObj.getString("industry");
+                                company = jsonObj.getString("company");
+                                address_line_1 = jsonObj.getString("address_line_1");
+                                address_line_2 = jsonObj.getString("address_line_2");
+                                city = jsonObj.getString("city");
+                                pin_code = jsonObj.getString("pin_code");
+                                title = jsonObj.getString("title");
+                                photo = jsonObj.getString("photo");
+                                company_photo = jsonObj.getString("company_photo");
+
+                                Log.e(" Photo Received ", "" + photo);
+                                Log.e(" company_photoReceived", "" + company_photo);
 //
-        if(!photo.isEmpty()) {
+                                if (!photo.isEmpty()) {
 //            Picasso.with(getActivity()).load(photo).centerCrop().resize(200,200).into(target);
-            Picasso.with(getActivity()).load(photo).centerCrop().resize(400,400).into(imageProfile);
-            Log.e(" Photo on Received ",""+photo);
+                                    Picasso.with(getActivity()).load(photo).centerCrop().resize(400, 400).into(imageProfile);
+                                    Log.e(" Photo on Received ", "" + photo);
 //            if(PROFILE_IMAGE.length()==0) {
-            SavePreferences(PROFILE_IMAGE, photo);
-        } else  {
-            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
-        }
-        if(!company_photo.isEmpty()) {
-            Picasso.with(getActivity()).load(company_photo).centerCrop().resize(200,200).into(imageCompany);
-            Log.e(" company_photoReceived",""+company_photo);
-            SavePreferences(COMPANY_IMAGE, company_photo);
-        }else  {
-            imageCompany.setImageResource(R.drawable.com_logo);
-        }
-        textViewName.setText(firstname+ " "+lastname);
-        values = new ArrayList<String>();
-        values.add(firstname);
-        values.add(lastname);
-        values.add(title);  // contains value for what do you do?
-        values.add(email);
-        values.add(address_line_1);
-        values.add(city);
-        values.add(pin_code);
-        for (int i = 0; i < label.size(); i++) {
-            ListItem item = new ListItem();
-            item.setLabel(label.get(i));
-            item.setValue(values.get(i));
-            arrayList.add(item);
-        }
+                                    SavePreferences(PROFILE_IMAGE, photo);
+                                } else {
+                                    imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
+                                }
+                                if (!company_photo.isEmpty()) {
+                                    Picasso.with(getActivity()).load(company_photo).centerCrop().resize(200, 200).into(imageCompany);
+                                    Log.e(" company_photoReceived", "" + company_photo);
+                                    SavePreferences(COMPANY_IMAGE, company_photo);
+                                } else {
+                                    imageCompany.setImageResource(R.drawable.com_logo);
+                                }
+                                textViewName.setText(firstname + " " + lastname);
+                                values = new ArrayList<String>();
+                                values.add(firstname);
+                                values.add(lastname);
+                                values.add(title);  // contains value for what do you do?
+                                values.add(email);
+                                values.add(address_line_1);
+                                values.add(city);
+                                values.add(pin_code);
+                                for (int i = 0; i < label.size(); i++) {
+                                    ListItem item = new ListItem();
+                                    item.setLabel(label.get(i));
+                                    item.setValue(values.get(i));
+                                    arrayList.add(item);
+                                }
+                            }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                    }.execute(URL_GET_PROFILE + p.token_sharedPreference);//cal to get profile data
     }
     protected void SavePreferences(String key, String value) {
 // TODO Auto-generated method stub
@@ -745,6 +752,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         public void setLabel(String label) {
             this.label = label;
         }
+
+        @Override
+        public String toString() {
+            return value.toString();
+        }
     }
     //    /**
 //     * ViewHolder which also tracks the TextWatcher for an EditText
@@ -809,7 +821,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             };
             holder.editText.addTextChangedListener(holder.textWatcher);
             holder.editText.setText(listItem.value);
-//            holder.textView.setText(listItem.getLabel());
+            Log.e("val=",""+listItem.value);
+            holder.textView.setText(listItem.getLabel());
 //              holder.editText.setEnabled(false);
             if (clickCount == 0) {
                 actv(false);
