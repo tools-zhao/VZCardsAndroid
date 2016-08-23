@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -111,20 +113,20 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public Bitmap bitmap;
     public static String picturePath;
     public String profilePicturePath="",companyPicturePath="";
+    ListView listView2;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 // on configuration changes (screen rotation) we want fragment member variables to preserved
         setRetainInstance(true);
         profile = inflater.inflate(R.layout.profile_layout, container, false);
-        TextView textView=(TextView)profile.findViewById(R.id.emptytext);
-        textView.setText("");
-        textView.setVisibility(View.GONE);
+
         linearLayout=(LinearLayout)profile. findViewById(R.id.l2);
         editbtn = (Button) profile.findViewById(R.id.edit);
         cancelBtn=(Button) profile.findViewById(R.id.cancel);
         cancelBtn.setVisibility(View.GONE);
         listView = (ListView) profile.findViewById(R.id.profileList);
+        listView2=(ListView)profile.findViewById(R.id.profileList2);
 //        listView.setOnScrollListener(new MyScrollListener());
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
@@ -184,12 +186,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         paramImage3.topMargin=((width/2)-(width/6));
         editbtn.setLayoutParams(paramImage3);
         editbtn.setBackgroundResource(R.color.primary);
-
+        listView2.setVisibility(View.VISIBLE);
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (clickCount == 0) {
                     editbtn.setText("Save");
+                    listView.setVisibility(View.VISIBLE);
+                    listView2.setVisibility(View.GONE);
                     editbtn.setBackgroundResource(R.color.primaryGreen);
                     cancelBtn.setVisibility(View.VISIBLE);
                     RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/4, width/6);
@@ -202,15 +206,18 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     cancelBtn.setLayoutParams(paramImage4);
                     imageCompany.setClickable(true);
                     imageProfile.setClickable(true);
-                    editTextAdapter.actv(true);
+//                    editTextAdapter.actv(true);
                     editTextAdapter.notifyDataSetChanged();
                     clickCount = 1;
                 } else if (clickCount == 1) {
+
+
                     // to hide keypad
                     InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (getActivity().getCurrentFocus() != null){
                         inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     }
+
                     editbtn.setText("Edit");
                     RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/2, width/6);
                     paramImage3.leftMargin=width/2;
@@ -221,7 +228,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     imageCompany.setClickable(false);
                     imageProfile.setClickable(false);
 
-                    editTextAdapter.actv(false);
+//                    editTextAdapter.actv(false);
                     json2 = new Gson().toJson(groupItem);// updated array
 
 
@@ -313,6 +320,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     editTextAdapter.notifyDataSetChanged();
                     clickCount = 0;
                     companyPicturePath="";profilePicturePath="";
+
+                    listView2.setVisibility(View.VISIBLE);
+                    listView.setVisibility(View.GONE);
                 }
             }
         });
@@ -452,7 +462,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         textViewName.setText(firstname+ " "+lastname);
         values = new ArrayList<String>();
-        values.add(firstname);
+        values.add(firstname );
         values.add(lastname);
         values.add(title);  // contains value for what do you do?
         values.add(email);
@@ -467,6 +477,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             item.setValue(values.get(i));
             arrayList.add(item);
         }
+
+
 
     }
     protected void SavePreferences(String key, String value) {
@@ -488,8 +500,15 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         }.getType();
         adapterArrayList = gson.fromJson(json, type);
         // send the adapterArraylist to the adapter and set it to listview
-        editTextAdapter = new EditTextAdapter(getActivity(), adapterArrayList, R.layout.profile_layout);
-        listView.setAdapter(editTextAdapter);
+        if(clickCount==0) {
+            editTextAdapter = new EditTextAdapter(getActivity(), adapterArrayList, R.layout.profile_layout);
+            listView.setAdapter(editTextAdapter);
+        }
+
+
+            editTextAdapter = new EditTextAdapter(getActivity(), adapterArrayList, R.layout.profile_layout);
+            listView2.setAdapter(editTextAdapter);
+
     }
     private void selectImageOption() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -818,52 +837,87 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         }
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            View rowView = null;
-            convertView = null;
-            if (convertView == null) {
-                // Not recycled, inflate a new view
-                LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                rowView = li.inflate(R.layout.profile_listitems, parent,false);
-                rowView.setTag(holder);
-            }
-            holder.textView = (TextView) rowView.findViewById(R.id.labels);
-            holder.editText = (EditText) rowView.findViewById(R.id.values1);
-            ViewParent parent2 =  holder.editText .getParent();
-            parent.clearChildFocus(  holder.editText );
-            ViewHolder holder = (ViewHolder) rowView.getTag();
-            // Remove any existing TextWatcher that will be keyed to the wrong ListItem
-            if (holder.textWatcher != null)
-                holder.editText.removeTextChangedListener(holder.textWatcher);
-            final ListItem listItem = groupItem.get(position);
-            // Keep a reference to the TextWatcher so that we can remove it later
-            holder.textWatcher = new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            if(clickCount==1) {
+                View rowView = null;
+                convertView = null;
+                if (convertView == null) {
+                    // Not recycled, inflate a new view
+                    LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    rowView = li.inflate(R.layout.profile_listitems, parent, false);
+                    rowView.setTag(holder);
                 }
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    listItem.value = s.toString();
-                    System.out.println(listItem.value + "" + groupItem.get(position));
-                }
-                @Override
-                public void afterTextChanged(Editable s) {
-                }
-            };
-            holder.editText.addTextChangedListener(holder.textWatcher);
-            holder.editText.setText(listItem.value);
-            Log.e("val=",""+listItem.value);
-            holder.textView.setText(listItem.getLabel());
+                holder.textView = (TextView) rowView.findViewById(R.id.labels);
+                holder.editText = (EditText) rowView.findViewById(R.id.values1);
+                ViewParent parent2 = holder.editText.getParent();
+                parent.clearChildFocus(holder.editText);
+                ViewHolder holder = (ViewHolder) rowView.getTag();
+                // Remove any existing TextWatcher that will be keyed to the wrong ListItem
+                if (holder.textWatcher != null)
+                    holder.editText.removeTextChangedListener(holder.textWatcher);
+                final ListItem listItem = groupItem.get(position);
+                // Keep a reference to the TextWatcher so that we can remove it later
+                holder.textWatcher = new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        listItem.value = s.toString();
+                        System.out.println(listItem.value + "" + groupItem.get(position));
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                    }
+                };
+                holder.editText.addTextChangedListener(holder.textWatcher);
+                holder.editText.setText(listItem.value);
+                Log.e("val=", "" + listItem.value);
+                holder.textView.setText(listItem.getLabel());
 //              holder.editText.setEnabled(false);
-            if (clickCount == 0) {
-                actv(false);
+//                if (clickCount == 0) {
+//                    actv(false);
+//                }
+                return rowView;
             }
-            return rowView;
-        }
-        protected void actv(final boolean active) {
-            holder.editText.setEnabled(active);
-            if (active) {
-                holder.editText.requestFocus();
+            else {
+                View rowView = null;
+                convertView = null;
+                if (convertView == null) {
+                    // Not recycled, inflate a new view
+                    LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    rowView = li.inflate(R.layout.frnds_profile_details, null);
+
+                    rowView.setTag(holder);
+                }
+//            holder.textView = (TextView) rowView.findViewById(R.id.labels);
+                TextView editText = (TextView) rowView.findViewById(R.id.values1);
+
+
+                if(position==0 )
+                {
+                    editText.setFilters(new InputFilter[] {new InputFilter.AllCaps()});
+                    editText.setTextSize(18);
+                    editText.setTypeface(null, Typeface.BOLD);
+
+                }
+                final ListItem listItem = groupItem.get(position);
+
+
+               editText.setText(listItem.value);
+
+//            holder.textView.setText(listItem.getLabel().toString());
+//              holder.editText.setEnabled(false);
+
+                return rowView;
             }
         }
+//        protected void actv(final boolean active) {
+//            holder.editText.setEnabled(active);
+//            if (active) {
+//                holder.editText.requestFocus();
+//            }
+//        }
     }
 }

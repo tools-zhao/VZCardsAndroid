@@ -18,6 +18,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -35,6 +36,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -365,6 +367,13 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
             final ListItem listItem = groupItem.get(position);
 
+            if(position==0)
+            {
+                holder.editText.setFilters(new InputFilter[] {new InputFilter.AllCaps()});
+                holder.editText.setTextSize(18);
+                holder.editText.setTypeface(null, Typeface.BOLD);
+
+            }
             holder.editText.setText(listItem.value);
 
 //            holder.textView.setText(listItem.getLabel().toString());
