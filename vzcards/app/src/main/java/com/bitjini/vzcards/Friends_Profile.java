@@ -178,7 +178,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         paramImage3.topMargin = width / 4;
         imageCall.setLayoutParams(paramImage3);
         imageCall.setBackgroundResource(R.drawable.callgreen);
-        imageCall.setPadding(50, 50, 50, 50);
+        imageCall.setPadding(30, 30, 30, 30);
         imageCall.setCropToPadding(true);
         imageCall.setImageResource(R.drawable.ic_call_white_);
 
