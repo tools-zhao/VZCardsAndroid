@@ -167,15 +167,14 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         textViewName.setTextColor(Color.WHITE);
         textViewName.setLayoutParams(textParams);
 
-        RelativeLayout.LayoutParams paramImage2 = new RelativeLayout.LayoutParams(width / 2, width / 4);
-
-        paramImage2.leftMargin = width / 2;
+        RelativeLayout.LayoutParams paramImage2 = new RelativeLayout.LayoutParams(width/2, width/3);
+        paramImage2.leftMargin=width/2;
         imageCompany.setLayoutParams(paramImage2);
         imageCompany.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width / 2, width / 4);
-        paramImage3.leftMargin = width / 2;
-        paramImage3.topMargin = width / 4;
+        RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/2, width/6);
+        paramImage3.leftMargin=width/2;
+        paramImage3.topMargin=((width/2)-(width/6));
         imageCall.setLayoutParams(paramImage3);
         imageCall.setBackgroundResource(R.drawable.callgreen);
         imageCall.setPadding(30, 30, 30, 30);
@@ -240,28 +239,6 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         listView.setAdapter(editTextAdapter);
 
     }
-
-//    private Target target = new Target() {
-//        @Override
-//        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-//            imageProfile.setImageBitmap(bitmap);
-//
-//            Bitmap blurredBitmap = BlurBuilder.blur(getApplicationContext(), bitmap);
-//
-////            linearLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), blurredBitmap));
-//        }
-//
-//        @Override
-//        public void onBitmapFailed(Drawable drawable) {
-//
-//        }
-//
-//        @Override
-//        public void onPrepareLoad(Drawable drawable) {
-//
-//        }
-//
-//    };
 
 
     public void onClick(View v) {

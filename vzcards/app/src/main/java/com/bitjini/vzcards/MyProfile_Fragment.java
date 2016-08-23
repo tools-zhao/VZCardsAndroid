@@ -183,14 +183,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         paramImage3.leftMargin=width/2;
         paramImage3.topMargin=((width/2)-(width/6));
         editbtn.setLayoutParams(paramImage3);
-        editbtn.setBackgroundColor(R.color.primary);
+        editbtn.setBackgroundResource(R.color.primary);
 
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (clickCount == 0) {
                     editbtn.setText("Save");
-                    editbtn.setBackgroundColor(R.color.primaryGreen);
+                    editbtn.setBackgroundResource(R.color.primaryGreen);
                     cancelBtn.setVisibility(View.VISIBLE);
                     RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/4, width/6);
                     paramImage3.leftMargin=(3*(width/4));
@@ -216,7 +216,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     paramImage3.leftMargin=width/2;
                     paramImage3.topMargin=((width/2)-(width/6));
                     editbtn.setLayoutParams(paramImage3);
-                    editbtn.setBackgroundColor(R.color.primary);
+                    editbtn.setBackgroundResource(R.color.primary);
                     cancelBtn.setVisibility(View.GONE);
                     imageCompany.setClickable(false);
                     imageProfile.setClickable(false);
@@ -428,7 +428,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         } else  {
             imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
             imageProfile.setCropToPadding(true);
-            imageProfile.setPadding(40,40,40,40);
+            imageProfile.setPadding(50,50,50,50);
             //            new DownloadImagesTask(getActivity()).execute(holder.photo);
 
         }
@@ -444,9 +444,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
         }else  {
-            imageCompany.setImageResource(R.drawable.com_logo);
+            imageCompany.setImageResource(R.drawable.no_pic_placeholder_2);
             imageCompany.setCropToPadding(true);
-            imageCompany.setPadding(40,40,40,40);
+            imageCompany.setPadding(60,60,60,60);
         }
 
 
