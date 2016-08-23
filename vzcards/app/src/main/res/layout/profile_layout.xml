@@ -6,12 +6,14 @@
     android:clickable="true"
     android:background="?android:attr/colorBackground"
     android:layout_height="match_parent" >
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+    <!--<ScrollView-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content">-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:background="#43c1d9f2"
+        android:id="@+id/rl"
+        android:layout_marginBottom="30dp"
         android:layout_height="wrap_content">
 
 
@@ -29,7 +31,7 @@
                     <RelativeLayout
                         android:layout_gravity="center_horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="211dp"
+                        android:layout_height="wrap_content"
                         android:splitMotionEvents="false">
 
                     <ImageView
@@ -64,7 +66,7 @@
                             android:layout_marginTop="5dp"
                             android:textColor="#ffff"
                             android:text="Name"
-                            android:textSize="15sp"/>
+                            android:textSize="16sp"/>
 
                     <Button
                         android:layout_width="60dp"
@@ -110,6 +112,7 @@
                         android:visibility="gone"
                         android:descendantFocusability="afterDescendants"
                         android:dividerHeight="-3.0sp"
+                        android:listSelector="@android:color/transparent"
                         android:layout_marginBottom="15dp"></ListView>
 
 
@@ -118,13 +121,14 @@
             android:layout_height="680dp"
             android:visibility="visible"
             android:id="@+id/profileList2"
+            android:listSelector="@android:color/transparent"
             android:layout_below="@+id/l2"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="25dp"
             android:descendantFocusability="afterDescendants"
-            android:dividerHeight="-22dp"
+            android:dividerHeight="-23dp"
             android:divider="@null"></ListView>
             </RelativeLayout>
-        </ScrollView>
+        <!--</ScrollView>-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"

@@ -162,9 +162,9 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         RelativeLayout.LayoutParams paramImage = new RelativeLayout.LayoutParams(width / 2, width / 2);
         imageProfile.setLayoutParams(paramImage);
 
-        RelativeLayout.LayoutParams textParams = new RelativeLayout.LayoutParams(width / 2, 35);
+        RelativeLayout.LayoutParams textParams = new RelativeLayout.LayoutParams(width / 2, 45);
 //        textParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        textParams.topMargin = ((width / 2) - 35);
+        textParams.topMargin = ((width / 2) - 45);
         Log.e("width=", "" + width / 2);
         textViewName.setTextColor(Color.WHITE);
         textViewName.setLayoutParams(textParams);
@@ -202,7 +202,9 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         }
 
 
+
         textViewName.setText(firstname + " " + lastname);
+        textViewName.setTextSize(16);
         values = new ArrayList<String>();
         values.add(firstname + " " + lastname);
 //        values.add(lastname);
@@ -287,30 +289,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
     /**
      * The object we have a list of
      */
-    class ListItem {
-        public String value;
-        public String label;
 
-
-        ListItem() {
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
-    }
 
     //    /**
 //     * ViewHolder which also tracks the TextWatcher for an EditText
@@ -384,4 +363,3 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
     }
 }
-

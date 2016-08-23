@@ -1,6 +1,7 @@
 package com.bitjini.vzcards;
 import android.Manifest;
 import android.app.Activity;
+import android.app.LauncherActivity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -53,6 +54,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
@@ -103,7 +106,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     int width,height;
     ArrayList<ListItem> adapterArrayList = new ArrayList<ListItem>();
     public ArrayList<ListItem> groupItem = new ArrayList<ListItem>();
-    LinearLayout linearLayout;
+    RelativeLayout relativeLayout;
     VerifyScreen p = new VerifyScreen();
     Bitmap bm = null;
     String json, json2,json3;
@@ -114,6 +117,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public static String picturePath;
     public String profilePicturePath="",companyPicturePath="";
     ListView listView2;
+    MyAdapter adapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -121,12 +125,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         setRetainInstance(true);
         profile = inflater.inflate(R.layout.profile_layout, container, false);
 
-        linearLayout=(LinearLayout)profile. findViewById(R.id.l2);
+        relativeLayout=(RelativeLayout) profile. findViewById(R.id.rl);
         editbtn = (Button) profile.findViewById(R.id.edit);
         cancelBtn=(Button) profile.findViewById(R.id.cancel);
         cancelBtn.setVisibility(View.GONE);
         listView = (ListView) profile.findViewById(R.id.profileList);
         listView2=(ListView)profile.findViewById(R.id.profileList2);
+
+        relativeLayout.setBackgroundResource(R.color.white);
 //        listView.setOnScrollListener(new MyScrollListener());
         p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
         p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
@@ -169,9 +175,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         height = metrics.heightPixels;
         RelativeLayout.LayoutParams paramImage = new RelativeLayout.LayoutParams(width/2,width/2);
         imageProfile.setLayoutParams(paramImage);
-        RelativeLayout.LayoutParams textParams = new RelativeLayout.LayoutParams(width/2,40);
+        RelativeLayout.LayoutParams textParams = new RelativeLayout.LayoutParams(width/2,43);
 //        textParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        textParams.topMargin=((width/2)-40);
+        textParams.topMargin=((width/2)-43);
         Log.e("width=",""+width/2);
         textViewName.setTextColor(Color.WHITE);
         textViewName.setLayoutParams(textParams);
@@ -206,12 +212,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     cancelBtn.setLayoutParams(paramImage4);
                     imageCompany.setClickable(true);
                     imageProfile.setClickable(true);
+                    relativeLayout.setBackgroundResource(R.color.disabled_blue);
 //                    editTextAdapter.actv(true);
                     editTextAdapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
                     clickCount = 1;
                 } else if (clickCount == 1) {
 
-
+                    relativeLayout.setBackgroundResource(R.color.white);
                     // to hide keypad
                     InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (getActivity().getCurrentFocus() != null){
@@ -318,6 +326,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                         }
                     }
                     editTextAdapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
+                    LoadPreferences();
                     clickCount = 0;
                     companyPicturePath="";profilePicturePath="";
 
@@ -481,6 +491,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
     }
+
     protected void SavePreferences(String key, String value) {
 // TODO Auto-generated method stub
         data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
@@ -505,11 +516,58 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             listView.setAdapter(editTextAdapter);
         }
 
+        try { JSONArray jsonArray = new JSONArray(json);
 
-            editTextAdapter = new EditTextAdapter(getActivity(), adapterArrayList, R.layout.profile_layout);
-            listView2.setAdapter(editTextAdapter);
+            firstname = jsonArray.getJSONObject(0).getString("value");
+            lastname = jsonArray.getJSONObject(1).getString("value");
+            title = jsonArray.getJSONObject(2).getString("value");
+            email = jsonArray.getJSONObject(3).getString("value");
+            address_line_1 = jsonArray.getJSONObject(4).getString("value");
+            city = jsonArray.getJSONObject(5).getString("value");
+            pin_code = jsonArray.getJSONObject(6).getString("value");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        values = new ArrayList<String>();
+        values.add(firstname + " " + lastname);
+//        values.add(lastname);
+        if (!title.isEmpty())
+            values.add(title);  // contains value for what do you do?
+
+        if (!email.isEmpty())
+            values.add(email);
+
+        if (!address_line_1.isEmpty())
+            values.add(address_line_1);
+
+        if (!city.isEmpty())
+            values.add(city);
+
+        if (!pin_code.isEmpty())
+            values.add(pin_code);
+
+        addValues(values);
+
 
     }
+    public void addValues(ArrayList<String> values) {
+        ArrayList<ListItem> arr=new ArrayList<>();
+        for (int i = 0; i < values.size(); i++) {
+       ListItem item = new ListItem();
+//            item.setLabel(label.get(i));
+            item.setValue(values.get(i));
+            arr.add(item);
+        }
+
+
+        // send the adapterArraylist to the adapter and set it to listview
+         adapter=new MyAdapter(arr,getActivity(),R.layout.profile_layout);
+        listView2.setAdapter(adapter);
+
+
+    }
+
     private void selectImageOption() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
@@ -573,7 +631,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                                 Log.e("profilePicturePath :", "" + profilePicturePath);
                                 imageProfile.setImageBitmap(photo);
                                 Bitmap blurredBitmap = BlurBuilder.blur(getActivity(), photo);
-                                linearLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), blurredBitmap));
+
                             } else {
                                 Toast.makeText(getActivity(), "Error while save image", Toast.LENGTH_SHORT).show();
                             }
@@ -784,29 +842,29 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     /**
      * The object we have a list of
      */
-    static class ListItem {
-        public String value;
-        public String label;
-        ListItem() {
-        }
-        public String getValue() {
-            return value;
-        }
-        public void setValue(String value) {
-            this.value = value;
-        }
-        public String getLabel() {
-            return label;
-        }
-        public void setLabel(String label) {
-            this.label = label;
-        }
-
-        @Override
-        public String toString() {
-            return value.toString();
-        }
-    }
+//    static class ListItem {
+//        public String value;
+//        public String label;
+//        ListItem() {
+//        }
+//        public String getValue() {
+//            return value;
+//        }
+//        public void setValue(String value) {
+//            this.value = value;
+//        }
+//        public String getLabel() {
+//            return label;
+//        }
+//        public void setLabel(String label) {
+//            this.label = label;
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return value.toString();
+//        }
+//    }
     //    /**
 //     * ViewHolder which also tracks the TextWatcher for an EditText
 //     */
@@ -817,6 +875,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     }
     // custom adapter class
     class EditTextAdapter extends BaseAdapter {
+        ArrayList<String> arr=new ArrayList<>();
         ViewHolder holder = new ViewHolder();
         Context _c;
         EditTextAdapter(Context context, ArrayList<ListItem> groupItem, int resource) {
@@ -837,7 +896,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         }
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            if(clickCount==1) {
+
                 View rowView = null;
                 convertView = null;
                 if (convertView == null) {
@@ -881,38 +940,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //                }
                 return rowView;
             }
-            else {
-                View rowView = null;
-                convertView = null;
-                if (convertView == null) {
-                    // Not recycled, inflate a new view
-                    LayoutInflater li = (LayoutInflater) _c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    rowView = li.inflate(R.layout.frnds_profile_details, null);
 
-                    rowView.setTag(holder);
-                }
-//            holder.textView = (TextView) rowView.findViewById(R.id.labels);
-                TextView editText = (TextView) rowView.findViewById(R.id.values1);
-
-
-                if(position==0 )
-                {
-                    editText.setFilters(new InputFilter[] {new InputFilter.AllCaps()});
-                    editText.setTextSize(18);
-                    editText.setTypeface(null, Typeface.BOLD);
-
-                }
-                final ListItem listItem = groupItem.get(position);
-
-
-               editText.setText(listItem.value);
-
-//            holder.textView.setText(listItem.getLabel().toString());
-//              holder.editText.setEnabled(false);
-
-                return rowView;
-            }
-        }
 //        protected void actv(final boolean active) {
 //            holder.editText.setEnabled(active);
 //            if (active) {

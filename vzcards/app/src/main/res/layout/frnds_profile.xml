@@ -40,7 +40,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:id="@+id/l2"
                     android:orientation="vertical"
@@ -98,7 +98,7 @@
                         android:text="Name lk;lk;lk;lk;lk;lk;lk;lk "
                         android:textStyle="bold"
                         android:layout_marginBottom="2dp"
-                        android:textSize="1sp"
+                        android:textSize="16sp"
                         android:id="@id/name"
                         android:gravity="center"/>
 
@@ -121,7 +121,8 @@
                         android:layout_below="@+id/l2"
                         android:descendantFocusability="afterDescendants"
                         android:layout_above="@+id/l8"
-                        android:dividerHeight="-22dp"
+                        android:dividerHeight="-23dp"
+                        android:listSelector="@android:color/transparent"
                         android:divider="@null"
                         android:layout_marginBottom="10dp"></ListView>
 
