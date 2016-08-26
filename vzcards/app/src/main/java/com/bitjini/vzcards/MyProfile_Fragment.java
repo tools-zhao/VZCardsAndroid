@@ -111,7 +111,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     Bitmap bm = null;
     String json, json2,json3;
     public   String  firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "",
-            city, pin_code = "",title="";
+            city="", pin_code = "",title="";
     public static String photo="",company_photo="";
     public Bitmap bitmap;
     public static String picturePath;
@@ -435,7 +435,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         if(!photo.isEmpty()) {
 
 
-            Picasso.with(getActivity()).load(photo).centerCrop().resize(400,400).into(imageProfile);
+            Picasso.with(getActivity()).load(photo).centerCrop().resize(400,400).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
 
             Log.e(" Photo on Received ",""+photo);
 
@@ -456,7 +456,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
         if(!company_photo.isEmpty()) {
-            Picasso.with(getActivity()).load(company_photo).centerCrop().resize(200,200).into(imageCompany);
+            Picasso.with(getActivity()).load(company_photo).centerCrop().resize(200,200).placeholder(R.drawable.no_pic_placeholder_2).into(imageCompany);
             Log.e(" company_photoReceived",""+company_photo);
 
             SavePreferences(COMPANY_IMAGE, company_photo);
@@ -466,7 +466,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         }else  {
             imageCompany.setImageResource(R.drawable.no_pic_placeholder_2);
             imageCompany.setCropToPadding(true);
-            imageCompany.setPadding(60,60,60,60);
+            imageProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            imageCompany.setPadding(50,50,50,50);
         }
 
 
