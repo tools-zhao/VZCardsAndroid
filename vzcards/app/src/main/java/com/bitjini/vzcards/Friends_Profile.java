@@ -103,8 +103,8 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
     VerifyScreen p = new VerifyScreen();
     Bitmap bm = null;
     String json, json2;
-    public String firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "",
-            city, pin_code = "", phone = "", title = "";
+    public String firstname = "", lastname = "", email ="", industry = "", company = "", address_line_1 = "", address_line_2 = "",
+            city="", pin_code = "", phone = "", title = "";
     public static String photo = "", company_photo = "";
     public Bitmap bitmap;
     public static String picturePath;
@@ -211,16 +211,16 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         if (!title.isEmpty())
             values.add(title);  // contains value for what do you do?
 
-        if (!email.isEmpty())
+        if (email!=null)
             values.add(email);
 
-        if (!address_line_1.isEmpty())
+        if (address_line_1!=null)
             values.add(address_line_1);
 
-        if (!city.isEmpty())
+        if (city!=null)
             values.add(city);
 
-        if (!pin_code.isEmpty())
+        if (pin_code!=null)
             values.add(pin_code);
 
         addValues(values);
