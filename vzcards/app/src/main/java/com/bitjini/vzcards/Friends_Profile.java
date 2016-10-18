@@ -208,7 +208,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         values = new ArrayList<String>();
         values.add(firstname + " " + lastname);
 //        values.add(lastname);
-        if (!title.isEmpty())
+        if (title!=null)
             values.add(title);  // contains value for what do you do?
 
         if (email!=null)
