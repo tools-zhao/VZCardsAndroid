@@ -764,8 +764,14 @@ FrameLayout layout_MainMenu;
 
             View layout = inflater.inflate(R.layout.screen_popup, null);
 
-            pwindo = new PopupWindow(layout, 700, 500, true);
-
+            CheckDensity checkdensity=new CheckDensity(getActivity());
+           int density= checkdensity.getDensity();
+            if(density==480)
+            {
+                pwindo = new PopupWindow(layout, 1500, 730, true);
+            }else {
+                pwindo = new PopupWindow(layout, 700, 500, true);
+            }
             pwindo.showAtLocation(layout, Gravity.CENTER, 0, 0);
             pwindo.getAnimationStyle();
             pwindo.setBackgroundDrawable(new ColorDrawable(Color.LTGRAY));
