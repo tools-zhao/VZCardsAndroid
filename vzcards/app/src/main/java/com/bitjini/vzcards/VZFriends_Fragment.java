@@ -55,6 +55,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -139,6 +140,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             progressBar.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
 
+            Collections.sort(selectUsers, new SortBasedOnName());// sort in alphabetical order
 
             adapter = new VZFriends_Adapter(selectUsers, getActivity());
             listView.setAdapter(adapter);
@@ -318,6 +320,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 isLoading = false;
                 getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
                 if(getActivity()!=null) {
+                    Collections.sort(selectUsers, new SortBasedOnName());// sort in alphabetical order
+
                     adapter = new VZFriends_Adapter(selectUsers, getActivity());
                     listView.setAdapter(adapter);
                     filter = adapter.getFilter();
@@ -425,17 +429,6 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 //        getFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in,R.anim.slide_out).add(R.id.vzfrnds_list_frame, ldf).addToBackStack(ldf.toString())
 //                .commit();
     }
-
-    //dynamically increase the size of the imageview
-//                int width = image.getWidth();
-//                int height = image.getHeight();
-//                int newWidth = 300;
-//                int newHeight = 240;
-//                float scaleWidth = ((float) newWidth) / width;
-//                float scaleHeight = ((float) newHeight) / height;
-//                Matrix matrix = new Matrix();
-//                matrix.postScale(scaleWidth, scaleHeight);
-//                Bitmap newbm = Bitmap.createBitmap(image, 0, 0, width, height, matrix,true);
 
 
 
