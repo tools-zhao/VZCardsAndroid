@@ -272,6 +272,10 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                         JsonElement jsonObject1 = parser1.parse(refPhoneDetails);
 
                         if (jsonObject1.isJsonObject()) {
+
+
+//                Log.e("list:",""+sync.phoneList12);
+
                             JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
 
                             referedFname = reffered_phone_details.getString("firstname");
@@ -376,6 +380,15 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                         referalUsers.setRefItemName(refItemName);
                         referalUsers.setRefItem_photo(refItem_photo);
 
+                        SyncContacts sync = new SyncContacts(getActivity());
+                        for (SelectUser list : sync.phoneList12) {
+
+                            if (phone.equals(list.getPhone())) {
+                                referalUsers.setFname(list.getName());
+                                Log.e("list name",""+list.getfName());
+                            }
+
+                        }
 //                            Log.e("referedFname 1=", "" + referedFname);
                         groupItem.add(referalUsers);
                         String json2 = new Gson().toJson(groupItem);// updated array
@@ -573,7 +586,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
                     Intent nextScreenIntent = new Intent(_c, Friends_Profile.class);
 
-
+                    nextScreenIntent.putExtra("phoneName", data.getFname());
                     nextScreenIntent.putExtra("fname", data.getReferredfName());
                     nextScreenIntent.putExtra("lname", data.getReferredlName());
                     nextScreenIntent.putExtra("photo", data.getReferedPhoto());
