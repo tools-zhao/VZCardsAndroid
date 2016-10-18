@@ -171,13 +171,21 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         getProfileDetails();
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         width = metrics.widthPixels;
+        int density = metrics.densityDpi;
         Log.e("width=",""+width);
         height = metrics.heightPixels;
         RelativeLayout.LayoutParams paramImage = new RelativeLayout.LayoutParams(width/2,width/2);
         imageProfile.setLayoutParams(paramImage);
         RelativeLayout.LayoutParams textParams = new RelativeLayout.LayoutParams(width/2,43);
-//        textParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        textParams.topMargin=((width/2)-43);
+        if(density==480) {
+            textParams = new RelativeLayout.LayoutParams(width / 2, 60);
+            textParams.topMargin = ((width / 2) - 60);
+        }else
+        {
+            textParams = new RelativeLayout.LayoutParams(width / 2, 45);
+            textParams.topMargin = ((width / 2) - 45);
+        }
+
         Log.e("width=",""+width/2);
         textViewName.setTextColor(Color.WHITE);
         textViewName.setLayoutParams(textParams);

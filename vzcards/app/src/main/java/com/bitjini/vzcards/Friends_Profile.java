@@ -158,14 +158,23 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         int width = metrics.widthPixels;
+        int density = metrics.densityDpi;
         Log.e("width=", "" + width);
         int height = metrics.heightPixels;
         RelativeLayout.LayoutParams paramImage = new RelativeLayout.LayoutParams(width / 2, width / 2);
         imageProfile.setLayoutParams(paramImage);
+        RelativeLayout.LayoutParams textParams;
+        if(density==480) {
+            textParams = new RelativeLayout.LayoutParams(width / 2, 60);
+            textParams.topMargin = ((width / 2) - 60);
+        }else
+        {
+            textParams = new RelativeLayout.LayoutParams(width / 2, 45);
+            textParams.topMargin = ((width / 2) - 45);
+        }
+//        textParams.addRule(RelativeLayout.ALIGN_BOTTOM);
 
-        RelativeLayout.LayoutParams textParams = new RelativeLayout.LayoutParams(width / 2, 45);
-//        textParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        textParams.topMargin = ((width / 2) - 45);
+//
         Log.e("width=", "" + width / 2);
         textViewName.setTextColor(Color.WHITE);
         textViewName.setLayoutParams(textParams);
