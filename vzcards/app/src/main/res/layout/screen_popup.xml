@@ -62,7 +62,7 @@
                 android:textSize="12sp"
                 android:text="profile"
                 android:id="@+id/feedProfile"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="6dp"
                 android:layout_marginTop="5dp"
                 />
         </LinearLayout>
@@ -145,9 +145,10 @@
                 android:layout_height="fill_parent"
                 android:layout_below="@+id/name"
                 android:textSize="12sp"
+
                 android:text="profile"
                 android:id="@+id/feedProfile2"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="6dp"
                 android:layout_marginTop="5dp"
                 />
         </LinearLayout>

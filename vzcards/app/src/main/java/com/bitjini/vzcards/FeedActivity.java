@@ -768,7 +768,7 @@ FrameLayout layout_MainMenu;
            int density= checkdensity.getDensity();
             if(density==480)
             {
-                pwindo = new PopupWindow(layout, 1200, 730, true);
+                pwindo = new PopupWindow(layout, 1080, 730, true);
             }else {
                 pwindo = new PopupWindow(layout, 700, 500, true);
             }
