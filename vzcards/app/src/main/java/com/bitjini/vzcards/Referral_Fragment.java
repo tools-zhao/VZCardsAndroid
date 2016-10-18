@@ -305,7 +305,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                             email = "";
                             title = "";
 
-//                                Log.e("json reffered_ticket 3=", "" + referedFname);
+                                Log.e("json reffered fname", "" + referedFname);
 //                                Log.e("json reffered_phone_ 3=", "" + phone);
                         }
                         String refTicketDetails = c2.getString("reffered_ticket_details");
@@ -384,7 +384,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                         for (SelectUser list : sync.phoneList12) {
 
                             if (phone.equals(list.getPhone())) {
-                                referalUsers.setFname(list.getName());
+                                referalUsers.setPhoneName(list.getName());
                                 Log.e("list name",""+list.getfName());
                             }
 
@@ -586,7 +586,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
                     Intent nextScreenIntent = new Intent(_c, Friends_Profile.class);
 
-                    nextScreenIntent.putExtra("phoneName", data.getFname());
+                    nextScreenIntent.putExtra("phoneName", data.getPhoneName());
                     nextScreenIntent.putExtra("fname", data.getReferredfName());
                     nextScreenIntent.putExtra("lname", data.getReferredlName());
                     nextScreenIntent.putExtra("photo", data.getReferedPhoto());

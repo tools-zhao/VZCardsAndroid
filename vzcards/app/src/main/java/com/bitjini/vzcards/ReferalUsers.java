@@ -13,6 +13,16 @@ public class ReferalUsers {
     String ticketReferedName;
     String refQuestion="",refDesc="",refItemName="",refDateValidity="",refItem_photo="";
 
+    String phoneName="";
+
+    public String getPhoneName() {
+        return phoneName;
+    }
+
+    public void setPhoneName(String phoneName) {
+        this.phoneName = phoneName;
+    }
+
     public String getTitle() {
         return title;
     }
