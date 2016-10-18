@@ -180,6 +180,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         if(density==480) {
             textParams = new RelativeLayout.LayoutParams(width / 2, 64);
             textParams.topMargin = ((width / 2) - 64);
+        }else if(density==240) {
+            textParams = new RelativeLayout.LayoutParams(width / 2, 34);
+            textParams.topMargin = ((width / 2) - 34);
         }else
         {
             textParams = new RelativeLayout.LayoutParams(width / 2, 45);
