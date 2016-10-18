@@ -104,7 +104,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
     Bitmap bm = null;
     String json, json2;
     public String firstname = "", lastname = "", email ="", industry = "", company = "", address_line_1 = "", address_line_2 = "",
-            city="", pin_code = "", phone = "", title = "";
+            city="", pin_code = "", phone = "", title = "",phoneName="";
     public static String photo = "", company_photo = "";
     public Bitmap bitmap;
     public static String picturePath;
@@ -141,6 +141,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         Intent intent = getIntent();
         // Receiving data
 
+        phoneName = intent.getStringExtra("phoneName");
         firstname = intent.getStringExtra("fname");
         lastname = intent.getStringExtra("lname");
         email = intent.getStringExtra("email");
@@ -202,8 +203,8 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         }
 
 
-
-        textViewName.setText(firstname + " " + lastname);
+        textViewName.setText(phoneName);
+//        textViewName.setText(firstname + " " + lastname);
         textViewName.setTextSize(16);
         values = new ArrayList<String>();
         values.add(firstname + " " + lastname);

@@ -403,6 +403,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         SelectUser data = (SelectUser) parent.getItemAtPosition(position);
         Intent nextScreenIntent = new Intent(getActivity(), Friends_Profile.class);
 
+        nextScreenIntent.putExtra("phoneName",data.getfName());
         nextScreenIntent.putExtra("fname", data.getFirstName());
         nextScreenIntent.putExtra("lname", data.getLastName());
         nextScreenIntent.putExtra("photo", data.getPhoto());
