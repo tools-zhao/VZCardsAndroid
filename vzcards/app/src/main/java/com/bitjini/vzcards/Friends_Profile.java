@@ -165,8 +165,8 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         imageProfile.setLayoutParams(paramImage);
         RelativeLayout.LayoutParams textParams;
         if(density==480) {
-            textParams = new RelativeLayout.LayoutParams(width / 2, 60);
-            textParams.topMargin = ((width / 2) - 60);
+            textParams = new RelativeLayout.LayoutParams(width / 2, 64);
+            textParams.topMargin = ((width / 2) - 64);
         }else
         {
             textParams = new RelativeLayout.LayoutParams(width / 2, 45);

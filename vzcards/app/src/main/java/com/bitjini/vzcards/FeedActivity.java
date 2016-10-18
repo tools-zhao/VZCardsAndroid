@@ -769,6 +769,10 @@ FrameLayout layout_MainMenu;
             if(density==480)
             {
                 pwindo = new PopupWindow(layout, 1080, 730, true);
+            }else if(density==240)
+            {
+                pwindo = new PopupWindow(layout, 540, 400, true);
+
             }else {
                 pwindo = new PopupWindow(layout, 700, 500, true);
             }

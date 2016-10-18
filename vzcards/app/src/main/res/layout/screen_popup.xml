@@ -74,8 +74,8 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
             <com.bitjini.vzcards.RoundedImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="15dp"
                 android:id="@+id/profilePic"
@@ -161,8 +161,8 @@
             android:layout_marginRight="5dp"
             android:gravity="center_horizontal">
             <com.bitjini.vzcards.RoundedImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="15dp"
                 android:id="@+id/profilePic2"
