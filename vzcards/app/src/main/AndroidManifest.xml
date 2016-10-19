@@ -33,6 +33,8 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data android:name="net.hockeyapp.android.appIdentifier" android:value="${HOCKEYAPP_APP_ID}" />
+
     </application>
     <!-- NEED TO ADD TO BE ABLE TO GO ONLINE AND GET DATA -->
     <uses-permission android:name="android.permission.INTERNET"/>

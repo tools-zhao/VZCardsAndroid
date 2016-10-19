@@ -22,6 +22,8 @@ android {
 
     defaultConfig {
         applicationId "com.bitjini.vzcards"
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "2e72f177f0c2446aaa87733c957f5e0d"]
+
         minSdkVersion 17
         targetSdkVersion 24
         versionCode 3
@@ -59,5 +61,6 @@ dependencies {
         exclude module: 'httpclient'
     }
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
+    compile 'net.hockeyapp.android:HockeySDK:4.1.1'
 //    compile files('libs/httpmime-4.3.jar')
 }
