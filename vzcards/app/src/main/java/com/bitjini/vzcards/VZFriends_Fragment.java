@@ -191,7 +191,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
 
 
-                    selectUsers.clear();
+//                    selectUsers.clear();
+//                    listView.setVisibility(View.VISIBLE);
                     // It is time to load more items
                     isLoading = true;
                     totalPage=(int) Math.ceil((double)countOfFrnds / 10.0);
@@ -352,6 +353,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 totalPage=0;
                 countOfFrnds=0;
                 isLoading = false;
+                listView.setVisibility(View.VISIBLE);
                 getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
                 if(getActivity()!=null) {
 
@@ -386,7 +388,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 if(currentPage<totalPage) {
 
                     Log.e("currentpage=",""+currentPage);
-
+                    listView.setVisibility(View.VISIBLE);
                     getVzFrnds("https://vzcards-api.herokuapp.com/get_my_friends/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
 
                     listView.setVisibility(View.VISIBLE);
