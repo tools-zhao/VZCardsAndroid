@@ -107,28 +107,15 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
         // Populate our list with groups and it's children
         // Creating the list adapter and populating the list
- if(savedInstanceState==null) {
-     list.setVisibility(View.GONE);
-     progressBar.setVisibility(View.VISIBLE);
-     progressBar.setProgress(0);
-        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-        animation.setDuration(2000); //in milliseconds
-        animation.setRepeatCount(5);
-        animation.setInterpolator(new DecelerateInterpolator());
-        animation.start();
+        if (getActivity() != null) {
 
      getReferalContents(HISTORY_URL + p.token_sharedPreference);
                 progressBar.clearAnimation();
 
-                progressBar.setVisibility(View.GONE);
-                list.setVisibility(View.VISIBLE);
 
-     if (getActivity() != null) {
-//            list.setVisibility(View.VISIBLE);
-//            getReferalContents(HISTORY_URL + p.token_sharedPreference);
          listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
          list.setAdapter(listAdapter);
-     }
+
  }
         // on configuration changes (screen rotation) we want fragment member variables to preserved
         setRetainInstance(true);
@@ -226,192 +213,206 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
         }
     public void getReferalContents(String url) {
-        try{
-            count=1;
-        String received=new HttpAsyncTask(getActivity()).execute(url).get();
+        list.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setProgress(0);
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+        animation.setDuration(2000); //in milliseconds
+        animation.setRepeatCount(5);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.start();
+        new HttpAsyncTask(getActivity()) {
+
+            @Override
+            public void onPostExecute(String received) {
+                if(received!=null) {
+
+                        try {
+                            count = 1;
+//        String received=new HttpAsyncTask(getActivity()).execute(url).get();
 
 //                    Log.e("received History", "" + received);
 
-                    JSONObject jsonObject = new JSONObject(received);
-            countOfFeeds=jsonObject.getInt("count");
+                            JSONObject jsonObject = new JSONObject(received);
+                            countOfFeeds = jsonObject.getInt("count");
 
-            if(countOfFeeds==0)
-            {
-                emptyMsg.setVisibility(View.VISIBLE);
-                emptyMsg.setText("Hey, you do not have any Tickets referred yet.\nPlease \"Add\" tickets.");
-                list.setVisibility(View.GONE);
+                            if (countOfFeeds == 0) {
+                                emptyMsg.setVisibility(View.VISIBLE);
+                                emptyMsg.setText("Hey, you do not have any Tickets referred yet.\nPlease \"Add\" tickets.");
+                                list.setVisibility(View.GONE);
 
-            }else {
-                emptyMsg.setVisibility(View.GONE);
-                list.setVisibility(View.VISIBLE);
+                            } else {
+                                emptyMsg.setVisibility(View.GONE);
+                                list.setVisibility(View.VISIBLE);
 
-                String response = jsonObject.getString("response");
-                // Getting JSON Array node
-                JSONArray arr = jsonObject.getJSONArray("response");
+                                String response = jsonObject.getString("response");
+                                // Getting JSON Array node
+                                JSONArray arr = jsonObject.getJSONArray("response");
 
-                Log.e("referrals", "" + response);
-                // looping through All Contacts
-                for (int i = 0; i < arr.length(); i++) {
-                    JSONObject c = arr.getJSONObject(i);
-                    // Connection Node in an array
-                    JSONArray arr2 = c.getJSONArray("connections");
+                                Log.e("referrals", "" + response);
+                                // looping through All Contacts
+                                for (int i = 0; i < arr.length(); i++) {
+                                    JSONObject c = arr.getJSONObject(i);
+                                    // Connection Node in an array
+                                    JSONArray arr2 = c.getJSONArray("connections");
 //                        Log.e(" connections :", "" + arr2);
 
-                    for (int i2 = 0; i2 < arr2.length(); i2++) {
-                        JSONObject c2 = arr2.getJSONObject(i2);
+                                    for (int i2 = 0; i2 < arr2.length(); i2++) {
+                                        JSONObject c2 = arr2.getJSONObject(i2);
 
-                        String referedFname = "", referedLname = "", refphoto = "", phone = "", company = "", pin_code = "", industry = "",
-                                address1 = "", address2 = "", city = "", company_photo = "", email = "", title = "";
-                        String refQuestion = "", refDescription = "", refTicket_id = "", refItemName = "",
-                                refDate_validity = "", refVz_id = "", refItem_photo = "", refDate_created = "";
+                                        String referedFname = "", referedLname = "", refphoto = "", phone = "", company = "", pin_code = "", industry = "",
+                                                address1 = "", address2 = "", city = "", company_photo = "", email = "", title = "";
+                                        String refQuestion = "", refDescription = "", refTicket_id = "", refItemName = "",
+                                                refDate_validity = "", refVz_id = "", refItem_photo = "", refDate_created = "";
 
-                        String refPhoneDetails = c2.getString("reffered_phone_details");
+                                        String refPhoneDetails = c2.getString("reffered_phone_details");
 
-                        // check if refPhone Details is a string or valid json object
-                        JsonParser parser1 = new JsonParser();
-                        JsonElement jsonObject1 = parser1.parse(refPhoneDetails);
+                                        // check if refPhone Details is a string or valid json object
+                                        JsonParser parser1 = new JsonParser();
+                                        JsonElement jsonObject1 = parser1.parse(refPhoneDetails);
 
-                        if (jsonObject1.isJsonObject()) {
+                                        if (jsonObject1.isJsonObject()) {
 
 
 //                Log.e("list:",""+sync.phoneList12);
 
-                            JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
+                                            JSONObject reffered_phone_details = c2.getJSONObject("reffered_phone_details");
 
-                            referedFname = reffered_phone_details.getString("firstname");
-                            referedLname = reffered_phone_details.getString("lastname");
-                            refphoto = reffered_phone_details.getString("photo");
-                            phone = reffered_phone_details.getString("phone");
-                            company = reffered_phone_details.getString("company");
-                            pin_code = reffered_phone_details.getString("pin_code");
-                            industry = reffered_phone_details.getString("industry");
-                            address1 = reffered_phone_details.getString("address_line_1");
-                            address2 = reffered_phone_details.getString("address_line_2");
-                            city = reffered_phone_details.getString("city");
-                            title = reffered_phone_details.getString("title");
-                            company_photo = reffered_phone_details.getString("company_photo");
-                            email = reffered_phone_details.getString("email");
+                                            referedFname = reffered_phone_details.getString("firstname");
+                                            referedLname = reffered_phone_details.getString("lastname");
+                                            refphoto = reffered_phone_details.getString("photo");
+                                            phone = reffered_phone_details.getString("phone");
+                                            company = reffered_phone_details.getString("company");
+                                            pin_code = reffered_phone_details.getString("pin_code");
+                                            industry = reffered_phone_details.getString("industry");
+                                            address1 = reffered_phone_details.getString("address_line_1");
+                                            address2 = reffered_phone_details.getString("address_line_2");
+                                            city = reffered_phone_details.getString("city");
+                                            title = reffered_phone_details.getString("title");
+                                            company_photo = reffered_phone_details.getString("company_photo");
+                                            email = reffered_phone_details.getString("email");
 
 //                                Log.e("json reffered_phone_ 2=", "" + jsonObject1);
-                        } else {
-                            phone = c2.getString("reffered_phone_details");
-                            company = "";
-                            pin_code = "";
-                            industry = "";
-                            address1 = "";
-                            address2 = "";
-                            city = "";
-                            company_photo = "";
-                            email = "";
-                            title = "";
+                                        } else {
+                                            phone = c2.getString("reffered_phone_details");
+                                            company = "";
+                                            pin_code = "";
+                                            industry = "";
+                                            address1 = "";
+                                            address2 = "";
+                                            city = "";
+                                            company_photo = "";
+                                            email = "";
+                                            title = "";
 
-                                Log.e("json reffered fname", "" + referedFname);
+                                            Log.e("json reffered fname", "" + referedFname);
 //                                Log.e("json reffered_phone_ 3=", "" + phone);
-                        }
-                        String refTicketDetails = c2.getString("reffered_ticket_details");
+                                        }
+                                        String refTicketDetails = c2.getString("reffered_ticket_details");
 
-                        // check if refPhone Details is a string or valid json object
-                        JsonParser parser2 = new JsonParser();
-                        JsonElement jsonObject2 = parser2.parse(refPhoneDetails);
+                                        // check if refPhone Details is a string or valid json object
+                                        JsonParser parser2 = new JsonParser();
+                                        JsonElement jsonObject2 = parser2.parse(refPhoneDetails);
 
-                        if (jsonObject2.isJsonObject()) {
-                            JSONObject reffered_TicketDetails = c2.getJSONObject("reffered_ticket_details");
-                            refQuestion = reffered_TicketDetails.getString("question");
-                            refDescription = reffered_TicketDetails.getString("description");
-                            refTicket_id = reffered_TicketDetails.getString("ticket_id");
-                            refItemName = reffered_TicketDetails.getString("item");
-                            refDate_validity = reffered_TicketDetails.getString("date_validity");
-                            refVz_id = reffered_TicketDetails.getString("vz_id");
-                            refItem_photo = reffered_TicketDetails.getString("item_photo");
-                            refDate_created = reffered_TicketDetails.getString("date_created");
-                        } else {
-                            referedFname = c2.getString("reffered_ticket_details");
-                        }
+                                        if (jsonObject2.isJsonObject()) {
+                                            JSONObject reffered_TicketDetails = c2.getJSONObject("reffered_ticket_details");
+                                            refQuestion = reffered_TicketDetails.getString("question");
+                                            refDescription = reffered_TicketDetails.getString("description");
+                                            refTicket_id = reffered_TicketDetails.getString("ticket_id");
+                                            refItemName = reffered_TicketDetails.getString("item");
+                                            refDate_validity = reffered_TicketDetails.getString("date_validity");
+                                            refVz_id = reffered_TicketDetails.getString("vz_id");
+                                            refItem_photo = reffered_TicketDetails.getString("item_photo");
+                                            refDate_created = reffered_TicketDetails.getString("date_created");
+                                        } else {
+                                            referedFname = c2.getString("reffered_ticket_details");
+                                        }
 
 
-                        JSONObject connecter_details = c2.getJSONObject("connecter_details");
+                                        JSONObject connecter_details = c2.getJSONObject("connecter_details");
 //                    Log.w("connecter_details", "" + connecter_details);
 
-                        String fname = connecter_details.getString("firstname");
-                        String lastname = connecter_details.getString("lastname");
-                        String photo = connecter_details.getString("photo");
+                                        String fname = connecter_details.getString("firstname");
+                                        String lastname = connecter_details.getString("lastname");
+                                        String photo = connecter_details.getString("photo");
 
-                        ReferalUsers referalUsers = new ReferalUsers();
+                                        ReferalUsers referalUsers = new ReferalUsers();
 
 
-                        JSONObject ticket_details = c.getJSONObject("ticket_details");
+                                        JSONObject ticket_details = c.getJSONObject("ticket_details");
 //                            Log.e(" ticket_details :", "" + ticket_details);
-                        String question = ticket_details.getString("question");
-                        String description = ticket_details.getString("description");
-                        String ticket_id = ticket_details.getString("ticket_id");
-                        String itemName = ticket_details.getString("item");
-                        String date_validity = ticket_details.getString("date_validity");
-                        String vz_id = ticket_details.getString("vz_id");
-                        String item_photo = ticket_details.getString("item_photo");
-                        String date_created = ticket_details.getString("date_created");
+                                        String question = ticket_details.getString("question");
+                                        String description = ticket_details.getString("description");
+                                        String ticket_id = ticket_details.getString("ticket_id");
+                                        String itemName = ticket_details.getString("item");
+                                        String date_validity = ticket_details.getString("date_validity");
+                                        String vz_id = ticket_details.getString("vz_id");
+                                        String item_photo = ticket_details.getString("item_photo");
+                                        String date_created = ticket_details.getString("date_created");
 //                    Log.e(" description :", "" + description);
-                        referalUsers.setDesc(description);
-                        referalUsers.setItemName(itemName);
-                        referalUsers.setItem_photo(item_photo);
-                        referalUsers.setRefQuestion(question);
-                        Log.e("ref question ", "" + question);
-                        // Connector details
-                        referalUsers.setFname(fname);
-                        referalUsers.setLname(lastname);
-                        referalUsers.setPhoto(photo);
+                                        referalUsers.setDesc(description);
+                                        referalUsers.setItemName(itemName);
+                                        referalUsers.setItem_photo(item_photo);
+                                        referalUsers.setRefQuestion(question);
+                                        Log.e("ref question ", "" + question);
+                                        // Connector details
+                                        referalUsers.setFname(fname);
+                                        referalUsers.setLname(lastname);
+                                        referalUsers.setPhoto(photo);
 
-                        // Referral details
-                        referalUsers.setReferredfName(referedFname);
-                        referalUsers.setReferredlName(referedLname);
-                        referalUsers.setReferedPhoto(refphoto);
-                        referalUsers.setPhone(phone);
-                        referalUsers.setEmail(email);
-                        referalUsers.setCompany(company);
-                        referalUsers.setPin_code(pin_code);
-                        referalUsers.setIndustry(industry);
-                        referalUsers.setAddress1(address1);
-                        referalUsers.setAddress2(address2);
-                        referalUsers.setCity(city);
-                        referalUsers.setTitle(title);
-                        referalUsers.setComany_photo(company_photo);
-                        // Referred ticket details
+                                        // Referral details
+                                        referalUsers.setReferredfName(referedFname);
+                                        referalUsers.setReferredlName(referedLname);
+                                        referalUsers.setReferedPhoto(refphoto);
+                                        referalUsers.setPhone(phone);
+                                        referalUsers.setEmail(email);
+                                        referalUsers.setCompany(company);
+                                        referalUsers.setPin_code(pin_code);
+                                        referalUsers.setIndustry(industry);
+                                        referalUsers.setAddress1(address1);
+                                        referalUsers.setAddress2(address2);
+                                        referalUsers.setCity(city);
+                                        referalUsers.setTitle(title);
+                                        referalUsers.setComany_photo(company_photo);
+                                        // Referred ticket details
 
-                        referalUsers.setRefDesc(refDescription);
-                        referalUsers.setRefItemName(refItemName);
-                        referalUsers.setRefItem_photo(refItem_photo);
+                                        referalUsers.setRefDesc(refDescription);
+                                        referalUsers.setRefItemName(refItemName);
+                                        referalUsers.setRefItem_photo(refItem_photo);
 
-                        SyncContacts sync = new SyncContacts(getActivity());
-                        for (SelectUser list : sync.phoneList12) {
+                                        SyncContacts sync = new SyncContacts(getActivity());
+                                        for (SelectUser list : sync.phoneList12) {
 
-                            if (phone.equals(list.getPhone())) {
-                                referalUsers.setPhoneName(list.getName());
-                                Log.e("list name",""+list.getfName());
-                            }
+                                            if (phone.equals(list.getPhone())) {
+                                                referalUsers.setPhoneName(list.getName());
+                                                Log.e("list name", "" + list.getfName());
+                                            }
 
-                        }
+                                        }
 //                            Log.e("referedFname 1=", "" + referedFname);
-                        groupItem.add(referalUsers);
-                        String json2 = new Gson().toJson(groupItem);// updated array
+                                        groupItem.add(referalUsers);
+                                        String json2 = new Gson().toJson(groupItem);// updated array
 //                            Log.e("groupItem array", "" + json2);
 
-                    }
+                                    }
 
 
-                }
-            }
+                                }
+                            }
 //                    for (ReferalUsers u : groupItem) {
 //                        Log.w("list ", "" + u.getReferredfName());
 //                    }
+                            progressBar.setVisibility(View.GONE);
+                            list.setVisibility(View.VISIBLE);
 
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-    e.printStackTrace();
-} catch (ExecutionException e) {
-    e.printStackTrace();
-}
-    }
+                }
+            }.execute(url);
+        }
 
 
     @Override

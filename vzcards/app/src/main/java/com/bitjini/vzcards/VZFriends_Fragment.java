@@ -108,6 +108,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
         getActivity();
         progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
+        progressBar.setVisibility(View.GONE);
         swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
         inviteButton=(Button)vzfrnds.findViewById(R.id.invite);
 
@@ -126,21 +127,9 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
         mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
         if(getActivity()!=null) {
-            listView.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.setProgress(0);
-            ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
-            animation.setDuration(2000); //in milliseconds
-            animation.setRepeatCount(5);
-            animation.setInterpolator(new DecelerateInterpolator());
-            animation.start();
+
             getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-
-
-            progressBar.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
-
-            Collections.sort(selectUsers, new SortBasedOnName());// sort in alphabetical order
+            progressBar.clearAnimation();
 
             adapter = new VZFriends_Adapter(selectUsers, getActivity());
             listView.setAdapter(adapter);
@@ -206,10 +195,23 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
     public void getVzFrnds(String url)
     {
+        listView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setProgress(0);
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
+        animation.setDuration(2000); //in milliseconds
+        animation.setRepeatCount(5);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.start();
+        new HttpAsyncTask(getActivity()) {
+
+            @Override
+            public void onPostExecute(String received) {
+                if(received!=null) {
         try {
             progressCount=1;
 
-            String received=new HttpAsyncTask(getActivity()).execute(url).get();
+//            String received=new HttpAsyncTask(getActivity()).execute(url).get();
 
 
                     JSONObject jsonObject = new JSONObject(received);
@@ -279,6 +281,10 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
 
                     selectUsers.add(selectUser);
+                    progressBar.setVisibility(View.GONE);
+                    listView.setVisibility(View.VISIBLE);
+                    Collections.sort(selectUsers, new SortBasedOnName());// sort in alphabetical order
+
 
 
                 }
@@ -289,11 +295,10 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+                }
+                }
+            }
+        }.execute(url);
     }
 
 

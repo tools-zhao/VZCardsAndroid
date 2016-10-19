@@ -6,14 +6,14 @@ package com.bitjini.vzcards;
 
 import java.util.Comparator;
 
-public class SortBasedOnName implements Comparator
+public class SortBasedOnName implements Comparator<SelectUser>
 {
-    public int compare(Object o1, Object o2)
-    {
 
-        SelectUser dd1 = (SelectUser)o1;// where SelectUser is your object class
-        SelectUser dd2 = (SelectUser)o2;
+
+    @Override
+    public int compare(SelectUser selectUser, SelectUser t1) {
+        SelectUser dd1 = (SelectUser)selectUser;// where SelectUser is your object class
+        SelectUser dd2 = (SelectUser)t1;
         return dd1.getfName().compareToIgnoreCase(dd2.getfName());//where getfName is field name
     }
-
 }
