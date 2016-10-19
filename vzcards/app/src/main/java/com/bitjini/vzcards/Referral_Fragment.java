@@ -38,6 +38,9 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -52,7 +55,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
     private static final int PERMISSIONS_REQUEST_CALL_CONTACTS = 100;
 
     MyProfile_Fragment pr = new MyProfile_Fragment();
-   ArrayList<ReferalUsers> groupItem = new ArrayList<ReferalUsers>();
+    static ArrayList<ReferalUsers> groupItem = new ArrayList<ReferalUsers>();
     Button vzfrnds, profilebtn, referralbtn;
     ListView list;
     ProgressBar progressBar;
@@ -108,14 +111,30 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
         // Populate our list with groups and it's children
         // Creating the list adapter and populating the list
         if (getActivity() != null) {
+            if(!groupItem.isEmpty()) {
 
-     getReferalContents(HISTORY_URL + p.token_sharedPreference);
+                list.setVisibility(View.VISIBLE);
+                // add elements to al, including duplicates
+                Set<ReferalUsers> hs = new HashSet<>();
+                hs.addAll(groupItem);
+                groupItem.clear();
+                groupItem.addAll(hs);
+
+                listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+                list.setAdapter(listAdapter);
+            }
+
+            else {
+                list.setVisibility(View.GONE);
+
+                groupItem.clear();
+                getReferalContents(HISTORY_URL + p.token_sharedPreference);
                 progressBar.clearAnimation();
 
 
-         listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
-         list.setAdapter(listAdapter);
-
+                listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
+                list.setAdapter(listAdapter);
+            }
  }
         // on configuration changes (screen rotation) we want fragment member variables to preserved
         setRetainInstance(true);
@@ -193,7 +212,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
         if(currentPage<=totalPage) {
 
             Log.e("currentpage=",""+currentPage);
-
+            list.setVisibility(View.VISIBLE);
             getReferalContents("https://vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
 
 //            // Notify the ListView of data changed
@@ -434,7 +453,11 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 isLoading = false;
                 if(getActivity()!=null) {
                 getReferalContents(HISTORY_URL + p.token_sharedPreference);
-
+                    list.setVisibility(View.VISIBLE);
+                    Set<ReferalUsers> hs = new HashSet<>();
+                    hs.addAll(groupItem);
+                    groupItem.clear();
+                    groupItem.addAll(hs);
                     CustomListAdapter listAdapter = new CustomListAdapter(getActivity(), groupItem, R.layout.referral);
                     list.setAdapter(listAdapter);
                 }

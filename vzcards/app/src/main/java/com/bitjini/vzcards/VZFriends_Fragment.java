@@ -57,7 +57,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -74,7 +76,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     Context c;
     View v;
     // ArrayList
-    ArrayList<SelectUser> selectUsers = new ArrayList<SelectUser>();
+   static   ArrayList<SelectUser> selectUsers = new ArrayList<SelectUser>();
     ArrayList<SelectUser> phoneList = new ArrayList<SelectUser>();
     VZFriends_Adapter adapter;
     List<SelectUser> temp;
@@ -120,23 +122,39 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 ,R.color.red);
         c = vzfrnds.getContext();
 
-
+        mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
         listView = (ListView)vzfrnds.findViewById(R.id.contactList);
         LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
-        mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
-        if(getActivity()!=null) {
+        if(!selectUsers.isEmpty()) {
 
-            getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-            progressBar.clearAnimation();
-
+            listView.setVisibility(View.VISIBLE);
+            // add elements to al, including duplicates
+            Set<SelectUser> hs = new HashSet<>();
+            hs.addAll(selectUsers);
+            selectUsers.clear();
+            selectUsers.addAll(hs);
+            Collections.sort(selectUsers, new SortBasedOnName(getActivity()));// sort in alphabetical order
             adapter = new VZFriends_Adapter(selectUsers, getActivity());
             listView.setAdapter(adapter);
 
             listView.setTextFilterEnabled(true);
             filter = adapter.getFilter();
-        }
+        }else {
+
+            listView.setVisibility(View.GONE);
+
+            selectUsers.clear();
+                getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+                progressBar.clearAnimation();
+
+                adapter = new VZFriends_Adapter(selectUsers, getActivity());
+                listView.setAdapter(adapter);
+
+                listView.setTextFilterEnabled(true);
+                filter = adapter.getFilter();
+            }
 
 
         setupSearchView();
@@ -173,6 +191,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
 
 
+                    selectUsers.clear();
                     // It is time to load more items
                     isLoading = true;
                     totalPage=(int) Math.ceil((double)countOfFrnds / 10.0);
@@ -195,7 +214,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
     public void getVzFrnds(String url)
     {
-        listView.setVisibility(View.GONE);
+//        listView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setProgress(0);
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 500); // see this max value coming back here, we animale towards that value
@@ -252,6 +271,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                     String email = c.getString("email");
 
 
+
+
                     SelectUser selectUser = new SelectUser();
 
                     SyncContacts sync = new SyncContacts(getActivity());
@@ -280,11 +301,18 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                     selectUser.setComany_photo(company_photo);
 
 
+
                     selectUsers.add(selectUser);
                     progressBar.setVisibility(View.GONE);
                     listView.setVisibility(View.VISIBLE);
-                    if(!selectUsers.isEmpty())
-                    Collections.sort(selectUsers, new SortBasedOnName());// sort in alphabetical order
+
+                    if(!selectUsers.isEmpty() && selectUsers!=null) {
+                        Set<SelectUser> hs = new HashSet<>();
+                        hs.addAll(selectUsers);
+                        selectUsers.clear();
+                        selectUsers.addAll(hs);
+                        Collections.sort(selectUsers, new SortBasedOnName(getActivity()));// sort in alphabetical order
+                    }
 
 
 
@@ -326,8 +354,13 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 isLoading = false;
                 getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
                 if(getActivity()!=null) {
-                    Collections.sort(selectUsers, new SortBasedOnName());// sort in alphabetical order
 
+                    listView.setVisibility(View.VISIBLE);
+                    Set<SelectUser> hs = new HashSet<>();
+                    hs.addAll(selectUsers);
+                    selectUsers.clear();
+                    selectUsers.addAll(hs);
+                    Collections.sort(selectUsers, new SortBasedOnName(getActivity()));// sort in alphabetical order
                     adapter = new VZFriends_Adapter(selectUsers, getActivity());
                     listView.setAdapter(adapter);
                     filter = adapter.getFilter();
@@ -344,6 +377,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
         listView.addFooterView(footer);
 
+
         new Handler().postDelayed(new Runnable() {
 
             @Override public void run() {
@@ -355,6 +389,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                     getVzFrnds("https://vzcards-api.herokuapp.com/get_my_friends/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
 
+                    listView.setVisibility(View.VISIBLE);
 //            // Notify the ListView of data changed
 //
                     adapter.notifyDataSetChanged();
