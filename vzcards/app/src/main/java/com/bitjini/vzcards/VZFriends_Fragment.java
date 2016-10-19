@@ -283,6 +283,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                     selectUsers.add(selectUser);
                     progressBar.setVisibility(View.GONE);
                     listView.setVisibility(View.VISIBLE);
+                    if(!selectUsers.isEmpty())
                     Collections.sort(selectUsers, new SortBasedOnName());// sort in alphabetical order
 
 
