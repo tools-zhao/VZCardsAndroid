@@ -138,11 +138,11 @@ FrameLayout layout_MainMenu;
         layout_MainMenu = (FrameLayout) feed.findViewById(R.id.feed_detail);
         layout_MainMenu.getForeground().setAlpha( 0);
 
-        // To avoid NetworkOnMainThreadException
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+//        // To avoid NetworkOnMainThreadException
+//        if (android.os.Build.VERSION.SDK_INT > 9) {
+//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//            StrictMode.setThreadPolicy(policy);
+//        }
 
         listView = (ListView) feed.findViewById(R.id.feedList);
 
