@@ -56,7 +56,7 @@ import javax.net.ssl.HttpsURLConnection;
  * Created by bitjini on 5/4/16.
  */
 public class SyncContacts extends AsyncTask<String, Void, String> {
-    ArrayList<String > phoneArray=new ArrayList<>();
+   static ArrayList<String > phoneArray=new ArrayList<>();
     public static  ArrayList<SelectUser>  phoneList12=new ArrayList<>();
 
     public ProgressDialog progress;
@@ -77,6 +77,10 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         this.context = context;
     }
 
+    public void LoadContacts()
+    {
+        new LoadContact().execute();
+    }
     @Override
     protected String doInBackground(String... urls) {
         // params comes from the execute() call: params[0] is the url.
@@ -105,9 +109,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
             conn.setDoOutput(true);
 
-            new LoadContact() {
-                protected void onPostExecute(Void aVoid) {
-                    super.onPostExecute(aVoid);
+//            new LoadContact().execute();
                     try {
 //                        for (String s:phoneArray) {
 //                            Log.e(" phone arrays:", "" + s);
@@ -118,7 +120,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
                         for(String s: phoneArray) {
                             params.add(new BasicNameValuePair("contact_list", s));
-//                            Log.e("s", "" + s);
+                            Log.e("s", "" + s);
                         }
                         //Send request
                         DataOutputStream wr = new DataOutputStream (
@@ -152,7 +154,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                         }
                     }
 
-                }}.execute();
+
 
 
 
@@ -293,5 +295,6 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         }
         return CountryZipCode;
     }
+
 }
 

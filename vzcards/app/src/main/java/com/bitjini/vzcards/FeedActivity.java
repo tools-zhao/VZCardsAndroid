@@ -534,7 +534,7 @@ FrameLayout layout_MainMenu;
                 new Handler().postDelayed(new Runnable() {
                     @Override public void run() {
 
-
+                        new SyncContacts(getActivity()).LoadContacts();
                         new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL);
 
                         progressBar.setVisibility(View.GONE);
