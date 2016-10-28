@@ -198,82 +198,83 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         return history;
     }
 
-    public void getHistoryContents(String url)
-    {
-
-            count=1;
-            new HttpAsyncTask(getActivity()) {
-
-                @Override
-                public void onPostExecute(String result) {
-                    if (result != null) {
-
-                        listView.setVisibility(View.VISIBLE);
-                        try {
-                            Log.e("received History", "" + result);
+    public void getHistoryContents(String url) {
 
 
-                            JSONObject jsonObject = new JSONObject(result);
+        try {
+            count = 1;
+            String result = new HttpAsyncTask(getActivity()).execute(url).get();
+            Log.e("received History", "" + result);
 
-                            countOfFeeds = jsonObject.getInt("count");
-                            if (countOfFeeds == 0 ) {
-                                emptyMsg.setVisibility(View.VISIBLE);
-                                emptyMsg.setText("Hey, you have not added any tickets.\nPlease \"Add\" tickets.");
-                                listView.setVisibility(View.GONE);
 
-                            } else {
-                                emptyMsg.setVisibility(View.GONE);
-                                listView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.VISIBLE);
 
-                                String response = jsonObject.getString("response");
-                                // Getting JSON Array node
-                                JSONArray arr = jsonObject.getJSONArray("response");
+            Log.e("received History", "" + result);
 
-                                // looping through All Contacts
-                                for (int i = 0; i < arr.length(); i++) {
-                                    JSONObject c = arr.getJSONObject(i);
-                                    // Connection Node in an array
-                                    JSONArray arr2 = c.getJSONArray("connections");
-                                    JSONArray connection = arr.getJSONObject(i).getJSONArray("connections");
-                                    String question = "", description = "", ticket_id = "", itemName = "", date_validity = "", vz_id = "", item_photo = "", date_created = "";
 
-                                    // ticket_details Node in an json object
-                                    JSONObject ticket_details = c.getJSONObject("ticket_details");
+            JSONObject jsonObject = new JSONObject(result);
 
-                                    question = ticket_details.getString("question");
-                                    description = ticket_details.getString("description");
-                                    ticket_id = ticket_details.getString("ticket_id");
-                                    itemName = ticket_details.getString("item");
-                                    date_validity = ticket_details.getString("date_validity");
-                                    vz_id = ticket_details.getString("vz_id");
-                                    item_photo = ticket_details.getString("item_photo");
-                                    date_created = ticket_details.getString("date_created");
+            countOfFeeds = jsonObject.getInt("count");
+            if (countOfFeeds == 0) {
+                emptyMsg.setVisibility(View.VISIBLE);
+                emptyMsg.setText("Hey, you have not added any tickets.\nPlease \"Add\" tickets.");
+                listView.setVisibility(View.GONE);
+
+            } else {
+                emptyMsg.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
+
+                String response = jsonObject.getString("response");
+                // Getting JSON Array node
+                JSONArray arr = jsonObject.getJSONArray("response");
+
+                // looping through All Contacts
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject c = arr.getJSONObject(i);
+                    // Connection Node in an array
+                    JSONArray arr2 = c.getJSONArray("connections");
+                    JSONArray connection = arr.getJSONObject(i).getJSONArray("connections");
+                    String question = "", description = "", ticket_id = "", itemName = "", date_validity = "", vz_id = "", item_photo = "", date_created = "";
+
+                    // ticket_details Node in an json object
+                    JSONObject ticket_details = c.getJSONObject("ticket_details");
+
+                    question = ticket_details.getString("question");
+                    description = ticket_details.getString("description");
+                    ticket_id = ticket_details.getString("ticket_id");
+                    itemName = ticket_details.getString("item");
+                    date_validity = ticket_details.getString("date_validity");
+                    vz_id = ticket_details.getString("vz_id");
+                    item_photo = ticket_details.getString("item_photo");
+                    date_created = ticket_details.getString("date_created");
 //                Log.e(" description :", "" + description);
 
-                                    String days = String.valueOf(getDateDifference(date_created));
+                    String days = String.valueOf(getDateDifference(date_created));
 
-                                    SelectUser selectUser = new SelectUser();
+                    SelectUser selectUser = new SelectUser();
 
-                                    selectUser.setItemName(itemName);
-                                    selectUser.setDate_created(days);
-                                    selectUser.setTicket_id(ticket_id);
-                                    selectUser.setItem_description(description);
-                                    selectUser.setDate_validity(date_validity);
-                                    selectUser.setItem_photo(item_photo);
-                                    selectUser.setQuestion(question);
-                                    selectUser.setConnections(arr2);
-                                    selectUsers.add(selectUser);
+                    selectUser.setItemName(itemName);
+                    selectUser.setDate_created(days);
+                    selectUser.setTicket_id(ticket_id);
+                    selectUser.setItem_description(description);
+                    selectUser.setDate_validity(date_validity);
+                    selectUser.setItem_photo(item_photo);
+                    selectUser.setQuestion(question);
+                    selectUser.setConnections(arr2);
+                    selectUsers.add(selectUser);
 
-                                    swipeRefreshLayout.setRefreshing(false);
-                                }
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    swipeRefreshLayout.setRefreshing(false);
                 }
-            }.execute(url);
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -281,7 +282,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 
 
-    @Override
+                @Override
     public void onRefresh() {
         // TODO Auto-generated method stub
 

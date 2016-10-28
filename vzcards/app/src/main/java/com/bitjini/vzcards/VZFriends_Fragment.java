@@ -514,8 +514,9 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
                 fragmentManager2.beginTransaction()
-                        .replace(contentView3.getId(), inviteContacts).addToBackStack(null)
+                        .replace(contentView3.getId(), inviteContacts).addToBackStack(String.valueOf(contentView3.getId()))
                         .commit();
+                break;
             default:
                 break;
         }

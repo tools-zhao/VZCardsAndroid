@@ -124,6 +124,8 @@ FrameLayout layout_MainMenu;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View feed = inflater.inflate(R.layout.feed_listview, container, false);
+
+
         progressBar = (ProgressBar)feed.findViewById(R.id.progress1);
         progressContainer = (ImageView) feed.findViewById(R.id.progress);
 
@@ -319,22 +321,20 @@ FrameLayout layout_MainMenu;
 
     public void getFeedsContents(String url) {
 
+    try {
 
 
-            progressCount = 1;
-            new HttpAsyncTask(getActivity()) {
+                progressCount = 1;
 
-                @Override
-                public void onPostExecute(String received) {
-                    if(received!=null) {
-                        swipeRefreshLayout.setRefreshing(false);
-                        try {
-                            int status = 0;
-                            JSONObject jsonObj = new JSONObject(received);
-                            if (jsonObj.has("status")) {
-                                status = jsonObj.getInt("status");
-                            }
-                            if (status == 401) {
+                String received =  new HttpAsyncTask(getActivity()).execute(url).get();
+
+                int status=0;
+                JSONObject jsonObj = new JSONObject(received);
+                if (jsonObj.has("status")) {
+                    status= jsonObj.getInt("status");
+                }
+                if(status==401)
+                {
                                 android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getActivity());
                                 alertDialogBuilder.setTitle("Authentication Failed");
                                 alertDialogBuilder.setMessage("Invalid Access Token Please Login Again");
@@ -427,23 +427,25 @@ FrameLayout layout_MainMenu;
                                         dataFeeds.setPhone(phone);
 
                                         feedsArrayList.add(dataFeeds);
-
                                     }
                                 }
                             }
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+
+                            } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 }
-            }.execute(url);
+
+            }
 
 
 
 
 
-    }
 
 
 
@@ -766,6 +768,7 @@ FrameLayout layout_MainMenu;
 
             CheckDensity checkdensity=new CheckDensity(getActivity());
            int density= checkdensity.getDensity();
+            Toast.makeText(getActivity(),"density = "+density,Toast.LENGTH_SHORT).show();
             if(density==480)
             {
                 pwindo = new PopupWindow(layout, 1080, 730, true);
