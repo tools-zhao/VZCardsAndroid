@@ -119,7 +119,7 @@ FrameLayout layout_MainMenu;
     DataFeeds dataFeeds2 = new DataFeeds();
     DataFeeds dataFeeds1 = new DataFeeds();
     ImageView progressContainer;
-
+    public PopupWindow pwindo;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -756,7 +756,7 @@ FrameLayout layout_MainMenu;
     private void initiatePopupWindow() {
         View v = null;
         Button btnClosePopup,btnOkPopup;
-        final PopupWindow pwindo;
+
         layout_MainMenu.getForeground().setAlpha( 150); // dim
 
 
@@ -770,15 +770,26 @@ FrameLayout layout_MainMenu;
             CheckDensity checkdensity=new CheckDensity(getActivity());
            int density= checkdensity.getDensity();
 //            Toast.makeText(getActivity(),"density = "+density,Toast.LENGTH_SHORT).show();
-            if(density==480)
-            {
-                pwindo = new PopupWindow(layout, 1080, 730, true);
-            }else if(density==240)
-            {
-                pwindo = new PopupWindow(layout, 540, 400, true);
+            switch (density) {
+                case 640:
+                    pwindo = new PopupWindow(layout, 1460, 960, true);
+                    break;
+                case 480:
+                    pwindo = new PopupWindow(layout, 1080, 730, true);
+                    break;
+                case 320:
+                    pwindo = new PopupWindow(layout, 700, 500, true);
+                    break;
+                case 240:
+                    pwindo = new PopupWindow(layout, 540, 400, true);
 
-            }else {
-                pwindo = new PopupWindow(layout, 700, 500, true);
+                    break;
+                case 160 :
+                    pwindo = new PopupWindow(layout, 400, 400, true);
+                    break;
+                case 120 :
+                    pwindo = new PopupWindow(layout, 300, 300, true);
+                    break;
             }
             pwindo.showAtLocation(layout, Gravity.CENTER, 0, 0);
             pwindo.getAnimationStyle();
