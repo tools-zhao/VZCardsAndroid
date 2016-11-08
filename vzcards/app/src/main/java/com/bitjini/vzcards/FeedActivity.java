@@ -769,7 +769,7 @@ FrameLayout layout_MainMenu;
 
             CheckDensity checkdensity=new CheckDensity(getActivity());
            int density= checkdensity.getDensity();
-            Toast.makeText(getActivity(),"density = "+density,Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(),"density = "+density,Toast.LENGTH_SHORT).show();
             if(density==480)
             {
                 pwindo = new PopupWindow(layout, 1080, 730, true);
