@@ -427,6 +427,7 @@ FrameLayout layout_MainMenu;
                                         dataFeeds.setPhone(phone);
 
                                         feedsArrayList.add(dataFeeds);
+                                        swipeRefreshLayout.setRefreshing(false);
                                     }
                                 }
                             }
@@ -484,7 +485,7 @@ FrameLayout layout_MainMenu;
                 }
 
                 Log.e("feed size aft refresh",""+feedsArrayList.size());
-//                swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setRefreshing(false);
             }
         }, 5000);
 
@@ -512,7 +513,7 @@ FrameLayout layout_MainMenu;
                     isLoading = false;
                     listView.removeFooterView(footer);
 
-
+                    swipeRefreshLayout.setRefreshing(false);
                 }
                 else {
                     listView.removeFooterView(footer);
