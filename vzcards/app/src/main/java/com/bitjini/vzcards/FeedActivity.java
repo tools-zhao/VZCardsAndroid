@@ -538,7 +538,7 @@ FrameLayout layout_MainMenu;
                     @Override public void run() {
 
                         new SyncContacts(getActivity()).LoadContacts();
-                        new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL);
+//                        new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL);
 
                         progressBar.setVisibility(View.GONE);
                         listView.setVisibility(View.VISIBLE);
