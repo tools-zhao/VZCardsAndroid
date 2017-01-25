@@ -146,11 +146,39 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     }
 
                 } else {
-                    currentImageView = (ImageView) view;
-                    selectImageOption();
-                    if(profilePicturePath!=null)
-                    {
-                        UploadProfileImage();
+                    switch (clickCount) {
+                        case 0:
+                            editbtn.setText("Save");
+                            editbtn.setBackgroundResource(R.color.primaryGreen);
+                            cancelBtn.setVisibility(View.VISIBLE);
+                            RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/4, width/6);
+                            paramImage3.leftMargin=(3*(width/4));
+                            paramImage3.topMargin=((width/2)-(width/6));
+                            editbtn.setLayoutParams(paramImage3);
+                            RelativeLayout.LayoutParams paramImage4 = new RelativeLayout.LayoutParams(width/4, width/6);
+                            paramImage4.leftMargin=width/2;
+                            paramImage4.topMargin=((width/2)-(width/6));
+                            cancelBtn.setLayoutParams(paramImage4);
+                            currentImageView = imageProfile;
+                            selectImageOption();
+                            clickCount=1;
+                            break;
+                        case 1:
+                            editbtn.setText("Edit");
+                            RelativeLayout.LayoutParams paramImage5 = new RelativeLayout.LayoutParams(width/2, width/6);
+                            paramImage5.leftMargin=width/2;
+                            paramImage5.topMargin=((width/2)-(width/6));
+                            editbtn.setLayoutParams(paramImage5);
+                            editbtn.setBackgroundResource(R.color.primary);
+                            cancelBtn.setVisibility(View.GONE);
+
+                            clickCount=0;
+                            if(profilePicturePath!=null)
+                            {
+                                uploadCompanyImage();
+                            }
+
+                            break;
                     }
 
                 }
@@ -408,6 +436,12 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public void uploadCompanyImage()
     {
 //                                                String res = new UploadImageTask(getActivity()).execute().get();
+        progress = new ProgressDialog(getActivity());
+        if (progress != null) {
+            progress.setMessage("Saving user details...");
+            progress.setCancelable(false);
+            progress.show();
+        }
         new UploadImageTask(getActivity()) {
             @Override
             public void onPostExecute(String result) {
