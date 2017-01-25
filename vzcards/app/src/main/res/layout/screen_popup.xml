@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-   android:background="@color/accent_material_dark"
+    android:layout_height="wrap_content"
+   android:background="#80FFFFFF"
     android:baselineAligned="false"
+    android:layout_marginRight="5dp"
+    android:layout_marginLeft="5dp"
     android:descendantFocusability="blocksDescendants">
 
 
@@ -12,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:id="@+id/linearLayout1"
-        android:layout_marginTop="5dp"
+        android:background="#ffffff"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
@@ -36,6 +39,7 @@
                 android:layout_width="120dp"
                 android:layout_height="30dp"
                 android:text=" Name "
+                android:paddingTop="8dp"
                 android:id="@+id/feedName"
                 android:layout_toRightOf="@+id/image1"
                 android:layout_alignTop="@id/image1"
@@ -43,7 +47,8 @@
                 android:textSize="14sp" />
             <TextView
                 android:layout_width="50dp"
-                android:layout_height="20dp"
+                android:layout_height="18dp"
+                android:textSize="12sp"
                 android:id="@+id/selectionText"
                 android:layout_marginLeft="5dp"
                 android:text="needs"
@@ -57,7 +62,7 @@
                 android:textSize="12sp"
                 android:text="profile"
                 android:id="@+id/feedProfile"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="6dp"
                 android:layout_marginTop="5dp"
                 />
         </LinearLayout>
@@ -65,31 +70,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="90dp"
+            android:layout_marginRight="2dp"
             android:orientation="vertical"
             android:gravity="center_horizontal">
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="right"
-                android:layout_marginRight="10dp"
+            <com.bitjini.vzcards.RoundedImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="15dp"
                 android:id="@+id/profilePic"
                 android:src="@drawable/profile_pic_placeholder"/>
 
-            <Button
-                android:layout_width="60dp"
-                android:layout_height="25dp"
-                android:id="@+id/referButton"
-                android:layout_below="@+id/profilePic"
-                android:layout_gravity="right"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="10dp"
-                android:textColor="#771d1e10"
-                android:textAllCaps="false"
-                android:shadowColor="#771d1e10"
-                android:focusable="false"
-                android:textSize="15sp"
-                android:background="@drawable/drawable_refer"
-                android:text="Refer"/>
+
 
         </LinearLayout>
     </LinearLayout>
@@ -100,20 +92,128 @@
         android:layout_marginRight="2dp"
         android:layout_marginLeft="2dp"
         android:layout_below="@+id/linearLayout1"
-        android:background="#ea1624"></View>
+        android:background="#f27166"></View>
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:id="@+id/linearLayout2"
+        android:background="#ffffff"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:elevation="3dp"
+        android:layout_below="@+id/linearLayout1">
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/itemPhoto2"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/no_pic_placeholder_with_border_800x800"/>
+        />
+        <LinearLayout
+            android:layout_width="160dp"
+            android:layout_height="90dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="30dp"
+                android:text=" Name "
+                android:paddingTop="8dp"
+                android:id="@+id/feedName2"
+                android:layout_toRightOf="@+id/image1"
+                android:layout_alignTop="@id/image1"
+                android:layout_marginLeft="5dp"
+                android:textSize="14sp" />
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="18dp"
+                android:id="@+id/selectionText2"
+                android:layout_marginLeft="5dp"
+                android:text="needs"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="#ffffff"
+                android:background="@drawable/addimage_red"/>
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/name"
+                android:textSize="12sp"
 
+                android:text="profile"
+                android:id="@+id/feedProfile2"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="5dp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:orientation="vertical"
+
+            android:layout_marginRight="5dp"
+            android:gravity="center_horizontal">
+            <com.bitjini.vzcards.RoundedImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="15dp"
+                android:id="@+id/profilePic2"
+
+                android:src="@drawable/profile_pic_placeholder"/>
+
+
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:id="@+id/viewLine2"
+        android:layout_marginRight="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_below="@+id/linearLayout2"
+        android:background="#f27166"></View>
+
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="12dp"
+    android:orientation="horizontal"
+    android:layout_below="@+id/viewLine2"
+    android:gravity="center"
+    android:id="@+id/linearLayout">
+
+    <Button
+        android:id="@+id/btn_Ok_popup"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="Refer"
+        android:layout_marginLeft="50dp"
+        android:layout_gravity="center"
+        style="?android:attr/borderlessButtonStyle"
+        android:background="@drawable/drawable_refer"
+        android:layout_alignTop="@+id/linearLayout"/>
 
     <Button
         android:id="@+id/btn_close_popup"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_height="30dp"
         android:text="Close"
-        android:layout_below="@+id/viewLine"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="50dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/drawable_refer"/>
+</LinearLayout>
 
 
 </RelativeLayout>

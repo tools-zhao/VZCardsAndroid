@@ -1,29 +1,66 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    compileSdkVersion 24
+    buildToolsVersion '25.0.0'
+    useLibrary  'org.apache.http.legacy'
+    signingConfigs {
+        config {
+            keyAlias 'AndroidKey'
+            keyPassword 'B!tjini'
+            storeFile file('/home/bitjini/AndroidStudioProjects/AndroidKeystore/keystore2.release.jks')
+            storePassword 'B!tjini123'
+        }
+    }
+        packagingOptions {
+            exclude 'META-INF/DEPENDENCIES'
+            exclude 'META-INF/NOTICE'
+            exclude 'META-INF/LICENSE'
+            exclude 'META-INF/LICENSE.txt'
+            exclude 'META-INF/NOTICE.txt'
+        }
 
     defaultConfig {
         applicationId "com.bitjini.vzcards"
-        minSdkVersion 16
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "2e72f177f0c2446aaa87733c957f5e0d"]
+
+        minSdkVersion 17
+        targetSdkVersion 24
+        versionCode 4
+        versionName "1.0.3"
+
+        // Add the following two lines
+        renderscriptTargetApi 18
+        renderscriptSupportModeEnabled true
     }
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.android.support:design:23.1.0'
-    compile files('libs/gson-2.2.2.jar')
-    compile files('libs/apache-httpcomponents-httpcore.jar')
-    compile files('libs/httpclient-4.5.jar')
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
+    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.google.android.gms:play-services-appindexing:9.2.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+//    compile files('libs/picasso-2.5.2.jar')
+    compile 'joda-time:joda-time:2.9.4'
+//    compile files('libs/joda-time-2.0.jar')
+//    compile files('libs/httpclient-4.5.jar')
+//    compile 'org.apache.httpcomponents:httpclient:4.5.2'
+//    compile files('libs/httpcore-4.3.jar')
+//    compile 'org.apache.httpcomponents:httpcore:4.4.5'
+//    compile 'org.apache.httpcomponents:httpmime:4.5.2'
+    compile('org.apache.httpcomponents:httpmime:4.3.5') {
+        exclude module: 'httpclient'
+    }
+    compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
+    compile 'net.hockeyapp.android:HockeySDK:4.1.1'
+//    compile files('libs/httpmime-4.3.jar')
 }

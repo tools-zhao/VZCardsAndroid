@@ -3,28 +3,55 @@
     android:id="@+id/referral_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:background="?android:attr/colorBackground">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:id="@+id/parent"
-    android:background="@android:color/transparent"
-    android:layout_height="match_parent"
-    android:animateLayoutChanges="true">
-
-
-
-
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pullToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/parent"
+        android:animateLayoutChanges="true">
+        <TextView
+            android:id="@+id/emptyFeeds"
+            style="@android:style/TextAppearance.Medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/referralList"
         android:layout_below="@+id/Layout1"
-        android:divider="#97e6ecf2"
+        android:divider="#43c1d9f2"
         android:focusable="false"
-        android:dividerHeight="5.0sp"></ListView>
+        android:dividerHeight="5.0sp"
+        android:layout_above="@+id/l8"
+        android:layout_marginBottom="5dp"></ListView>
 
 
+        <ProgressBar
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/progress1"
+            android:layout_gravity="center"
+            android:indeterminateDrawable="@drawable/progress_animation"
+            android:max="500"
+            android:progress="0"
+            android:visibility="gone"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -95,4 +122,6 @@
 
 
 </RelativeLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
     </FrameLayout>

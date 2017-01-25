@@ -15,7 +15,7 @@
             android:id="@+id/name"
             android:layout_marginTop="100dp"
             android:textSize="20sp"
-            android:src="@drawable/navbarlogo2x"
+            android:src="@drawable/navbarlogo3x"
             android:gravity="center"/>
 
     <RelativeLayout
@@ -23,18 +23,51 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:id="@+id/plus"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:layout_marginTop="30dp"
+            android:background="#81a3d4"
+            android:text="+"
+            android:inputType="number"
+            android:singleLine="true"
+            android:layout_marginLeft="57dp"
+            android:textAllCaps="true"
+            android:textSize="16sp"
+            android:paddingTop="6dp"
+            android:gravity="right"
+            android:textColor="#ffffff" />
         <EditText
-            android:layout_width="30dp"
+            android:layout_width="32dp"
             android:layout_height="30dp"
             android:id="@+id/initial"
             android:layout_marginTop="30dp"
             android:background="#81a3d4"
-            android:layout_marginLeft="70dp"
             android:text="91"
-            android:paddingTop="5dp"
+            android:maxLength="3"
+            android:inputType="number"
+            android:singleLine="true"
+            android:layout_marginLeft="68dp"
+            android:textAllCaps="true"
+            android:textSize="16sp"
+            android:paddingTop="6dp"
             android:gravity="right"
             android:textColor="#ffffff"
             />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="IN"
+            android:id="@+id/countryCode"
+            android:layout_below="@+id/initial"
+            android:textAllCaps="true"
+            android:gravity="right"
+            android:paddingLeft="5dp"
+            android:layout_alignLeft="@+id/initial"
+            android:layout_alignStart="@+id/initial" />
         <EditText
             android:layout_width="200dp"
             android:layout_height="30dp"
@@ -49,9 +82,11 @@
             android:hint="Mobile Number"
             android:inputType="number"
             android:layout_marginRight="70dp"
+            android:textColor="#ffffff"
             android:textColorHint="#ffffff"
            />
     </RelativeLayout>
+
     </LinearLayout>
 
     <LinearLayout

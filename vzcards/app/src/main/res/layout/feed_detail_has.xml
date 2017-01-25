@@ -1,26 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/add1_frame"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/feed_detail_has_Frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
+    android:layout_marginTop="-2dp"
+    android:splitMotionEvents="false"
     android:background="?android:attr/colorBackground">
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:id="@+id/toolbar"
+        android:background="?attr/colorPrimary"
+        android:elevation="6dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        <ImageView
+            android:layout_width="130dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:src="@drawable/navbarlogo2x"
+            android:layout_gravity="center"/>
+    </android.support.v7.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="52dp"
         android:background="#5f8ac7"
         android:id="@+id/l1"
-        android:layout_below="@+id/l0"
-        android:layout_gravity="center_horizontal">
-        <ImageView
+        android:layout_below="@+id/toolbar">
+        <com.bitjini.vzcards.RoundedImageView
             android:layout_width="45dp"
-            android:layout_height="40dp"
+            android:layout_height="match_parent"
             android:layout_marginLeft="8dp"
-            android:layout_gravity="center_vertical"
+            android:padding="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="5dp"
             android:id="@+id/profilePic"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
             android:src="@drawable/profile_pic_placeholder"/>
         <TextView
             android:layout_width="match_parent"
@@ -28,82 +52,122 @@
             android:text="Name"
             android:id="@+id/name"
             android:layout_marginLeft="15dp"
-            android:textSize="20sp"
+            android:textSize="25sp"
             android:gravity="center_vertical"
             android:textColor="#ffff"/>
         </LinearLayout>
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:background="#c3877980"
+        android:layout_height="210dp"
+        android:background="#B6B7B8"
         android:orientation="vertical"
-        android:id="@+id/l2"
         android:layout_below="@+id/l1"
+        android:id="@+id/l2"
         android:gravity="center_horizontal">
         <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:scaleType="centerCrop"
+            android:paddingBottom="50dp"
+            android:paddingTop="60dp"
+            android:adjustViewBounds="true"
             android:id="@+id/item_photo"
             android:src="@drawable/no_pic_placeholder"/></LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/l2"
+        android:layout_above="@+id/lin"
+
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:id="@+id/scrollView">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relative"
+            android:layout_below="@+id/l2"
+            android:layout_marginBottom="10dp">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:layout_marginRight="15dp"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="20dp"
-        android:id="@+id/l3"
-        android:layout_below="@+id/l2">
+        android:id="@+id/l3">
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="Title"
             android:textSize="25sp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
             android:id="@+id/title"
             android:gravity="center"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:id="@+id/l4"
         android:layout_below="@+id/l3">
-        <EditText
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:hint="Enter your Description"
+            android:minLines="1"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:ellipsize="marquee"
+
+            android:scrollbars = "vertical"
             android:id="@+id/description"
-            android:gravity="center"/>
+            android:gravity="top|center"/>
     </LinearLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/lin"
+    android:background="?android:attr/colorBackground"
+    android:layout_alignParentBottom="true">
     <Button
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:text="Refer Tickets"
+        android:background="@drawable/addimage"
+        android:textColor="@color/white"
+        android:shadowColor="#ffff"
+        android:id="@+id/refer_vzfrnd"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_marginLeft="25dp"
-        android:text="Refer VZ Friend"
-        android:background="@drawable/drawable_refer_frnd"
-        android:layout_below="@+id/l4"
         android:layout_marginRight="25dp"
-        android:layout_marginTop="5dp"
-        android:textColor="#ffff"
-        android:id="@+id/refer_vzfrnd"/>
+        android:layout_marginBottom="5dp" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="Refer Phonebook Contact"
-        android:background="@drawable/drawable_refer_frnd"
+        android:background="@drawable/addimage"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/refer_vzfrnd"
-        android:textColor="#ffff"
+        android:textColor="@color/white"
+        style="?android:attr/borderlessButtonStyle"
+        android:shadowColor="@color/white"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
         android:id="@+id/refer_contact"/>
-
-
-</RelativeLayout>
-    </FrameLayout>
+    </LinearLayout>
+ </RelativeLayout>

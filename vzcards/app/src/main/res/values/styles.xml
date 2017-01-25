@@ -4,6 +4,8 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <!-- Customize your theme here. -->
+        <item name="android:windowEnableSplitTouch">false</item>
+        <item name="android:splitMotionEvents">false</item>
         <item name="windowActionBar">false</item>
         <item name="tabIndicatorHeight">2dp</item>
         <!--<item name="logo" align="center">@drawable/navbar_logo</item>-->
@@ -24,6 +26,10 @@
 
     </style>
 
+    <declare-styleable name="CircleButton">
+        <attr name="cb_color" format="color" />
+        <attr name="cb_pressedRingWidth" format="dimension" />
+    </declare-styleable>
     <!--<style name="AppTheme.ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">-->
     <!--<item name="android:textSize">@dimen/bar_text_size</item>-->
     <!--<item name="android:textColor">@color/bar_text_color</item>-->

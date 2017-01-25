@@ -1,46 +1,87 @@
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/vzfrnds_frame"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vzfrnds_list_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:background="@android:color/transparent"
-    android:layout_height="match_parent">
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pullToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:layout_height="match_parent">
 
 
-    <!--<SearchView-->
+        <!--<SearchView-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="40dp"-->
         <!--android:id="@+id/searchView">-->
-    <!--</SearchView>-->
+        <!--</SearchView>-->
 
-    <!--<TextView-->
+        <!--<TextView-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="40dp"-->
         <!--android:layout_below="@+id/searchView"-->
         <!--android:layout_centerHorizontal="true"-->
         <!--android:id="@+id/resultText"/>-->
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="80dp"
         android:background="#5f8ac7"
+        android:layout_below="@+id/toolbar"
         android:orientation="vertical"
         android:id="@+id/Layout1"
         >
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:id="@+id/invite"
+            android:textAllCaps="false"
+            android:textSize="13sp"
+            android:background="@drawable/button_color_invite"
+            android:textColor="@drawable/text_color"
+            android:text="Invite"/>
         <SearchView
             android:layout_width="300dp"
-            android:layout_height="30dp"
-            android:background="@drawable/drawable_text"
-            android:layout_gravity="center"
-            android:layout_marginTop="9dp"
-            android:id="@+id/searchview"
+            android:layout_height="35dp"
             android:textAlignment="gravity"
-            android:gravity="center_horizontal"></SearchView>
+            android:queryBackground="@android:color/transparent"
+            android:background="@drawable/drawable_text"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="9dp"
+            android:id="@+id/searchview"
+            android:gravity="center"></SearchView>
 
-            </LinearLayout>
+        <!--android:queryHint="@string/search"-->
+        <TextView
+            android:layout_width="300dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/searchview"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:id="@+id/resultText"/></LinearLayout>
 
+        <TextView
+            android:id="@+id/emptyFeeds"
+            style="@android:style/TextAppearance.Medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:layout_below="@+id/Layout1"
+            android:gravity="center"
+            android:text="No feeds please add frns"
+            android:layout_above="@+id/l8"
+            android:visibility="gone" />
 
     <ListView
         android:layout_width="match_parent"
@@ -50,6 +91,19 @@
         android:divider="#97e6ecf2"
         android:dividerHeight="5.0sp"
         android:layout_above="@+id/l8"></ListView>
+
+
+        <ProgressBar
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/progress1"
+        android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/progress_animation"
+        android:max="500"
+        android:progress="0"
+            android:visibility="gone"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -90,7 +144,7 @@
                 android:layout_height="30dp"
                 android:layout_margin="0dp"
                 android:background="@drawable/button_color2"
-                android:text="VZFrnds"
+                android:text="VZFriends"
                 android:button="@null"
                 android:textColor="@drawable/text_color"
                 android:layout_weight="1"
@@ -119,4 +173,5 @@
 
 
 </RelativeLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
     </FrameLayout>

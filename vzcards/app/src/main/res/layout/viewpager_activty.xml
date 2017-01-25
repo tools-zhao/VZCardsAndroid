@@ -1,43 +1,112 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_layout"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:gravity="center"
+    android:animateLayoutChanges="true"
     >
 
+<<<<<<< HEAD
     <LinearLayout
+=======
+    <!--<android.support.v7.widget.Toolbar-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="45dp"-->
+    <!--android:id="@+id/toolbar"-->
+    <!--android:background="?attr/colorPrimary"-->
+    <!--android:elevation="6dp"-->
+    <!--android:minHeight="?attr/actionBarSize"-->
+    <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
+    <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light">-->
+    <!--<ImageView-->
+    <!--android:layout_width="170dp"-->
+    <!--android:layout_height="40dp"-->
+    <!--android:src="@drawable/navbarlogo2x"-->
+    <!--android:layout_gravity="left"/>-->
+    <!--<ProgressBar-->
+    <!--android:layout_width="30dp"-->
+    <!--android:layout_height="30dp"-->
+    <!--android:indeterminate="true"-->
+    <!--android:layout_marginTop="10dp"-->
+    <!--android:layout_marginRight="25dp"-->
+    <!--android:id="@+id/progress"-->
+    <!--android:max="500"-->
+    <!--android:onClick=""-->
+    <!--android:progress="0"-->
+    <!--android:background="#8900"-->
+    <!---->
+    <!--android:progressDrawable="@drawable/refresh"-->
+    <!--android:layout_alignParentRight="true" />-->
+    <!--</android.support.v7.widget.Toolbar>-->
+
+    <android.support.v7.widget.Toolbar
+>>>>>>> develop
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:id="@+id/toolbar"
         android:gravity="center"
         android:background="?attr/colorPrimary"
         android:elevation="6dp"
+<<<<<<< HEAD
         android:minHeight="?attr/actionBarSize">
+=======
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+>>>>>>> develop
         <ImageView
-            android:layout_width="140dp"
-            android:layout_height="35dp"
+            android:layout_width="130dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:src="@drawable/navbarlogo2x"
             android:layout_gravity="center"/>
+<<<<<<< HEAD
     </LinearLayout>
+=======
+
+        <!--<ImageButton-->
+        <!--android:layout_width="30dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:id="@+id/progress"-->
+        <!--android:background="@drawable/refresh"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentEnd="true" />-->
+        <!--<ProgressBar-->
+        <!--android:layout_width="30dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:id="@+id/progress1"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_gravity="right"-->
+        <!--android:indeterminateDrawable="@drawable/progress_animation"-->
+        <!--android:max="500"-->
+        <!--android:progress="0" />-->
+    </android.support.v7.widget.Toolbar>
+>>>>>>> develop
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/toolbar"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
+        app:tabIndicatorHeight="1dp"
+        app:tabIndicatorColor="#fff"
         android:theme="@style/AppTheme"/>
 
     <android.support.v4.view.ViewPager
         android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/viewPager"
+        android:layout_height="match_parent"
+        android:id="@+id/viewPager"
+        android:background="#e4ffffff"
         android:layout_below="@+id/tab_layout">
 
-</android.support.v4.view.ViewPager>
+    </android.support.v4.view.ViewPager>
 
-</RelativeLayout>
+</android.support.design.widget.AppBarLayout>

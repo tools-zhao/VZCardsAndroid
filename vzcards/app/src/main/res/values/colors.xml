@@ -2,8 +2,29 @@
 <resources>
     <color name="colorPrimary">#5f8ac7</color>
     <color name="colorPrimaryDark">#214a83</color>
-    <color name="colorAccent">#ffffff</color>
+    <color name="colorAccent">#7c2363d1</color>
 
+    <color name="white">#ffff</color>
     <color name="pressed_color">#4d90fe</color>
     <color name="default_color">#ffffff</color>
+    <color name="pink">#f5a70b66</color>
+    <color name="red">#c4cc0e27</color>
+    <color name="primaryRed">#f27166</color>
+    <color name="primaryGreen">#add58a</color>
+    <color name="prompt">#5f8ac7</color>
+    <color name="primary">#5e546b</color>
+    <color name="primary_dark">#5e546b</color>
+    <color name="toolbar_text_color">#FFFFFF</color>
+    <color name="fab_primary">#5869b2</color>
+    <color name="fab_primary_pressed">#3951b7</color>
+    <color name="fab_ripple">#7891ff</color>
+    <color name="fab_orange_dark">#f97910</color>
+    <color name="fab_orange_bright">#ffb54c</color>
+    <color name="disabled_gray">#bccccccc</color>
+    <color name="disabled_blue">#43c1d9f2</color>
+    <color name="gray_backgrounds">#f0ecf0</color>
+    <color name="header_gray_background">#EEEEEE</color>
+    <color name="subheader_gray_button">#F5F5F5</color>
+    <color name="green">#009688</color>
+    <color name="callgreen">#0db72f</color>
 </resources>

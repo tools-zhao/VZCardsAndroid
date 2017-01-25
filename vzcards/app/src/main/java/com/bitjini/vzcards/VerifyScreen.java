@@ -10,8 +10,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -38,29 +42,34 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by VEENA on 12/8/2015.
  */
 public class VerifyScreen extends Activity {
 
-    String URL_REGISTER = "http://vzcards-api.herokuapp.com/user_register/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-    String URL_VERIFY = "http://vzcards-api.herokuapp.com/verify/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-    String URL_RESEND="http://vzcards-api.herokuapp.com/send_again/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    String URL_REGISTER = "https://vzcards-api.herokuapp.com/user_register/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    String URL_VERIFY = "https://vzcards-api.herokuapp.com/verify/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    String URL_RESEND="https://vzcards-api.herokuapp.com/send_again/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
+    public static String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
 
     public static final String VZCARD_PREFS = "MySharedPref";
     public SharedPreferences sharedPreferences;
     public String TOKEN_KEY="token";
+    public String VZ_ID_KEY="vz_id";
+    public String PHONE_KEY="phone";
 
 
     private ProgressDialog progress;
     private EditText editTextPhoneNo, editTextOTP;
     String company_photo, photo, firstname, lastname, email;
-    String industry, company, address_line_1, address_line_2, city, pin_code;
+    String industry, company, address_line_1, address_line_2, city, pin_code,title;
     public String otp, phone;
     private Button btn;
 
-    TextView  textView;
+    TextView  textViewCountryCode;
+    EditText textViewCountryPrefix;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,26 +79,91 @@ public class VerifyScreen extends Activity {
         String token_sharedPreference=sharedPreferences.getString(TOKEN_KEY,null);
         if(token_sharedPreference!=null)
         {
-            Intent positveActivity = new Intent(getApplicationContext(), MainActivity.class);
+            Intent positveActivity = new Intent(getApplicationContext(), SplashScreen.class);
             startActivity(positveActivity);
             finish();
         }
         System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
 
+        // get the country code
+        TelephonyManager tm = (TelephonyManager)getSystemService(getApplicationContext().TELEPHONY_SERVICE);
+        String countryCode = tm.getNetworkCountryIso();
+        String countryZipCode = GetCountryZipCode();
+
         editTextPhoneNo = (EditText) findViewById(R.id.phoneNo);
-        textView=(TextView)findViewById(R.id.initial);
+        textViewCountryPrefix=(EditText)findViewById(R.id.initial);
+        textViewCountryCode=(TextView)findViewById(R.id.countryCode);
+
         btn = (Button) findViewById(R.id.verify);
+        // set the country code to textview
+
+//        textViewCountryPrefix.setText("+"+countryZipCode);
+//        textViewCountryCode.setText(countryCode);
+//        textViewCountryPrefix.setText("+"+countryZipCode);
+
+        editTextPhoneNo.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                String countryCode1=GetCountryIdCode();
+                textViewCountryCode.setText(countryCode1);
+                return false;
+            }
+        });
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(editTextPhoneNo.getText().toString().length()==10){
+                    InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (getCurrentFocus() != null){
+                        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+                    sendPostRequest(view);
 
-                sendPostRequest(view);
+
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),"Enter a valid 10 digit phone number",Toast.LENGTH_LONG).show();
+
+                }
 
             }
         });
     }
+    public String GetCountryZipCode(){
+        String CountryID="";
+        String CountryZipCode="";
 
+        TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        CountryID=manager.getSimCountryIso().toUpperCase();
+        String[] rl=getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<rl.length;i++){
+            String[] g=rl[i].split(",");
+            if(g[1].trim().equals(CountryID.trim())){
+                CountryZipCode=g[0];
+                break;
+            }
+        }
+        return CountryZipCode;
+    }
+    public String GetCountryIdCode(){
+        String CountryID="";
+        String CountryZipCode="";
+
+        TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        CountryZipCode= textViewCountryPrefix.getText().toString().replaceAll("[\\D]", "");
+        String[] rl=getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<rl.length;i++){
+            String[] g=rl[i].split(",");
+            if(g[0].equals(CountryZipCode)){
+                CountryID=g[1];
+                break;
+            }
+        }
+        return CountryID;
+    }
     // method to call AsyncTask PostClass for registration
     public void sendPostRequest(View View) {
         new PostClass(this).execute(URL_REGISTER);
@@ -113,6 +187,7 @@ public class VerifyScreen extends Activity {
         protected void onPreExecute() {
             progress = new ProgressDialog(this.context);
             progress.setMessage("Loading");
+            progress.setCancelable(false);
             progress.show();
         }
         @Override
@@ -127,26 +202,22 @@ public class VerifyScreen extends Activity {
         private String downloadUrl(String urlString) throws IOException {
             String response=null;
             try {
-//                final TextView outputView = (TextView) findViewById(R.id.content);
-                URL url = new URL(urlString);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                     HttpClient client = new DefaultHttpClient();
+                String postURL = URL_REGISTER;
+                HttpPost post = new HttpPost(postURL);
                 company_photo = "";
                 photo = "";
                 firstname = "";
                 lastname = "";
                 email = "";
-                phone = textView.getText()+editTextPhoneNo.getText().toString();
+                phone = textViewCountryPrefix.getText().toString().replaceAll("[\\D]", "")+editTextPhoneNo.getText().toString();
                 industry = "";
                 company = "";
                 address_line_1 = "";
                 address_line_2 = "";
                 city = "";
                 pin_code = "";
-
-                HttpClient client = new DefaultHttpClient();
-                String postURL = URL_REGISTER;
-                HttpPost post = new HttpPost(postURL);
-
+                title="";
                 List<NameValuePair> params1 = new ArrayList<NameValuePair>();
                 params1.add(new BasicNameValuePair("company_photo", company_photo));
                 params1.add(new BasicNameValuePair("photo", photo));
@@ -160,6 +231,7 @@ public class VerifyScreen extends Activity {
                 params1.add(new BasicNameValuePair("address_line_2", address_line_2));
                 params1.add(new BasicNameValuePair("city", city));
                 params1.add(new BasicNameValuePair("pin_code", pin_code));
+                params1.add(new BasicNameValuePair("title", title));
 
 
                 UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
@@ -173,7 +245,7 @@ public class VerifyScreen extends Activity {
 
                 }
                 StringBuilder sb = new StringBuilder();
-                try {
+                try {if(response!=null) {
                     BufferedReader reader =
                             new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
                     String line = null;
@@ -181,6 +253,7 @@ public class VerifyScreen extends Activity {
                     while ((line = reader.readLine()) != null) {
                         sb.append(line);
                     }
+                }
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
@@ -202,9 +275,13 @@ public class VerifyScreen extends Activity {
         protected void onPostExecute(String result) {
             progress.dismiss();
 
-            CustomDialogClass cdd = new CustomDialogClass(VerifyScreen.this);
-            cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            cdd.show();
+
+                CustomDialogClass cdd = new CustomDialogClass(VerifyScreen.this);
+                cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                cdd.setCanceledOnTouchOutside(false);
+            cdd.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                cdd.show();
+
         }
 
     }
@@ -367,7 +444,8 @@ public class VerifyScreen extends Activity {
                     JSONObject res=new JSONObject(result.toString());
                     int valid = res.getInt("valid");
                     String token=res.getString("token_generated");
-
+                     String vz_id=res.getString("vz_id");
+                    String phone=res.getString("phone");
                     Log.e("token generated =", "" + token);
                     Log.e("valid =", "" + valid);
 
@@ -376,13 +454,21 @@ public class VerifyScreen extends Activity {
                     sharedPreferences = getSharedPreferences(VZCARD_PREFS, 0);
                     SharedPreferences.Editor sEdit = sharedPreferences.edit();
                     System.out.println(" saving token generated "+ sEdit.putString("token", token));
+                    System.out.println(" saving vz_id "+ sEdit.putString("vz_id", vz_id));
+                    System.out.println(" saving phone "+ sEdit.putString("phone", phone));
                     sEdit.commit();
 
-                    String token_sharedPreference=sharedPreferences.getString("token",token);
+                     token_sharedPreference=sharedPreferences.getString("token",token);
+
+                     vz_id_sharedPreference=sharedPreferences.getString("vz_id",vz_id);
+                    phone_sharedPreference=sharedPreferences.getString("phone",phone);
                     System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
+                    System.out.println(" getting vz_id from sharedpreference "+ vz_id_sharedPreference);
+                    System.out.println(" getting phone from sharedpreference "+ phone_sharedPreference);
 
                     if(valid==1)
                     {
+
                         Intent positveActivity = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(positveActivity);
                         finish();
