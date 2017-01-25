@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static com.bitjini.vzcards.BaseURLs.VZFRIENDS_URL;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
  * Created by bitjini on 18/12/15.
@@ -47,9 +48,6 @@ import static com.bitjini.vzcards.BaseURLs.VZFRIENDS_URL;
 public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextListener, AdapterView.OnItemClickListener {
 
      public String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
-
-    String token_sharedPreference;
-    VerifyScreen p = new VerifyScreen();
 
     Context c;
     View v;
@@ -85,8 +83,8 @@ public class Refer_VZfriends extends Activity implements SearchView.OnQueryTextL
 
         try {
 
-            Log.e("token =",""+p.token_sharedPreference);
-            String received = new HttpAsyncTask(getApplicationContext()).execute(VZFRIENDS_URL + p.token_sharedPreference).get();
+            Log.e("token =",""+token_sharedPreference);
+            String received = new HttpAsyncTask(getApplicationContext()).execute(VZFRIENDS_URL + token_sharedPreference).get();
 
             JSONObject jsonObject = new JSONObject(received);
             String response = jsonObject.getString("response");

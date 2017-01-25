@@ -103,6 +103,14 @@ import javax.net.ssl.HttpsURLConnection;
 
 import static com.bitjini.vzcards.BaseURLs.URL_CREATE_TICKET;
 import static com.bitjini.vzcards.BaseURLs.URL_Cloudynary_Image_Path;
+import static com.bitjini.vzcards.Constants.IS_ORGANIZATION_KEY;
+import static com.bitjini.vzcards.Constants.TOKEN_KEY;
+import static com.bitjini.vzcards.Constants.VZCARD_PREFS;
+import static com.bitjini.vzcards.Constants.VZ_ID_KEY;
+import static com.bitjini.vzcards.Constants.is_organization_sharedPreference;
+import static com.bitjini.vzcards.Constants.sharedPreferences;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
+import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
 
 /**
  * Created by VEENA on 12/7/2015.
@@ -481,7 +489,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                         Log.e("item_photo :", "" + item_photo);
                                         Log.e("link :", "" + link);
 
-                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + token_sharedPreference);
 
 //                                        view.clearAnimation();
                                     } catch (JSONException e) {
@@ -499,7 +507,7 @@ public class AddActivity extends Fragment implements View.OnClickListener {
                                     @Override
                                     public void onClick(DialogInterface arg0, int arg1) {
 
-                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + token_sharedPreference);
 
 //                                        v.clearAnimation();
                                     }
@@ -614,11 +622,11 @@ public class AddActivity extends Fragment implements View.OnClickListener {
             Log.e(" item test:", "" + item);
             Log.e(" description test:", "" + description);
             Log.e(" date_validity test:", "" + date_validity);
-            Log.e(" vz_id test:", "" + VerifyScreen.vz_id_sharedPreference);
+            Log.e(" vz_id test:", "" + vz_id_sharedPreference);
 
             try {
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("vz_id", VerifyScreen.vz_id_sharedPreference));
+                params.add(new BasicNameValuePair("vz_id", vz_id_sharedPreference));
                 params.add(new BasicNameValuePair("item_photo", item_photo));
                 params.add(new BasicNameValuePair("question", question));
                 params.add(new BasicNameValuePair("item", item));

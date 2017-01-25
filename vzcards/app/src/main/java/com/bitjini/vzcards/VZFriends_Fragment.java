@@ -63,6 +63,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import static com.bitjini.vzcards.BaseURLs.VZFRIENDS_URL;
+import static com.bitjini.vzcards.Constants.is_organization_sharedPreference;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
  * Created by bitjini on 18/12/15.
@@ -101,69 +103,24 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     int progressCount=0;
 
     TextView emptyMsg;
-    Button inviteButton;
+    Button inviteButton,profilebtn,referral;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-         vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
-        emptyMsg=(TextView) vzfrnds.findViewById(R.id.emptyFeeds);
+        vzfrnds = inflater.inflate(R.layout.contact_listview, container, false);
 
+        initViews();
+        GetSharedPreference.getSharePreferenceValue(getActivity());// get data from sharedpreference
+        CheckIfOrganisation();
 
-        getActivity();
-        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
-        progressBar.setVisibility(View.GONE);
-        swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
-        inviteButton=(Button)vzfrnds.findViewById(R.id.invite);
-
-        // the refresh listner. this would be called when the layout is pulled down
-        swipeRefreshLayout.setOnRefreshListener(this);
-        // sets the colors used in the refresh animation
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
-                R.color.colorPrimary
-                ,R.color.red);
-        c = vzfrnds.getContext();
-
-        mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
-        listView = (ListView)vzfrnds.findViewById(R.id.contactList);
-        LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        footer = (View) inflater2.inflate(R.layout.loading_layout, null);
-
+        initListeners();
         if(!selectUsers.isEmpty()) {
-
-            listView.setVisibility(View.VISIBLE);
-            // add elements to al, including duplicates
-            Set<SelectUser> hs = new HashSet<>();
-            hs.addAll(selectUsers);
-            selectUsers.clear();
-            selectUsers.addAll(hs);
-            Collections.sort(selectUsers, new SortBasedOnName(getActivity()));// sort in alphabetical order
-            adapter = new VZFriends_Adapter(selectUsers, getActivity());
-            listView.setAdapter(adapter);
-
-            listView.setTextFilterEnabled(true);
-            filter = adapter.getFilter();
+            LoadSavedElements();
         }else {
-
-            listView.setVisibility(View.GONE);
-
-            selectUsers.clear();
-                getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
-                progressBar.clearAnimation();
-
-                adapter = new VZFriends_Adapter(selectUsers, getActivity());
-                listView.setAdapter(adapter);
-
-                listView.setTextFilterEnabled(true);
-                filter = adapter.getFilter();
-            }
-
+            LoadNewElements();
+        }
 
         setupSearchView();
-
-
-        listView.setFastScrollEnabled(true);
-        listView.setOnItemClickListener(this);
-        inviteButton.setOnClickListener(this);
 
         // to avoid triggering of swipe to refresh on scrolling of listview
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -204,16 +161,80 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 }
             }
         });
-        Button profilebtn = (Button) vzfrnds.findViewById(R.id.profilebtn);
-        Button referral = (Button) vzfrnds.findViewById(R.id.referralbtn);
 
-        profilebtn.setOnClickListener(this);
-
-        referral.setOnClickListener(this);
         return vzfrnds;
 
     }
 
+    private void LoadNewElements() {
+        listView.setVisibility(View.GONE);
+        selectUsers.clear();
+        getVzFrnds(VZFRIENDS_URL + token_sharedPreference);
+        progressBar.clearAnimation();
+
+        adapter = new VZFriends_Adapter(selectUsers, getActivity());
+        listView.setAdapter(adapter);
+
+        listView.setTextFilterEnabled(true);
+        filter = adapter.getFilter();
+    }
+
+    private void LoadSavedElements() {
+        listView.setVisibility(View.VISIBLE);
+        // add elements to al, including duplicates
+        Set<SelectUser> hs = new HashSet<>();
+        hs.addAll(selectUsers);
+        selectUsers.clear();
+        selectUsers.addAll(hs);
+        Collections.sort(selectUsers, new SortBasedOnName(getActivity()));// sort in alphabetical order
+        adapter = new VZFriends_Adapter(selectUsers, getActivity());
+        listView.setAdapter(adapter);
+
+        listView.setTextFilterEnabled(true);
+        filter = adapter.getFilter();
+    }
+
+    private void initListeners() {
+        profilebtn.setOnClickListener(this);
+        referral.setOnClickListener(this);
+
+        listView.setFastScrollEnabled(true);
+        listView.setOnItemClickListener(this);
+
+    }
+
+    private void initViews() {
+        emptyMsg=(TextView) vzfrnds.findViewById(R.id.emptyFeeds);
+        progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
+        progressBar.setVisibility(View.GONE);
+        swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
+
+        // the refresh listner. this would be called when the layout is pulled down
+        swipeRefreshLayout.setOnRefreshListener(this);
+        // sets the colors used in the refresh animation
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
+                R.color.colorPrimary
+                ,R.color.red);
+        c = vzfrnds.getContext();
+
+        mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
+        listView = (ListView)vzfrnds.findViewById(R.id.contactList);
+        LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        footer = (View) inflater2.inflate(R.layout.loading_layout, null);
+
+         profilebtn = (Button) vzfrnds.findViewById(R.id.profilebtn);
+         referral = (Button) vzfrnds.findViewById(R.id.referralbtn);
+
+    }
+    private void CheckIfOrganisation() {
+
+        if(is_organization_sharedPreference.equals("false"))
+        {
+            inviteButton=(Button)vzfrnds.findViewById(R.id.invite);
+            inviteButton.setOnClickListener(this);
+            inviteButton.setVisibility(View.VISIBLE);
+        }
+    }
     public void getVzFrnds(String url)
     {
 //        listView.setVisibility(View.GONE);
@@ -355,7 +376,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                 countOfFrnds=0;
                 isLoading = false;
                 listView.setVisibility(View.VISIBLE);
-                getVzFrnds(VZFRIENDS_URL + p.token_sharedPreference);
+                getVzFrnds(VZFRIENDS_URL + token_sharedPreference);
                 if(getActivity()!=null) {
 
                     listView.setVisibility(View.VISIBLE);
@@ -390,7 +411,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                     Log.e("currentpage=",""+currentPage);
                     listView.setVisibility(View.VISIBLE);
-                    getVzFrnds("https://vzcards-api.herokuapp.com/get_my_friends/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+                    getVzFrnds(VZFRIENDS_URL + token_sharedPreference +"&page="+currentPage);
 
                     listView.setVisibility(View.VISIBLE);
 //            // Notify the ListView of data changed

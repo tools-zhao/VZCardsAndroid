@@ -30,7 +30,7 @@ public class BaseURLs {
 
     public static String URL_CREATE_TICKET = baseUrl+"ticket_create/?access_token=";
     public static String URL_CONNECT = baseUrl+"connect/?access_token=";
-
+    public static String URL_REMOVE_TICKET=baseUrl+"remove_ticket/ticket_id=";
 
     //  Get Feeds
     public static String URL_GETLIST=baseUrl+"get_list/?access_token=";

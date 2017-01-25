@@ -45,6 +45,8 @@ import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 import static com.bitjini.vzcards.BaseURLs.HISTORY_URL;
+import static com.bitjini.vzcards.BaseURLs.URL_REMOVE_TICKET;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
  * Created by VEENA on 12/7/2015.
@@ -54,7 +56,6 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
      private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayList<SelectUser> arrayList = new ArrayList<>();
     MyClassAdapter childAdapter;
-    VerifyScreen p = new VerifyScreen();
     // ArrayList
     ArrayList<SelectUser> selectUsers=new ArrayList<>();
     ArrayList<SelectUser> connectorDetails=new ArrayList<>();
@@ -69,9 +70,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     int countOfFeeds=0;
     int currentPage=1;
     int totalPage=0;
-    int progressCount=0;
     boolean isLoading=false;
-     int itemCount=0;
     TextView emptyMsg;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -102,7 +101,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         }
 
         if(getActivity()!=null) {
-        getHistoryContents(HISTORY_URL + p.token_sharedPreference);
+        getHistoryContents(HISTORY_URL + token_sharedPreference);
 
             adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
@@ -306,7 +305,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 
                 if(getActivity()!=null) {
-                    getHistoryContents(HISTORY_URL + p.token_sharedPreference);
+                    getHistoryContents(HISTORY_URL + token_sharedPreference);
 
                     adapter = new History_Adapter(selectUsers, getActivity(), R.layout.history_layout);
 
@@ -335,7 +334,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
             Log.e("currentpage=",""+currentPage);
 
-            getHistoryContents("https://vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+            getHistoryContents(HISTORY_URL + token_sharedPreference +"&page="+currentPage);
 
 //            // Notify the ListView of data changed
 //
@@ -502,7 +501,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                                                 Toast.makeText(getActivity(),"Delete Failure",Toast.LENGTH_LONG).show();
                                             }
                                        }
-                                    }.execute("http://vzcards-api.herokuapp.com/remove_ticket/ticket_id="+ticketId+"?access_token="+ p.token_sharedPreference);
+                                    }.execute(URL_REMOVE_TICKET+ticketId+"?access_token="+token_sharedPreference);
 
                                 }
                             });

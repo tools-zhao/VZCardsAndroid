@@ -53,6 +53,7 @@ import java.util.concurrent.ExecutionException;
 import javax.net.ssl.HttpsURLConnection;
 
 import static com.bitjini.vzcards.BaseURLs.SYNC_CONTACT_URL;
+import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
 
 /**
  * Created by bitjini on 5/4/16.
@@ -95,8 +96,6 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
     private String downloadUrl(String postURL) throws IOException {
         {
-            p.sharedPreferences = context.getSharedPreferences(p.VZCARD_PREFS, 0);
-           p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
             //Create connection
             URL url = new URL(postURL);
@@ -117,8 +116,8 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 //                            Log.e(" phone arrays:", "" + s);
 //                        }
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("vz_id", p.vz_id_sharedPreference));
-                        Log.e(" p.vz_id_", "" + p.vz_id_sharedPreference);
+                        params.add(new BasicNameValuePair("vz_id", vz_id_sharedPreference));
+                        Log.e(" p.vz_id_", "" + vz_id_sharedPreference);
 
                         for(String s: phoneArray) {
                             params.add(new BasicNameValuePair("contact_list", s));

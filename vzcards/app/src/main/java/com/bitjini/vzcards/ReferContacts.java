@@ -59,6 +59,7 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 import static com.bitjini.vzcards.BaseURLs.URL_CONNECT;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
  * Created by bitjini on 16/2/16.
@@ -148,7 +149,7 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
 //                                startActivity(intent);
                                 VerifyScreen p=new VerifyScreen();
                                 HttpPostClass connect = new HttpPostClass();
-                                connect.execute(URL_CONNECT + p.token_sharedPreference);
+                                connect.execute(URL_CONNECT + token_sharedPreference);
 
 
                             }

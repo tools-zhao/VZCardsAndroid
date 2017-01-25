@@ -50,19 +50,20 @@ import java.util.Locale;
 import static com.bitjini.vzcards.BaseURLs.URL_REGISTER;
 import static com.bitjini.vzcards.BaseURLs.URL_RESEND;
 import static com.bitjini.vzcards.BaseURLs.URL_VERIFY;
+import static com.bitjini.vzcards.Constants.TOKEN_KEY;
+import static com.bitjini.vzcards.Constants.VZCARD_PREFS;
+import static com.bitjini.vzcards.Constants.is_organization_sharedPreference;
+import static com.bitjini.vzcards.Constants.phone_sharedPreference;
+import static com.bitjini.vzcards.Constants.sharedPreferences;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
+import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
 
 /**
  * Created by VEENA on 12/8/2015.
  */
 public class VerifyScreen extends Activity {
 
-    public static String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
 
-    public static final String VZCARD_PREFS = "MySharedPref";
-    public SharedPreferences sharedPreferences;
-    public String TOKEN_KEY="token";
-    public String VZ_ID_KEY="vz_id";
-    public String PHONE_KEY="phone";
 
 
     private ProgressDialog progress;
@@ -449,28 +450,16 @@ public class VerifyScreen extends Activity {
                      String vz_id=userDetailsObj.getString("vz_id");
                     String phone=userDetailsObj.getString("phone");
 
-                    String  is_organization=res.getString("is_organization");
-                    JSONObject obj2=new JSONObject(is_organization);
-                    String is_organisation=obj2.getString("is_organization");
+                    String  organization=res.getString("is_organization");
+                    JSONObject obj2=new JSONObject(organization);
+                    String is_organization=obj2.getString("is_organization");
+
                     Log.e("token generated =", "" + token);
                     Log.e("valid =", "" + valid);
-                    Log.e("is_organisation =", "" + is_organisation);
+                    Log.e("is_organisation =", "" + is_organization);
 
                    // saving token in shared prefernces
-                    sharedPreferences = getSharedPreferences(VZCARD_PREFS, 0);
-                    SharedPreferences.Editor sEdit = sharedPreferences.edit();
-                    System.out.println(" saving token generated "+ sEdit.putString("token", token));
-                    System.out.println(" saving vz_id "+ sEdit.putString("vz_id", vz_id));
-                    System.out.println(" saving phone "+ sEdit.putString("phone", phone));
-                    sEdit.commit();
-
-                     token_sharedPreference=sharedPreferences.getString("token",token);
-
-                     vz_id_sharedPreference=sharedPreferences.getString("vz_id",vz_id);
-                    phone_sharedPreference=sharedPreferences.getString("phone",phone);
-                    System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
-                    System.out.println(" getting vz_id from sharedpreference "+ vz_id_sharedPreference);
-                    System.out.println(" getting phone from sharedpreference "+ phone_sharedPreference);
+                    SaveResponseInSharedPreference(token,vz_id,is_organization);
 
                     if(Integer.parseInt(valid)==1)
                     {
@@ -497,6 +486,25 @@ public class VerifyScreen extends Activity {
             }
 
         }
+    }
+
+    private void SaveResponseInSharedPreference(String token, String vz_id, String is_organization) {
+        sharedPreferences = getSharedPreferences(VZCARD_PREFS, 0);
+        SharedPreferences.Editor sEdit = sharedPreferences.edit();
+        sEdit.putString("token", token);
+        sEdit.putString("vz_id", vz_id);
+        sEdit.putString("phone", phone);
+        sEdit.putString("is_organization",is_organization);
+        sEdit.commit();
+
+        token_sharedPreference=sharedPreferences.getString("token",token);
+        vz_id_sharedPreference=sharedPreferences.getString("vz_id",vz_id);
+        phone_sharedPreference=sharedPreferences.getString("phone",phone);
+        is_organization_sharedPreference=sharedPreferences.getString("is_organization",is_organization);
+        System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
+        System.out.println(" getting vz_id from sharedpreference "+ vz_id_sharedPreference);
+        System.out.println(" getting phone from sharedpreference "+ phone_sharedPreference);
+
     }
 }
 //    private class GetClass extends AsyncTask<String, Void, Void> {

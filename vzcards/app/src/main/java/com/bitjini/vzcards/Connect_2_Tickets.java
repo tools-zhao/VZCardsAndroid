@@ -44,6 +44,8 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 import static com.bitjini.vzcards.BaseURLs.URL_CONNECT;
+import static com.bitjini.vzcards.Constants.TOKEN_KEY;
+import static com.bitjini.vzcards.Constants.sharedPreferences;
 
 /**
  * Created by bitjini on 15/2/16.
@@ -75,8 +77,8 @@ public class Connect_2_Tickets extends Activity {
         Log.e("connector_vz_id =:",""+connecter_vz_id);
         Log.e("ticket_id_2 =:",""+ticket_id_2);
         VerifyScreen p = new VerifyScreen();
-        p.sharedPreferences = getSharedPreferences(p.VZCARD_PREFS, 0);
-        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
+
+        token_sharedPreference =sharedPreferences.getString(TOKEN_KEY, null);
         System.out.println(" getting token from sharedpreference " + token_sharedPreference);
         // call AsynTask to perform network operation on separate thread
         new HttpPostClass().execute(URL_CONNECT + token_sharedPreference);

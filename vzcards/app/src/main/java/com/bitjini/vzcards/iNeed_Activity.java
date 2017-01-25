@@ -87,20 +87,23 @@ import javax.net.ssl.HttpsURLConnection;
 
 import static com.bitjini.vzcards.BaseURLs.URL_CREATE_TICKET;
 import static com.bitjini.vzcards.BaseURLs.URL_Cloudynary_Image_Path;
+import static com.bitjini.vzcards.Constants.CAMERA_CODE;
+import static com.bitjini.vzcards.Constants.CROPING_CODE;
+import static com.bitjini.vzcards.Constants.GALLERY_CODE;
+import static com.bitjini.vzcards.Constants.PERMISSIONS_READ_EXTERNAL_STORAGE;
+import static com.bitjini.vzcards.Constants.PERMISSIONS_REQUEST_CAMERA;
+import static com.bitjini.vzcards.Constants.PERMISSIONS_WRITE_EXTERNAL_STORAGE;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
+import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
 
 /**
  * Created by bitjini on 18/12/15.
  */
 public class iNeed_Activity extends Fragment implements View.OnClickListener {
 
-    private static final int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
 
     private Uri mImageCaptureUri;
     private File outPutFile = null;
-    private static final int PERMISSIONS_REQUEST_CAMERA = 105;
-    private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 106;
-    private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 107;
-
 
     Button havebtn;
     public ImageView item_image;;
@@ -144,9 +147,6 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
         done1 = (Button) iNeed.findViewById(R.id.done);
         done2 = (Button) iNeed.findViewById(R.id.done2);
 
-        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
-        p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
         addImage.setOnClickListener(this);
 //        btnCander = (ImageButton) iNeed.findViewById(R.id.click);
@@ -451,7 +451,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                                         Log.e("item_photo :", "" + item_photo);
                                         Log.e("link :", "" + link);
 
-                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + token_sharedPreference);
 
 
                                     } catch (JSONException e) {
@@ -470,7 +470,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                                     @Override
                                     public void onClick(DialogInterface arg0, int arg1) {
 
-                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + VerifyScreen.token_sharedPreference);
+                                        new INeed_Task(getActivity()).execute(URL_CREATE_TICKET + token_sharedPreference);
 
 //                                        v.clearAnimation();
                                     }
@@ -578,11 +578,11 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
             Log.e(" item test:",""+item);
             Log.e(" description test:",""+description);
             Log.e(" date_validity test:",""+date_validity);
-            Log.e(" vz_id test:",""+p.vz_id_sharedPreference);
+            Log.e(" vz_id test:",""+vz_id_sharedPreference);
 
             try {
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("vz_id",p.vz_id_sharedPreference));
+                params.add(new BasicNameValuePair("vz_id",vz_id_sharedPreference));
                 params.add(new BasicNameValuePair("item_photo", item_photo));
                 params.add(new BasicNameValuePair("question", question));
                 params.add(new BasicNameValuePair("item", item));

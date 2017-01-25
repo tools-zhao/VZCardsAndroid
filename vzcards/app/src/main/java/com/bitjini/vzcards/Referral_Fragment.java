@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import static com.bitjini.vzcards.BaseURLs.HISTORY_URL;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
  * Created by bitjini on 28/12/15.
@@ -129,7 +130,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 list.setVisibility(View.GONE);
 
                 groupItem.clear();
-                getReferalContents(HISTORY_URL + p.token_sharedPreference);
+                getReferalContents(HISTORY_URL + token_sharedPreference);
                 progressBar.clearAnimation();
 
 
@@ -214,7 +215,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
             Log.e("currentpage=",""+currentPage);
             list.setVisibility(View.VISIBLE);
-            getReferalContents("https://vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+            getReferalContents(HISTORY_URL +token_sharedPreference +"&page="+currentPage);
 
 //            // Notify the ListView of data changed
 //
@@ -453,7 +454,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 countOfFeeds=0;
                 isLoading = false;
                 if(getActivity()!=null) {
-                getReferalContents(HISTORY_URL + p.token_sharedPreference);
+                getReferalContents(HISTORY_URL + token_sharedPreference);
                     list.setVisibility(View.VISIBLE);
                     Set<ReferalUsers> hs = new HashSet<>();
                     hs.addAll(groupItem);

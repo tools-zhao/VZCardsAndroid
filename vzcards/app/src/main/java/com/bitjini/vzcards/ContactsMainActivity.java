@@ -41,6 +41,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bitjini.vzcards.Constants.PERMISSIONS_REQUEST_READ_CONTACTS;
+
 public class ContactsMainActivity extends Activity implements SearchView.OnQueryTextListener {
 
     // ArrayList
@@ -49,7 +51,6 @@ public class ContactsMainActivity extends Activity implements SearchView.OnQuery
     // Contact List
     ListView listView;
     // Request code for READ_CONTACTS. It can be any number > 0.
-    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
     // Cursor to load contacts list
      Cursor phones, email;

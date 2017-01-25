@@ -31,6 +31,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
@@ -69,6 +70,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static com.bitjini.vzcards.Constants.PERMISSIONS_REQUEST_CALL_CONTACTS;
+
 /**
  * Created by VEENA on 12/7/2015.
  */
@@ -77,34 +80,21 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
     public ImageView imageProfile, imageCompany, imageCall;
 
-    View profile;
-
-    private static final int PERMISSIONS_REQUEST_CALL_CONTACTS = 100;
-
     ArrayList<String> label;
     ArrayList<String> values;
-    public Bitmap output;
-    int clickCount = 0;
-    //Declaring widgets
-    Button editbtn, profilebtn, vzfrndsbtn, referralbtn;
     TextView textViewName;
 
     public ProgressDialog progress;
 
-    Bitmap bitmapBackground = null;
-    LinearLayout linearLayout1;
     ListView listView;
     EditTextAdapter editTextAdapter;
 
     ArrayList<ListItem> arrayList = new ArrayList<ListItem>();
-    ArrayList<ListItem> adapterArrayList = new ArrayList<ListItem>();
-    public ArrayList<ListItem> groupItem = new ArrayList<ListItem>();
 
     VerifyScreen p = new VerifyScreen();
-    Bitmap bm = null;
-    String json, json2;
-    public String firstname = "", lastname = "", email ="", industry = "", company = "", address_line_1 = "", address_line_2 = "",
-            city="", pin_code = "", phone = "", title = "",phoneName="";
+    String json;
+    public String firstname = "", lastname = "", email = "", industry = "", company = "", address_line_1 = "", address_line_2 = "",
+            city = "", pin_code = "", phone = "", title = "", phoneName = "";
     public static String photo = "", company_photo = "";
     public Bitmap bitmap;
     public static String picturePath;
@@ -164,13 +154,13 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         RelativeLayout.LayoutParams paramImage = new RelativeLayout.LayoutParams(width / 2, width / 2);
         imageProfile.setLayoutParams(paramImage);
         RelativeLayout.LayoutParams textParams;
-        if(density==480) {
+        if (density == 480) {
             textParams = new RelativeLayout.LayoutParams(width / 2, 64);
             textParams.topMargin = ((width / 2) - 64);
-        }else if(density==240) {
+        } else if (density == 240) {
             textParams = new RelativeLayout.LayoutParams(width / 2, 34);
             textParams.topMargin = ((width / 2) - 34);
-        }else{
+        } else {
             textParams = new RelativeLayout.LayoutParams(width / 2, 45);
             textParams.topMargin = ((width / 2) - 45);
         }
@@ -181,14 +171,14 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         textViewName.setTextColor(Color.WHITE);
         textViewName.setLayoutParams(textParams);
 
-        RelativeLayout.LayoutParams paramImage2 = new RelativeLayout.LayoutParams(width/2, width/3);
-        paramImage2.leftMargin=width/2;
+        RelativeLayout.LayoutParams paramImage2 = new RelativeLayout.LayoutParams(width / 2, width / 3);
+        paramImage2.leftMargin = width / 2;
         imageCompany.setLayoutParams(paramImage2);
         imageCompany.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/2, width/6);
-        paramImage3.leftMargin=width/2;
-        paramImage3.topMargin=((width/2)-(width/6));
+        RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width / 2, width / 6);
+        paramImage3.leftMargin = width / 2;
+        paramImage3.topMargin = ((width / 2) - (width / 6));
         imageCall.setLayoutParams(paramImage3);
         imageCall.setBackgroundResource(R.drawable.callgreen);
         imageCall.setPadding(30, 30, 30, 30);
@@ -220,19 +210,19 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         values = new ArrayList<String>();
         values.add(firstname + " " + lastname);
 //        values.add(lastname);
-        if (title!=null)
+        if (title != null)
             values.add(title);  // contains value for what do you do?
 
-        if (email!=null)
+        if (email != null)
             values.add(email);
 
-        if (address_line_1!=null)
+        if (address_line_1 != null)
             values.add(address_line_1);
 
-        if (city!=null)
+        if (city != null)
             values.add(city);
 
-        if (pin_code!=null)
+        if (pin_code != null)
             values.add(pin_code);
 
         addValues(values);
@@ -290,6 +280,16 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
                 // Permission is granted
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
                 callIntent.setData(Uri.parse("tel:" + "+" + phone));
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
                 startActivity(callIntent);
             } else {
                 Toast.makeText(Friends_Profile.this, " No Permission", Toast.LENGTH_SHORT).show();
