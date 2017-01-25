@@ -85,12 +85,13 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.bitjini.vzcards.BaseURLs.URL_CREATE_TICKET;
+import static com.bitjini.vzcards.BaseURLs.URL_Cloudynary_Image_Path;
+
 /**
  * Created by bitjini on 18/12/15.
  */
 public class iNeed_Activity extends Fragment implements View.OnClickListener {
-
-    public static final String URL_CREATE_TICKET = "http://staging-vzcards-api.herokuapp.com/ticket_create/?access_token=";
 
     private static final int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
 
@@ -105,7 +106,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     public ImageView item_image;;
     Button addImage;
     EditText txtItem,txtDescription;
-    TextView txtDate_validity;
+    static TextView txtDate_validity;
     ImageButton submit;
     public static String Item_picturePath="";
     public String item_photo = "", item = "", description = "", date_validity="",question="";
@@ -445,7 +446,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
                                         json = new JSONObject(result);
 //
                                         String link = json.getString("link");
-                                        item_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/" + link;
+                                        item_photo =URL_Cloudynary_Image_Path+ link;
 //
                                         Log.e("item_photo :", "" + item_photo);
                                         Log.e("link :", "" + link);
@@ -675,7 +676,7 @@ public class iNeed_Activity extends Fragment implements View.OnClickListener {
     }
 
 
-    public class DatePickerDialog1 extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
+    public static class DatePickerDialog1 extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
 
 
         private int myear;

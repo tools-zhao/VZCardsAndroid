@@ -7,11 +7,29 @@ import java.util.List;
 
 public class ReferalUsers {
     String fname,lname;
-    String referredfName,referredlName,phone,company,industry,city,address1,address2,pin_code,email;
+    String referredfName,referredlName,phone,company,industry,city,address1,address2,pin_code,email,title;
     String photo="",referedPhoto="",comany_photo="",item_photo="";
     String desc,itemName,dateValidity;
     String ticketReferedName;
     String refQuestion="",refDesc="",refItemName="",refDateValidity="",refItem_photo="";
+
+    String phoneName="";
+
+    public String getPhoneName() {
+        return phoneName;
+    }
+
+    public void setPhoneName(String phoneName) {
+        this.phoneName = phoneName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public String getRefItem_photo() {
         return refItem_photo;

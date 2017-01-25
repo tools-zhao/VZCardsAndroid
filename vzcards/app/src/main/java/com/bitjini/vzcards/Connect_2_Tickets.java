@@ -43,12 +43,14 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.bitjini.vzcards.BaseURLs.URL_CONNECT;
+
 /**
  * Created by bitjini on 15/2/16.
  */
 public class Connect_2_Tickets extends Activity {
 
-    String URL_CONNECT = "http://staging-vzcards-api.herokuapp.com/connect/?access_token=";
+
     String token_sharedPreference;
     private ProgressDialog progress;
     String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
@@ -182,7 +184,7 @@ public class Connect_2_Tickets extends Activity {
         }
         protected void onPostExecute(String result) {
             progress.dismiss();
-            Toast.makeText(Connect_2_Tickets.this, "Connected tickets", Toast.LENGTH_LONG).show();
+            Toast.makeText(Connect_2_Tickets.this, "Tickets Connected ", Toast.LENGTH_LONG).show();
             finish();
 //            if (result != null) {
 //                Log.e("valid =", "" + result.toString());

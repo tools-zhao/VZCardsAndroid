@@ -23,6 +23,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import net.hockeyapp.android.CrashManager;
+
 /**
  * Created by VEENA on 12/7/2015.
  */
@@ -120,5 +122,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         viewPager.setCurrentItem(savedInstanceState.getInt(POSITION));
+    }
+    public void onResume() {
+        super.onResume();
+        // ... your own onResume implementation
+        checkForCrashes();
+    }
+
+    private void checkForCrashes() {
+        CrashManager.register(this);
     }
 }

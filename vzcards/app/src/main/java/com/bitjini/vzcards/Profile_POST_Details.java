@@ -37,6 +37,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.bitjini.vzcards.BaseURLs.URL_PROFILE_UPDATE;
+
 /**
  * Created by VEENA on 12/7/2015.
  */
@@ -81,7 +83,7 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
 //            HttpClient client = new DefaultHttpClient();
-            postURL = pr.URL_PROFILE_UPDATE + p.token_sharedPreference;
+            postURL = URL_PROFILE_UPDATE + p.token_sharedPreference;
 //            HttpPost post = new HttpPost(postURL);
             URL url = new URL(postURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -119,7 +121,7 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
             firstname = jsonArray.getJSONObject(0).getString("value");
             lastname = jsonArray.getJSONObject(1).getString("value");
-            industry = jsonArray.getJSONObject(2).getString("value");
+            title = jsonArray.getJSONObject(2).getString("value");
             email = jsonArray.getJSONObject(3).getString("value");
             address_line_1 = jsonArray.getJSONObject(4).getString("value");
             city = jsonArray.getJSONObject(5).getString("value");

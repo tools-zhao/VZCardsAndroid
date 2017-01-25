@@ -53,14 +53,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static com.bitjini.vzcards.BaseURLs.URL_CONNECT;
+import static com.bitjini.vzcards.BaseURLs.URL_GETLIST;
+
 /**
  * Created by bitjini on 9/5/16.
  */
 public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    String URL_GETLIST="http://staging-vzcards-api.herokuapp.com/get_list/?access_token=";
-    String URL_CONNECT = "http://staging-vzcards-api.herokuapp.com/connect/?access_token=";
-    String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
+     String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
     private ProgressDialog progress;
     String token_sharedPreference;
     String vz_id;
@@ -339,7 +340,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
                     Log.e("currentpage=", "" + currentPage);
 
 
-                    getFeedsContents("http://staging-vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference + "&page=" + currentPage);
+                    getFeedsContents("https://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference + "&page=" + currentPage);
 
                     // Notify the ListView of data changed
                     adapter.notifyDataSetChanged();

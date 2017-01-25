@@ -58,11 +58,12 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.bitjini.vzcards.BaseURLs.URL_CONNECT;
+
 /**
  * Created by bitjini on 16/2/16.
  */
 public class ReferContacts extends Fragment implements SearchView.OnQueryTextListener {
-    String URL_CONNECT = "http://staging-vzcards-api.herokuapp.com/connect/?access_token=";
 
     // ArrayList
     ArrayList<SelectUser> phoneList = new ArrayList<>();
@@ -74,7 +75,7 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
     // Cursor to load contacts list
     Cursor email;
     SearchView mSearchView;
-    String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
+    String connecter_vz_id="", phone_1="", ticket_id_1="", phone_2="", ticket_id_2="", my_ticket="", reffered_ticket="", reffered_phone="";
     private ProgressDialog progress;
     Filter filter;
     // Pop up
@@ -119,6 +120,8 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
                 ticket_id_2 = data.getName();
               phone_2 = data.getPhone().replaceAll("\\D+", "");
 
+
+
                 // create an alert dialog box
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                 alertDialogBuilder.setMessage("Do you want to refer " + ticket_id_2);
@@ -128,12 +131,14 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
 
-                                String ticket_id_1, phone1, connector_vz_id;
+//                                String ticket_id_1, phone1, connector_vz_id;
                                 // retrive the data sent by feed detail
                                 ticket_id_1 = getArguments().getString("ticket_id");
                                 phone_1 = getArguments().getString("phone1");
-                                connector_vz_id = getArguments().getString("connector_vz_id");
-
+                                connecter_vz_id = getArguments().getString("connector_vz_id");
+                                Log.e("ticket_id_2",""+ticket_id_2);
+                                Log.e("phone_2",""+phone_2);
+                                Log.e("phone_1",""+phone_1);
 //                                Intent intent=new Intent(getActivity(),Connect_2_Tickets.class);
 //                                intent.putExtra("ticket_id_1", ticket_id_1);
 //                                intent.putExtra("phone1", phone1);
@@ -222,17 +227,9 @@ return refer_contact;
             String response = null;
             try {
 //                final TextView outputView = (TextView) findViewById(R.id.content);
-                URL url = new URL(urlString);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-//
-//                HttpClient client = new DefaultHttpClient();
-//
-//                HttpPost post = new HttpPost(urlString);
+                HttpClient client = new DefaultHttpClient();
+
+                HttpPost post = new HttpPost(urlString);
 
                 List<NameValuePair> params1 = new ArrayList<NameValuePair>();
                 params1.add(new BasicNameValuePair("connecter_vz_id", connecter_vz_id));
@@ -245,34 +242,34 @@ return refer_contact;
                 params1.add(new BasicNameValuePair("reffered_phone", reffered_phone));
 
 
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getQuery(params1));
-                writer.flush();
-                writer.close();
-                os.close();
+                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
+                post.setEntity(ent);
+                HttpResponse responsePOST = client.execute(post);
+                HttpEntity resEntity = responsePOST.getEntity();
 
-                conn.connect();
-
-
-                int responseCode = conn.getResponseCode();
-
-                Log.e("res code", "" + responseCode);
-                if (responseCode == HttpsURLConnection.HTTP_OK) {
-                    String line;
-                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    while ((line = br.readLine()) != null) {
-                        response += line;
-                    }
-                } else {
-                    response = "";
+                if (resEntity != null) {
+                    response = EntityUtils.toString(resEntity);
+                    Log.i("RESPONSE", response);
 
                 }
-                System.out.println("finalResult " + response);
+                StringBuilder sb = new StringBuilder();
+                try {
+                    BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
+                    String line = null;
 
-                // return response
-                return response;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                System.out.println("finalResult " + sb.toString());
+                return sb.toString();
 
 
             } catch (Exception e) {
@@ -281,24 +278,6 @@ return refer_contact;
 
             return null;
         }
-        private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
-            StringBuilder result = new StringBuilder();
-            boolean first = true;
-
-            for (NameValuePair pair : params) {
-                if (first)
-                    first = false;
-                else
-                    result.append("&");
-
-                result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
-                result.append("=");
-                result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
-            }
-
-            return result.toString();
-        }
-
 
         protected void onPostExecute(String result) {
             progress.dismiss();
@@ -306,7 +285,6 @@ return refer_contact;
 
         }
     }
-
 }
 
 

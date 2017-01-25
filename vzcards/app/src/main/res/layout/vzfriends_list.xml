@@ -52,6 +52,8 @@
                 android:layout_width="300dp"
                 android:layout_height="39dp"
                 android:paddingTop="-22dp"
+
+                android:queryBackground="@android:color/transparent"
                 android:textAlignment="center"
                 android:background="@drawable/drawable_text"
                 android:layout_gravity="center_horizontal"

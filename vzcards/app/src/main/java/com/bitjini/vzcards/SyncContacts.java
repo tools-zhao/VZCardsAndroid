@@ -52,11 +52,13 @@ import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.bitjini.vzcards.BaseURLs.SYNC_CONTACT_URL;
+
 /**
  * Created by bitjini on 5/4/16.
  */
 public class SyncContacts extends AsyncTask<String, Void, String> {
-    ArrayList<String > phoneArray=new ArrayList<>();
+    static ArrayList<String > phoneArray=new ArrayList<>();
     public static  ArrayList<SelectUser>  phoneList12=new ArrayList<>();
 
     public ProgressDialog progress;
@@ -69,7 +71,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
    Activity _activity;
     // Pop up
 
-    Context context;
+   public Context context;
 
     VerifyScreen p = new VerifyScreen();
 
@@ -77,6 +79,10 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         this.context = context;
     }
 
+    public void LoadContacts()
+    {
+        new LoadContact().execute();
+    }
     @Override
     protected String doInBackground(String... urls) {
         // params comes from the execute() call: params[0] is the url.
@@ -105,9 +111,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
             conn.setDoOutput(true);
 
-            new LoadContact() {
-                protected void onPostExecute(Void aVoid) {
-                    super.onPostExecute(aVoid);
+//            new LoadContact().execute();
                     try {
 //                        for (String s:phoneArray) {
 //                            Log.e(" phone arrays:", "" + s);
@@ -152,7 +156,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                         }
                     }
 
-                }}.execute();
+
 
 
 
@@ -184,15 +188,21 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
     }
 
     // Load data on background
-    class LoadContact extends AsyncTask<Void, Void, Void> {
+    class LoadContact extends AsyncTask<Void, Void, ArrayList<String >> {
+        ProgressDialog progressDialog;
         @Override
         protected void onPreExecute() {
+
             super.onPreExecute();
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Syncing contacts.Please Wait..");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
 
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected ArrayList<String > doInBackground(Void... voids) {
 
             ContentResolver resolver=context.getContentResolver();
 
@@ -272,7 +282,16 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             } else {
 //                Log.e("Cursor close 1", "----------------");
             }
-            return null;
+            return phoneArray;
+        }
+        protected void onPostExecute(ArrayList<String> result) {
+            if(!result.isEmpty()) {
+                if (progressDialog.isShowing() && progressDialog != null) {
+                    progressDialog.dismiss();
+                    progressDialog = null;
+                }
+                new SyncContacts(context).execute(SYNC_CONTACT_URL);
+            }
         }
 
     }
@@ -293,5 +312,6 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         }
         return CountryZipCode;
     }
+
 }
 

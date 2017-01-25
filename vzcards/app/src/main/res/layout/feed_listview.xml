@@ -26,16 +26,16 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <!--<TextView-->
-        <!--android:id="@+id/tv_no_product"-->
-        <!--style="@android:style/TextAppearance.Medium"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_margin="10dp"-->
-        <!--android:gravity="center"-->
-        <!--android:text="empty"-->
-        <!--android:visibility="gone" />-->
+    <TextView
+        android:id="@+id/emptyFeeds"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="No feeds please add frns"
+        android:visibility="gone" />
     <ImageView
         android:layout_width="40dp"
         android:layout_height="40dp"

@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -35,22 +36,26 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import static com.bitjini.vzcards.BaseURLs.URL_REGISTER;
+import static com.bitjini.vzcards.BaseURLs.URL_RESEND;
+import static com.bitjini.vzcards.BaseURLs.URL_VERIFY;
 
 /**
  * Created by VEENA on 12/8/2015.
  */
 public class VerifyScreen extends Activity {
 
-    String URL_REGISTER = "http://staging-vzcards-api.herokuapp.com/user_register/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
-    String URL_VERIFY = "http://staging-vzcards-api.herokuapp.com/verify/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
-    String URL_RESEND="http://staging-vzcards-api.herokuapp.com/send_again/?access_token=gWgLsmgEafve3TEUewVf26rh9tuq69";
     public static String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
 
     public static final String VZCARD_PREFS = "MySharedPref";
@@ -67,7 +72,8 @@ public class VerifyScreen extends Activity {
     public String otp, phone;
     private Button btn;
 
-    TextView  textViewCountryCode, textViewCountryPrefix;
+    TextView  textViewCountryCode;
+    EditText textViewCountryPrefix;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,15 +95,24 @@ public class VerifyScreen extends Activity {
         String countryZipCode = GetCountryZipCode();
 
         editTextPhoneNo = (EditText) findViewById(R.id.phoneNo);
-        textViewCountryPrefix=(TextView)findViewById(R.id.initial);
+        textViewCountryPrefix=(EditText)findViewById(R.id.initial);
         textViewCountryCode=(TextView)findViewById(R.id.countryCode);
 
         btn = (Button) findViewById(R.id.verify);
         // set the country code to textview
-        textViewCountryCode.setText(countryCode);
-        textViewCountryPrefix.setText(countryZipCode);
 
+//        textViewCountryPrefix.setText("+"+countryZipCode);
+//        textViewCountryCode.setText(countryCode);
+//        textViewCountryPrefix.setText("+"+countryZipCode);
 
+        editTextPhoneNo.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                String countryCode1=GetCountryIdCode();
+                textViewCountryCode.setText(countryCode1);
+                return false;
+            }
+        });
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +140,7 @@ public class VerifyScreen extends Activity {
 
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         //getNetworkCountryIso
-        CountryID= manager.getSimCountryIso().toUpperCase();
+        CountryID=manager.getSimCountryIso().toUpperCase();
         String[] rl=getResources().getStringArray(R.array.CountryCodes);
         for(int i=0;i<rl.length;i++){
             String[] g=rl[i].split(",");
@@ -135,6 +150,23 @@ public class VerifyScreen extends Activity {
             }
         }
         return CountryZipCode;
+    }
+    public String GetCountryIdCode(){
+        String CountryID="";
+        String CountryZipCode="";
+
+        TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        CountryZipCode= textViewCountryPrefix.getText().toString().replaceAll("[\\D]", "");
+        String[] rl=getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<rl.length;i++){
+            String[] g=rl[i].split(",");
+            if(g[0].equals(CountryZipCode)){
+                CountryID=g[1];
+                break;
+            }
+        }
+        return CountryID;
     }
     // method to call AsyncTask PostClass for registration
     public void sendPostRequest(View View) {
@@ -182,7 +214,7 @@ public class VerifyScreen extends Activity {
                 firstname = "";
                 lastname = "";
                 email = "";
-                phone = textViewCountryPrefix.getText()+editTextPhoneNo.getText().toString();
+                phone = textViewCountryPrefix.getText().toString().replaceAll("[\\D]", "")+editTextPhoneNo.getText().toString();
                 industry = "";
                 company = "";
                 address_line_1 = "";
@@ -339,7 +371,7 @@ public class VerifyScreen extends Activity {
    /* *
     * class for Verifying otp
     */
-    private class PostClassOTP extends AsyncTask<String, Void, JSONObject> {
+    private class PostClassOTP extends AsyncTask<String, Void, String> {
         String reply;
 
         private final Context context;
@@ -354,73 +386,75 @@ public class VerifyScreen extends Activity {
             progress.show();
         }
 
-        @Override
-        protected JSONObject doInBackground(String... params) {
-            String response = null;
-            try {
-                otp = editTextOTP.getText().toString().trim();
-                HttpClient client = new DefaultHttpClient();
-                String postURL = URL_VERIFY;
+       protected String doInBackground(String... params)  {
+           InputStream is = null;
+           try {
+               otp = editTextOTP.getText().toString().trim();
+             String  urlString = URL_VERIFY;
+               URL url = new URL(urlString);
+               HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-                // making Post request
-                HttpPost post = new HttpPost(postURL);
+               conn.setReadTimeout(10000 /* milliseconds */);
+               conn.setConnectTimeout(15000 /* milliseconds */);
+               conn.setRequestMethod("GET");
+               conn.setDoInput(true);
 
-                // Post data
-                List<NameValuePair> params1 = new ArrayList<NameValuePair>();
-                params1.add(new BasicNameValuePair("phone", phone));
-                params1.add(new BasicNameValuePair("otp", otp));
+               conn.setRequestProperty("PHONE",phone);
+               conn.setRequestProperty("OTP", otp);
 
-                // encode post data in url format
-                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
-                post.setEntity(ent);
-                HttpResponse responsePOST = client.execute(post);
-                HttpEntity resEntity = responsePOST.getEntity();
-                if (resEntity != null) {
-                    // storing the response
-                    response=EntityUtils.toString(resEntity);
-                    Log.i("RESPONSE", response);
+               // Starts the query
+               conn.connect();
+               int responseCode = conn.getResponseCode();
+               is = conn.getInputStream();
+               String contentAsString = convertStreamToString(is);
+               Log.e("res=",""+contentAsString);
+               return contentAsString;
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+           return null;
+       }
 
-                }
-                StringBuilder sb = new StringBuilder();
-                try {
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
-                    String line = null;
+       private String convertStreamToString(InputStream is) throws UnsupportedEncodingException {
+           BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 8);
+           StringBuilder sb = new StringBuilder();
+           String line = null;
+           try {
+               while ((line = reader.readLine()) != null) {
+                   sb.append(line + "\n");
+               }
+           } catch (IOException e) {
+               e.printStackTrace();
+           } finally {
+               try {
+                   is.close();
+               } catch (IOException e) {
+                   e.printStackTrace();
+               }
+           }
+           return sb.toString();
+       }
 
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-
-                System.out.println("finalResult " + sb.toString());
-                // return response
-                return new JSONObject(response);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        protected void onPostExecute(JSONObject result) {
+        protected void onPostExecute(String result) {
             progress.dismiss();
             if (result != null) {
-                Log.e("valid =", "" + result.toString());
+                Log.e("valid =", "" + result);
                 try {
-                    JSONObject res=new JSONObject(result.toString());
-                    int valid = res.getInt("valid");
-                    String token=res.getString("token_generated");
-                     String vz_id=res.getString("vz_id");
-                    String phone=res.getString("phone");
+                    JSONObject res=new JSONObject(result);
+
+                    String  user_details=res.getString("user_details");
+                    JSONObject userDetailsObj=new JSONObject(user_details);
+                    String valid = userDetailsObj.getString("valid");
+                    String token=userDetailsObj.getString("token_generated");
+                     String vz_id=userDetailsObj.getString("vz_id");
+                    String phone=userDetailsObj.getString("phone");
+
+                    String  is_organization=res.getString("is_organization");
+                    JSONObject obj2=new JSONObject(is_organization);
+                    String is_organisation=obj2.getString("is_organization");
                     Log.e("token generated =", "" + token);
                     Log.e("valid =", "" + valid);
-
+                    Log.e("is_organisation =", "" + is_organisation);
 
                    // saving token in shared prefernces
                     sharedPreferences = getSharedPreferences(VZCARD_PREFS, 0);
@@ -438,7 +472,7 @@ public class VerifyScreen extends Activity {
                     System.out.println(" getting vz_id from sharedpreference "+ vz_id_sharedPreference);
                     System.out.println(" getting phone from sharedpreference "+ phone_sharedPreference);
 
-                    if(valid==1)
+                    if(Integer.parseInt(valid)==1)
                     {
 
                         Intent positveActivity = new Intent(getApplicationContext(), MainActivity.class);

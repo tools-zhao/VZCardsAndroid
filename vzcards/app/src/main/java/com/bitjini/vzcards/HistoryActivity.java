@@ -1,68 +1,57 @@
 package com.bitjini.vzcards;
 
-import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.jorgecastilloprz.FABProgressCircle;
-import com.github.jorgecastilloprz.listeners.FABProgressListener;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.squareup.picasso.Picasso;
 
+import org.joda.time.DateTimeUtils;
+import org.joda.time.Interval;
+import org.joda.time.Period;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
+
+import static com.bitjini.vzcards.BaseURLs.HISTORY_URL;
 
 /**
  * Created by VEENA on 12/7/2015.
  */
-public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener, FABProgressListener {
+public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    String HISTORY_URL = "http://staging-vzcards-api.herokuapp.com/history/?access_token=";
-    private SwipeRefreshLayout swipeRefreshLayout;
+     private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayList<SelectUser> arrayList = new ArrayList<>();
     MyClassAdapter childAdapter;
     VerifyScreen p = new VerifyScreen();
@@ -83,12 +72,12 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
     int progressCount=0;
     boolean isLoading=false;
      int itemCount=0;
-
+    TextView emptyMsg;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View history = inflater.inflate(R.layout.history_listview, container, false);
-
+        emptyMsg=(TextView) history.findViewById(R.id.emptyFeeds);
           progressContainer = (ImageView) history.findViewById(R.id.progress);
 //        progressBar = (ProgressBar)history.findViewById(R.id.progress1);
         swipeRefreshLayout = (SwipeRefreshLayout) history.findViewById(R.id.pullToRefresh);
@@ -210,17 +199,32 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
         return history;
     }
 
-    public void getHistoryContents(String url)
-    {
-        try{
-            count=1;
+    public void getHistoryContents(String url) {
+
+
+        try {
+            count = 1;
             String result = new HttpAsyncTask(getActivity()).execute(url).get();
+            Log.e("received History", "" + result);
+
+
+            listView.setVisibility(View.VISIBLE);
+
             Log.e("received History", "" + result);
 
 
             JSONObject jsonObject = new JSONObject(result);
 
-                countOfFeeds = jsonObject.getInt("count");
+            countOfFeeds = jsonObject.getInt("count");
+            if (countOfFeeds == 0) {
+                emptyMsg.setVisibility(View.VISIBLE);
+                emptyMsg.setText("Hey, you have not added any tickets.\nPlease \"Add\" tickets.");
+                listView.setVisibility(View.GONE);
+
+            } else {
+                emptyMsg.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
+
                 String response = jsonObject.getString("response");
                 // Getting JSON Array node
                 JSONArray arr = jsonObject.getJSONArray("response");
@@ -260,9 +264,10 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                     selectUser.setConnections(arr2);
                     selectUsers.add(selectUser);
 
-
+                    swipeRefreshLayout.setRefreshing(false);
                 }
 
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -278,7 +283,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
 
 
-    @Override
+                @Override
     public void onRefresh() {
         // TODO Auto-generated method stub
 
@@ -293,6 +298,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 selectUsers.clear();
                 connectorDetails.clear();
 
+                swipeRefreshLayout.setRefreshing(true);
                 currentPage=1;
                 totalPage=0;
                 countOfFeeds=0;
@@ -310,7 +316,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                 }
                 //do processing to get new data and set your listview's adapter, maybe  reinitialise the loaders you may be using or so
                 //when your data has finished loading, set the refresh state of the view to false
-                swipeRefreshLayout.setRefreshing(false);
+//                swipeRefreshLayout.setRefreshing(false);
 
             }
         }, 2000);
@@ -329,7 +335,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
             Log.e("currentpage=",""+currentPage);
 
-            getHistoryContents("http://staging-vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+            getHistoryContents("https://vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
 
 //            // Notify the ListView of data changed
 //
@@ -348,12 +354,6 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
 
     }
 
-    @Override
-    public void onFABProgressAnimationEnd() {
-//        Snackbar.make(fabProgressCircle, R.string.cloud_upload_complete, Snackbar.LENGTH_LONG)
-//                .setAction("Action", null)
-//                .show();
-    }
     public boolean isConnected() {
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -502,7 +502,7 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
                                                 Toast.makeText(getActivity(),"Delete Failure",Toast.LENGTH_LONG).show();
                                             }
                                        }
-                                    }.execute("http://staging-vzcards-api.herokuapp.com/remove_ticket/ticket_id="+ticketId+"?access_token="+ p.token_sharedPreference);
+                                    }.execute("http://vzcards-api.herokuapp.com/remove_ticket/ticket_id="+ticketId+"?access_token="+ p.token_sharedPreference);
 
                                 }
                             });
@@ -722,121 +722,135 @@ public class HistoryActivity extends Fragment implements SwipeRefreshLayout.OnRe
             }
         }
 
-    public String getDateDifference(String date_created)  {
+    public String getDateDifference(String date_created) {
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
         String time = null;
-        String created_date=date_created.replaceAll("[^0-9-:]", " ");
+        String created_date = date_created.replaceAll("[^0-9-:]", " ");
         String output = created_date.substring(0, 19);
         Log.e(" date_created rep  :", "" + output);
 
         Calendar calendar1 = Calendar.getInstance();
-        Calendar calendar2= Calendar.getInstance();
-
-
+        Calendar calendar2 = Calendar.getInstance();
+        DateTimeUtils obj = null;
+        int days;
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+"));
         String result = sdf.format(calendar2.getTime());
 
         System.out.println(result);
 
-
-
+        Period period = null;
+        long elapsed = 0;
         try {
 
 
-             Date date = sdf.parse(date_created);
-             calendar1.setTime(date);
+            Date date = sdf.parse(date_created);
+            calendar1.setTime(date);
 
             // set the current date to calender2 object
 
-             Date date2 = sdf.parse(result);
+            Date date2 = sdf.parse(result);
 
             Calendar cal = Calendar.getInstance();
             cal.setTime(date2);
 
-            Log.e("date1 =",""+date);
-            Log.e("date2 =",""+date2);
+            Log.e("date1 =", "" + date);
+            Log.e("date2 =", "" + date2);
 
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-		/*
-		 * Use getTimeInMillis() method to get the Calendar's time value in
-		 * milliseconds. This method returns the current time as UTC
-		 * milliseconds from the epoch
-		 */
+
+//    }       obj.printDifference(date, date2);
+
+
+//        return "Added "+period.getMonths() +" "+time;
+
+//		/*
+//		 * Use getTimeInMillis() method to get the Calendar's time value in
+//		 * milliseconds. This method returns the current time as UTC
+//		 * milliseconds from the epoch
+//		 */
+
+            Interval interval =
+                    new Interval(date.getTime(), date2.getTime());
+            period = interval.toPeriod();
+            Log.e("period", "" + period);
+            System.out.printf(
+                    "%d years, %d months, %d days, %d hours, %d minutes, %d seconds%n",
+                    period.getYears(), period.getMonths(), period.getDays(),
+                    period.getHours(), period.getMinutes(), period.getSeconds());
+
         long miliSecondForDate1 = calendar1.getTimeInMillis();
         long miliSecondForDate2 = calendar2.getTimeInMillis();
 
         // Calculate the difference in millisecond between two dates
         long diffInMilis = miliSecondForDate2-miliSecondForDate1;
-
-		/*
-		 * Now we have difference between two date in form of millsecond we can
-		 * easily convert it Minute / Hour / Days by dividing the difference
-		 * with appropriate value. 1 Second : 1000 milisecond 1 Hour : 60 * 1000
-		 * millisecond 1 Day : 24 * 60 * 1000 milisecond
-		 */
-        long elapsed = 0;
-
-        long diffInSecond = diffInMilis / 1000;
-        long diffInMinute = diffInMilis / (60 * 1000);
-        long diffInHour = diffInMilis / (60 * 60 * 1000);
-        long diffInDays = diffInMilis / (24 * 60 * 60 * 1000);
+//
+//		/*
+//		 * Now we have difference between two date in form of millsecond we can
+//		 * easily convert it Minute / Hour / Days by dividing the difference
+//		 * with appropriate value. 1 Second : 1000 milisecond 1 Hour : 60 * 1000
+//		 * millisecond 1 Day : 24 * 60 * 1000 milisecond
+//		 */
 
 
-        if(diffInSecond<=60)
-        {
-            elapsed=diffInSecond;
-            time="seconds ago";
-            System.out.println("Difference in Seconds : " + elapsed);
+            long diffInSecond = diffInMilis / 1000;
+            long diffInMinute = diffInMilis / (60 * 1000);
+            long diffInHour = diffInMilis / (60 * 60 * 1000);
+            long diffInDays = diffInMilis / (24 * 60 * 60 * 1000);
+
+
+            if (diffInSecond <= 60) {
+                elapsed = diffInSecond;
+                time = "seconds ago";
+                System.out.println("Difference in Seconds : " + elapsed);
+            }
+            if (diffInSecond > 60 && diffInMinute < 60) {
+
+                elapsed = diffInMinute;
+
+                if (elapsed > 1) {
+                    time = "mins ago";
+                } else {
+                    time = "min ago";
+                }
+                System.out.println("Difference in Minute : " + elapsed);
+            }
+            if (diffInMinute > 60 && diffInHour < 24) {
+                elapsed = diffInHour;
+                if (elapsed > 1) {
+                    time = "hrs ago";
+                } else {
+                    time = "hour ago";
+                }
+                System.out.println("Difference in Hours : " + elapsed);
+            }
+            if (diffInHour > 24 && diffInDays < 30) {
+
+                elapsed = diffInDays;
+                if (elapsed > 1) {
+                    time = "days ago";
+                } else {
+                    time = "day ago";
+                }
+                System.out.println("Difference in Days : " + elapsed);
+            }
+            if (diffInDays > 30) {
+                elapsed=period.getMonths();
+                System.out.println("Difference in Days : " + period.getMonths());
+                if (elapsed > 1) {
+                    time = "months ago";
+                } else {
+                    time = "month ago";
+                }
+
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        if(diffInSecond>60 && diffInMinute<60){
-
-            elapsed=diffInMinute;
-
-            if(elapsed>1){
-                time="mins ago";
-            }
-            else {
-                time="min ago";
-            }
-            System.out.println("Difference in Minute : " + elapsed);
-        }
-        if(diffInMinute>60 && diffInHour<24)
-        {
-            elapsed=diffInHour;
-            if(elapsed>1){
-                time="hrs ago";
-            }
-            else {
-                time="hour ago";
-            }
-            System.out.println("Difference in Hours : " + elapsed);
-        }
-        if(diffInHour>24 && diffInDays<30) {
-
-            elapsed=diffInDays;
-            if(elapsed>1){
-                time="days ago";
-            }
-            else {
-                time="day ago";
-            }
-            System.out.println("Difference in Days : " + elapsed);
-        }
-        if(diffInDays>30) {
-
-            elapsed= Long.parseLong(output);
-            System.out.println("Difference in Days : " + elapsed);
-        }
-
-
-   return "Added "+elapsed +" "+time;
-
+        return "Added " + elapsed + " " + time;
 
 
     }
-
     }
+

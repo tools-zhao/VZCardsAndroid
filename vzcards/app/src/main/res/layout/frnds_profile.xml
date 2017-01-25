@@ -10,7 +10,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="#43c1d9f2"
+        android:background="@color/white"
         android:layout_marginTop="0dp"
         android:layout_height="match_parent">
 
@@ -38,67 +38,73 @@
 
 
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#434951"
+                    android:background="@android:color/transparent"
                     android:id="@+id/l2"
-
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
                     android:layout_below="@+id/toolbar"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:textColor="#ffffff"
-                        android:layout_gravity="center"
-                        android:text="Name"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="2dp"
-                        android:textSize="20sp"
-                        android:id="@id/name"
-                        android:gravity="center"/>
-                    <RelativeLayout
-                        android:layout_gravity="center_horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="211dp">
-                    <com.bitjini.vzcards.RoundedImageView
+
+
+                            <ImageView
+                                android:layout_width="200dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center|center_vertical"
+                                android:layout_marginLeft="15dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="2dp"
+                                android:layout_weight="1.8"
+                                android:id="@+id/profilePic"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/profile_pic_placeholder"
+                                android:layout_alignParentStart="true" />
+
+
+                    <ImageView
                         android:layout_width="50dp"
                         android:layout_height="60dp"
                         android:src="@drawable/call_btn"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginLeft="40dp"
                         android:id="@+id/btn_call"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentStart="true" />
+                        android:layout_marginBottom="39dp"
+                        android:layout_alignParentBottom="true"/>
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="60dp"
+                                android:src="@drawable/no_pic_placeholder_2"
+                                android:layout_gravity="center"
+                                android:layout_marginLeft="40dp"
+                                android:id="@+id/btn_pick"
+                                android:layout_marginRight="20dp"
+                                android:layout_above="@+id/btn_call"
+                                android:layout_toEndOf="@+id/profilePic" />
 
-                    <com.bitjini.vzcards.RoundedImageView
-                        android:layout_width="200dp"
-                        android:layout_height="fill_parent"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="1dp"
-                        android:layout_toEndOf="@+id/btn_call"
-                        android:layout_weight="1.8"
-                        android:id="@+id/profilePic"
-                        android:src="@drawable/profile_pic_placeholder"/>
 
-                    <com.bitjini.vzcards.RoundedImageView
+                    <TextView
                         android:layout_width="50dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/com_logo"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="20dp"
-                        android:id="@+id/btn_pick"
-                        android:layout_marginRight="20dp"
-                        android:layout_alignTop="@+id/btn_call"
-                        android:layout_alignParentEnd="true" />
+                        android:maxLines="1"
+                        android:layout_height="35dp"
+                        android:textColor="#ffffff"
+                        android:ellipsize="end"
+                        android:background="@color/disabled_gray"
+                        android:layout_alignParentTop="true"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:text=""
+                        android:textStyle="bold"
+                        android:layout_marginBottom="2dp"
+                        android:textSize="16sp"
+                        android:id="@id/name"
+                        android:gravity="center"/>
 
-                    </RelativeLayout>
-                </LinearLayout>
+
+                </RelativeLayout>
 
 
 
@@ -115,9 +121,13 @@
                         android:id="@+id/profileList"
                         android:layout_below="@+id/l2"
                         android:descendantFocusability="afterDescendants"
-                        android:dividerHeight="-3.0sp"
                         android:layout_above="@+id/l8"
+                        android:dividerHeight="-23dp"
+                        android:listSelector="@android:color/transparent"
+                        android:divider="@null"
                         android:layout_marginBottom="10dp"></ListView>
+
+
 
                 <!--</LinearLayout>-->
             </RelativeLayout>
