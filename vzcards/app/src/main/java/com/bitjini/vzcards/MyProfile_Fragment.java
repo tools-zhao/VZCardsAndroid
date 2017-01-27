@@ -468,74 +468,70 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     }
     public void getProfileDetails()
     {
-        try {
+
             String receivedprofileSharedPreference = null;
+            new Get_Profile_AsyncTask(){
+                @Override
+                protected void onPostExecute(String receivedprofileSharedPreference) {
+                    try {
+                        //Profile details
+                        if (receivedprofileSharedPreference != null) {
+                            JSONObject jsonObj = new JSONObject(receivedprofileSharedPreference);
 
+                            firstname = jsonObj.getString("firstname");
+                            lastname = jsonObj.getString("lastname");
+                            email = jsonObj.getString("email");
+                            industry = jsonObj.getString("industry");
+                            company = jsonObj.getString("company");
+                            address_line_1 = jsonObj.getString("address_line_1");
+                            address_line_2 = jsonObj.getString("address_line_2");
+                            city = jsonObj.getString("city");
+                            pin_code = jsonObj.getString("pin_code");
+                            title = jsonObj.getString("title");
+                            photo = jsonObj.getString("photo");
+                            company_photo = jsonObj.getString("company_photo");
 
-            receivedprofileSharedPreference = new Get_Profile_AsyncTask().execute(BaseURLs.URL_GET_PROFILE + token_sharedPreference).get();//cal to get profile profileSharedPreference
+                        }
 
-            //Profile details
-            if(receivedprofileSharedPreference!=null) {
-                JSONObject jsonObj = new JSONObject(receivedprofileSharedPreference);
+                        Log.e(" Photo Received ", "" + photo);
+                        Log.e(" company_photoReceived", "" + company_photo);
 
-                firstname = jsonObj.getString("firstname");
-                lastname = jsonObj.getString("lastname");
-                email = jsonObj.getString("email");
-                industry = jsonObj.getString("industry");
-                company = jsonObj.getString("company");
-                address_line_1 = jsonObj.getString("address_line_1");
-                address_line_2 = jsonObj.getString("address_line_2");
-                city = jsonObj.getString("city");
-                pin_code = jsonObj.getString("pin_code");
-                title = jsonObj.getString("title");
-                photo= jsonObj.getString("photo");
-                company_photo=jsonObj.getString("company_photo");
-
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        Log.e(" Photo Received ",""+photo);
-        Log.e(" company_photoReceived",""+company_photo);
-
-        if(!photo.isEmpty()) {
-            Picasso.with(getActivity()).load(photo).centerCrop().resize(400,400).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
-            Log.e(" Photo on Received ",""+photo);
+                        if (!photo.isEmpty()) {
+                            Picasso.with(getActivity()).load(photo).centerCrop().resize(400, 400).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+                            Log.e(" Photo on Received ", "" + photo);
 //            if(PROFILE_IMAGE.length()==0) {
-            SavePreferences(PROFILE_IMAGE, photo);
+                            SavePreferences(PROFILE_IMAGE, photo);
 //            }
 //            imageProfile.setTag(photo);
 //                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
 
-        } else  {
-            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
-            imageProfile.setCropToPadding(true);
-            imageProfile.setPadding(50,50,50,50);
-            //            new DownloadImagesTask(getActivity()).execute(holder.photo);
+                        } else {
+                            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
+                            imageProfile.setCropToPadding(true);
+                            imageProfile.setPadding(50, 50, 50, 50);
+                            //            new DownloadImagesTask(getActivity()).execute(holder.photo);
 
-        }
+                        }
 
-        if(!company_photo.isEmpty()) {
-            Picasso.with(getActivity()).load(company_photo).centerCrop().resize(200,200).placeholder(R.drawable.no_pic_placeholder_2).into(imageCompany);
-            Log.e(" company_photoReceived",""+company_photo);
-            imageProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            SavePreferences(COMPANY_IMAGE, company_photo);
+                        if (!company_photo.isEmpty()) {
+                            Picasso.with(getActivity()).load(company_photo).centerCrop().resize(200, 200).placeholder(R.drawable.no_pic_placeholder_2).into(imageCompany);
+                            Log.e(" company_photoReceived", "" + company_photo);
+                            imageProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                            SavePreferences(COMPANY_IMAGE, company_photo);
 
 //            imageCompany.setTag(company_photo);
 //            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
-        }else  {
-            imageCompany.setImageResource(R.drawable.no_pic_placeholder_2);
-            imageCompany.setCropToPadding(true);
-            imageProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            imageCompany.setPadding(50,50,50,50);
-        }
-
+                        } else {
+                            imageCompany.setImageResource(R.drawable.no_pic_placeholder_2);
+                            imageCompany.setCropToPadding(true);
+                            imageProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                            imageCompany.setPadding(50, 50, 50, 50);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.execute(BaseURLs.URL_GET_PROFILE + token_sharedPreference);//cal to get profile profileSharedPreference
 
         textViewName.setText(firstname+ " "+lastname);
         values = new ArrayList<String>();

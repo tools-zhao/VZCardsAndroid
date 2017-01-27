@@ -143,13 +143,35 @@ public class Feed_detail_needs extends Activity implements View.OnClickListener 
                 break;
 
             case R.id.refer_contact:
-                createDialog();
+                if(!GetSharedPreference.isOrganisation())
+                {
+                    openFragment();
+                }else {
+                    createDialog();
 
+                }
                 break;
 
 
         }
     }
+
+    private void openFragment() {
+        // send the parameters to refer contact
+        ReferContacts connect = new ReferContacts();
+
+        Bundle args2 = new Bundle();
+        args2.putString("ticket_id", ticket_id_1);
+        args2.putString("phone1", phone1);
+        args2.putString("connector_vz_id", connector_vz_id);
+
+        connect.setArguments(args2);
+
+        //Inflate the fragment
+        getFragmentManager().beginTransaction().replace(R.id.feed_detail_need_frame, connect).addToBackStack(connect.toString())
+                .commit();
+    }
+
     private void createDialog() {
         // create an alert dialog box
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Feed_detail_needs.this);
@@ -160,19 +182,7 @@ public class Feed_detail_needs extends Activity implements View.OnClickListener 
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
 
-//                     // send the parameters to refer contact
-                        ReferContacts connect = new ReferContacts();
-
-                        Bundle args2 = new Bundle();
-                        args2.putString("ticket_id", ticket_id_1);
-                        args2.putString("phone1", phone1);
-                        args2.putString("connector_vz_id", connector_vz_id);
-
-                        connect.setArguments(args2);
-
-                        //Inflate the fragment
-                        getFragmentManager().beginTransaction().replace(R.id.feed_detail_need_frame, connect).addToBackStack(connect.toString())
-                                .commit();
+//
                     }
                 });
 

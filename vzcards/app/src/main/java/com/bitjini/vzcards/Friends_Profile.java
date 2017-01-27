@@ -127,7 +127,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         if (!email.equals(""))
             values.add(email);
 
-        if (!address_line_1.equals(""))
+        if (!address_line_1.equals("") )
             values.add(address_line_1);
 
         if (!city.equals(""))

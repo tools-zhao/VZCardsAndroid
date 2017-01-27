@@ -609,11 +609,12 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                     nextScreenIntent.putExtra("lname", data.getReferredlName());
                     nextScreenIntent.putExtra("photo", data.getReferedPhoto());
                     nextScreenIntent.putExtra("phone", data.getPhone());
+                    nextScreenIntent.putExtra("email", data.getEmail());
                     nextScreenIntent.putExtra("company", data.getCompany());
                     nextScreenIntent.putExtra("pin_code", data.getPin_code());
                     nextScreenIntent.putExtra("industry", data.getIndustry());
-                    nextScreenIntent.putExtra("address1", data.getAddress1());
-                    nextScreenIntent.putExtra("address2", data.getAddress2());
+                    nextScreenIntent.putExtra("address_line_1", data.getAddress1());
+                    nextScreenIntent.putExtra("address_line_2", data.getAddress2());
                     nextScreenIntent.putExtra("city", data.getCity());
                     nextScreenIntent.putExtra("title", data.getTitle());
                     nextScreenIntent.putExtra("company_photo", data.getComany_photo());

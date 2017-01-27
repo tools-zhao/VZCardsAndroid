@@ -180,26 +180,16 @@ return refer_contact;
         } else {
             if (getActivity() != null)
             {
-                progress1 = new ProgressDialog(getActivity());
-                if (progress1 != null) {
-                    progress1.setMessage("Fetching contacts...");
-                    progress1.setCancelable(false);
-                    progress1.show();
+                if (getActivity() != null) {
+                    LoadContacts loadContacts = new LoadContacts(getActivity());
+
+                    adapter = new SelectUserAdapter(loadContacts.phoneList12, getActivity());
+
+                    listView.setAdapter(adapter);
+                    listView.setTextFilterEnabled(true);
+                    // place your adapter to a separate filter to remove pop up text
+                    filter = adapter.getFilter();
                 }
-                new LoadContacts(getActivity()){
-
-                    protected void onPostExecute(ArrayList<SelectUser> result) {
-
-                        if (progress1.isShowing() && progress1!=null) {
-                            progress1.dismiss();
-                            progress1 = null;}
-                        adapter = new SelectUserAdapter(result, getActivity());
-                        listView.setAdapter(adapter);
-                        listView.setTextFilterEnabled(true);
-                        // place your adapter to a separate filter to remove pop up text
-                        filter = adapter.getFilter();
-                    }
-                }.execute();
 
 
             }
