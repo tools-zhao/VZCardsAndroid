@@ -1,27 +1,15 @@
 package com.bitjini.vzcards;
 
-import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SyncContext;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.provider.ContactsContract;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +27,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -47,34 +34,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import static com.bitjini.vzcards.BaseURLs.VZFRIENDS_URL;
-import static com.bitjini.vzcards.Constants.is_organization_sharedPreference;
 import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
  * Created by bitjini on 18/12/15.
  */
 public class VZFriends_Fragment extends Fragment implements View.OnClickListener,SearchView.OnQueryTextListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
-
-
-    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
-
-    VerifyScreen p = new VerifyScreen();
 
     Context c;
     View v;
@@ -148,9 +120,6 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                 if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
 
-
-//                    selectUsers.clear();
-//                    listView.setVisibility(View.VISIBLE);
                     // It is time to load more items
                     isLoading = true;
                     totalPage=(int) Math.ceil((double)countOfFrnds / 10.0);
@@ -228,7 +197,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     }
     private void CheckIfOrganisation() {
 
-        if(is_organization_sharedPreference.equals("false"))
+        // if not an organisation
+        if(!GetSharedPreference.isOrganisation())
         {
             inviteButton=(Button)vzfrnds.findViewById(R.id.invite);
             inviteButton.setOnClickListener(this);
@@ -250,104 +220,97 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             @Override
             public void onPostExecute(String received) {
                 if(received!=null) {
-        try {
-            progressCount=1;
-
-//            String received=new HttpAsyncTask(getActivity()).execute(url).get();
+                    try {
+                        progressCount = 1;
 
 
-                    JSONObject jsonObject = new JSONObject(received);
-                    countOfFrnds=jsonObject.getInt("count");
-            if(countOfFrnds==0)
-            {
-                emptyMsg.setVisibility(View.VISIBLE);
-                emptyMsg.setText( "Hey, you have no VZFriends.\nPlease invite friends to VZCards.");
-                listView.setVisibility(View.GONE);
+                        JSONObject jsonObject = new JSONObject(received);
+                        countOfFrnds = jsonObject.getInt("count");
+                        if (countOfFrnds == 0) {
+                            emptyMsg.setVisibility(View.VISIBLE);
+                            emptyMsg.setText("Hey, you have no VZFriends.\nPlease invite friends to VZCards.");
+                            listView.setVisibility(View.GONE);
 
-            }else {
-                emptyMsg.setVisibility(View.GONE);
-                listView.setVisibility(View.VISIBLE);
+                        } else {
+                            emptyMsg.setVisibility(View.GONE);
+                            listView.setVisibility(View.VISIBLE);
 
-                Log.e("count of frnds", "" + countOfFrnds);
-                String response = jsonObject.getString("response");
-                Log.e("response of frnds", "" + response);
-                // Getting JSON Array node
-                JSONArray arr = jsonObject.getJSONArray("response");
+                            Log.e("count of frnds", "" + countOfFrnds);
+                            String response = jsonObject.getString("response");
+                            Log.e("response of frnds", "" + response);
+                            // Getting JSON Array node
+                            JSONArray arr = jsonObject.getJSONArray("response");
 
-                // looping through All Contacts
-                for (int i = 0; i < arr.length(); i++) {
-                    JSONObject c = arr.getJSONObject(i);
-                    // Feed node is JSON Object
-                    String phone = c.getString("phone");
-                    String firstname = c.getString("firstname");
-                    String lastname = c.getString("lastname");
-                    String photo = c.getString("photo");
+                            // looping through All Contacts
+                            for (int i = 0; i < arr.length(); i++) {
+                                JSONObject c = arr.getJSONObject(i);
+                                // Feed node is JSON Object
+                                String phone = c.getString("phone");
+                                String firstname = c.getString("firstname");
+                                String lastname = c.getString("lastname");
+                                String photo = c.getString("photo");
 
-                    String company = c.getString("company");
-                    String pin_code = c.getString("pin_code");
-                    String industry = c.getString("industry");
-                    String address1 = c.getString("address_line_1");
-                    String address2 = c.getString("address_line_2");
-                    String city = c.getString("city");
-                    String title = c.getString("title");
-                    String company_photo = c.getString("company_photo");
-                    String email = c.getString("email");
-
+                                String company = c.getString("company");
+                                String pin_code = c.getString("pin_code");
+                                String industry = c.getString("industry");
+                                String address1 = c.getString("address_line_1");
+                                String address2 = c.getString("address_line_2");
+                                String city = c.getString("city");
+                                String title = c.getString("title");
+                                String company_photo = c.getString("company_photo");
+                                String email = c.getString("email");
 
 
+                                SelectUser selectUser = new SelectUser();
 
-                    SelectUser selectUser = new SelectUser();
-
-                    SyncContacts sync = new SyncContacts(getActivity());
+                                if (!GetSharedPreference.isOrganisation()) {
+                                    SyncContacts sync = new SyncContacts(getActivity());
 //                Log.e("list:",""+sync.phoneList12);
-                    for (SelectUser list : sync.phoneList12) {
+                                    for (SelectUser list : sync.phoneList12) {
 
-                        if (phone.equals(list.getPhone())) {
-                            selectUser.setfName(list.getName());
-                            Log.e("list name",""+list.getfName());
+                                        if (phone.equals(list.getPhone())) {
+                                            selectUser.setFirstName(list.getName());
+                                            Log.e("list name", "" + list.getfName());
+                                        } else
+                                            selectUser.setFirstName(firstname + " " + lastname);
+
+                                    }
+                                }
+
+                                selectUser.setFirstName(firstname +" "+lastname);
+                                selectUser.setLastName(lastname);
+                                selectUser.setSyncPhone(phone);
+                                selectUser.setPhoto(photo);
+                                selectUser.setEmail(email);
+                                selectUser.setCompany(company);
+                                selectUser.setPin_code(pin_code);
+                                selectUser.setIndustry(industry);
+                                selectUser.setAddress1(address1);
+                                selectUser.setAddress2(address2);
+                                selectUser.setCity(city);
+                                selectUser.setTitle(title);
+                                selectUser.setComany_photo(company_photo);
+
+
+                                selectUsers.add(selectUser);
+                                progressBar.setVisibility(View.GONE);
+                                listView.setVisibility(View.VISIBLE);
+
+                                if (!selectUsers.isEmpty() && selectUsers != null) {
+                                    Set<SelectUser> hs = new HashSet<>();
+                                    hs.addAll(selectUsers);
+                                    selectUsers.clear();
+                                    selectUsers.addAll(hs);
+                                    Collections.sort(selectUsers, new SortBasedOnName(getActivity()));// sort in alphabetical order
+                                }
+
+
+                            }
+
                         }
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-                    selectUser.setFirstName(firstname);
-                    selectUser.setLastName(lastname);
-                    selectUser.setSyncPhone(phone);
-                    selectUser.setPhoto(photo);
-                    selectUser.setEmail(email);
-                    selectUser.setCompany(company);
-                    selectUser.setPin_code(pin_code);
-                    selectUser.setIndustry(industry);
-                    selectUser.setAddress1(address1);
-                    selectUser.setAddress2(address2);
-                    selectUser.setCity(city);
-                    selectUser.setTitle(title);
-                    selectUser.setComany_photo(company_photo);
-
-
-
-                    selectUsers.add(selectUser);
-                    progressBar.setVisibility(View.GONE);
-                    listView.setVisibility(View.VISIBLE);
-
-                    if(!selectUsers.isEmpty() && selectUsers!=null) {
-                        Set<SelectUser> hs = new HashSet<>();
-                        hs.addAll(selectUsers);
-                        selectUsers.clear();
-                        selectUsers.addAll(hs);
-                        Collections.sort(selectUsers, new SortBasedOnName(getActivity()));// sort in alphabetical order
-                    }
-
-
-
-                }
-
-            }
-//            Log.e(" received :", "" + response);
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
                 }
             }
         }.execute(url);
@@ -472,7 +435,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         SelectUser data = (SelectUser) parent.getItemAtPosition(position);
         Intent nextScreenIntent = new Intent(getActivity(), Friends_Profile.class);
 
-        nextScreenIntent.putExtra("phoneName",data.getfName());
+        nextScreenIntent.putExtra("phoneName",data.getFirstName());
         nextScreenIntent.putExtra("fname", data.getFirstName());
         nextScreenIntent.putExtra("lname", data.getLastName());
         nextScreenIntent.putExtra("photo", data.getPhoto());
@@ -596,9 +559,9 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             v.phone = (TextView) view.findViewById(R.id.number);
             v.imageView = (ImageView) view.findViewById(R.id.contactImage);
 
-            final SelectUser data = (SelectUser) arrayList.get(i);
-            v.fname.setText(data.getfName());
-            Log.e("name=",""+data.getfName());
+            final SelectUser data = arrayList.get(i);
+            v.fname.setText(data.getFirstName());
+            Log.e("name=",""+data.getFirstName());
 //            v.company.setText(data.getCompany());
             v.phone.setText(data.getSyncPhone());
 

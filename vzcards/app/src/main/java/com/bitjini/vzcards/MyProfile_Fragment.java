@@ -135,7 +135,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (is_organization_sharedPreference.equals("false")) {
+                if(!GetSharedPreference.isOrganisation()) {
                     switch (clickCount) {
                         case 0:
                             EditUserDetails();

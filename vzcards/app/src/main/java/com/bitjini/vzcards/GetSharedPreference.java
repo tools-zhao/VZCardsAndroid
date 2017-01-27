@@ -30,4 +30,15 @@ public class GetSharedPreference {
 
         profileSharedPreference = context.getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
     }
+
+    public static boolean isOrganisation()
+    {
+        if(is_organization_sharedPreference.equals("false"))
+        {
+            return false;
+        }else
+        {
+            return true;
+        }
+    }
 }
