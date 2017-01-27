@@ -106,11 +106,8 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
             conn.setDoOutput(true);
 
-//            new LoadContact().execute();
                     try {
-//                        for (String s:phoneArray) {
-//                            Log.e(" phone arrays:", "" + s);
-//                        }
+
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
                         params.add(new BasicNameValuePair("vz_id", vz_id_sharedPreference));
                         Log.e(" p.vz_id_", "" + vz_id_sharedPreference);

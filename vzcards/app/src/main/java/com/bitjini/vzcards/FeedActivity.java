@@ -540,7 +540,7 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
                          @Override
                          protected void onPostExecute(ArrayList<SelectUser> result) {
                              super.onPostExecute(result);
-                             Log.e("loadContacts-",""+result);
+//                             Log.e("loadContacts-",""+result);
                              new SyncContacts(context,result).execute(SYNC_CONTACT_URL);
                              progressBar.setVisibility(View.GONE);
                              listView.setVisibility(View.VISIBLE);

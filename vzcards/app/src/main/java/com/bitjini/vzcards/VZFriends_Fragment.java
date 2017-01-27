@@ -265,20 +265,20 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
 
                                    LoadContacts loadContacts = new LoadContacts(getActivity());
-//                Log.e("list:",""+sync.phoneList12);
+
                                     for (SelectUser list : loadContacts.phoneList12) {
+//                                        Log.e("api phone= list:",""+phone+"  "+list.getPhone());
 
                                         if (phone.equals(list.getPhone())) {
-                                            selectUser.setFirstName(list.getName());
-                                            Log.e("list name", "" + list.getfName());
-                                        } else
-                                            selectUser.setFirstName(firstname + " " + lastname);
+                                            selectUser.setfName(list.getName());
+                                            selectUser.setPhone(list.getPhone());
+
+                                            Log.e("list name", "" + list.getName());
+                                        }
 
                                     }
-
-
-                                selectUser.setFirstName(firstname +" "+lastname);
-                                selectUser.setLastName(lastname);
+                                selectUser.setFirstName(firstname + " " + lastname);
+//                                selectUser.setLastName(lastname);
                                 selectUser.setSyncPhone(phone);
                                 selectUser.setPhoto(photo);
                                 selectUser.setEmail(email);
@@ -435,7 +435,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         SelectUser data = (SelectUser) parent.getItemAtPosition(position);
         Intent nextScreenIntent = new Intent(getActivity(), Friends_Profile.class);
 
-        nextScreenIntent.putExtra("phoneName",data.getFirstName());
+        nextScreenIntent.putExtra("phoneName",data.getfName());
         nextScreenIntent.putExtra("fname", data.getFirstName());
         nextScreenIntent.putExtra("lname", data.getLastName());
         nextScreenIntent.putExtra("photo", data.getPhoto());
@@ -555,13 +555,18 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             }
             v = new ViewHolder();
             v.fname = (TextView) view.findViewById(R.id.name);
-            v.company=(TextView) view.findViewById(R.id.companyName);
+            v.company = (TextView) view.findViewById(R.id.companyName);
             v.phone = (TextView) view.findViewById(R.id.number);
             v.imageView = (ImageView) view.findViewById(R.id.contactImage);
 
             final SelectUser data = arrayList.get(i);
-            v.fname.setText(data.getFirstName());
-            Log.e("name=",""+data.getFirstName());
+            if (data.getSyncPhone().equals(data.getPhone())) {
+                v.fname.setText(data.getfName());
+            }
+            else
+            {  v.fname.setText(data.getFirstName());
+            Log.e("name=", "" + data.getFirstName());
+               }
 //            v.company.setText(data.getCompany());
             v.phone.setText(data.getSyncPhone());
 
