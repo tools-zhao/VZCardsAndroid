@@ -89,9 +89,9 @@ public class InviteContacts extends Fragment implements SearchView.OnQueryTextLi
         toolbar.setVisibility(View.GONE);
 //        showContacts();
         if (getActivity() != null) {
-            SyncContacts sync = new SyncContacts(getActivity());
+            LoadContacts loadContacts = new LoadContacts(getActivity());
 
-            adapter = new SelectUserAdapter(sync.phoneList12, getActivity());
+            adapter = new SelectUserAdapter(loadContacts.phoneList12, getActivity());
 
             listView.setAdapter(adapter);
             listView.setTextFilterEnabled(true);

@@ -77,7 +77,7 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
         }
     }
 
-    private JSONObject downloadUrl(String postURL) throws IOException {
+    private String downloadUrl(String postURL) throws IOException {
 
 //              private String downloadUrl(String urlString) throws IOException {
         String response = null;
@@ -96,11 +96,11 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             conn.setDoInput(true);
             conn.setDoOutput(true);
 
-
+            GetSharedPreference.getSharePreferenceValue(context);
 
             Log.e("photo in profile",""+pr.photo);
-            String company_photo = profileSharedPreference.getString(COMPANY_IMAGE, null);
-            String photo =profileSharedPreference.getString(PROFILE_IMAGE, null);;
+            String company_photo = profileSharedPreference.getString(COMPANY_IMAGE, "");
+            String photo =profileSharedPreference.getString(PROFILE_IMAGE, "");;
             String firstname = "";
             String lastname = "";
             String email = "";
@@ -180,7 +180,7 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
 
             // return response
-            return new JSONObject(response);
+            return response;
 
         } catch (Exception e) {
             e.printStackTrace();

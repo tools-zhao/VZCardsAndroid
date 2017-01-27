@@ -135,7 +135,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!GetSharedPreference.isOrganisation()) {
+                if (!GetSharedPreference.isOrganisation()) {
                     switch (clickCount) {
                         case 0:
                             EditUserDetails();
@@ -245,12 +245,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 }
                 if (companyPicturePath.length() != 0) {
 //                                    picturePath = companyPicturePath;
-                    progressDialog1 = new ProgressDialog(getActivity());
-                    if (progressDialog1 != null) {
-                        progressDialog1.setMessage("Saving user details...");
-                        progressDialog1.setCancelable(false);
-                        progressDialog1.show();
-                    }
+
                     uploadCompanyImage();
                 }
 //

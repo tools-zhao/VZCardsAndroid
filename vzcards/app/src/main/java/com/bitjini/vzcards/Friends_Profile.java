@@ -119,21 +119,21 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         textViewName.setTextSize(16);
 
         values = new ArrayList<String>();
-        values.add(firstname + " " + lastname);
+        values.add(firstname);
 //        values.add(lastname);
-        if (title != null)
+        if (!title.equals(""))
             values.add(title);  // contains value for what do you do?
 
-        if (email != null)
+        if (!email.equals(""))
             values.add(email);
 
-        if (address_line_1 != null)
+        if (!address_line_1.equals(""))
             values.add(address_line_1);
 
-        if (city != null)
+        if (!city.equals(""))
             values.add(city);
 
-        if (pin_code != null)
+        if (!pin_code.equals(""))
             values.add(pin_code);
 
         addValues(values);

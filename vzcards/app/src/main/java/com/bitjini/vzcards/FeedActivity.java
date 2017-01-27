@@ -302,6 +302,7 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
 
         if(!GetSharedPreference.isOrganisation())
         {
+            Log.e("isorganisation=",""+GetSharedPreference.isOrganisation());
             showContacts();// sync contacts if not organisation
         }
 
@@ -539,7 +540,8 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
                          @Override
                          protected void onPostExecute(ArrayList<SelectUser> result) {
                              super.onPostExecute(result);
-                             new SyncContacts(context).execute(SYNC_CONTACT_URL);
+                             Log.e("loadContacts-",""+result);
+                             new SyncContacts(context,result).execute(SYNC_CONTACT_URL);
                              progressBar.setVisibility(View.GONE);
                              listView.setVisibility(View.VISIBLE);
                          }
