@@ -80,7 +80,7 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
     public ImageView imageProfile, imageCompany, imageCall;
 
-    ArrayList<String> label;
+//    ArrayList<String> label;
     ArrayList<String> values;
     TextView textViewName;
 
@@ -106,107 +106,18 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.frnds_profile);
 
-        listView = (ListView) findViewById(R.id.profileList);
-//       linearLayout=(LinearLayout) findViewById(R.id.l2);
+        initViews();
 
-        textViewName = (TextView) findViewById(R.id.name);
-        //Picking Profile picture
-        imageProfile = (ImageView) findViewById(R.id.profilePic);
-        imageCompany = (ImageView) findViewById(R.id.btn_pick);
-        imageCall = (ImageView) findViewById(R.id.btn_call);
+        getIntentData();
 
-        //image listeners
-        imageCall.setOnClickListener(this);
+        getDensityOfScreen();
 
-        label = new ArrayList<String>();
-        label.add("Firstname");
-        label.add("Lastname");
-        label.add("What do you do?");
-        label.add("Email");
-        label.add("Address");
-        label.add("City");
-        label.add("Pin code");
-        // Making http get request to load profile details
-
-        Intent intent = getIntent();
-        // Receiving data
-
-        phoneName = intent.getStringExtra("phoneName");
-        firstname = intent.getStringExtra("fname");
-        lastname = intent.getStringExtra("lname");
-        email = intent.getStringExtra("email");
-        phone = intent.getStringExtra("phone");
-        industry = intent.getStringExtra("industry");
-        company = intent.getStringExtra("company");
-        address_line_1 = intent.getStringExtra("address_line_1");
-        address_line_2 = intent.getStringExtra("address_line_2");
-        city = intent.getStringExtra("city");
-        pin_code = intent.getStringExtra("pin_code");
-        photo = intent.getStringExtra("photo");
-        title = intent.getStringExtra("title");
-        company_photo = intent.getStringExtra("company_photo");
-
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        int width = metrics.widthPixels;
-        int density = metrics.densityDpi;
-        Log.e("width=", "" + width);
-        int height = metrics.heightPixels;
-        RelativeLayout.LayoutParams paramImage = new RelativeLayout.LayoutParams(width / 2, width / 2);
-        imageProfile.setLayoutParams(paramImage);
-        RelativeLayout.LayoutParams textParams;
-        if (density == 480) {
-            textParams = new RelativeLayout.LayoutParams(width / 2, 64);
-            textParams.topMargin = ((width / 2) - 64);
-        } else if (density == 240) {
-            textParams = new RelativeLayout.LayoutParams(width / 2, 34);
-            textParams.topMargin = ((width / 2) - 34);
-        } else {
-            textParams = new RelativeLayout.LayoutParams(width / 2, 45);
-            textParams.topMargin = ((width / 2) - 45);
-        }
-//        textParams.addRule(RelativeLayout.ALIGN_BOTTOM);
-
-//
-        Log.e("width=", "" + width / 2);
-        textViewName.setTextColor(Color.WHITE);
-        textViewName.setLayoutParams(textParams);
-
-        RelativeLayout.LayoutParams paramImage2 = new RelativeLayout.LayoutParams(width / 2, width / 3);
-        paramImage2.leftMargin = width / 2;
-        imageCompany.setLayoutParams(paramImage2);
-        imageCompany.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-        RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width / 2, width / 6);
-        paramImage3.leftMargin = width / 2;
-        paramImage3.topMargin = ((width / 2) - (width / 6));
-        imageCall.setLayoutParams(paramImage3);
-        imageCall.setBackgroundResource(R.drawable.callgreen);
-        imageCall.setPadding(30, 30, 30, 30);
-        imageCall.setCropToPadding(true);
-        imageCall.setImageResource(R.drawable.ic_call_white_);
-
-
-        if (!photo.isEmpty()) {
-            Picasso.with(getApplicationContext()).load(photo).resize(400, 400).into(imageProfile);
-//            imageProfile.setTag(photo);
-//            new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
-        } else {
-            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
-            imageProfile.setPadding(60, 60, 60, 60);
-        }
-        if (!company_photo.isEmpty()) {
-            Picasso.with(getApplicationContext()).load(company_photo).resize(250, 260).placeholder(R.drawable.com_logo).into(imageCompany);
-//            imageCompany.setTag(company_photo);
-//            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
-        } else {
-            imageCompany.setImageResource(R.drawable.no_pic_placeholder_2);
-            imageCompany.setPadding(60, 60, 60, 60);
-        }
+        setImagesToImageViews();
 
 
         textViewName.setText(phoneName);
-//        textViewName.setText(firstname + " " + lastname);
         textViewName.setTextSize(16);
+
         values = new ArrayList<String>();
         values.add(firstname + " " + lastname);
 //        values.add(lastname);
@@ -231,6 +142,98 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
     }
 
+    private void initViews() {
+        listView = (ListView) findViewById(R.id.profileList);
+        textViewName = (TextView) findViewById(R.id.name);
+        //Picking Profile picture
+        imageProfile = (ImageView) findViewById(R.id.profilePic);
+        imageCompany = (ImageView) findViewById(R.id.btn_pick);
+        imageCall = (ImageView) findViewById(R.id.btn_call);
+
+        //image listeners
+        imageCall.setOnClickListener(this);
+    }
+
+    private void setImagesToImageViews() {
+        if (!photo.isEmpty()) {
+            Picasso.with(getApplicationContext()).load(photo).resize(400, 400).into(imageProfile);
+//            imageProfile.setTag(photo);
+//            new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
+        } else {
+            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
+            imageProfile.setPadding(60, 60, 60, 60);
+        }
+        if (!company_photo.isEmpty()) {
+            Picasso.with(getApplicationContext()).load(company_photo).resize(250, 260).placeholder(R.drawable.com_logo).into(imageCompany);
+//            imageCompany.setTag(company_photo);
+//            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
+        } else {
+            imageCompany.setImageResource(R.drawable.no_pic_placeholder_2);
+            imageCompany.setPadding(60, 60, 60, 60);
+        }
+
+    }
+
+    private void getDensityOfScreen() {
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        int density = metrics.densityDpi;
+        Log.e("width=", "" + width);
+        int height = metrics.heightPixels;
+        RelativeLayout.LayoutParams paramImage = new RelativeLayout.LayoutParams(width / 2, width / 2);
+        imageProfile.setLayoutParams(paramImage);
+        RelativeLayout.LayoutParams textParams;
+        if (density == 480) {
+            textParams = new RelativeLayout.LayoutParams(width / 2, 64);
+            textParams.topMargin = ((width / 2) - 64);
+        } else if (density == 240) {
+            textParams = new RelativeLayout.LayoutParams(width / 2, 34);
+            textParams.topMargin = ((width / 2) - 34);
+        } else {
+            textParams = new RelativeLayout.LayoutParams(width / 2, 45);
+            textParams.topMargin = ((width / 2) - 45);
+        }
+
+        Log.e("width=", "" + width / 2);
+        textViewName.setTextColor(Color.WHITE);
+        textViewName.setLayoutParams(textParams);
+
+        RelativeLayout.LayoutParams paramImage2 = new RelativeLayout.LayoutParams(width / 2, width / 3);
+        paramImage2.leftMargin = width / 2;
+        imageCompany.setLayoutParams(paramImage2);
+        imageCompany.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width / 2, width / 6);
+        paramImage3.leftMargin = width / 2;
+        paramImage3.topMargin = ((width / 2) - (width / 6));
+        imageCall.setLayoutParams(paramImage3);
+        imageCall.setBackgroundResource(R.drawable.callgreen);
+        imageCall.setPadding(30, 30, 30, 30);
+        imageCall.setCropToPadding(true);
+        imageCall.setImageResource(R.drawable.ic_call_white_);
+    }
+
+    private void getIntentData() {
+        Intent intent = getIntent();
+        // Receiving data
+
+        phoneName = intent.getStringExtra("phoneName");
+        firstname = intent.getStringExtra("fname");
+        lastname = intent.getStringExtra("lname");
+        email = intent.getStringExtra("email");
+        phone = intent.getStringExtra("phone");
+        industry = intent.getStringExtra("industry");
+        company = intent.getStringExtra("company");
+        address_line_1 = intent.getStringExtra("address_line_1");
+        address_line_2 = intent.getStringExtra("address_line_2");
+        city = intent.getStringExtra("city");
+        pin_code = intent.getStringExtra("pin_code");
+        photo = intent.getStringExtra("photo");
+        title = intent.getStringExtra("title");
+        company_photo = intent.getStringExtra("company_photo");
+
+    }
+
     public void addValues(ArrayList<String> values) {
         for (int i = 0; i < values.size(); i++) {
             ListItem item = new ListItem();
@@ -238,8 +241,6 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
             item.setValue(values.get(i));
             arrayList.add(item);
         }
-
-
         // send the adapterArraylist to the adapter and set it to listview
         editTextAdapter = new EditTextAdapter(Friends_Profile.this, arrayList, R.layout.profile_layout);
         listView.setAdapter(editTextAdapter);
@@ -297,12 +298,6 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
         }
     }
 
-
-    /**
-     * The object we have a list of
-     */
-
-
     //    /**
 //     * ViewHolder which also tracks the TextWatcher for an EditText
 //     */
@@ -324,7 +319,6 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
             this._c = context;
             this.groupItem = groupItem;
         }
-
 
         @Override
         public int getCount() {
@@ -366,9 +360,6 @@ public class Friends_Profile extends Activity implements View.OnClickListener {
 
             }
             holder.editText.setText(listItem.value);
-
-//            holder.textView.setText(listItem.getLabel().toString());
-//              holder.editText.setEnabled(false);
 
             return rowView;
         }

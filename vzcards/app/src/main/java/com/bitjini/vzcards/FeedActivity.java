@@ -82,6 +82,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static com.bitjini.vzcards.BaseURLs.SYNC_CONTACT_URL;
 import static com.bitjini.vzcards.BaseURLs.URL_CONNECT;
 import static com.bitjini.vzcards.BaseURLs.URL_GETLIST;
 import static com.bitjini.vzcards.Constants.IS_ORGANIZATION_KEY;
@@ -292,7 +293,7 @@ FrameLayout layout_MainMenu;
 
     private void CheckIfOrganisationSynContacts() {
 
-        if(is_organization_sharedPreference != null && is_organization_sharedPreference.equals("false"))
+        if(!GetSharedPreference.isOrganisation())
         {
             showContacts();// sync contacts if not organisation
         }
@@ -312,12 +313,6 @@ FrameLayout layout_MainMenu;
 
         layout_MainMenu = (FrameLayout) feed.findViewById(R.id.feed_detail);
         layout_MainMenu.getForeground().setAlpha(0);
-
-//        // To avoid NetworkOnMainThreadException
-//        if (android.os.Build.VERSION.SDK_INT > 9) {
-//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//            StrictMode.setThreadPolicy(policy);
-//        }
 
         listView = (ListView) feed.findViewById(R.id.feedList);
 
@@ -497,7 +492,7 @@ FrameLayout layout_MainMenu;
                     Log.e("currentpage=", "" + currentPage);
 
 
-                    getFeedsContents("https://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference + "&page=" + currentPage);
+                    getFeedsContents(URL_GETLIST + token_sharedPreference + "&page=" + currentPage);
 
                   // Notify the ListView of data changed
                     adapter.notifyDataSetChanged();
@@ -526,18 +521,15 @@ FrameLayout layout_MainMenu;
 //
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(0);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override public void run() {
-
-                        new SyncContacts(getActivity()).LoadContacts();
-//                        new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL);
-
-                        progressBar.setVisibility(View.GONE);
-                        listView.setVisibility(View.VISIBLE);
-                    }
-                }, 5000);
-//
+                     new LoadContacts(getActivity()){
+                         @Override
+                         protected void onPostExecute(ArrayList<SelectUser> result) {
+                             super.onPostExecute(result);
+                             new SyncContacts(context).execute(SYNC_CONTACT_URL);
+                             progressBar.setVisibility(View.GONE);
+                             listView.setVisibility(View.VISIBLE);
+                         }
+                     }.execute();
 
         }
     }
@@ -894,15 +886,6 @@ FrameLayout layout_MainMenu;
                     // send data to Connect_2_Tickets
                     HttpPostClass connect = new HttpPostClass();
                     connect.execute(URL_CONNECT + token_sharedPreference);
-
-
-//                    Intent intent=new Intent(getActivity(),Connect_2_Tickets.class);
-//                    intent.putExtra("ticket_id_1", ticket_id_1);
-//                    intent.putExtra("phone1", phone1);
-//                    intent.putExtra("connector_vz_id", connector_vz_id);
-//                    intent.putExtra("phone2", phone2);
-//                    intent.putExtra("ticket_id_2", ticket_id_2);
-//                    startActivity(intent);
 
                     pwindo.dismiss();
 
