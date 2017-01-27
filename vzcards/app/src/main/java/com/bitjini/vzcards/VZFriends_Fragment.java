@@ -263,10 +263,10 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
                                 SelectUser selectUser = new SelectUser();
 
-                                if (!GetSharedPreference.isOrganisation()) {
-                                    SyncContacts sync = new SyncContacts(getActivity());
+
+                                   LoadContacts loadContacts = new LoadContacts(getActivity());
 //                Log.e("list:",""+sync.phoneList12);
-                                    for (SelectUser list : sync.phoneList12) {
+                                    for (SelectUser list : loadContacts.phoneList12) {
 
                                         if (phone.equals(list.getPhone())) {
                                             selectUser.setFirstName(list.getName());
@@ -275,7 +275,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                                             selectUser.setFirstName(firstname + " " + lastname);
 
                                     }
-                                }
+
 
                                 selectUser.setFirstName(firstname +" "+lastname);
                                 selectUser.setLastName(lastname);

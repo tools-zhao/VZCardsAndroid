@@ -100,31 +100,40 @@ import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
  */
 public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-
+    FrameLayout layout_MainMenu;
+    TextView emptyMsg;
     ProgressBar progressBar;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    public Cursor phones;
-    ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
-    ArrayList<DataFeeds> feeds = new ArrayList<DataFeeds>();
-    String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
     private ProgressDialog progress;
     ListView listView;
-    public FeedsAdapter adapter;
-    ViewHolder holder;
-FrameLayout layout_MainMenu;
+    ImageView progressContainer;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
-    TextView emptyMsg;
+    public Cursor phones;
+
+    ArrayList<DataFeeds> feedsArrayList = new ArrayList<DataFeeds>();
+    ArrayList<DataFeeds> feeds = new ArrayList<DataFeeds>();
+
     int countOfFeeds=0;
     int currentPage=1;
     int totalPage=0;
-    int progressCount=0;
+
     boolean isLoading=false;
-    View footer;
+
+    String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
+
     DataFeeds dataFeeds2 = new DataFeeds();
     DataFeeds dataFeeds1 = new DataFeeds();
-    ImageView progressContainer;
-    public PopupWindow pwindo;
+
+    public FeedsAdapter adapter;
+    ViewHolder holder;
+
+
+    View footer;
     View feed;
+
+
+    public PopupWindow pwindo;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
          feed = inflater.inflate(R.layout.feed_listview, container, false);
@@ -133,13 +142,11 @@ FrameLayout layout_MainMenu;
 
         // call GetSharedPreference class to fetch values
         GetSharedPreference.getSharePreferenceValue(getActivity());
-
-        CheckIfOrganisationSynContacts();
-
-
         // check if you are connected or not
         if (isConnected()) {
             Log.e("", "You are conncted");
+            CheckIfOrganisationSynContacts();
+
             // refresh contents
             getFeedsContents(URL_GETLIST + token_sharedPreference);
 
@@ -275,9 +282,9 @@ FrameLayout layout_MainMenu;
             @Override
             public void onClick(View v) {
 
-                listView.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.GONE);
 
-//                swipeRefreshLayout.setRefreshing(true);
+                swipeRefreshLayout.setRefreshing(true);
                CheckIfOrganisationSynContacts();
 
                 refreshContent();
@@ -297,6 +304,7 @@ FrameLayout layout_MainMenu;
         {
             showContacts();// sync contacts if not organisation
         }
+
     }
 
     private void initViews() {
@@ -324,120 +332,126 @@ FrameLayout layout_MainMenu;
     }
     public void getFeedsContents(String url) {
 
-        try {
+        new HttpAsyncTask(getActivity()) {
+            @Override
+            public void onPostExecute(String received) {
+                super.onPostExecute(received);
 
+                try {
+                    int status = 0;
+                    JSONObject jsonObj = new JSONObject(received);
+                    if (jsonObj.has("status")) {
+                        status = jsonObj.getInt("status");
+                    }
+                    if (status == 401) {
+                        createAlertDialog(); // on Authentication failure
+                    }
 
-            progressCount = 1;
+                    if (jsonObj.has("count")) {
 
-            String received = new HttpAsyncTask(getActivity()).execute(url).get();
+                        // Getting JSON Array node
+                        countOfFeeds = jsonObj.getInt("count");
+                        if (countOfFeeds == 0) {
 
-            int status = 0;
-            JSONObject jsonObj = new JSONObject(received);
-            if (jsonObj.has("status")) {
-                status = jsonObj.getInt("status");
-            }
-            if (status == 401) {
-                android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-                alertDialogBuilder.setTitle("Authentication Failed");
-                alertDialogBuilder.setMessage("Invalid Access Token Please Login Again");
-                alertDialogBuilder.setPositiveButton("Ok",
-                        new DialogInterface.OnClickListener() {
+                            emptyMsg.setVisibility(View.VISIBLE);
+                            emptyMsg.setText("Hey, there are no feeds for you.\nPlease invite friends & \"Add\" ticket");
+                            listView.setVisibility(View.GONE);
 
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                SharedPreferences.Editor sEdit = sharedPreferences.edit();
-                                sEdit.clear();
-                                sEdit.commit();
-                                Intent intent1 = new Intent(getActivity(), VerifyScreen.class);
-                                startActivity(intent1);
-                            }
+                        } else {
+                            emptyMsg.setVisibility(View.GONE);
+                            listView.setVisibility(View.VISIBLE);
+                            Log.e("countOfFeeds", "" + countOfFeeds);
+                            JSONArray arr = jsonObj.getJSONArray("response");
 
-                        });
+                            // looping through All Contacts
+                            for (int i = 0; i < arr.length(); i++) {
+                                JSONObject c = arr.getJSONObject(i);
+                                // Feed node is JSON Object
+                                JSONObject feed = c.getJSONObject("feed");
 
-                alertDialogBuilder.setNegativeButton("cancel",
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-
-                            }
-                        });
-                android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-
-            }
-
-
-            if (jsonObj.has("count")) {
-
-                // Getting JSON Array node
-                countOfFeeds = jsonObj.getInt("count");
-                if (countOfFeeds == 0) {
-
-                    emptyMsg.setVisibility(View.VISIBLE);
-                    emptyMsg.setText("Hey, there are no feeds for you.\nPlease invite friends & \"Add\" ticket");
-                    listView.setVisibility(View.GONE);
-
-                } else {
-                    emptyMsg.setVisibility(View.GONE);
-                    listView.setVisibility(View.VISIBLE);
-                    Log.e("countOfFeeds", "" + countOfFeeds);
-                    JSONArray arr = jsonObj.getJSONArray("response");
-
-                    // looping through All Contacts
-                    for (int i = 0; i < arr.length(); i++) {
-                        JSONObject c = arr.getJSONObject(i);
-                        // Feed node is JSON Object
-                        JSONObject feed = c.getJSONObject("feed");
-
-                        String item = feed.getString("item");
-                        String question = feed.getString("question");
-                        String item_photo = feed.getString("item_photo");
-                        String description = feed.getString("description");
-                        String ticket_id = feed.getString("ticket_id");
-                        String isNeeds = "1", isHas = "0";
+                                String item = feed.getString("item");
+                                String question = feed.getString("question");
+                                String item_photo = feed.getString("item_photo");
+                                String description = feed.getString("description");
+                                String ticket_id = feed.getString("ticket_id");
+                                String isNeeds = "1", isHas = "0";
 //                    String vz_id = feed.getString("vz_id");
 
 
-                        if (question == isNeeds) {
-                            isNeeds = question;
+                                if (question == isNeeds) {
+                                    isNeeds = question;
+                                }
+                                if (question == isHas) {
+                                    isHas = question;
+                                }
+                                // user_details node is JSON Object
+                                JSONObject user_detail = c.getJSONObject("user_details");
+
+                                String firstname = user_detail.getString("firstname");
+                                String photo = user_detail.getString("photo");
+
+                                String phone = user_detail.getString("phone");
+
+                                DataFeeds dataFeeds = new DataFeeds();
+
+                                dataFeeds.setFname(firstname);
+                                dataFeeds.setItem(item);
+                                dataFeeds.setQuestion(question);
+                                dataFeeds.setPhoto(photo);
+                                dataFeeds.setItem_photo(item_photo);
+                                dataFeeds.setDescription(description);
+                                dataFeeds.setIsHas(isHas);
+                                dataFeeds.setIsNeeds(isNeeds);
+                                dataFeeds.setTicket_id(ticket_id);
+                                dataFeeds.setVz_id(vz_id_sharedPreference);
+                                dataFeeds.setPhone(phone);
+
+                                feedsArrayList.add(dataFeeds);
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
                         }
-                        if (question == isHas) {
-                            isHas = question;
-                        }
-                        // user_details node is JSON Object
-                        JSONObject user_detail = c.getJSONObject("user_details");
-
-                        String firstname = user_detail.getString("firstname");
-                        String photo = user_detail.getString("photo");
-
-                        String phone = user_detail.getString("phone");
-
-                        DataFeeds dataFeeds = new DataFeeds();
-
-                        dataFeeds.setFname(firstname);
-                        dataFeeds.setItem(item);
-                        dataFeeds.setQuestion(question);
-                        dataFeeds.setPhoto(photo);
-                        dataFeeds.setItem_photo(item_photo);
-                        dataFeeds.setDescription(description);
-                        dataFeeds.setIsHas(isHas);
-                        dataFeeds.setIsNeeds(isNeeds);
-                        dataFeeds.setTicket_id(ticket_id);
-                        dataFeeds.setVz_id(vz_id_sharedPreference);
-                        dataFeeds.setPhone(phone);
-
-                        feedsArrayList.add(dataFeeds);
-                        swipeRefreshLayout.setRefreshing(false);
                     }
+
+                    adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+                    listView.setAdapter(adapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-            adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
-            listView.setAdapter(adapter);
-        } catch (JSONException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        }.execute(url);
     }
+
+    private void createAlertDialog() {
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setTitle("Authentication Failed");
+        alertDialogBuilder.setMessage("Invalid Access Token Please Login Again");
+        alertDialogBuilder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        SharedPreferences.Editor sEdit = sharedPreferences.edit();
+                        sEdit.clear();
+                        sEdit.commit();
+                        Intent intent1 = new Intent(getActivity(), VerifyScreen.class);
+                        startActivity(intent1);
+                    }
+
+                });
+
+        alertDialogBuilder.setNegativeButton("cancel",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+    }
+
     public boolean isConnected() {
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -465,7 +479,7 @@ FrameLayout layout_MainMenu;
                 totalPage=0;
                 countOfFeeds=0;
                 isLoading = false;
-                getFeedsContents(URL_GETLIST + token_sharedPreference );
+                getFeedsContents(URL_GETLIST + token_sharedPreference);
                 listView.setVisibility(View.VISIBLE);
                 if(getActivity()!=null) {
                     adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
