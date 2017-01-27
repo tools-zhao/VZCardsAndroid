@@ -148,34 +148,17 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 } else {
                     switch (clickCount) {
                         case 0:
-                            editbtn.setText("Save");
-                            editbtn.setBackgroundResource(R.color.primaryGreen);
-                            cancelBtn.setVisibility(View.VISIBLE);
-                            RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/4, width/6);
-                            paramImage3.leftMargin=(3*(width/4));
-                            paramImage3.topMargin=((width/2)-(width/6));
-                            editbtn.setLayoutParams(paramImage3);
-                            RelativeLayout.LayoutParams paramImage4 = new RelativeLayout.LayoutParams(width/4, width/6);
-                            paramImage4.leftMargin=width/2;
-                            paramImage4.topMargin=((width/2)-(width/6));
-                            cancelBtn.setLayoutParams(paramImage4);
+                            ChangeLayoutParametersOnEdit();
                             currentImageView = imageProfile;
                             selectImageOption();
-                            clickCount=1;
                             break;
                         case 1:
-                            editbtn.setText("Edit");
-                            RelativeLayout.LayoutParams paramImage5 = new RelativeLayout.LayoutParams(width/2, width/6);
-                            paramImage5.leftMargin=width/2;
-                            paramImage5.topMargin=((width/2)-(width/6));
-                            editbtn.setLayoutParams(paramImage5);
-                            editbtn.setBackgroundResource(R.color.primary);
-                            cancelBtn.setVisibility(View.GONE);
+                            ChangeLayoutParametersOnSave();
 
-                            clickCount=0;
                             if(profilePicturePath!=null)
                             {
-                                uploadCompanyImage();
+                                Log.e("profilePicturePath= ",""+ profilePicturePath);
+                                UploadProfileImage();
                             }
 
                             break;
@@ -202,6 +185,35 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         return profile;
     }
 
+    private void ChangeLayoutParametersOnSave() {
+        editbtn.setText("Edit");
+        RelativeLayout.LayoutParams paramImage5 = new RelativeLayout.LayoutParams(width/2, width/6);
+        paramImage5.leftMargin=width/2;
+        paramImage5.topMargin=((width/2)-(width/6));
+        editbtn.setLayoutParams(paramImage5);
+        editbtn.setBackgroundResource(R.color.primary);
+        cancelBtn.setVisibility(View.GONE);
+        clickCount=0;
+
+
+    }
+
+    private void ChangeLayoutParametersOnEdit() {
+        editbtn.setText("Save");
+        editbtn.setBackgroundResource(R.color.primaryGreen);
+        cancelBtn.setVisibility(View.VISIBLE);
+        RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/4, width/6);
+        paramImage3.leftMargin=(3*(width/4));
+        paramImage3.topMargin=((width/2)-(width/6));
+        editbtn.setLayoutParams(paramImage3);
+        RelativeLayout.LayoutParams paramImage4 = new RelativeLayout.LayoutParams(width/4, width/6);
+        paramImage4.leftMargin=width/2;
+        paramImage4.topMargin=((width/2)-(width/6));
+        cancelBtn.setLayoutParams(paramImage4);
+
+        clickCount=1;
+    }
+
 
     private void saveUserDetails() {
         relativeLayout.setBackgroundResource(R.color.white);
@@ -210,14 +222,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         if (getActivity().getCurrentFocus() != null){
             inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
-
-        editbtn.setText("Edit");
-        RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/2, width/6);
-        paramImage3.leftMargin=width/2;
-        paramImage3.topMargin=((width/2)-(width/6));
-        editbtn.setLayoutParams(paramImage3);
-        editbtn.setBackgroundResource(R.color.primary);
-        cancelBtn.setVisibility(View.GONE);
+        ChangeLayoutParametersOnSave();
         imageCompany.setClickable(false);
         imageProfile.setClickable(false);
 
@@ -226,7 +231,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
 
         Log.e("arr",""+json2);
-        profileSharedPreference = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
+
         json3=profileSharedPreference.getString(TASKS, null);
 
         SavePreferences(TASKS, json2);
@@ -271,7 +276,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         editTextAdapter.notifyDataSetChanged();
         adapter.notifyDataSetChanged();
         LoadPreferences();
-        clickCount = 0;
+
         companyPicturePath="";profilePicturePath="";
 
         listView2.setVisibility(View.VISIBLE);
@@ -294,14 +299,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     progress.dismiss();
                     progress = null;
                     profilePicturePath="";
-//                                            File f = new File(outPutFile.getPath());
-//
-//                                            if (f.exists()) f.delete();
                 }
                 try
                 { if(result!=null) {
                     JSONObject json = new JSONObject(result);
-                    photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+                    photo = URL_Cloudynary_Image_Path;
                     String link = json.getString("link");
                     SavePreferences(PROFILE_IMAGE, photo + link);
                     Log.e("photo :", "" + photo + link);
@@ -325,20 +327,13 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     }
 
     private void EditUserDetails() {
-        editbtn.setText("Save");
+
+        ChangeLayoutParametersOnEdit();
+
         listView.setVisibility(View.VISIBLE);
         listView2.setVisibility(View.GONE);
-        editbtn.setBackgroundResource(R.color.primaryGreen);
-        cancelBtn.setVisibility(View.VISIBLE);
 
-        RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/4, width/6);
-        paramImage3.leftMargin=(3*(width/4));
-        paramImage3.topMargin=((width/2)-(width/6));
-        editbtn.setLayoutParams(paramImage3);
-        RelativeLayout.LayoutParams paramImage4 = new RelativeLayout.LayoutParams(width/4, width/6);
-        paramImage4.leftMargin=width/2;
-        paramImage4.topMargin=((width/2)-(width/6));
-        cancelBtn.setLayoutParams(paramImage4);
+
 
         imageCompany.setClickable(true);
         imageProfile.setClickable(true);
@@ -346,7 +341,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 //                    editTextAdapter.actv(true);
         editTextAdapter.notifyDataSetChanged();
         adapter.notifyDataSetChanged();
-        clickCount = 1;
+
     }
 
     private void addArrayOfLabels() {
@@ -436,11 +431,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public void uploadCompanyImage()
     {
 //                                                String res = new UploadImageTask(getActivity()).execute().get();
-        progress = new ProgressDialog(getActivity());
-        if (progress != null) {
-            progress.setMessage("Saving user details...");
-            progress.setCancelable(false);
-            progress.show();
+        progressDialog1 = new ProgressDialog(getActivity());
+        if (progressDialog1 != null) {
+            progressDialog1.setMessage("Saving user details...");
+            progressDialog1.setCancelable(false);
+            progressDialog1.show();
         }
         new UploadImageTask(getActivity()) {
             @Override
@@ -534,7 +529,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         if(!company_photo.isEmpty()) {
             Picasso.with(getActivity()).load(company_photo).centerCrop().resize(200,200).placeholder(R.drawable.no_pic_placeholder_2).into(imageCompany);
             Log.e(" company_photoReceived",""+company_photo);
-
+            imageProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             SavePreferences(COMPANY_IMAGE, company_photo);
 
 //            imageCompany.setTag(company_photo);
