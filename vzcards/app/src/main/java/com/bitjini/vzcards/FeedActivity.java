@@ -534,18 +534,20 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
         } else {
             listView.setVisibility(View.GONE);
 //
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar.setProgress(0);
-                     new LoadContacts(getActivity()){
-                         @Override
-                         protected void onPostExecute(ArrayList<SelectUser> result) {
-                             super.onPostExecute(result);
-//                             Log.e("loadContacts-",""+result);
-                             new SyncContacts(context,result).execute(SYNC_CONTACT_URL);
-                             progressBar.setVisibility(View.GONE);
-                             listView.setVisibility(View.VISIBLE);
-                         }
-                     }.execute();
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(0);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override public void run() {
+
+                    new SyncContacts(getActivity()).LoadContacts();
+//                        new SyncContacts(getActivity()).execute(SYNC_CONTACT_URL);
+
+                    progressBar.setVisibility(View.GONE);
+                    listView.setVisibility(View.VISIBLE);
+                }
+            }, 5000);
+//
 
         }
     }
@@ -554,7 +556,7 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
         if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission is granted
-               CheckIfOrganisationSynContacts();
+                showContacts();
             } else {
                 Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
             }

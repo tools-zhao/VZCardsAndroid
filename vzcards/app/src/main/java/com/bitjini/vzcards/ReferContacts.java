@@ -180,8 +180,8 @@ return refer_contact;
         } else {
             if (getActivity() != null)
             {
-                if (getActivity() != null) {
-                    LoadContacts loadContacts = new LoadContacts(getActivity());
+
+                    SyncContacts loadContacts = new SyncContacts(getActivity());
 
                     adapter = new SelectUserAdapter(loadContacts.phoneList12, getActivity());
 
@@ -189,7 +189,7 @@ return refer_contact;
                     listView.setTextFilterEnabled(true);
                     // place your adapter to a separate filter to remove pop up text
                     filter = adapter.getFilter();
-                }
+
 
 
             }

@@ -27,7 +27,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 24
         versionCode 4
-        versionName "1.0.3"
+        versionName "1.1.4"
 
         // Add the following two lines
         renderscriptTargetApi 18

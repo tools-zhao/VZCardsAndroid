@@ -264,7 +264,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                                 SelectUser selectUser = new SelectUser();
 
 
-                                   LoadContacts loadContacts = new LoadContacts(getActivity());
+                                   SyncContacts loadContacts = new SyncContacts(getActivity());
 
                                     for (SelectUser list : loadContacts.phoneList12) {
 //                                        Log.e("api phone= list:",""+phone+"  "+list.getPhone());

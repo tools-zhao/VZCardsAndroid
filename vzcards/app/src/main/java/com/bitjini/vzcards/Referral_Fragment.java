@@ -393,7 +393,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                                         referalUsers.setRefItem_photo(refItem_photo);
 
 
-                                        LoadContacts loadContacts = new LoadContacts(getActivity());
+                                        SyncContacts loadContacts = new SyncContacts(getActivity());
                                         for (SelectUser list : loadContacts.phoneList12) {
 
                                             if (phone.equals(list.getPhone())) {

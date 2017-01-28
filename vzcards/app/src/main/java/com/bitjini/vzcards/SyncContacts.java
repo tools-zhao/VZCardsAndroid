@@ -64,17 +64,25 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
     public ProgressDialog progress;
     public Cursor phones;
+    // Request code for READ_CONTACTS. It can be any number > 0.
+
     // Cursor to load contacts list
 
-   public Context context;
+    Activity _activity;
+    // Pop up
+
+    public Context context;
 
     VerifyScreen p = new VerifyScreen();
 
-    public SyncContacts(Context context, ArrayList<SelectUser> result) {
+    public SyncContacts(Context context) {
         this.context = context;
-        this.phoneList12=result;
     }
 
+    public void LoadContacts()
+    {
+        new LoadContact().execute();
+    }
     @Override
     protected String doInBackground(String... urls) {
         // params comes from the execute() call: params[0] is the url.
@@ -87,12 +95,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
     private String downloadUrl(String postURL) throws IOException {
         {
-
-            for (int i=0;i<phoneList12.size();i++)
-            {
-                SelectUser selectUser=phoneList12.get(i);
-                phoneArray.add(selectUser.getPhone());
-            }
+           GetSharedPreference.getSharePreferenceValue(context);
             //Create connection
             URL url = new URL(postURL);
             final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -106,47 +109,50 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             conn.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
             conn.setDoOutput(true);
 
-                    try {
+//            new LoadContact().execute();
+            try {
+//                        for (String s:phoneArray) {
+//                            Log.e(" phone arrays:", "" + s);
+//                        }
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("vz_id", vz_id_sharedPreference));
+                Log.e(" p.vz_id_", "" + vz_id_sharedPreference);
 
-                        List<NameValuePair> params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("vz_id", vz_id_sharedPreference));
-                        Log.e(" p.vz_id_", "" + vz_id_sharedPreference);
+                for(String s: phoneArray) {
+                    params.add(new BasicNameValuePair("contact_list", s));
+//                            Log.e("s", "" + s);
+                }
+                //Send request
+                DataOutputStream wr = new DataOutputStream (
+                        conn.getOutputStream ());
+                wr.writeBytes (getQuery(params));
+                wr.flush ();
+                wr.close ();
 
-                        for(String s: phoneArray) {
-                            params.add(new BasicNameValuePair("contact_list", s));
-                            Log.e("s", "" + s);
-                        }
-                        //Send request
-                        DataOutputStream wr = new DataOutputStream (
-                                conn.getOutputStream ());
-                        wr.writeBytes (getQuery(params));
-                        wr.flush ();
-                        wr.close ();
-
-                        //Get Response
-                        InputStream is = conn.getInputStream();
-                        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-                        String line;
-                        StringBuilder response = new StringBuilder();
-                        while ((line = rd.readLine()) != null) {
-                            response.append(line);
-                            response.append('"');
-                        }
-                        rd.close();
+                //Get Response
+                InputStream is = conn.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuilder response = new StringBuilder();
+                while ((line = rd.readLine()) != null) {
+                    response.append(line);
+                    response.append('"');
+                }
+                rd.close();
 
 
 //                        Log.e(" contact list Response", "" + response.toString());
 
 
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
 
-                        if (conn != null) {
-                            conn.disconnect();
-                        }
-                    }
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
 
 
 
@@ -179,6 +185,130 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         return result.toString();
     }
 
+    // Load data on background
+    class LoadContact extends AsyncTask<Void, Void, ArrayList<String >> {
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute() {
+
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Syncing contacts.Please Wait..");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
+        }
+
+        @Override
+        protected ArrayList<String > doInBackground(Void... voids) {
+
+            ContentResolver resolver=context.getContentResolver();
+
+            phones =context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+
+//            Log.e("show contact:",""+phones);
+//            // Get Contact list from Phone
+//            Log.e("phones", "" + phones);
+
+            if (phones != null) {
+//                Log.e("count", "" + phones.getCount());
+                if (phones.getCount() == 0) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Toast t = Toast.makeText(context, "No contact lists", Toast.LENGTH_LONG);
+                            t.show();
+                        }
+                    });
+                }
+
+                while (phones.moveToNext()) {
+                    Bitmap bit_thumb = null;
+                    String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    String image_thumb = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
+
+                    try {
+                        if (image_thumb != null) {
+                            bit_thumb = MediaStore.Images.Media.getBitmap(resolver, Uri.parse(image_thumb));
+                        } else {
+//                            Log.e("No Image Thumb", "--------------");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    phoneNumber=phoneNumber.replaceAll("[\\D]", "");
+                    phoneNumber=phoneNumber.replaceFirst("^0+(?!$)", "");
+                    // get the country code
+                    String countryCode = GetCountryZipCode();
+
+                    if(phoneNumber.length()== 10)
+                    {
+                        phoneNumber=countryCode+phoneNumber;
+
+                    }
+
+                    phoneArray.add(phoneNumber);
+
+
+                    SelectUser selectUser = new SelectUser();
+                    selectUser.setThumb(bit_thumb);
+                    selectUser.setName(name);
+                    selectUser.setPhone(phoneNumber);
+                    int flag = 0;
+                    if(phoneList12.size() == 0){
+                        phoneList12.add(selectUser);
+                    }
+                    for(int i=0;i<phoneList12.size();i++){
+
+                        if(!phoneList12.get(i).getPhone().trim().equals(phoneNumber)){
+                            flag = 1;
+
+                        }else{
+                            flag =0;
+                            break;
+                        }
+
+                    }
+                    if(flag == 1){
+                        phoneList12.add(selectUser);
+                    }
+
+
+                }
+                phones.close();
+            } else {
+//                Log.e("Cursor close 1", "----------------");
+            }
+            return phoneArray;
+        }
+        protected void onPostExecute(ArrayList<String> result) {
+            if(!result.isEmpty()) {
+                if (progressDialog.isShowing() && progressDialog != null) {
+                    progressDialog.dismiss();
+                    progressDialog = null;
+                }
+                new SyncContacts(context).execute(SYNC_CONTACT_URL);
+            }
+        }
+
+    }
+    public String GetCountryZipCode(){
+        String CountryID="";
+        String CountryZipCode="";
+
+        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        CountryID= manager.getSimCountryIso().toUpperCase();
+        String[] rl=context.getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<rl.length;i++){
+            String[] g=rl[i].split(",");
+            if(g[1].trim().equals(CountryID.trim())){
+                CountryZipCode=g[0];
+                break;
+            }
+        }
+        return CountryZipCode;
+    }
 
 }
-

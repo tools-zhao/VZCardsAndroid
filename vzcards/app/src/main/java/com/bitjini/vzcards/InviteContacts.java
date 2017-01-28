@@ -89,7 +89,7 @@ public class InviteContacts extends Fragment implements SearchView.OnQueryTextLi
         toolbar.setVisibility(View.GONE);
 //        showContacts();
         if (getActivity() != null) {
-            LoadContacts loadContacts = new LoadContacts(getActivity());
+            SyncContacts loadContacts = new SyncContacts(getActivity());
 
             adapter = new SelectUserAdapter(loadContacts.phoneList12, getActivity());
 
