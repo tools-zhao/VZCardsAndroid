@@ -1,10 +1,13 @@
 package com.bitjini.vzcards;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -27,6 +30,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -41,6 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.bitjini.vzcards.BaseURLs.VZFRIENDS_URL;
+import static com.bitjini.vzcards.Constants.PERMISSIONS_REQUEST_READ_CONTACTS;
 import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
@@ -92,6 +97,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             LoadNewElements();
         }
 
+        getPermissionForShowingContacts();
         setupSearchView();
 
         // to avoid triggering of swipe to refresh on scrolling of listview
@@ -317,6 +323,28 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     }
 
 
+
+    private void getPermissionForShowingContacts() {
+        // Check the SDK version and whether the permission is already granted or not.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+            //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+        } else {
+
+            return;
+        }
+    }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                getPermissionForShowingContacts();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
 
 
