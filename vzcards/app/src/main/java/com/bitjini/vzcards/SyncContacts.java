@@ -62,8 +62,8 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
     static ArrayList<String > phoneArray=new ArrayList<>();
     public static  ArrayList<SelectUser>  phoneList12=new ArrayList<>();
 
-    public ProgressDialog progress;
-    public Cursor phones;
+     static ProgressDialog progress;
+    public static Cursor phones;
     // Request code for READ_CONTACTS. It can be any number > 0.
 
     // Cursor to load contacts list
@@ -71,9 +71,8 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
     Activity _activity;
     // Pop up
 
-    public Context context;
+    static Context context;
 
-    VerifyScreen p = new VerifyScreen();
 
     public SyncContacts(Context context) {
         this.context = context;
@@ -118,8 +117,8 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                 params.add(new BasicNameValuePair("vz_id", vz_id_sharedPreference));
                 Log.e(" p.vz_id_", "" + vz_id_sharedPreference);
 
-                for(String s: phoneArray) {
-                    params.add(new BasicNameValuePair("contact_list", s));
+                for(SelectUser s: phoneList12) {
+                    params.add(new BasicNameValuePair("contact_list", s.getPhone()));
 //                            Log.e("s", "" + s);
                 }
                 //Send request
@@ -186,21 +185,21 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
     }
 
     // Load data on background
-    class LoadContact extends AsyncTask<Void, Void, ArrayList<String >> {
+  public static class LoadContact extends AsyncTask<Void, Void, ArrayList<SelectUser >> {
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute() {
 
             super.onPreExecute();
             progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Syncing contacts.Please Wait..");
+            progressDialog.setMessage("Fetching contacts.Please Wait..");
             progressDialog.setCancelable(false);
             progressDialog.show();
 
         }
 
         @Override
-        protected ArrayList<String > doInBackground(Void... voids) {
+        protected ArrayList<SelectUser> doInBackground(Void... voids) {
 
             ContentResolver resolver=context.getContentResolver();
 
@@ -280,9 +279,9 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             } else {
 //                Log.e("Cursor close 1", "----------------");
             }
-            return phoneArray;
+            return phoneList12;
         }
-        protected void onPostExecute(ArrayList<String> result) {
+        protected void onPostExecute(ArrayList<SelectUser> result) {
             if(!result.isEmpty()) {
                 if (progressDialog.isShowing() && progressDialog != null) {
                     progressDialog.dismiss();
@@ -293,7 +292,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         }
 
     }
-    public String GetCountryZipCode(){
+    public static String GetCountryZipCode(){
         String CountryID="";
         String CountryZipCode="";
 

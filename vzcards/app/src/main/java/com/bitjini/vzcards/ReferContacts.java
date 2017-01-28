@@ -180,15 +180,31 @@ return refer_contact;
         } else {
             if (getActivity() != null)
             {
-
-                    SyncContacts loadContacts = new SyncContacts(getActivity());
+                SyncContacts loadContacts = new SyncContacts(getActivity());
+                if(!GetSharedPreference.isOrganisation()) {
 
                     adapter = new SelectUserAdapter(loadContacts.phoneList12, getActivity());
-
                     listView.setAdapter(adapter);
                     listView.setTextFilterEnabled(true);
                     // place your adapter to a separate filter to remove pop up text
                     filter = adapter.getFilter();
+
+                }else {
+                    new SyncContacts.LoadContact(){
+                        @Override
+                        protected void onPostExecute(ArrayList<SelectUser> result) {
+                            super.onPostExecute(result);
+
+                            adapter = new SelectUserAdapter(result, getActivity());
+                            listView.setAdapter(adapter);
+                            listView.setTextFilterEnabled(true);
+                            // place your adapter to a separate filter to remove pop up text
+                            filter = adapter.getFilter();
+
+                        }
+                    }.execute();
+
+                }
 
 
 
