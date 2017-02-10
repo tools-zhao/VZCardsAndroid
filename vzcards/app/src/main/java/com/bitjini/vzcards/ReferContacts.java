@@ -58,11 +58,15 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.bitjini.vzcards.BaseURLs.SYNC_CONTACT_URL;
+import static com.bitjini.vzcards.BaseURLs.URL_CONNECT;
+import static com.bitjini.vzcards.Constants.PERMISSIONS_REQUEST_READ_CONTACTS;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
+
 /**
  * Created by bitjini on 16/2/16.
  */
 public class ReferContacts extends Fragment implements SearchView.OnQueryTextListener {
-    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
 
     // ArrayList
     ArrayList<SelectUser> phoneList = new ArrayList<>();
@@ -80,7 +84,7 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
     // Pop up
     ContentResolver resolver;
     SelectUserAdapter adapter;
-
+    public ProgressDialog progress1;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -92,18 +96,8 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
         listView = (ListView) refer_contact.findViewById(R.id.contactList);
         mSearchView = (SearchView) refer_contact.findViewById(R.id.searchview);
 
-//        showContacts();
-        if (getActivity() != null)
-        {
-            SyncContacts sync = new SyncContacts(getActivity());
+        showContacts();
 
-           adapter = new SelectUserAdapter(sync.phoneList12, getActivity());
-
-        listView.setAdapter(adapter);
-        listView.setTextFilterEnabled(true);
-        // place your adapter to a separate filter to remove pop up text
-        filter = adapter.getFilter();
-    }
         setupSearchView();
 
 //                // Select item on listclick
@@ -111,60 +105,13 @@ public class ReferContacts extends Fragment implements SearchView.OnQueryTextLis
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-
                 SelectUser data = (SelectUser) parent.getItemAtPosition(position);
 
                 // get the name and phone number from phone book on item click
-//                final String name = data.getName();
-                ticket_id_2 = data.getName();
-              phone_2 = data.getPhone().replaceAll("\\D+", "");
+                 ticket_id_2 = data.getName();
+                 phone_2 = data.getPhone().replaceAll("\\D+", "");
 
-
-
-                // create an alert dialog box
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                alertDialogBuilder.setMessage("Do you want to refer " + ticket_id_2);
-                alertDialogBuilder.setPositiveButton("Ok",
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-
-//                                String ticket_id_1, phone1, connector_vz_id;
-                                // retrive the data sent by feed detail
-                                ticket_id_1 = getArguments().getString("ticket_id");
-                                phone_1 = getArguments().getString("phone1");
-                                connecter_vz_id = getArguments().getString("connector_vz_id");
-                                Log.e("ticket_id_2",""+ticket_id_2);
-                                Log.e("phone_2",""+phone_2);
-                                Log.e("phone_1",""+phone_1);
-//                                Intent intent=new Intent(getActivity(),Connect_2_Tickets.class);
-//                                intent.putExtra("ticket_id_1", ticket_id_1);
-//                                intent.putExtra("phone1", phone1);
-//                                intent.putExtra("connector_vz_id", connector_vz_id);
-//                                intent.putExtra("phone2", phone2);
-//                                intent.putExtra("ticket_id_2", name);
-//                                startActivity(intent);
-                                VerifyScreen p=new VerifyScreen();
-                                HttpPostClass connect = new HttpPostClass();
-                                connect.execute(URL_CONNECT + p.token_sharedPreference);
-
-
-                            }
-                        });
-
-                alertDialogBuilder.setNegativeButton("cancel",
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-
-                            }
-                        });
-
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-
+                 createDialog();
 
             }
         });
@@ -177,6 +124,104 @@ return refer_contact;
 
     }
 
+    private void createDialog() {
+        // create an alert dialog box
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setMessage("Do you want to refer " + ticket_id_2);
+        alertDialogBuilder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+//                                String ticket_id_1, phone1, connector_vz_id;
+                        // retrive the data sent by feed detail
+                        ticket_id_1 = getArguments().getString("ticket_id");
+                        phone_1 = getArguments().getString("phone1");
+                        connecter_vz_id = getArguments().getString("connector_vz_id");
+                        Log.e("ticket_id_2",""+ticket_id_2);
+                        Log.e("phone_2",""+phone_2);
+                        Log.e("phone_1",""+phone_1);
+//                                Intent intent=new Intent(getActivity(),Connect_2_Tickets.class);
+//                                intent.putExtra("ticket_id_1", ticket_id_1);
+//                                intent.putExtra("phone1", phone1);
+//                                intent.putExtra("connector_vz_id", connector_vz_id);
+//                                intent.putExtra("phone2", phone2);
+//                                intent.putExtra("ticket_id_2", name);
+//                                startActivity(intent);
+                        VerifyScreen p=new VerifyScreen();
+                        HttpPostClass connect = new HttpPostClass();
+                        connect.execute(URL_CONNECT + token_sharedPreference);
+
+
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("cancel",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+
+    }
+
+    private void showContacts() {
+        // Check the SDK version and whether the permission is already granted or not.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+            //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+        } else {
+            if (getActivity() != null)
+            {
+                SyncContacts loadContacts = new SyncContacts(getActivity());
+                if(!GetSharedPreference.isOrganisation()) {
+
+                    adapter = new SelectUserAdapter(loadContacts.phoneList12, getActivity());
+                    listView.setAdapter(adapter);
+                    listView.setTextFilterEnabled(true);
+                    // place your adapter to a separate filter to remove pop up text
+                    filter = adapter.getFilter();
+
+                }else {
+                    new SyncContacts.LoadContact(){
+                        @Override
+                        protected void onPostExecute(ArrayList<SelectUser> result) {
+                            super.onPostExecute(result);
+
+                            adapter = new SelectUserAdapter(result, getActivity());
+                            listView.setAdapter(adapter);
+                            listView.setTextFilterEnabled(true);
+                            // place your adapter to a separate filter to remove pop up text
+                            filter = adapter.getFilter();
+
+                        }
+                    }.execute();
+
+                }
+
+
+
+            }
+        }
+    }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                showContacts();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     private void setupSearchView() {
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setOnQueryTextListener(this);

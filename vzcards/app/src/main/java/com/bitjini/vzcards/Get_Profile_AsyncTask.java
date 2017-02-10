@@ -25,14 +25,8 @@ import java.util.ArrayList;
  * Created by bitjini on 18/2/16.
  */
 public class Get_Profile_AsyncTask extends AsyncTask<String, Void, String> {
-    public static final String VALUES = "values";
 
-    MyProfile_Fragment pr = new MyProfile_Fragment();
-    VerifyScreen p = new VerifyScreen();
-    public ArrayList<String> values1;
-    public ArrayList<String> arrValues=new ArrayList<String>();
     public  JSONObject jsonObj;
-    public String  jsonValues;
     public String firstname,lastname,email ,industry ,company ,address_line_1 ,address_line_2,city ,pin_code,photo;
 
 
@@ -56,9 +50,6 @@ public class Get_Profile_AsyncTask extends AsyncTask<String, Void, String> {
 
             try {
                 jsonObj = new JSONObject(result);
-
-
-
 
                 firstname = jsonObj.getString("firstname");
                  lastname = jsonObj.getString("lastname");

@@ -36,29 +36,34 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import static com.bitjini.vzcards.BaseURLs.URL_REGISTER;
+import static com.bitjini.vzcards.BaseURLs.URL_RESEND;
+import static com.bitjini.vzcards.BaseURLs.URL_VERIFY;
+import static com.bitjini.vzcards.Constants.TOKEN_KEY;
+import static com.bitjini.vzcards.Constants.VZCARD_PREFS;
+import static com.bitjini.vzcards.Constants.is_organization_sharedPreference;
+import static com.bitjini.vzcards.Constants.phone_sharedPreference;
+import static com.bitjini.vzcards.Constants.sharedPreferences;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
+import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
 
 /**
  * Created by VEENA on 12/8/2015.
  */
 public class VerifyScreen extends Activity {
 
-    String URL_REGISTER = "https://vzcards-api.herokuapp.com/user_register/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-    String URL_VERIFY = "https://vzcards-api.herokuapp.com/verify/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-    String URL_RESEND="https://vzcards-api.herokuapp.com/send_again/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-    public static String token_sharedPreference,phone_sharedPreference,vz_id_sharedPreference;
 
-    public static final String VZCARD_PREFS = "MySharedPref";
-    public SharedPreferences sharedPreferences;
-    public String TOKEN_KEY="token";
-    public String VZ_ID_KEY="vz_id";
-    public String PHONE_KEY="phone";
 
 
     private ProgressDialog progress;
@@ -367,7 +372,7 @@ public class VerifyScreen extends Activity {
    /* *
     * class for Verifying otp
     */
-    private class PostClassOTP extends AsyncTask<String, Void, JSONObject> {
+    private class PostClassOTP extends AsyncTask<String, Void, String> {
         String reply;
 
         private final Context context;
@@ -382,91 +387,81 @@ public class VerifyScreen extends Activity {
             progress.show();
         }
 
-        @Override
-        protected JSONObject doInBackground(String... params) {
-            String response = null;
-            try {
-                otp = editTextOTP.getText().toString().trim();
-                HttpClient client = new DefaultHttpClient();
-                String postURL = URL_VERIFY;
+       protected String doInBackground(String... params)  {
+           InputStream is = null;
+           try {
+               otp = editTextOTP.getText().toString().trim();
+             String  urlString = URL_VERIFY;
+               URL url = new URL(urlString);
+               HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-                // making Post request
-                HttpPost post = new HttpPost(postURL);
+               conn.setReadTimeout(10000 /* milliseconds */);
+               conn.setConnectTimeout(15000 /* milliseconds */);
+               conn.setRequestMethod("GET");
+               conn.setDoInput(true);
 
-                // Post data
-                List<NameValuePair> params1 = new ArrayList<NameValuePair>();
-                params1.add(new BasicNameValuePair("phone", phone));
-                params1.add(new BasicNameValuePair("otp", otp));
+               conn.setRequestProperty("PHONE",phone);
+               conn.setRequestProperty("OTP", otp);
 
-                // encode post data in url format
-                UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params1, HTTP.UTF_8);
-                post.setEntity(ent);
-                HttpResponse responsePOST = client.execute(post);
-                HttpEntity resEntity = responsePOST.getEntity();
-                if (resEntity != null) {
-                    // storing the response
-                    response=EntityUtils.toString(resEntity);
-                    Log.i("RESPONSE", response);
+               // Starts the query
+               conn.connect();
+               int responseCode = conn.getResponseCode();
+               is = conn.getInputStream();
+               String contentAsString = convertStreamToString(is);
+               Log.e("res=",""+contentAsString);
+               return contentAsString;
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+           return null;
+       }
 
-                }
-                StringBuilder sb = new StringBuilder();
-                try {
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(resEntity.getContent()), 65728);
-                    String line = null;
+       private String convertStreamToString(InputStream is) throws UnsupportedEncodingException {
+           BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"), 8);
+           StringBuilder sb = new StringBuilder();
+           String line = null;
+           try {
+               while ((line = reader.readLine()) != null) {
+                   sb.append(line + "\n");
+               }
+           } catch (IOException e) {
+               e.printStackTrace();
+           } finally {
+               try {
+                   is.close();
+               } catch (IOException e) {
+                   e.printStackTrace();
+               }
+           }
+           return sb.toString();
+       }
 
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-
-                System.out.println("finalResult " + sb.toString());
-                // return response
-                return new JSONObject(response);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        protected void onPostExecute(JSONObject result) {
+        protected void onPostExecute(String result) {
             progress.dismiss();
             if (result != null) {
-                Log.e("valid =", "" + result.toString());
+                Log.e("valid =", "" + result);
                 try {
-                    JSONObject res=new JSONObject(result.toString());
-                    int valid = res.getInt("valid");
-                    String token=res.getString("token_generated");
-                     String vz_id=res.getString("vz_id");
-                    String phone=res.getString("phone");
+                    JSONObject res=new JSONObject(result);
+
+                    String  user_details=res.getString("user_details");
+                    JSONObject userDetailsObj=new JSONObject(user_details);
+                    String valid = userDetailsObj.getString("valid");
+                    String token=userDetailsObj.getString("token_generated");
+                     String vz_id=userDetailsObj.getString("vz_id");
+                    String phone=userDetailsObj.getString("phone");
+
+                    String  organization=res.getString("is_organization");
+                    JSONObject obj2=new JSONObject(organization);
+                    String is_organization=obj2.getString("is_organization");
+
                     Log.e("token generated =", "" + token);
                     Log.e("valid =", "" + valid);
-
+                    Log.e("is_organisation =", "" + is_organization);
 
                    // saving token in shared prefernces
-                    sharedPreferences = getSharedPreferences(VZCARD_PREFS, 0);
-                    SharedPreferences.Editor sEdit = sharedPreferences.edit();
-                    System.out.println(" saving token generated "+ sEdit.putString("token", token));
-                    System.out.println(" saving vz_id "+ sEdit.putString("vz_id", vz_id));
-                    System.out.println(" saving phone "+ sEdit.putString("phone", phone));
-                    sEdit.commit();
+                    SaveResponseInSharedPreference(token,vz_id,is_organization);
 
-                     token_sharedPreference=sharedPreferences.getString("token",token);
-
-                     vz_id_sharedPreference=sharedPreferences.getString("vz_id",vz_id);
-                    phone_sharedPreference=sharedPreferences.getString("phone",phone);
-                    System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
-                    System.out.println(" getting vz_id from sharedpreference "+ vz_id_sharedPreference);
-                    System.out.println(" getting phone from sharedpreference "+ phone_sharedPreference);
-
-                    if(valid==1)
+                    if(Integer.parseInt(valid)==1)
                     {
 
                         Intent positveActivity = new Intent(getApplicationContext(), MainActivity.class);
@@ -491,6 +486,25 @@ public class VerifyScreen extends Activity {
             }
 
         }
+    }
+
+    private void SaveResponseInSharedPreference(String token, String vz_id, String is_organization) {
+        sharedPreferences = getSharedPreferences(VZCARD_PREFS, 0);
+        SharedPreferences.Editor sEdit = sharedPreferences.edit();
+        sEdit.putString("token", token);
+        sEdit.putString("vz_id", vz_id);
+        sEdit.putString("phone", phone);
+        sEdit.putString("is_organization",is_organization);
+        sEdit.commit();
+
+        token_sharedPreference=sharedPreferences.getString("token",token);
+        vz_id_sharedPreference=sharedPreferences.getString("vz_id",vz_id);
+        phone_sharedPreference=sharedPreferences.getString("phone",phone);
+        is_organization_sharedPreference=sharedPreferences.getString("is_organization",is_organization);
+        System.out.println(" getting token from sharedpreference "+ token_sharedPreference);
+        System.out.println(" getting vz_id from sharedpreference "+ vz_id_sharedPreference);
+        System.out.println(" getting phone from sharedpreference "+ phone_sharedPreference);
+
     }
 }
 //    private class GetClass extends AsyncTask<String, Void, Void> {

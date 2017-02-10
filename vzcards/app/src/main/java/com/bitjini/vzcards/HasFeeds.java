@@ -61,15 +61,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static com.bitjini.vzcards.BaseURLs.URL_CONNECT;
+import static com.bitjini.vzcards.BaseURLs.URL_GETLIST;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
+import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
+
 /**
  * Created by bitjini on 9/5/16.
  */
 public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
-    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
 
-    String URL_GETLIST="https://vzcards-api.herokuapp.com/get_list/?access_token=";
-    String token_sharedPreference;
-    String vz_id;
+
     private SwipeRefreshLayout swipeRefreshLayout;
     ListView listView;
     View footer;
@@ -112,10 +114,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
         getActivity();
-        VerifyScreen p = new VerifyScreen();
-        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
-        vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
+
 
 //            listView.setVisibility(View.GONE);
 //            progressBar.setVisibility(View.VISIBLE);
@@ -164,7 +163,7 @@ public class HasFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshLi
                 dataFeeds_Has.setDescription(desc);
                 dataFeeds_Has.setTicket_id(ticket_id);
                 dataFeeds_Has.setPhone(phone1);
-                dataFeeds_Has.setVz_id(vz_id);
+                dataFeeds_Has.setVz_id(vz_id_sharedPreference);
 
                 String itemNeeds = getArguments().getString("titleNeeds");
                 String descNeeds = getArguments().getString("descNeeds");

@@ -53,17 +53,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static com.bitjini.vzcards.BaseURLs.URL_CONNECT;
+import static com.bitjini.vzcards.BaseURLs.URL_GETLIST;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
+import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
+
 /**
  * Created by bitjini on 9/5/16.
  */
 public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    String URL_GETLIST="https://vzcards-api.herokuapp.com/get_list/?access_token=";
-    String URL_CONNECT = "https://vzcards-api.herokuapp.com/connect/?access_token=";
-    String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
+     String connecter_vz_id, phone_1, ticket_id_1, phone_2, ticket_id_2, my_ticket, reffered_ticket, reffered_phone;
     private ProgressDialog progress;
-    String token_sharedPreference;
-    String vz_id;
+
     private SwipeRefreshLayout swipeRefreshLayout;
     ListView listView;
     View footer;
@@ -105,10 +107,6 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
 
-        VerifyScreen p = new VerifyScreen();
-        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
-       vz_id=p.sharedPreferences.getString(p.VZ_ID_KEY,null);
         if(getActivity()!=null) {
         getFeedsContents(URL_GETLIST + token_sharedPreference);
 
@@ -143,7 +141,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
                                                     dataFeeds_Needs.setItem_photo(item_photo);
                                                     dataFeeds_Needs.setDescription(desc);
                                                     dataFeeds_Needs.setTicket_id(ticket_id);
-                                                    dataFeeds_Needs.setVz_id(vz_id);
+                                                    dataFeeds_Needs.setVz_id(vz_id_sharedPreference);
                                                     dataFeeds_Needs.setPhone(phone1);
 
                                                     String itemHAs = getArguments().getString("titleHas");
@@ -339,7 +337,7 @@ public class NeedFeeds extends Fragment implements SwipeRefreshLayout.OnRefreshL
                     Log.e("currentpage=", "" + currentPage);
 
 
-                    getFeedsContents("https://vzcards-api.herokuapp.com/get_list/?access_token=" + token_sharedPreference + "&page=" + currentPage);
+                    getFeedsContents(URL_GETLIST + token_sharedPreference + "&page=" + currentPage);
 
                     // Notify the ListView of data changed
                     adapter.notifyDataSetChanged();

@@ -2,6 +2,7 @@ package com.bitjini.vzcards;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import static com.bitjini.vzcards.BaseURLs.URL_CONNECT;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
  * Created by bitjini on 10/2/16.
@@ -159,23 +164,64 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
                 break;
             case R.id.refer_contact:
 
-                // send the parameters to refer contact
-                ReferContacts connect = new ReferContacts();
 
-                Bundle args2 = new Bundle();
-                args2.putString("ticket_id", ticket_id_1);
-                args2.putString("phone1", phone1);
-                args2.putString("connector_vz_id", connector_vz_id);
+                if(!GetSharedPreference.isOrganisation())
+                {
+                    openFragment();
+                }else {
+                    createDialog();
 
-                connect.setArguments(args2);
-
-                //Inflate the fragment
-                getFragmentManager().beginTransaction().replace(R.id.feed_detail_has_Frame, connect).addToBackStack(connect.toString())
-                        .commit();
+                }
                 break;
 
 
         }
+    }
+    private void createDialog() {
+        // create an alert dialog box
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Feed_detail_has.this);
+        alertDialogBuilder.setMessage("Do you want to fetch your phone book contacts ");
+        alertDialogBuilder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        openFragment();
+//
+
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+
+    }
+
+    private void openFragment() {
+        // send the parameters to refer contact
+        ReferContacts connect = new ReferContacts();
+
+        Bundle args2 = new Bundle();
+        args2.putString("ticket_id", ticket_id_1);
+        args2.putString("phone1", phone1);
+        args2.putString("connector_vz_id", connector_vz_id);
+
+        connect.setArguments(args2);
+
+        //Inflate the fragment
+        getFragmentManager().beginTransaction().replace(R.id.feed_detail_has_Frame, connect).addToBackStack(connect.toString())
+                .commit();
+
     }
 }
 

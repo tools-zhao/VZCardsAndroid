@@ -37,6 +37,15 @@ import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.bitjini.vzcards.BaseURLs.URL_PROFILE_UPDATE;
+import static com.bitjini.vzcards.Constants.COMPANY_IMAGE;
+import static com.bitjini.vzcards.Constants.PROFILE_IMAGE;
+import static com.bitjini.vzcards.Constants.TASKS;
+import static com.bitjini.vzcards.Constants.phone_sharedPreference;
+import static com.bitjini.vzcards.Constants.profileSharedPreference;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
+import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
+
 /**
  * Created by VEENA on 12/7/2015.
  */
@@ -68,20 +77,16 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
         }
     }
 
-    private JSONObject downloadUrl(String postURL) throws IOException {
+    private String downloadUrl(String postURL) throws IOException {
 
 //              private String downloadUrl(String urlString) throws IOException {
         String response = null;
         try {
 //                final TextView outputView = (TextView) findViewById(R.id.content);
 
-            p.sharedPreferences = context.getSharedPreferences(p.VZCARD_PREFS, 0);
-            p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
-            p.phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
-            p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
 
 //            HttpClient client = new DefaultHttpClient();
-            postURL = pr.URL_PROFILE_UPDATE + p.token_sharedPreference;
+            postURL = URL_PROFILE_UPDATE + token_sharedPreference;
 //            HttpPost post = new HttpPost(postURL);
             URL url = new URL(postURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -91,16 +96,15 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             conn.setDoInput(true);
             conn.setDoOutput(true);
 
-
-            pr.data = context.getSharedPreferences(pr.MY_PROFILE_PREFERENCES, 0);
+            GetSharedPreference.getSharePreferenceValue(context);
 
             Log.e("photo in profile",""+pr.photo);
-            String company_photo = pr.data.getString(pr.COMPANY_IMAGE, null);
-            String photo =pr.data.getString(pr.PROFILE_IMAGE, null);;
+            String company_photo = profileSharedPreference.getString(COMPANY_IMAGE, "");
+            String photo =profileSharedPreference.getString(PROFILE_IMAGE, "");;
             String firstname = "";
             String lastname = "";
             String email = "";
-            String phone = p.phone_sharedPreference;
+            String phone = phone_sharedPreference;
             String industry = "";
             String company = "";
             String address_line_1 = "";
@@ -108,12 +112,12 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             String city = "";
             String pin_code = "";
             String title = "";
-            String vz_id = p.vz_id_sharedPreference;
+            String vz_id = vz_id_sharedPreference;
 
 
 
 
-            String json = pr.data.getString(pr.TASKS, null);
+            String json = profileSharedPreference.getString(TASKS, null);
 
             JSONArray jsonArray = new JSONArray(json);
 
@@ -176,7 +180,7 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
 
             // return response
-            return new JSONObject(response);
+            return response;
 
         } catch (Exception e) {
             e.printStackTrace();

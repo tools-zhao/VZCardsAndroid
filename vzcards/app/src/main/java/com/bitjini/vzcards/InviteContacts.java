@@ -43,11 +43,17 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.bitjini.vzcards.BaseURLs.URL_INVITE_FRNDS;
+import static com.bitjini.vzcards.Constants.MY_PROFILE_PREFERENCES;
+import static com.bitjini.vzcards.Constants.TASKS;
+import static com.bitjini.vzcards.Constants.phone_sharedPreference;
+import static com.bitjini.vzcards.Constants.profileSharedPreference;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
+
 /**
  * Created by bitjini on 16/2/16.
  */
 public class InviteContacts extends Fragment implements SearchView.OnQueryTextListener {
-    String URL_INVITE_FRNDS = "https://vzcards-api.herokuapp.com/invite_friends/?access_token=";
 
     // ArrayList
     ArrayList<SelectUser> phoneList = new ArrayList<>();
@@ -83,9 +89,9 @@ public class InviteContacts extends Fragment implements SearchView.OnQueryTextLi
         toolbar.setVisibility(View.GONE);
 //        showContacts();
         if (getActivity() != null) {
-            SyncContacts sync = new SyncContacts(getActivity());
+            SyncContacts loadContacts = new SyncContacts(getActivity());
 
-            adapter = new SelectUserAdapter(sync.phoneList12, getActivity());
+            adapter = new SelectUserAdapter(loadContacts.phoneList12, getActivity());
 
             listView.setAdapter(adapter);
             listView.setTextFilterEnabled(true);
@@ -121,7 +127,7 @@ public class InviteContacts extends Fragment implements SearchView.OnQueryTextLi
 
                                 VerifyScreen p = new VerifyScreen();
                                 GetHttpRequest connect = new GetHttpRequest(getActivity());
-                                connect.execute(URL_INVITE_FRNDS + p.token_sharedPreference);
+                                connect.execute(URL_INVITE_FRNDS + token_sharedPreference);
 
 
                             }
@@ -215,11 +221,11 @@ public class InviteContacts extends Fragment implements SearchView.OnQueryTextLi
 //                    PHONE : <friends no>
 //                    SENDER : <vzcard users name or phones>
 //                            RECEIVER : <frinds name or phone>
-                pr.data = getActivity().getSharedPreferences(pr.MY_PROFILE_PREFERENCES, 0); // getting data from sharedprefernces
-                p.sharedPreferences = context.getSharedPreferences(p.VZCARD_PREFS, 0);
-                myPhoneNumer= p.sharedPreferences.getString(p.PHONE_KEY, null);  // getting phone of user
+                profileSharedPreference = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0); // getting data from sharedprefernces
 
-                String json = pr.data.getString(pr.TASKS, null);
+                myPhoneNumer= phone_sharedPreference; // getting phone of user
+
+                String json = profileSharedPreference.getString(TASKS, null);
 
 
 

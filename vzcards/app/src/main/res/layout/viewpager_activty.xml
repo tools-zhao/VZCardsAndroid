@@ -7,9 +7,6 @@
     android:animateLayoutChanges="true"
     >
 
-<<<<<<< HEAD
-    <LinearLayout
-=======
     <!--<android.support.v7.widget.Toolbar-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="45dp"-->
@@ -41,20 +38,14 @@
     <!--</android.support.v7.widget.Toolbar>-->
 
     <android.support.v7.widget.Toolbar
->>>>>>> develop
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:id="@+id/toolbar"
-        android:gravity="center"
         android:background="?attr/colorPrimary"
         android:elevation="6dp"
-<<<<<<< HEAD
-        android:minHeight="?attr/actionBarSize">
-=======
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
->>>>>>> develop
         <ImageView
             android:layout_width="130dp"
             android:layout_height="30dp"
@@ -62,9 +53,6 @@
             android:layout_marginBottom="5dp"
             android:src="@drawable/navbarlogo2x"
             android:layout_gravity="center"/>
-<<<<<<< HEAD
-    </LinearLayout>
-=======
 
         <!--<ImageButton-->
         <!--android:layout_width="30dp"-->
@@ -87,7 +75,6 @@
         <!--android:max="500"-->
         <!--android:progress="0" />-->
     </android.support.v7.widget.Toolbar>
->>>>>>> develop
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"

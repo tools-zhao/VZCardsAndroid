@@ -1,7 +1,6 @@
 package com.bitjini.vzcards;
 import android.Manifest;
 import android.app.Activity;
-import android.app.LauncherActivity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,26 +9,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -38,26 +28,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -65,33 +53,37 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import static com.bitjini.vzcards.BaseURLs.URL_Cloudynary_Image_Path;
+import static com.bitjini.vzcards.BaseURLs.URL_GET_PROFILE;
+import static com.bitjini.vzcards.BaseURLs.URL_PROFILE_UPDATE;
+import static com.bitjini.vzcards.Constants.CAMERA_CODE;
+import static com.bitjini.vzcards.Constants.COMPANY_IMAGE;
+import static com.bitjini.vzcards.Constants.CROPING_CODE;
+import static com.bitjini.vzcards.Constants.GALLERY_CODE;
+import static com.bitjini.vzcards.Constants.MY_PROFILE_PREFERENCES;
+import static com.bitjini.vzcards.Constants.PERMISSIONS_READ_EXTERNAL_STORAGE;
+import static com.bitjini.vzcards.Constants.PERMISSIONS_REQUEST_CAMERA;
+import static com.bitjini.vzcards.Constants.PERMISSIONS_WRITE_EXTERNAL_STORAGE;
+import static com.bitjini.vzcards.Constants.PROFILE_IMAGE;
+import static com.bitjini.vzcards.Constants.TASKS;
+import static com.bitjini.vzcards.Constants.is_organization_sharedPreference;
+import static com.bitjini.vzcards.Constants.profileSharedPreference;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
+
 /**
  * Created by VEENA on 12/7/2015.
  */
 public class MyProfile_Fragment extends Fragment implements View.OnClickListener {
-    public static final String URL_PROFILE_UPDATE = "https://vzcards-api.herokuapp.com/my_profile/update/?access_token=";
-    public static final String URL_GET_PROFILE = "https://vzcards-api.herokuapp.com/my_profile/?access_token=";
-    public static final String URL_UPLOAD_IMAGE = "https://vzcards-api.herokuapp.com/upload_image/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-    public static final String MY_PROFILE_PREFERENCES = "mypref.txt";
-    public static final String PROFILE_IMAGE="profile";
-    public static final String COMPANY_IMAGE="company";
-    private static final int PERMISSIONS_REQUEST_CAMERA =197;
-    private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 198;
-    private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 199;
-    private static final int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
-    private Button btn_select_image;
+ 
     private Uri mImageCaptureUri;
     private File outPutFile = null;
-    public static final String TASKS = "key";
-    private final int SELECT_PHOTO = 1;
     public ImageView imageProfile, imageCompany;
-    private Uri outputFileUri;
     public ImageView currentImageView = null;
     View profile;
-    SharedPreferences data;
+    
     ArrayList<String> label=new ArrayList<>();
     ArrayList<String> values=new ArrayList<>();
-    public Bitmap output;
     int clickCount = 0;
     //Declaring widgets
     Button editbtn,cancelBtn;
@@ -125,40 +117,230 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         setRetainInstance(true);
         profile = inflater.inflate(R.layout.profile_layout, container, false);
 
-        relativeLayout=(RelativeLayout) profile. findViewById(R.id.rl);
-        editbtn = (Button) profile.findViewById(R.id.edit);
-        cancelBtn=(Button) profile.findViewById(R.id.cancel);
-        cancelBtn.setVisibility(View.GONE);
-        listView = (ListView) profile.findViewById(R.id.profileList);
-        listView2=(ListView)profile.findViewById(R.id.profileList2);
+        initViews();
+        initListener();
 
-        relativeLayout.setBackgroundResource(R.color.white);
-//        listView.setOnScrollListener(new MyScrollListener());
-        p.sharedPreferences = getActivity().getSharedPreferences(p.VZCARD_PREFS, 0);
-        p.token_sharedPreference = p.sharedPreferences.getString(p.TOKEN_KEY, null);
-        p.phone_sharedPreference = p.sharedPreferences.getString(p.PHONE_KEY, null);
-        p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
-        textViewName = (TextView) profile.findViewById(R.id.name);
-        //Picking Profile picture
-        imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
-        imageCompany = (ImageView) profile.findViewById(R.id.btn_pick);
-        //image listeners
-        imageCompany.setOnClickListener(this);
-        imageProfile.setOnClickListener(this);
-        cancelBtn.setOnClickListener(this);
-        imageCompany.setClickable(false);
-        imageProfile.setClickable(false);
-        profilebtn = (RadioButton) profile.findViewById(R.id.profilebtn);
-        referralbtn = (RadioButton) profile.findViewById(R.id.referralbtn);
-        vzfrndsbtn = (RadioButton) profile.findViewById(R.id.vzfrnds);
-        profilebtn.setChecked(true);
-        vzfrndsbtn.setChecked(false);
-        referralbtn.setChecked(false);
-        data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
-        String details = data.getString(TASKS, null);
+        GetSharedPreference.getSharePreferenceValue(getActivity());// get data from sharedpreference
+
+        String details = profileSharedPreference.getString(TASKS, null);
         if (details != null) {
             LoadPreferences();
         }
+        getDensity();
+        addArrayOfLabels();
+
+        // Making http get request to load profile details
+        getProfileDetails();
+
+
+        editbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!GetSharedPreference.isOrganisation()) {
+                    switch (clickCount) {
+                        case 0:
+                            EditUserDetails();
+                            break;
+                        case 1:
+                            saveUserDetails();
+                            break;
+                    }
+
+                } else {
+                    switch (clickCount) {
+                        case 0:
+                            ChangeLayoutParametersOnEdit();
+                            currentImageView = imageProfile;
+                            selectImageOption();
+                            break;
+                        case 1:
+                            ChangeLayoutParametersOnSave();
+
+                            if(profilePicturePath!=null)
+                            {
+                                Log.e("profilePicturePath= ",""+ profilePicturePath);
+                                UploadProfileImage();
+                            }
+
+                            break;
+                    }
+
+                }
+            }
+        });
+        if (!groupItem.isEmpty())
+            json2 = new Gson().toJson(groupItem);// updated array
+        json = new Gson().toJson(arrayList); //default array
+        //converting arrayList to json to Save the values in sharedpreference by calling SavePrefernces
+        // Check if the updated array is equal to default array if false load default array else load updated array
+        if (json.equals(json2) || json2 == null) {
+            SavePreferences(TASKS, json);
+        } else {
+            SavePreferences(TASKS, json2);
+        }
+        LoadPreferences();
+        vzfrndsbtn.setOnClickListener(this);
+        referralbtn.setOnClickListener(this);
+        // on configuration changes (screen rotation) we want fragment member variables to preserved
+        setRetainInstance(true);
+        return profile;
+    }
+
+    private void ChangeLayoutParametersOnSave() {
+        editbtn.setText("Edit");
+        RelativeLayout.LayoutParams paramImage5 = new RelativeLayout.LayoutParams(width/2, width/6);
+        paramImage5.leftMargin=width/2;
+        paramImage5.topMargin=((width/2)-(width/6));
+        editbtn.setLayoutParams(paramImage5);
+        editbtn.setBackgroundResource(R.color.primary);
+        cancelBtn.setVisibility(View.GONE);
+        clickCount=0;
+
+
+    }
+
+    private void ChangeLayoutParametersOnEdit() {
+        editbtn.setText("Save");
+        editbtn.setBackgroundResource(R.color.primaryGreen);
+        cancelBtn.setVisibility(View.VISIBLE);
+        RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/4, width/6);
+        paramImage3.leftMargin=(3*(width/4));
+        paramImage3.topMargin=((width/2)-(width/6));
+        editbtn.setLayoutParams(paramImage3);
+        RelativeLayout.LayoutParams paramImage4 = new RelativeLayout.LayoutParams(width/4, width/6);
+        paramImage4.leftMargin=width/2;
+        paramImage4.topMargin=((width/2)-(width/6));
+        cancelBtn.setLayoutParams(paramImage4);
+
+        clickCount=1;
+    }
+
+
+    private void saveUserDetails() {
+        relativeLayout.setBackgroundResource(R.color.white);
+        // to hide keypad
+        InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (getActivity().getCurrentFocus() != null){
+            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+        ChangeLayoutParametersOnSave();
+        imageCompany.setClickable(false);
+        imageProfile.setClickable(false);
+
+//                    editTextAdapter.actv(false);
+        json2 = new Gson().toJson(groupItem);// updated array
+
+
+        Log.e("arr",""+json2);
+
+        json3=profileSharedPreference.getString(TASKS, null);
+
+        SavePreferences(TASKS, json2);
+        // check if any changes done if yes make an api call
+        assert json3 != null;
+        if(json3.equals(json2) && profilePicturePath.length() == 0 && companyPicturePath.length() == 0 ) {
+        }else {
+            if (profilePicturePath.length() != 0 || companyPicturePath.length() != 0) {
+                if (profilePicturePath.length() != 0) {
+                    UploadProfileImage();
+                }
+                if (companyPicturePath.length() != 0) {
+//                                    picturePath = companyPicturePath;
+
+                    uploadCompanyImage();
+                }
+//
+            } else {
+                progress1 = new ProgressDialog(getActivity());
+                if (progress1 != null) {
+                    progress1.setMessage("Saving user details...");
+                    progress1.setCancelable(false);
+                    progress1.show();
+                }
+                new Profile_POST_Details(getActivity()) {
+                    @Override
+                    public void onPostExecute(String result) {
+                        if (progress1.isShowing() && progress1!=null) {
+                            progress1.dismiss();
+                            progress1 = null;}
+                        Toast.makeText(getActivity(), "Profile is updated ", Toast.LENGTH_LONG).show();
+                        getProfileDetails();
+                    }
+                }.execute(URL_PROFILE_UPDATE);
+            }
+        }
+        editTextAdapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
+        LoadPreferences();
+
+        companyPicturePath="";profilePicturePath="";
+
+        listView2.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.GONE);
+    }
+
+    private void UploadProfileImage() {
+        picturePath = profilePicturePath;
+        progress = new ProgressDialog(getActivity());
+        if (progress != null) {
+            progress.setMessage("Saving user details...");
+            progress.setCancelable(false);
+            progress.show();
+        }
+//                                            String result = new UploadImageTask(getActivity()).execute().get();
+        new UploadImageTask(getActivity()) {
+            @Override
+            public void onPostExecute(String result) {
+                if (progress.isShowing() && progress!=null) {
+                    progress.dismiss();
+                    progress = null;
+                    profilePicturePath="";
+                }
+                try
+                { if(result!=null) {
+                    JSONObject json = new JSONObject(result);
+                    photo = URL_Cloudynary_Image_Path;
+                    String link = json.getString("link");
+                    SavePreferences(PROFILE_IMAGE, photo + link);
+                    Log.e("photo :", "" + photo + link);
+                    if(companyPicturePath.length()==0) {
+                        // calling profile post details
+                        new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
+                        Toast.makeText(getActivity(), "Profile is updated ", Toast.LENGTH_LONG).show();
+                        if (!json2.equals(json3)) {
+                            getProfileDetails();
+                        }
+                    }else {
+                        uploadCompanyImage();
+                    }
+                }
+                } catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }.execute(profilePicturePath);
+    }
+
+    private void EditUserDetails() {
+
+        ChangeLayoutParametersOnEdit();
+
+        listView.setVisibility(View.VISIBLE);
+        listView2.setVisibility(View.GONE);
+
+
+
+        imageCompany.setClickable(true);
+        imageProfile.setClickable(true);
+        relativeLayout.setBackgroundResource(R.color.disabled_blue);
+//                    editTextAdapter.actv(true);
+        editTextAdapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
+
+    }
+
+    private void addArrayOfLabels() {
         label = new ArrayList<String>();
         label.add("Firstname");
         label.add("Lastname");
@@ -167,8 +349,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         label.add("Address");
         label.add("City");
         label.add("Pin code");
-        // Making http get request to load profile details
-        getProfileDetails();
+    }
+
+    private void getDensity() {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         width = metrics.widthPixels;
         int density = metrics.densityDpi;
@@ -203,171 +386,53 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         paramImage3.topMargin=((width/2)-(width/6));
         editbtn.setLayoutParams(paramImage3);
         editbtn.setBackgroundResource(R.color.primary);
-        listView2.setVisibility(View.VISIBLE);
-        editbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (clickCount == 0) {
-                    editbtn.setText("Save");
-                    listView.setVisibility(View.VISIBLE);
-                    listView2.setVisibility(View.GONE);
-                    editbtn.setBackgroundResource(R.color.primaryGreen);
-                    cancelBtn.setVisibility(View.VISIBLE);
-                    RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/4, width/6);
-                    paramImage3.leftMargin=(3*(width/4));
-                    paramImage3.topMargin=((width/2)-(width/6));
-                    editbtn.setLayoutParams(paramImage3);
-                    RelativeLayout.LayoutParams paramImage4 = new RelativeLayout.LayoutParams(width/4, width/6);
-                    paramImage4.leftMargin=width/2;
-                    paramImage4.topMargin=((width/2)-(width/6));
-                    cancelBtn.setLayoutParams(paramImage4);
-                    imageCompany.setClickable(true);
-                    imageProfile.setClickable(true);
-                    relativeLayout.setBackgroundResource(R.color.disabled_blue);
-//                    editTextAdapter.actv(true);
-                    editTextAdapter.notifyDataSetChanged();
-                    adapter.notifyDataSetChanged();
-                    clickCount = 1;
-                } else if (clickCount == 1) {
-
-                    relativeLayout.setBackgroundResource(R.color.white);
-                    // to hide keypad
-                    InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (getActivity().getCurrentFocus() != null){
-                        inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    }
-
-                    editbtn.setText("Edit");
-                    RelativeLayout.LayoutParams paramImage3 = new RelativeLayout.LayoutParams(width/2, width/6);
-                    paramImage3.leftMargin=width/2;
-                    paramImage3.topMargin=((width/2)-(width/6));
-                    editbtn.setLayoutParams(paramImage3);
-                    editbtn.setBackgroundResource(R.color.primary);
-                    cancelBtn.setVisibility(View.GONE);
-                    imageCompany.setClickable(false);
-                    imageProfile.setClickable(false);
-
-//                    editTextAdapter.actv(false);
-                    json2 = new Gson().toJson(groupItem);// updated array
-
-
-                    Log.e("arr",""+json2);
-                    data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
-                    json3=data.getString(TASKS, null);
-
-                    SavePreferences(TASKS, json2);
-                    // check if any changes done if yes make an api call
-                    assert json3 != null;
-                    if(json3.equals(json2) && profilePicturePath.length() == 0 && companyPicturePath.length() == 0 ) {
-                    }else {
-                        if (profilePicturePath.length() != 0 || companyPicturePath.length() != 0) {
-                            if (profilePicturePath.length() != 0) {
-                                picturePath = profilePicturePath;
-                                progress = new ProgressDialog(getActivity());
-                                if (progress != null) {
-                                    progress.setMessage("Saving user details...");
-                                    progress.setCancelable(false);
-                                    progress.show();
-                                }
-//                                            String result = new UploadImageTask(getActivity()).execute().get();
-                                new UploadImageTask(getActivity()) {
-                                    @Override
-                                    public void onPostExecute(String result) {
-                                        if (progress.isShowing() && progress!=null) {
-                                            progress.dismiss();
-                                            progress = null;
-                                            profilePicturePath="";
-//                                            File f = new File(outPutFile.getPath());
-//
-//                                            if (f.exists()) f.delete();
-                                        }
-                                        try
-                                        { if(result!=null) {
-                                            JSONObject json = new JSONObject(result);
-                                            photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
-                                            String link = json.getString("link");
-                                            SavePreferences(PROFILE_IMAGE, photo + link);
-                                            Log.e("photo :", "" + photo + link);
-                                            if(companyPicturePath.length()==0) {
-                                                // calling profile post details
-                                                new Profile_POST_Details(getActivity()).execute(URL_PROFILE_UPDATE);
-                                                Toast.makeText(getActivity(), "Profile is updated ", Toast.LENGTH_LONG).show();
-                                                if (!json2.equals(json3)) {
-                                                    getProfileDetails();
-                                                }
-                                            }else {
-                                                uploadCompanyImage();
-                                            }
-                                        }
-                                        } catch (JSONException e)
-                                        {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }.execute(profilePicturePath);
-                            }
-                            if (companyPicturePath.length() != 0) {
-//                                    picturePath = companyPicturePath;
-                                progressDialog1 = new ProgressDialog(getActivity());
-                                if (progressDialog1 != null) {
-                                    progressDialog1.setMessage("Saving user details...");
-                                    progressDialog1.setCancelable(false);
-                                    progressDialog1.show();
-                                }
-                                uploadCompanyImage();
-                            }
-//
-                        } else {
-                            progress1 = new ProgressDialog(getActivity());
-                            if (progress1 != null) {
-                                progress1.setMessage("Saving user details...");
-                                progress1.setCancelable(false);
-                                progress1.show();
-                            }
-                            new Profile_POST_Details(getActivity()) {
-                                @Override
-                                public void onPostExecute(String result) {
-                                    if (progress1.isShowing() && progress1!=null) {
-                                        progress1.dismiss();
-                                        progress1 = null;}
-                                    Toast.makeText(getActivity(), "Profile is updated ", Toast.LENGTH_LONG).show();
-                                    getProfileDetails();
-                                }
-                            }.execute(URL_PROFILE_UPDATE);
-                        }
-                    }
-                    editTextAdapter.notifyDataSetChanged();
-                    adapter.notifyDataSetChanged();
-                    LoadPreferences();
-                    clickCount = 0;
-                    companyPicturePath="";profilePicturePath="";
-
-                    listView2.setVisibility(View.VISIBLE);
-                    listView.setVisibility(View.GONE);
-                }
-            }
-        });
-        if (!groupItem.isEmpty())
-            json2 = new Gson().toJson(groupItem);// updated array
-//        Log.e("updated array", "" + json2);
-        json = new Gson().toJson(arrayList); //default array
-        //converting arrayList to json to Save the values in sharedpreference by calling SavePrefernces
-        // Check if the updated array is equal to default array if false load default array else load updated array
-        if (json.equals(json2) || json2 == null) {
-            SavePreferences(TASKS, json);
-        } else {
-            SavePreferences(TASKS, json2);
-        }
-        LoadPreferences();
-        vzfrndsbtn.setOnClickListener(this);
-        referralbtn.setOnClickListener(this);
-        // on configuration changes (screen rotation) we want fragment member variables to preserved
-        setRetainInstance(true);
-        return profile;
     }
+
+    private void initListener() {
+        //image listeners
+        imageCompany.setOnClickListener(this);
+        imageProfile.setOnClickListener(this);
+        cancelBtn.setOnClickListener(this);
+        imageCompany.setClickable(false);
+        imageProfile.setClickable(false);
+
+    }
+
+    private void initViews() {
+        relativeLayout=(RelativeLayout) profile. findViewById(R.id.rl);
+        editbtn = (Button) profile.findViewById(R.id.edit);
+        cancelBtn=(Button) profile.findViewById(R.id.cancel);
+        cancelBtn.setVisibility(View.GONE);
+        listView = (ListView) profile.findViewById(R.id.profileList);
+        listView2=(ListView)profile.findViewById(R.id.profileList2);
+
+        relativeLayout.setBackgroundResource(R.color.white);
+//        listView.setOnScrollListener(new MyScrollListener());
+
+        textViewName = (TextView) profile.findViewById(R.id.name);
+        //Picking Profile picture
+        imageProfile = (ImageView) profile.findViewById(R.id.profilePic);
+        imageCompany = (ImageView) profile.findViewById(R.id.btn_pick);
+
+        profilebtn = (RadioButton) profile.findViewById(R.id.profilebtn);
+        referralbtn = (RadioButton) profile.findViewById(R.id.referralbtn);
+        vzfrndsbtn = (RadioButton) profile.findViewById(R.id.vzfrnds);
+
+        profilebtn.setChecked(true);
+        vzfrndsbtn.setChecked(false);
+        referralbtn.setChecked(false);
+        listView2.setVisibility(View.VISIBLE);
+    }
+
     public void uploadCompanyImage()
     {
 //                                                String res = new UploadImageTask(getActivity()).execute().get();
+        progressDialog1 = new ProgressDialog(getActivity());
+        if (progressDialog1 != null) {
+            progressDialog1.setMessage("Saving user details...");
+            progressDialog1.setCancelable(false);
+            progressDialog1.show();
+        }
         new UploadImageTask(getActivity()) {
             @Override
             public void onPostExecute(String result) {
@@ -386,7 +451,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                     if(result!=null) {
                         JSONObject json = new JSONObject(result);
 //                                                            company_photo = json.getString("photo");
-                        company_photo = "http://res.cloudinary.com/harnesymz/image/upload/vzcards/";
+                        company_photo =URL_Cloudynary_Image_Path;
                         String link = json.getString("link");
                         SavePreferences(COMPANY_IMAGE, company_photo + link);
                         Log.e("link :", "" + link);
@@ -408,7 +473,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             String receivedData = null;
 
 
-            receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + p.token_sharedPreference).get();//cal to get profile data
+            receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + token_sharedPreference).get();//cal to get profile data
 
             //Profile details
             if(receivedData!=null) {
@@ -506,17 +571,15 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     protected void SavePreferences(String key, String value) {
 // TODO Auto-generated method stub
-        data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
-        SharedPreferences.Editor editor = data.edit();
+         SharedPreferences.Editor editor = profileSharedPreference.edit();
         editor.putString(key, value);
         editor.commit();
     }
 
     // To retrive saved values in shared preference Now convert the JSON string back to your java object
     protected void LoadPreferences() {
-        data = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
         Gson gson = new Gson();
-        String json = data.getString(TASKS, null);
+        String json = profileSharedPreference.getString(TASKS, null);
 
         Log.e("Load json shared prefs ", "" + json);
         Type type = new TypeToken<ArrayList<ListItem>>() {
@@ -617,16 +680,16 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         }
     }
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, Intent profileSharedPreference) {
+        super.onActivityResult(requestCode, resultCode, profileSharedPreference);
         if (resultCode == getActivity().RESULT_OK) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 getActivity().requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_READ_EXTERNAL_STORAGE);
             } else {
-                if (requestCode == GALLERY_CODE && resultCode == Activity.RESULT_OK && data != null) {
+                if (requestCode == GALLERY_CODE && resultCode == Activity.RESULT_OK && profileSharedPreference != null) {
                     String fname = "img_" + System.currentTimeMillis() + ".jpg";
                     outPutFile = new File(android.os.Environment.getExternalStorageDirectory(), fname);
-                    mImageCaptureUri = data.getData();
+                    mImageCaptureUri = profileSharedPreference.getData();
                     System.out.println("Gallery Image URI : " + mImageCaptureUri);
                     CropingIMG();
                 } else if (requestCode == CAMERA_CODE && resultCode == Activity.RESULT_OK) {
@@ -681,8 +744,8 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             intent.putExtra("aspectX", 1);
             intent.putExtra("aspectY", 1);
             intent.putExtra("scale", true);
-            //TODO: don't use return-data tag because it's not return large image data and crash not given any message
-//            intent.putExtra("return-data", true);
+            //TODO: don't use return-profileSharedPreference tag because it's not return large image profileSharedPreference and crash not given any message
+//            intent.putExtra("return-profileSharedPreference", true);
 //            Create output file here
             if(outPutFile!=null) {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outPutFile));
@@ -776,30 +839,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             }
         }
     }
-    public void decodeFile(String filePath) {
-        // First decode with inJustDecodeBounds=true to check dimensions
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, o);
-        // The new size we want to scale to
-        final int REQUIRED_SIZE = 1024;
-        // Calculate inSampleSize
-        // Find the correct scale value. It should be the power of 2.
-        int width_tmp = o.outWidth, height_tmp = o.outHeight;
-        int scale = 1;
-        while (true) {
-            if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
-                break;
-            width_tmp /= 2;
-            height_tmp /= 2;
-            scale *= 2;
-        }
-        // Decode bitmap with inSampleSize set
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        bitmap = BitmapFactory.decodeFile(filePath, o2);
-//        getRoundedCornerBitmap(bitmap, 100);
-    }
+
     public void onClick(View v) {
         switch (v.getId()) {
             //setting profile picture
@@ -813,17 +853,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 selectImageOption();
                 break;
             case R.id.cancel:
-                // to hide keypad
-//                setRetainInstance(true);
                 Fragment newfragment1 = new MyProfile_Fragment();
-                // get the id of fragment
-//                FrameLayout contentView1 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
-                // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
                         .replace(R.id.profile_frame, newfragment1)
                         .commit();
-//               gment image is blank
                 break;
             //redirecting to VZFriends_Fragment
             case R.id.vzfrnds:
@@ -839,9 +873,6 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             //redirecting to Referral_Fragmen
             case R.id.referralbtn:
                 Fragment fragment = new Referral_Fragment();
-                // get the id of fragment
-//                FrameLayout contentView3 = (FrameLayout) getActivity().findViewById(R.id.profile_frame);
-                // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager2 = getFragmentManager();
                 fragmentManager2.beginTransaction()
                         .replace(R.id.profile_frame, fragment)
@@ -851,39 +882,14 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 break;
         }
     }
-    /**
-     * The object we have a list of
-     */
-//    static class ListItem {
-//        public String value;
-//        public String label;
-//        ListItem() {
-//        }
-//        public String getValue() {
-//            return value;
-//        }
-//        public void setValue(String value) {
-//            this.value = value;
-//        }
-//        public String getLabel() {
-//            return label;
-//        }
-//        public void setLabel(String label) {
-//            this.label = label;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return value.toString();
-//        }
-//    }
+
     //    /**
 //     * ViewHolder which also tracks the TextWatcher for an EditText
 //     */
-    static class ViewHolder {
-        public TextView textView;
-        public EditText editText;
-        public TextWatcher textWatcher;
+    private static class ViewHolder {
+        TextView textView;
+        EditText editText;
+        TextWatcher textWatcher;
     }
     // custom adapter class
     class EditTextAdapter extends BaseAdapter {
@@ -946,18 +952,9 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 holder.editText.setText(listItem.value);
                 Log.e("val=", "" + listItem.value);
                 holder.textView.setText(listItem.getLabel());
-//              holder.editText.setEnabled(false);
-//                if (clickCount == 0) {
-//                    actv(false);
-//                }
+
                 return rowView;
             }
 
-//        protected void actv(final boolean active) {
-//            holder.editText.setEnabled(active);
-//            if (active) {
-//                holder.editText.requestFocus();
-//            }
-//        }
     }
 }

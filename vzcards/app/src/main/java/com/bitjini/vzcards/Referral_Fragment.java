@@ -3,8 +3,6 @@ package com.bitjini.vzcards;
 import android.Manifest;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
-import android.app.LauncherActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,10 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,26 +24,24 @@ import android.support.v4.app.FragmentManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
+
+import static com.bitjini.vzcards.BaseURLs.HISTORY_URL;
+import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
  * Created by bitjini on 28/12/15.
  */
 public class Referral_Fragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-    String HISTORY_URL = "https://vzcards-api.herokuapp.com/history/?access_token=";
     VerifyScreen p = new VerifyScreen();
     private SwipeRefreshLayout swipeRefreshLayout;
     // Request code for READ_CONTACTS. It can be any number > 0.
@@ -128,7 +121,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 list.setVisibility(View.GONE);
 
                 groupItem.clear();
-                getReferalContents(HISTORY_URL + p.token_sharedPreference);
+                getReferalContents(HISTORY_URL + token_sharedPreference);
                 progressBar.clearAnimation();
 
 
@@ -213,7 +206,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
 
             Log.e("currentpage=",""+currentPage);
             list.setVisibility(View.VISIBLE);
-            getReferalContents("https://vzcards-api.herokuapp.com/history/?access_token=" + p.token_sharedPreference +"&page="+currentPage);
+            getReferalContents(HISTORY_URL +token_sharedPreference +"&page="+currentPage);
 
 //            // Notify the ListView of data changed
 //
@@ -399,8 +392,9 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                                         referalUsers.setRefItemName(refItemName);
                                         referalUsers.setRefItem_photo(refItem_photo);
 
-                                        SyncContacts sync = new SyncContacts(getActivity());
-                                        for (SelectUser list : sync.phoneList12) {
+
+                                        SyncContacts loadContacts = new SyncContacts(getActivity());
+                                        for (SelectUser list : loadContacts.phoneList12) {
 
                                             if (phone.equals(list.getPhone())) {
                                                 referalUsers.setPhoneName(list.getName());
@@ -452,7 +446,7 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                 countOfFeeds=0;
                 isLoading = false;
                 if(getActivity()!=null) {
-                getReferalContents(HISTORY_URL + p.token_sharedPreference);
+                getReferalContents(HISTORY_URL + token_sharedPreference);
                     list.setVisibility(View.VISIBLE);
                     Set<ReferalUsers> hs = new HashSet<>();
                     hs.addAll(groupItem);
@@ -615,11 +609,12 @@ public class Referral_Fragment extends Fragment implements View.OnClickListener,
                     nextScreenIntent.putExtra("lname", data.getReferredlName());
                     nextScreenIntent.putExtra("photo", data.getReferedPhoto());
                     nextScreenIntent.putExtra("phone", data.getPhone());
+                    nextScreenIntent.putExtra("email", data.getEmail());
                     nextScreenIntent.putExtra("company", data.getCompany());
                     nextScreenIntent.putExtra("pin_code", data.getPin_code());
                     nextScreenIntent.putExtra("industry", data.getIndustry());
-                    nextScreenIntent.putExtra("address1", data.getAddress1());
-                    nextScreenIntent.putExtra("address2", data.getAddress2());
+                    nextScreenIntent.putExtra("address_line_1", data.getAddress1());
+                    nextScreenIntent.putExtra("address_line_2", data.getAddress2());
                     nextScreenIntent.putExtra("city", data.getCity());
                     nextScreenIntent.putExtra("title", data.getTitle());
                     nextScreenIntent.putExtra("company_photo", data.getComany_photo());

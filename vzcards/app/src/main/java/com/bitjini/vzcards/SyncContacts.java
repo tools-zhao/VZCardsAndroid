@@ -52,27 +52,27 @@ import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static com.bitjini.vzcards.BaseURLs.SYNC_CONTACT_URL;
+import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
+
 /**
  * Created by bitjini on 5/4/16.
  */
 public class SyncContacts extends AsyncTask<String, Void, String> {
-    String SYNC_CONTACT_URL="https://vzcards-api.herokuapp.com/sync/?access_token=jUUMHSnuGys5nr6qr8XsNEx6rbUyNu";
-   static ArrayList<String > phoneArray=new ArrayList<>();
+    static ArrayList<String > phoneArray=new ArrayList<>();
     public static  ArrayList<SelectUser>  phoneList12=new ArrayList<>();
 
-    public ProgressDialog progress;
-    public Cursor phones;
+     static ProgressDialog progress;
+    public static Cursor phones;
     // Request code for READ_CONTACTS. It can be any number > 0.
-    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
     // Cursor to load contacts list
 
-   Activity _activity;
+    Activity _activity;
     // Pop up
 
-   public Context context;
+    static Context context;
 
-    VerifyScreen p = new VerifyScreen();
 
     public SyncContacts(Context context) {
         this.context = context;
@@ -94,9 +94,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
 
     private String downloadUrl(String postURL) throws IOException {
         {
-            p.sharedPreferences = context.getSharedPreferences(p.VZCARD_PREFS, 0);
-           p.vz_id_sharedPreference = p.sharedPreferences.getString(p.VZ_ID_KEY, null);
-
+           GetSharedPreference.getSharePreferenceValue(context);
             //Create connection
             URL url = new URL(postURL);
             final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -111,49 +109,49 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             conn.setDoOutput(true);
 
 //            new LoadContact().execute();
-                    try {
+            try {
 //                        for (String s:phoneArray) {
 //                            Log.e(" phone arrays:", "" + s);
 //                        }
-                        List<NameValuePair> params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("vz_id", p.vz_id_sharedPreference));
-                        Log.e(" p.vz_id_", "" + p.vz_id_sharedPreference);
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("vz_id", vz_id_sharedPreference));
+                Log.e(" p.vz_id_", "" + vz_id_sharedPreference);
 
-                        for(String s: phoneArray) {
-                            params.add(new BasicNameValuePair("contact_list", s));
+                for(SelectUser s: phoneList12) {
+                    params.add(new BasicNameValuePair("contact_list", s.getPhone()));
 //                            Log.e("s", "" + s);
-                        }
-                        //Send request
-                        DataOutputStream wr = new DataOutputStream (
-                                conn.getOutputStream ());
-                        wr.writeBytes (getQuery(params));
-                        wr.flush ();
-                        wr.close ();
+                }
+                //Send request
+                DataOutputStream wr = new DataOutputStream (
+                        conn.getOutputStream ());
+                wr.writeBytes (getQuery(params));
+                wr.flush ();
+                wr.close ();
 
-                        //Get Response
-                        InputStream is = conn.getInputStream();
-                        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-                        String line;
-                        StringBuilder response = new StringBuilder();
-                        while ((line = rd.readLine()) != null) {
-                            response.append(line);
-                            response.append('"');
-                        }
-                        rd.close();
+                //Get Response
+                InputStream is = conn.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuilder response = new StringBuilder();
+                while ((line = rd.readLine()) != null) {
+                    response.append(line);
+                    response.append('"');
+                }
+                rd.close();
 
 
 //                        Log.e(" contact list Response", "" + response.toString());
 
 
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
 
-                        if (conn != null) {
-                            conn.disconnect();
-                        }
-                    }
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
 
 
 
@@ -187,21 +185,21 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
     }
 
     // Load data on background
-    class LoadContact extends AsyncTask<Void, Void, ArrayList<String >> {
+  public static class LoadContact extends AsyncTask<Void, Void, ArrayList<SelectUser >> {
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute() {
 
             super.onPreExecute();
             progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Syncing contacts.Please Wait..");
+            progressDialog.setMessage("Fetching contacts.Please Wait..");
             progressDialog.setCancelable(false);
             progressDialog.show();
 
         }
 
         @Override
-        protected ArrayList<String > doInBackground(Void... voids) {
+        protected ArrayList<SelectUser> doInBackground(Void... voids) {
 
             ContentResolver resolver=context.getContentResolver();
 
@@ -281,9 +279,9 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
             } else {
 //                Log.e("Cursor close 1", "----------------");
             }
-            return phoneArray;
+            return phoneList12;
         }
-        protected void onPostExecute(ArrayList<String> result) {
+        protected void onPostExecute(ArrayList<SelectUser> result) {
             if(!result.isEmpty()) {
                 if (progressDialog.isShowing() && progressDialog != null) {
                     progressDialog.dismiss();
@@ -294,7 +292,7 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
         }
 
     }
-    public String GetCountryZipCode(){
+    public static String GetCountryZipCode(){
         String CountryID="";
         String CountryZipCode="";
 
@@ -313,4 +311,3 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
     }
 
 }
-
