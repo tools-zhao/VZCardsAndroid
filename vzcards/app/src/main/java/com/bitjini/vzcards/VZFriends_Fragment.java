@@ -271,7 +271,8 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
 
 
                                    SyncContacts loadContacts = new SyncContacts(getActivity());
-
+                                Log.e("api phone= list:",""+loadContacts.phoneList12);
+                                if(!loadContacts.phoneList12.isEmpty()) {
                                     for (SelectUser list : loadContacts.phoneList12) {
 //                                        Log.e("api phone= list:",""+phone+"  "+list.getPhone());
 
@@ -283,6 +284,10 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                                         }
 
                                     }
+                                }else
+                                {
+                                    selectUser.setfName(firstname + " " + lastname);
+                                }
                                 selectUser.setFirstName(firstname + " " + lastname);
 //                                selectUser.setLastName(lastname);
                                 selectUser.setSyncPhone(phone);

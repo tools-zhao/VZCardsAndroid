@@ -287,7 +287,9 @@ public class SyncContacts extends AsyncTask<String, Void, String> {
                     progressDialog.dismiss();
                     progressDialog = null;
                 }
-                new SyncContacts(context).execute(SYNC_CONTACT_URL);
+                if(!GetSharedPreference.isOrganisation()) {
+                    new SyncContacts(context).execute(SYNC_CONTACT_URL);
+                }
             }
         }
 
