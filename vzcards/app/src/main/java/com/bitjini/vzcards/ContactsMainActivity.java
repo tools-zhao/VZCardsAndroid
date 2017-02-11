@@ -1,6 +1,9 @@
 package com.bitjini.vzcards;
+
 import java.io.IOException;
 import java.util.ArrayList;
+
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -99,8 +102,10 @@ public class ContactsMainActivity extends AsyncTask<Object, Object, ArrayList<Se
                 }
                 for(int i=0;i<selectUsers.size();i++){
 
+
                     if(!selectUsers.get(i).getPhone().trim().equals(phoneNumber)){
                         flag = 1;
+
 
                     }else{
                         flag =0;
