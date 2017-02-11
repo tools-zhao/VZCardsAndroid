@@ -593,13 +593,12 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             v.imageView = (ImageView) view.findViewById(R.id.contactImage);
 
             final SelectUser data = arrayList.get(i);
-            if (data.getSyncPhone().equals(data.getPhone())) {
+
                 v.fname.setText(data.getfName());
-            }
-            else
-            {  v.fname.setText(data.getFirstName());
-            Log.e("name=", "" + data.getFirstName());
-               }
+
+
+            Log.e("name=", "" + data.getfName());
+
 //            v.company.setText(data.getCompany());
             v.phone.setText(data.getSyncPhone());
 

@@ -14,7 +14,7 @@ import static com.bitjini.vzcards.Constants.profileSharedPreference;
 import static com.bitjini.vzcards.Constants.sharedPreferences;
 import static com.bitjini.vzcards.Constants.token_sharedPreference;
 import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
-
+import static com.bitjini.vzcards.Constants.isFetched_sharedPreference;
 /**
  * Created by bitjini on 25/1/17.
  */
@@ -27,6 +27,7 @@ public class GetSharedPreference {
         vz_id_sharedPreference=sharedPreferences.getString(VZ_ID_KEY,null);
         phone_sharedPreference=sharedPreferences.getString(PHONE_KEY,null);
         is_organization_sharedPreference=sharedPreferences.getString(IS_ORGANIZATION_KEY,null);
+        isFetched_sharedPreference=sharedPreferences.getBoolean("isFetched",false);
 
         profileSharedPreference = context.getSharedPreferences(MY_PROFILE_PREFERENCES, 0);
     }

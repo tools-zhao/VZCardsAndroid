@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -30,6 +31,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static com.bitjini.vzcards.BaseURLs.URL_CONNECT;
+import static com.bitjini.vzcards.Constants.isFetched_sharedPreference;
+import static com.bitjini.vzcards.Constants.sharedPreferences;
 import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
@@ -169,8 +172,15 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
                 {
                     openFragment();
                 }else {
-                    createDialog();
-
+                    GetSharedPreference.getSharePreferenceValue(Feed_detail_has.this);
+                    boolean isfetched=isFetched_sharedPreference;
+                    Log.e("isfetched=",""+isfetched);
+                    if(isFetched_sharedPreference) {
+                        openFragment();
+                    }
+                    else {
+                        createDialog();
+                    }
                 }
                 break;
 
@@ -186,6 +196,10 @@ public class Feed_detail_has extends Activity implements View.OnClickListener {
 
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
+                        SharedPreferences.Editor sEdit = sharedPreferences.edit();
+                        sEdit.putBoolean("isFetched", true);
+                        sEdit.commit();
+
                         openFragment();
 //
 

@@ -11,6 +11,7 @@ public class Constants {
     public static String phone_sharedPreference;
     public static String vz_id_sharedPreference;
     public static String is_organization_sharedPreference;
+    public static boolean isFetched_sharedPreference;
 
     public static String VZCARD_PREFS = "MySharedPref";
     public static SharedPreferences sharedPreferences;
