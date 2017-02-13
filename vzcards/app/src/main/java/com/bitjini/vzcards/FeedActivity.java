@@ -338,85 +338,87 @@ public class FeedActivity extends Fragment implements SwipeRefreshLayout.OnRefre
             public void onPostExecute(String received) {
                 super.onPostExecute(received);
 
-                try {
-                    int status = 0;
-                    JSONObject jsonObj = new JSONObject(received);
-                    if (jsonObj.has("status")) {
-                        status = jsonObj.getInt("status");
-                    }
-                    if (status == 401) {
-                        createAlertDialog(); // on Authentication failure
-                    }
+                if(received!=null) {
+                    try {
+                        int status = 0;
+                        JSONObject jsonObj = new JSONObject(received);
+                        if (jsonObj.has("status")) {
+                            status = jsonObj.getInt("status");
+                        }
+                        if (status == 401) {
+                            createAlertDialog(); // on Authentication failure
+                        }
 
-                    if (jsonObj.has("count")) {
+                        if (jsonObj.has("count")) {
 
-                        // Getting JSON Array node
-                        countOfFeeds = jsonObj.getInt("count");
-                        if (countOfFeeds == 0) {
+                            // Getting JSON Array node
+                            countOfFeeds = jsonObj.getInt("count");
+                            if (countOfFeeds == 0) {
 
-                            emptyMsg.setVisibility(View.VISIBLE);
-                            emptyMsg.setText("Hey, there are no feeds for you.\nPlease invite friends & \"Add\" ticket");
-                            listView.setVisibility(View.GONE);
+                                emptyMsg.setVisibility(View.VISIBLE);
+                                emptyMsg.setText("Hey, there are no feeds for you.\nPlease invite friends & \"Add\" ticket");
+                                listView.setVisibility(View.GONE);
 
-                        } else {
-                            emptyMsg.setVisibility(View.GONE);
-                            listView.setVisibility(View.VISIBLE);
-                            Log.e("countOfFeeds", "" + countOfFeeds);
-                            JSONArray arr = jsonObj.getJSONArray("response");
+                            } else {
+                                emptyMsg.setVisibility(View.GONE);
+                                listView.setVisibility(View.VISIBLE);
+                                Log.e("countOfFeeds", "" + countOfFeeds);
+                                JSONArray arr = jsonObj.getJSONArray("response");
 
-                            // looping through All Contacts
-                            for (int i = 0; i < arr.length(); i++) {
-                                JSONObject c = arr.getJSONObject(i);
-                                // Feed node is JSON Object
-                                JSONObject feed = c.getJSONObject("feed");
+                                // looping through All Contacts
+                                for (int i = 0; i < arr.length(); i++) {
+                                    JSONObject c = arr.getJSONObject(i);
+                                    // Feed node is JSON Object
+                                    JSONObject feed = c.getJSONObject("feed");
 
-                                String item = feed.getString("item");
-                                String question = feed.getString("question");
-                                String item_photo = feed.getString("item_photo");
-                                String description = feed.getString("description");
-                                String ticket_id = feed.getString("ticket_id");
-                                String isNeeds = "1", isHas = "0";
+                                    String item = feed.getString("item");
+                                    String question = feed.getString("question");
+                                    String item_photo = feed.getString("item_photo");
+                                    String description = feed.getString("description");
+                                    String ticket_id = feed.getString("ticket_id");
+                                    String isNeeds = "1", isHas = "0";
 //                    String vz_id = feed.getString("vz_id");
 
 
-                                if (question == isNeeds) {
-                                    isNeeds = question;
+                                    if (question == isNeeds) {
+                                        isNeeds = question;
+                                    }
+                                    if (question == isHas) {
+                                        isHas = question;
+                                    }
+                                    // user_details node is JSON Object
+                                    JSONObject user_detail = c.getJSONObject("user_details");
+
+                                    String firstname = user_detail.getString("firstname");
+                                    String photo = user_detail.getString("photo");
+
+                                    String phone = user_detail.getString("phone");
+
+                                    DataFeeds dataFeeds = new DataFeeds();
+
+                                    dataFeeds.setFname(firstname);
+                                    dataFeeds.setItem(item);
+                                    dataFeeds.setQuestion(question);
+                                    dataFeeds.setPhoto(photo);
+                                    dataFeeds.setItem_photo(item_photo);
+                                    dataFeeds.setDescription(description);
+                                    dataFeeds.setIsHas(isHas);
+                                    dataFeeds.setIsNeeds(isNeeds);
+                                    dataFeeds.setTicket_id(ticket_id);
+                                    dataFeeds.setVz_id(vz_id_sharedPreference);
+                                    dataFeeds.setPhone(phone);
+
+                                    feedsArrayList.add(dataFeeds);
+                                    swipeRefreshLayout.setRefreshing(false);
                                 }
-                                if (question == isHas) {
-                                    isHas = question;
-                                }
-                                // user_details node is JSON Object
-                                JSONObject user_detail = c.getJSONObject("user_details");
-
-                                String firstname = user_detail.getString("firstname");
-                                String photo = user_detail.getString("photo");
-
-                                String phone = user_detail.getString("phone");
-
-                                DataFeeds dataFeeds = new DataFeeds();
-
-                                dataFeeds.setFname(firstname);
-                                dataFeeds.setItem(item);
-                                dataFeeds.setQuestion(question);
-                                dataFeeds.setPhoto(photo);
-                                dataFeeds.setItem_photo(item_photo);
-                                dataFeeds.setDescription(description);
-                                dataFeeds.setIsHas(isHas);
-                                dataFeeds.setIsNeeds(isNeeds);
-                                dataFeeds.setTicket_id(ticket_id);
-                                dataFeeds.setVz_id(vz_id_sharedPreference);
-                                dataFeeds.setPhone(phone);
-
-                                feedsArrayList.add(dataFeeds);
-                                swipeRefreshLayout.setRefreshing(false);
                             }
                         }
-                    }
 
-                    adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
-                    listView.setAdapter(adapter);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                        adapter = new FeedsAdapter(getActivity(), R.layout.feed_layout, feedsArrayList);
+                        listView.setAdapter(adapter);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }.execute(url);

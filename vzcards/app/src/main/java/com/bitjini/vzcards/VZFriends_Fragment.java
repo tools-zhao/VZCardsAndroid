@@ -56,7 +56,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     Context c;
     View v;
     // ArrayList
-   static   ArrayList<SelectUser> selectUsers = new ArrayList<SelectUser>();
+    static ArrayList<SelectUser> selectUsers = new ArrayList<SelectUser>();
     ArrayList<SelectUser> phoneList = new ArrayList<SelectUser>();
     VZFriends_Adapter adapter;
     List<SelectUser> temp;
@@ -72,15 +72,16 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
     View footer;
-    int countOfFrnds=0;
-    int currentPage=1;
-    int totalPage=0;
-    boolean isLoading=false;
+    int countOfFrnds = 0;
+    int currentPage = 1;
+    int totalPage = 0;
+    boolean isLoading = false;
     View vzfrnds;
-    int progressCount=0;
+    int progressCount = 0;
 
     TextView emptyMsg;
-    Button inviteButton,profilebtn,referral;
+    Button inviteButton, profilebtn, referral;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,9 +92,9 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         CheckIfOrganisation();
 
         initListeners();
-        if(!selectUsers.isEmpty()) {
+        if (!selectUsers.isEmpty()) {
             LoadSavedElements();
-        }else {
+        } else {
             LoadNewElements();
         }
 
@@ -111,7 +112,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
                 boolean enable = false;
-                if(listView != null && listView.getChildCount() > 0){
+                if (listView != null && listView.getChildCount() > 0) {
                     // check if the first item of the list is visible
                     boolean firstItemVisible = listView.getFirstVisiblePosition() == 0;
                     // check if the top of the first item is visible
@@ -120,16 +121,16 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
                     enable = firstItemVisible && topOfFirstItemVisible;
                 }
                 swipeRefreshLayout.setEnabled(enable);
-                Log.i("Main",totalItemCount+"");
+                Log.i("Main", totalItemCount + "");
 
                 int lastIndexInScreen = visibleItemCount + firstVisibleItem;
 
-                if (lastIndexInScreen>= totalItemCount && 	!isLoading) {
+                if (lastIndexInScreen >= totalItemCount && !isLoading) {
 
                     // It is time to load more items
                     isLoading = true;
-                    totalPage=(int) Math.ceil((double)countOfFrnds / 10.0);
-                    Log.e("totalPage ",""+totalPage);
+                    totalPage = (int) Math.ceil((double) countOfFrnds / 10.0);
+                    Log.e("totalPage ", "" + totalPage);
 
                     loadMore();
 
@@ -179,7 +180,7 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
     }
 
     private void initViews() {
-        emptyMsg=(TextView) vzfrnds.findViewById(R.id.emptyFeeds);
+        emptyMsg = (TextView) vzfrnds.findViewById(R.id.emptyFeeds);
         progressBar = (ProgressBar) vzfrnds.findViewById(R.id.progress1);
         progressBar.setVisibility(View.GONE);
         swipeRefreshLayout = (SwipeRefreshLayout) vzfrnds.findViewById(R.id.pullToRefresh);
@@ -187,32 +188,32 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         // the refresh listner. this would be called when the layout is pulled down
         swipeRefreshLayout.setOnRefreshListener(this);
         // sets the colors used in the refresh animation
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark,R.color.pink,
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark, R.color.pink,
                 R.color.colorPrimary
-                ,R.color.red);
+                , R.color.red);
         c = vzfrnds.getContext();
 
         mSearchView = (SearchView) vzfrnds.findViewById(R.id.searchview);
-        listView = (ListView)vzfrnds.findViewById(R.id.contactList);
+        listView = (ListView) vzfrnds.findViewById(R.id.contactList);
         LayoutInflater inflater2 = (LayoutInflater) super.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = (View) inflater2.inflate(R.layout.loading_layout, null);
 
-         profilebtn = (Button) vzfrnds.findViewById(R.id.profilebtn);
-         referral = (Button) vzfrnds.findViewById(R.id.referralbtn);
+        profilebtn = (Button) vzfrnds.findViewById(R.id.profilebtn);
+        referral = (Button) vzfrnds.findViewById(R.id.referralbtn);
 
     }
+
     private void CheckIfOrganisation() {
 
         // if not an organisation
-        if(!GetSharedPreference.isOrganisation())
-        {
-            inviteButton=(Button)vzfrnds.findViewById(R.id.invite);
+        if (!GetSharedPreference.isOrganisation()) {
+            inviteButton = (Button) vzfrnds.findViewById(R.id.invite);
             inviteButton.setOnClickListener(this);
             inviteButton.setVisibility(View.VISIBLE);
         }
     }
-    public void getVzFrnds(String url)
-    {
+
+    public void getVzFrnds(String url) {
 //        listView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setProgress(0);
@@ -224,110 +225,124 @@ public class VZFriends_Fragment extends Fragment implements View.OnClickListener
         new HttpAsyncTask(getActivity()) {
 
             @Override
-            public void onPostExecute(String received) {
-                if(received!=null) {
-                    try {
-                        progressCount = 1;
+            public void onPostExecute(final String received) {
+                if (received != null) {
 
+                    progressCount = 1;
 
-                        JSONObject jsonObject = new JSONObject(received);
-                        countOfFrnds = jsonObject.getInt("count");
-                        if (countOfFrnds == 0) {
-                            emptyMsg.setVisibility(View.VISIBLE);
-                            emptyMsg.setText("Hey, you have no VZFriends.\nPlease invite friends to VZCards.");
-                            listView.setVisibility(View.GONE);
-
-                        } else {
-                            emptyMsg.setVisibility(View.GONE);
-                            listView.setVisibility(View.VISIBLE);
-
-                            Log.e("count of frnds", "" + countOfFrnds);
-                            String response = jsonObject.getString("response");
-                            Log.e("response of frnds", "" + response);
-                            // Getting JSON Array node
-                            JSONArray arr = jsonObject.getJSONArray("response");
-
-                            // looping through All Contacts
-                            for (int i = 0; i < arr.length(); i++) {
-                                JSONObject c = arr.getJSONObject(i);
-                                // Feed node is JSON Object
-                                String phone = c.getString("phone");
-                                String firstname = c.getString("firstname");
-                                String lastname = c.getString("lastname");
-                                String photo = c.getString("photo");
-
-                                String company = c.getString("company");
-                                String pin_code = c.getString("pin_code");
-                                String industry = c.getString("industry");
-                                String address1 = c.getString("address_line_1");
-                                String address2 = c.getString("address_line_2");
-                                String city = c.getString("city");
-                                String title = c.getString("title");
-                                String company_photo = c.getString("company_photo");
-                                String email = c.getString("email");
-
-
-                                SelectUser selectUser = new SelectUser();
-
-
-                                   SyncContacts loadContacts = new SyncContacts(getActivity());
-                                Log.e("api phone= list:",""+loadContacts.phoneList12);
-                                if(!loadContacts.phoneList12.isEmpty()) {
-                                    for (SelectUser list : loadContacts.phoneList12) {
-//                                        Log.e("api phone= list:",""+phone+"  "+list.getPhone());
-
-                                        if (phone.equals(list.getPhone())) {
-                                            selectUser.setfName(list.getName());
-                                            selectUser.setPhone(list.getPhone());
-
-                                            Log.e("list name", "" + list.getName());
-                                        }
-
-                                    }
-                                }else
-                                {
-                                    selectUser.setfName(firstname + " " + lastname);
-                                }
-                                selectUser.setFirstName(firstname + " " + lastname);
-//                                selectUser.setLastName(lastname);
-                                selectUser.setSyncPhone(phone);
-                                selectUser.setPhoto(photo);
-                                selectUser.setEmail(email);
-                                selectUser.setCompany(company);
-                                selectUser.setPin_code(pin_code);
-                                selectUser.setIndustry(industry);
-                                selectUser.setAddress1(address1);
-                                selectUser.setAddress2(address2);
-                                selectUser.setCity(city);
-                                selectUser.setTitle(title);
-                                selectUser.setComany_photo(company_photo);
-
-
-                                selectUsers.add(selectUser);
-                                progressBar.setVisibility(View.GONE);
-                                listView.setVisibility(View.VISIBLE);
-
-                                if (!selectUsers.isEmpty() && selectUsers != null) {
-                                    Set<SelectUser> hs = new HashSet<>();
-                                    hs.addAll(selectUsers);
-                                    selectUsers.clear();
-                                    selectUsers.addAll(hs);
-                                    Collections.sort(selectUsers, new SortBasedOnName(getActivity()));// sort in alphabetical order
-                                }
-
-
+                    final SyncContacts loadContacts = new SyncContacts(getActivity());
+                    if (loadContacts.phoneList12.isEmpty()) {
+                        new SyncContacts(getActivity()).LoadContacts();
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                getJsonData(received, loadContacts.phoneList12);
                             }
-
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        }, 3000);
+                    } else {
+                        getJsonData(received, loadContacts.phoneList12);
                     }
+
                 }
             }
         }.execute(url);
     }
 
+    private void getJsonData(String received, ArrayList<SelectUser> phoneList12) {
+        try {
+            JSONObject jsonObject = new JSONObject(received);
 
+            countOfFrnds = jsonObject.getInt("count");
+            if (countOfFrnds == 0) {
+                emptyMsg.setVisibility(View.VISIBLE);
+                emptyMsg.setText("Hey, you have no VZFriends.\nPlease invite friends to VZCards.");
+                listView.setVisibility(View.GONE);
+
+            } else {
+                emptyMsg.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
+
+                Log.e("count of frnds", "" + countOfFrnds);
+                String response = jsonObject.getString("response");
+                Log.e("response of frnds", "" + response);
+                // Getting JSON Array node
+                JSONArray arr = jsonObject.getJSONArray("response");
+
+                // looping through All Contacts
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject c = arr.getJSONObject(i);
+                    // Feed node is JSON Object
+                    String phone = c.getString("phone");
+                    String firstname = c.getString("firstname");
+                    String lastname = c.getString("lastname");
+                    String photo = c.getString("photo");
+
+                    String company = c.getString("company");
+                    String pin_code = c.getString("pin_code");
+                    String industry = c.getString("industry");
+                    String address1 = c.getString("address_line_1");
+                    String address2 = c.getString("address_line_2");
+                    String city = c.getString("city");
+                    String title = c.getString("title");
+                    String company_photo = c.getString("company_photo");
+                    String email = c.getString("email");
+
+
+                    SelectUser selectUser = new SelectUser();
+
+
+                    Log.e("api phone= list:", "" + phoneList12);
+                    if (!phoneList12.isEmpty()) {
+                        for (SelectUser list : phoneList12) {
+//                                        Log.e("api phone= list:",""+phone+"  "+list.getPhone());
+
+                            if (phone.equals(list.getPhone())) {
+                                selectUser.setfName(list.getName());
+                                selectUser.setPhone(list.getPhone());
+
+                                Log.e("list name", "" + list.getName());
+
+                            }
+
+                        }
+                    } else {
+                        selectUser.setfName(firstname + " " + lastname);
+                    }
+                    selectUser.setFirstName(firstname + " " + lastname);
+//                                selectUser.setLastName(lastname);
+                    selectUser.setSyncPhone(phone);
+                    selectUser.setPhoto(photo);
+                    selectUser.setEmail(email);
+                    selectUser.setCompany(company);
+                    selectUser.setPin_code(pin_code);
+                    selectUser.setIndustry(industry);
+                    selectUser.setAddress1(address1);
+                    selectUser.setAddress2(address2);
+                    selectUser.setCity(city);
+                    selectUser.setTitle(title);
+                    selectUser.setComany_photo(company_photo);
+
+
+                    selectUsers.add(selectUser);
+                    progressBar.setVisibility(View.GONE);
+                    listView.setVisibility(View.VISIBLE);
+
+                    if (!selectUsers.isEmpty() && selectUsers != null) {
+                        Set<SelectUser> hs = new HashSet<>();
+                        hs.addAll(selectUsers);
+                        selectUsers.clear();
+                        selectUsers.addAll(hs);
+                        Collections.sort(selectUsers, new SortBasedOnName(getActivity()));// sort in alphabetical order
+                    }
+
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void getPermissionForShowingContacts() {
         // Check the SDK version and whether the permission is already granted or not.

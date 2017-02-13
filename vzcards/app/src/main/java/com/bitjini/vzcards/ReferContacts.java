@@ -179,7 +179,6 @@ return refer_contact;
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
         } else {
 
-
                     final SyncContacts sync = new SyncContacts(getActivity());
 
                 if(sync.phoneList12.isEmpty())
@@ -194,15 +193,8 @@ return refer_contact;
                     },3000);
 
                 }else {
-
                     addContactsList_InListview(sync.phoneList12);
-//
                 }
-
-
-//
-//
-//
 
         }
     }
