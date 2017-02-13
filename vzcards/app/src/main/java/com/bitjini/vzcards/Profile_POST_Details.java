@@ -42,7 +42,7 @@ import static com.bitjini.vzcards.Constants.COMPANY_IMAGE;
 import static com.bitjini.vzcards.Constants.PROFILE_IMAGE;
 import static com.bitjini.vzcards.Constants.TASKS;
 import static com.bitjini.vzcards.Constants.phone_sharedPreference;
-import static com.bitjini.vzcards.Constants.profileSharedPreference;
+import static com.bitjini.vzcards.Constants.sharedPreferences;
 import static com.bitjini.vzcards.Constants.token_sharedPreference;
 import static com.bitjini.vzcards.Constants.vz_id_sharedPreference;
 
@@ -99,8 +99,8 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
             GetSharedPreference.getSharePreferenceValue(context);
 
             Log.e("photo in profile",""+pr.photo);
-            String company_photo = profileSharedPreference.getString(COMPANY_IMAGE, "");
-            String photo =profileSharedPreference.getString(PROFILE_IMAGE, "");;
+            String company_photo = sharedPreferences.getString(COMPANY_IMAGE, "");
+            String photo =sharedPreferences.getString(PROFILE_IMAGE, "");;
             String firstname = "";
             String lastname = "";
             String email = "";
@@ -117,7 +117,7 @@ public class Profile_POST_Details extends AsyncTask<String, Void, String> {
 
 
 
-            String json = profileSharedPreference.getString(TASKS, null);
+            String json = sharedPreferences.getString(TASKS, null);
 
             JSONArray jsonArray = new JSONArray(json);
 

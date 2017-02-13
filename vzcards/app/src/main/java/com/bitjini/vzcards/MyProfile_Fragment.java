@@ -61,14 +61,14 @@ import static com.bitjini.vzcards.Constants.CAMERA_CODE;
 import static com.bitjini.vzcards.Constants.COMPANY_IMAGE;
 import static com.bitjini.vzcards.Constants.CROPING_CODE;
 import static com.bitjini.vzcards.Constants.GALLERY_CODE;
-import static com.bitjini.vzcards.Constants.MY_PROFILE_PREFERENCES;
+import static com.bitjini.vzcards.Constants.VZCARD_PREFS;
 import static com.bitjini.vzcards.Constants.PERMISSIONS_READ_EXTERNAL_STORAGE;
 import static com.bitjini.vzcards.Constants.PERMISSIONS_REQUEST_CAMERA;
 import static com.bitjini.vzcards.Constants.PERMISSIONS_WRITE_EXTERNAL_STORAGE;
 import static com.bitjini.vzcards.Constants.PROFILE_IMAGE;
 import static com.bitjini.vzcards.Constants.TASKS;
 import static com.bitjini.vzcards.Constants.is_organization_sharedPreference;
-import static com.bitjini.vzcards.Constants.profileSharedPreference;
+import static com.bitjini.vzcards.Constants.sharedPreferences;
 import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
@@ -117,12 +117,18 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         setRetainInstance(true);
         profile = inflater.inflate(R.layout.profile_layout, container, false);
 
+          createViews();
+        return profile;
+    }
+
+    private void createViews() {
+
         initViews();
         initListener();
 
         GetSharedPreference.getSharePreferenceValue(getActivity());// get data from sharedpreference
 
-        String details = profileSharedPreference.getString(TASKS, null);
+        String details = sharedPreferences.getString(TASKS, null);
         if (details != null) {
             LoadPreferences();
         }
@@ -183,7 +189,19 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         referralbtn.setOnClickListener(this);
         // on configuration changes (screen rotation) we want fragment member variables to preserved
         setRetainInstance(true);
-        return profile;
+    }
+
+    //  as the user switches the tab make the fragment visible n load the new data
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+
+            createViews();
+            super.onPause();
+        }
+        else {
+        }
     }
 
     private void ChangeLayoutParametersOnSave() {
@@ -233,7 +251,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
         Log.e("arr",""+json2);
 
-        json3=profileSharedPreference.getString(TASKS, null);
+        json3=sharedPreferences.getString(TASKS, null);
 
         SavePreferences(TASKS, json2);
         // check if any changes done if yes make an api call
@@ -571,7 +589,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
 
     protected void SavePreferences(String key, String value) {
 // TODO Auto-generated method stub
-         SharedPreferences.Editor editor = profileSharedPreference.edit();
+         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, value);
         editor.commit();
     }
@@ -579,7 +597,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     // To retrive saved values in shared preference Now convert the JSON string back to your java object
     protected void LoadPreferences() {
         Gson gson = new Gson();
-        String json = profileSharedPreference.getString(TASKS, null);
+        String json = sharedPreferences.getString(TASKS, null);
 
         Log.e("Load json shared prefs ", "" + json);
         Type type = new TypeToken<ArrayList<ListItem>>() {

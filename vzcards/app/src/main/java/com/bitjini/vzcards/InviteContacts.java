@@ -44,10 +44,10 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 import static com.bitjini.vzcards.BaseURLs.URL_INVITE_FRNDS;
-import static com.bitjini.vzcards.Constants.MY_PROFILE_PREFERENCES;
 import static com.bitjini.vzcards.Constants.TASKS;
+import static com.bitjini.vzcards.Constants.VZCARD_PREFS;
 import static com.bitjini.vzcards.Constants.phone_sharedPreference;
-import static com.bitjini.vzcards.Constants.profileSharedPreference;
+import static com.bitjini.vzcards.Constants.sharedPreferences;
 import static com.bitjini.vzcards.Constants.token_sharedPreference;
 
 /**
@@ -221,11 +221,11 @@ public class InviteContacts extends Fragment implements SearchView.OnQueryTextLi
 //                    PHONE : <friends no>
 //                    SENDER : <vzcard users name or phones>
 //                            RECEIVER : <frinds name or phone>
-                profileSharedPreference = getActivity().getSharedPreferences(MY_PROFILE_PREFERENCES, 0); // getting data from sharedprefernces
+                sharedPreferences = getActivity().getSharedPreferences(VZCARD_PREFS, 0); // getting data from sharedprefernces
 
                 myPhoneNumer= phone_sharedPreference; // getting phone of user
 
-                String json = profileSharedPreference.getString(TASKS, null);
+                String json = sharedPreferences.getString(TASKS, null);
 
 
 

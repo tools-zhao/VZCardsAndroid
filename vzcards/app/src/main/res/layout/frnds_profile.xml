@@ -78,7 +78,9 @@
                                 android:layout_height="60dp"
                                 android:src="@drawable/no_pic_placeholder_2"
                                 android:layout_gravity="center"
+                                android:layout_marginLeft="40dp"
                                 android:id="@+id/btn_pick"
+                                android:layout_marginRight="20dp"
                                 android:layout_above="@+id/btn_call"
                                 android:layout_toEndOf="@+id/profilePic" />
 

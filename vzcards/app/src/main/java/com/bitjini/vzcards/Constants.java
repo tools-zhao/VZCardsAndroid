@@ -32,8 +32,6 @@ public class Constants {
     public static int CAMERA_CODE = 101, GALLERY_CODE = 201, CROPING_CODE = 301;
 
 
-    public static SharedPreferences profileSharedPreference;
-    public static String MY_PROFILE_PREFERENCES = "mypref.txt";
     public static String PROFILE_IMAGE="profile";
     public static String COMPANY_IMAGE="company";
 
