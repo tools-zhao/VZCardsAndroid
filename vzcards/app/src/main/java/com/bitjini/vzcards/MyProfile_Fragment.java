@@ -110,6 +110,7 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
     public String profilePicturePath="",companyPicturePath="";
     ListView listView2;
     MyAdapter adapter;
+    String receivedData = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -136,8 +137,11 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
         addArrayOfLabels();
 
         // Making http get request to load profile details
-        getProfileDetails();
-
+        if(receivedData==null) {
+            getProfileDetails();
+        }else {
+            showReceivedData(receivedData);
+        }
 
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -485,17 +489,25 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
             }
         }.execute(companyPicturePath);
     }
-    public void getProfileDetails()
-    {
+    public void getProfileDetails() {
         try {
-            String receivedData = null;
-
 
             receivedData = new Get_Profile_AsyncTask().execute(URL_GET_PROFILE + token_sharedPreference).get();//cal to get profile data
 
-            //Profile details
-            if(receivedData!=null) {
-                JSONObject jsonObj = new JSONObject(receivedData);
+            showReceivedData(receivedData);
+
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        } catch (ExecutionException e1) {
+            e1.printStackTrace();
+        }
+    }
+    private void showReceivedData(String receivedData) {
+        //Profile details
+        if (receivedData != null) {
+            JSONObject jsonObj = null;
+            try {
+                jsonObj = new JSONObject(receivedData);
 
                 firstname = jsonObj.getString("firstname");
                 lastname = jsonObj.getString("lastname");
@@ -507,85 +519,70 @@ public class MyProfile_Fragment extends Fragment implements View.OnClickListener
                 city = jsonObj.getString("city");
                 pin_code = jsonObj.getString("pin_code");
                 title = jsonObj.getString("title");
-                photo= jsonObj.getString("photo");
-                company_photo=jsonObj.getString("company_photo");
+                photo = jsonObj.getString("photo");
+                company_photo = jsonObj.getString("company_photo");
 
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        Log.e(" Photo Received ",""+photo);
-        Log.e(" company_photoReceived",""+company_photo);
+            Log.e(" Photo Received ", "" + photo);
+            Log.e(" company_photoReceived", "" + company_photo);
 
 //
 
 
-        if(!photo.isEmpty()) {
+            if (!photo.isEmpty()) {
+                Picasso.with(getActivity()).load(photo).centerCrop().resize(400, 400).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+                Log.e(" Photo on Received ", "" + photo);
+                SavePreferences(PROFILE_IMAGE, photo);
+            }else
+            {
+                imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
+                imageProfile.setCropToPadding(true);
+                imageProfile.setPadding(50, 50, 50, 50);
+            }
+            if (!company_photo.isEmpty())
+            {
+                Picasso.with(getActivity()).load(company_photo).centerCrop().resize(200, 200).placeholder(R.drawable.no_pic_placeholder_2).into(imageCompany);
+                Log.e(" company_photoReceived", "" + company_photo);
+
+                SavePreferences(COMPANY_IMAGE, company_photo);
+
+            } else
+
+            {
+                imageCompany.setImageResource(R.drawable.no_pic_placeholder_2);
+                imageCompany.setCropToPadding(true);
+                imageProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                imageCompany.setPadding(50, 50, 50, 50);
+            }
 
 
-            Picasso.with(getActivity()).load(photo).centerCrop().resize(400,400).placeholder(R.drawable.profile_pic_placeholder).into(imageProfile);
+            textViewName.setText(firstname + " " + lastname);
+            values = new ArrayList<String>();
+            values.add(firstname);
+            values.add(lastname);
+            values.add(title);  // contains value for what do you do?
+            values.add(email);
+            values.add(address_line_1);
+            values.add(city);
+            values.add(pin_code);
 
-            Log.e(" Photo on Received ",""+photo);
 
-//            if(PROFILE_IMAGE.length()==0) {
-            SavePreferences(PROFILE_IMAGE, photo);
-//            }
-//            imageProfile.setTag(photo);
-//                    new DownloadImagesTask(getActivity()).execute(imageProfile);// Download item_photo from AsynTask
-
-        } else  {
-            imageProfile.setImageResource(R.drawable.profile_pic_placeholder);
-            imageProfile.setCropToPadding(true);
-            imageProfile.setPadding(50,50,50,50);
-            //            new DownloadImagesTask(getActivity()).execute(holder.photo);
-
+            for (int i = 0; i < label.size(); i++) {
+                ListItem item = new ListItem();
+                item.setLabel(label.get(i));
+                item.setValue(values.get(i));
+                arrayList.add(item);
+            }
         }
-
-
-
-        if(!company_photo.isEmpty()) {
-            Picasso.with(getActivity()).load(company_photo).centerCrop().resize(200,200).placeholder(R.drawable.no_pic_placeholder_2).into(imageCompany);
-            Log.e(" company_photoReceived",""+company_photo);
-
-            SavePreferences(COMPANY_IMAGE, company_photo);
-
-//            imageCompany.setTag(company_photo);
-//            new DownloadImagesTask(getActivity()).execute(imageCompany);// Download item_photo from AsynTask
-        }else  {
-            imageCompany.setImageResource(R.drawable.no_pic_placeholder_2);
-            imageCompany.setCropToPadding(true);
-            imageProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            imageCompany.setPadding(50,50,50,50);
-        }
-
-
-        textViewName.setText(firstname+ " "+lastname);
-        values = new ArrayList<String>();
-        values.add(firstname );
-        values.add(lastname);
-        values.add(title);  // contains value for what do you do?
-        values.add(email);
-        values.add(address_line_1);
-        values.add(city);
-        values.add(pin_code);
-
-
-        for (int i = 0; i < label.size(); i++) {
-            ListItem item = new ListItem();
-            item.setLabel(label.get(i));
-            item.setValue(values.get(i));
-            arrayList.add(item);
-        }
-
-
-
     }
+
+
+
+
 
     protected void SavePreferences(String key, String value) {
 // TODO Auto-generated method stub
