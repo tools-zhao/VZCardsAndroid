@@ -3,6 +3,7 @@ package com.bitjini.vzcards;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -22,6 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import static com.bitjini.vzcards.Constants.isFetched_sharedPreference;
+import static com.bitjini.vzcards.Constants.sharedPreferences;
 
 public class Feed_detail_needs extends Activity implements View.OnClickListener {
 
@@ -147,8 +151,15 @@ public class Feed_detail_needs extends Activity implements View.OnClickListener 
                 {
                     openFragment();
                 }else {
-                    createDialog();
-
+                    GetSharedPreference.getSharePreferenceValue(Feed_detail_needs.this);
+                    boolean isfetched=isFetched_sharedPreference;
+                    Log.e("isfetched=",""+isfetched);
+                    if(isFetched_sharedPreference) {
+                        openFragment();
+                    }
+                    else {
+                        createDialog();
+                    }
                 }
                 break;
 
@@ -181,6 +192,9 @@ public class Feed_detail_needs extends Activity implements View.OnClickListener 
 
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
+                        SharedPreferences.Editor sEdit = sharedPreferences.edit();
+                        sEdit.putBoolean("isFetched", true);
+                        sEdit.commit();
 
                         openFragment();
 //

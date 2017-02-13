@@ -178,46 +178,44 @@ return refer_contact;
             getActivity().requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
         } else {
-            if (getActivity() != null)
-            {
 
-                if(GetSharedPreference.isOrganisation()) {
 
-                    new ContactsMainActivity(getActivity()){
+                    final SyncContacts sync = new SyncContacts(getActivity());
+
+                if(sync.phoneList12.isEmpty())
+                {
+                    new SyncContacts(getActivity()).LoadContacts();
+                    Handler handler=new Handler();
+                    handler.postDelayed(new Runnable() {
                         @Override
-                        protected void onPostExecute(ArrayList<SelectUser> arrOfContacts) {
-                            super.onPostExecute(arrOfContacts);
-                            adapter = new SelectUserAdapter(arrOfContacts, getActivity());
-                            listView.setAdapter(adapter);
-                            listView.setTextFilterEnabled(true);
-                            // place your adapter to a separate filter to remove pop up text
-                            filter = adapter.getFilter();
+                        public void run() {
+                            addContactsList_InListview(sync.phoneList12);
                         }
-                    }.execute();
-
+                    },3000);
 
                 }else {
-                    new SyncContacts.LoadContact(){
-                        @Override
-                        protected void onPostExecute(ArrayList<SelectUser> result) {
-                            super.onPostExecute(result);
 
-                            adapter = new SelectUserAdapter(result, getActivity());
-                            listView.setAdapter(adapter);
-                            listView.setTextFilterEnabled(true);
-                            // place your adapter to a separate filter to remove pop up text
-                            filter = adapter.getFilter();
-
-                        }
-                    }.execute();
-
+                    addContactsList_InListview(sync.phoneList12);
+//
                 }
 
 
+//
+//
+//
 
-            }
         }
     }
+
+    private void addContactsList_InListview(ArrayList<SelectUser> phoneList12) {
+        adapter = new SelectUserAdapter(phoneList12, getActivity());
+
+        listView.setAdapter(adapter);
+        listView.setTextFilterEnabled(true);
+        // place your adapter to a separate filter to remove pop up text
+        filter = adapter.getFilter();
+    }
+
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
